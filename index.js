@@ -7,6 +7,7 @@ const app = new express();
 
 // setting app with specific middleware
 app.set('view_engine', 'ejs');
+app.use(express.static(path.join(__dirname, 'public')));
 
 // not really connecting to a real mongodb database
 mongoose.connect('mongodb://localhost/my_database', {useNewUrlParser : true});
