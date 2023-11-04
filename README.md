@@ -1,2 +1,4 @@
-# marketPlace
-A simple marketplace app using nodejs and expressjs
+# app
+This is a repository for a marketplace app
+
+
