@@ -24,6 +24,10 @@ const StaffSchema = new mongoose.Schema({
     type: String,
     required: true,
   },
+  status: {
+    type: Boolean,
+    default: true,
+  },
 });
 
 StaffSchema.pre("save", function (next) {

@@ -1,5 +1,6 @@
 const Product = require("../models/Product");
 const multer = require("multer");
+const Staff = require("../models/Staff");
 
 const upload = multer({ dest: "public/uploads/" });
 

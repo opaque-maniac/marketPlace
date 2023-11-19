@@ -28,6 +28,17 @@ const CustomerSchema = new mongoose.Schema({
     type: Date,
     default: Date.now,
   },
+  location: {
+    type: String,
+    required: false,
+    enum: ["nairobi", "outside nairobi"],
+    default: "nairobi",
+  },
+  status: {
+    type: String,
+    enum: ["active", "inactive"],
+    default: "active",
+  },
 });
 
 CustomerSchema.pre("save", function (next) {

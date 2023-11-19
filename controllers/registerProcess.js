@@ -3,12 +3,19 @@ const Cart = require("../models/Cart");
 
 module.exports = async (req, res) => {
   try {
-    const { firstName, lastName, email, password } = req.body;
+    const { firstName, lastName, email, password, location } = req.body;
     const customer = await Customer.create({
       firstName,
       lastName,
       email,
       password,
+      location: () => {
+        if (location === "1") {
+          return "nairobi";
+        } else {
+          return "outside nairobi";
+        }
+      },
     });
     if (customer) {
       req.session.userId = customer._id;
