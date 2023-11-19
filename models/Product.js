@@ -19,6 +19,19 @@ const ProductSchema = new mongoose.Schema({
       required: true,
     },
   ],
+  status: {
+    type: String,
+    enum: ["in stock", "out of stock"],
+    default: "available",
+  },
+  dateAdded: {
+    type: Date,
+    default: Date.now,
+  },
+  quantity: {
+    type: Number,
+    required: true,
+  },
 });
 
 module.exports = mongoose.model("Product", ProductSchema);
