@@ -1,0 +1,33 @@
+<!-- allProducts.ejs -->
+
+<!DOCTYPE html>
+<html>
+<head>
+    <%- include('./layout/head.ejs') %>
+    <title>All Products</title>
+</head>
+<body>
+  <h1>All Products</h1>
+
+  <!-- Display Products -->
+  <ul>
+    <% products.forEach(product => { %>
+      <li><%= product.name %> - <%= product.price %></li>
+      <!-- Display other product details as needed -->
+    <% }); %>
+  </ul>
+
+  <!-- Pagination -->
+  <div>
+    <% if (totalPages > 1) { %>
+      <ul class="pagination">
+        <% for (let i = 1; i <= totalPages; i++) { %>
+          <li <% if (i === currentPage) { %>class="active"<% } %>>
+            <a href="/products?page=<%= i %>"><%= i %></a>
+          </li>
+        <% } %>
+      </ul>
+    <% } %>
+  </div>
+</body>
+</html>
