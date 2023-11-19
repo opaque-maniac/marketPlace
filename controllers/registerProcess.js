@@ -9,13 +9,6 @@ module.exports = async (req, res) => {
       lastName,
       email,
       password,
-      location: () => {
-        if (location === "1") {
-          return "nairobi";
-        } else {
-          return "outside nairobi";
-        }
-      },
     });
     if (customer) {
       req.session.userId = customer._id;
