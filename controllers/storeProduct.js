@@ -6,7 +6,7 @@ const upload = multer({ dest: "public/uploads/" });
 
 module.exports = async (req, res) => {
   try {
-    const { name, description, price, quantity } = req.body;
+    const { name, description, price, quantity, category } = req.body;
     const images = req.files.map((file) => {
       return file.filename;
     });
@@ -16,6 +16,7 @@ module.exports = async (req, res) => {
       price,
       images,
       quantity,
+      category,
     });
     if (product) {
       return res.redirect("/products/all");

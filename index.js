@@ -48,6 +48,7 @@ const blockStaff = require("./controllers/blockStaff");
 const unblockStaff = require("./controllers/unblockStaff");
 const updateProduct = require("./controllers/updateProduct");
 const updateProdcutProcess = require("./controllers/updateProductProcess");
+const about = require("./controllers/about");
 
 app.listen(port, () => {
   console.log(`Listening on port ${port}`);

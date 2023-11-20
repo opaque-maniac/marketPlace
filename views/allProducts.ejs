@@ -7,15 +7,18 @@
     <title>All Products</title>
 </head>
 <body>
-  <h1>All Products</h1>
-
-  <!-- Display Products -->
-  <ul>
-    <% products.forEach(product => { %>
-      <li><%= product.name %> - <%= product.price %></li>
-      <!-- Display other product details as needed -->
-    <% }); %>
-  </ul>
+  <%- include('./layout/header.ejs') %>
+  <% if (products.length === 0) { %>
+    <!-- Display Products -->
+    <ul class="product-list">
+      <% products.forEach(product => { %>
+        <li class="product-list-item"><%= product.name %> - <%= product.price %></li>
+        <!-- Display other product details as needed -->
+      <% }); %>
+    </ul>
+  <% } else { %>
+    <p class="no-products">No products found.</p>
+  <% } %>
 
   <!-- Pagination -->
   <div>
@@ -29,5 +32,7 @@
       </ul>
     <% } %>
   </div>
+  <%- include('./layout/footer.ejs') %>
+  <%- include('./layout/scripts.ejs') %>
 </body>
 </html>

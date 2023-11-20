@@ -32,6 +32,11 @@ const ProductSchema = new mongoose.Schema({
     type: Number,
     required: true,
   },
+  category: {
+    type: String,
+    enum: ["electronics", "fashion", "garden", "appliances"],
+    required: true,
+  },
 });
 
 module.exports = mongoose.model("Product", ProductSchema);
