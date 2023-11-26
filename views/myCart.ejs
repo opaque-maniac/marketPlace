@@ -1,0 +1,23 @@
+<!-- myCart.ejs -->
+
+<!DOCTYPE html>
+<html>
+  <head>
+    <%- include('./layout/head.ejs') %>
+    <title></title>
+  </head>
+  <body>
+    <%- include('./layout/header.ejs') %> <%- if (cart.products.length > 0) { %>
+    <ul class="products-list">
+      <% cart.products.forEach(product => { %>
+      <li class="product-list-item">
+        <%= product.name %> - <%= product.price %>
+      </li>
+      <% }); %>
+    </ul>
+    <%- } else { %>
+    <p class="no-products">No products in cart.</p>
+    <%- } %> <%- include('./layout/footer.ejs') %> <%-
+    include('./layout/scripts.ejs') %>
+  </body>
+</html>
