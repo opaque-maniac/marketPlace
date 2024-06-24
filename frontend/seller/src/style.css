@@ -1,0 +1,44 @@
+@import url("https://fonts.googleapis.com/css2?family=Pacifico&display=swap");
+
+body,
+html {
+  font-family: "Poppins", sans-serif;
+  margin: 0;
+  padding: 0;
+  background-color: #f5f5f5;
+  overflow-x: hidden;
+}
+body p,
+body span {
+  font-size: 1rem;
+}
+
+@media screen and (max-width: 768px) {
+  body p,
+  body span {
+    font-size: 0.8rem !important;
+  }
+}
+
+@media screen and (max-width: 500px) {
+  body p,
+  body span {
+    font-size: 1rem !important;
+  }
+}
+
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+@layer components {
+  .mobile-nav {
+    transition: right 0.3s ease-in-out;
+  }
+}
+
+@layer utilities {
+  .grayed-out-disabled {
+    @apply disabled:opacity-50;
+  }
+}
