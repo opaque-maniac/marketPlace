@@ -7,8 +7,8 @@ const VerifyAuth = () => {
   const user = useLoggedInStore((state) => state.user);
   const navigate = useNavigate();
 
-  const generalPaths = ["/about", "/contact"];
-  const noAuthPaths = ["/login", "/signup"];
+  const generalPaths = ["/about", "/contact", "/faq", "/privacy", "/error/500"];
+  const noAuthPaths = ["/login", "/register"];
 
   useEffect(() => {
     if (!user) {

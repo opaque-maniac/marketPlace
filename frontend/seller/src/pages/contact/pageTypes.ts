@@ -14,5 +14,8 @@ export interface ContactResults {
 }
 
 export interface ContactFormData {
-  [k: string]: FormDataEntryValue;
+  email: string;
+  name: string;
+  phone: string;
+  message: string;
 }

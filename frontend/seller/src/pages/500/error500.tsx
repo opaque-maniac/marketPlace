@@ -1,18 +1,20 @@
-// import { useContext, useEffect } from "react";
-import { Link /*useNavigate*/ } from "react-router-dom";
-// import ErrorContext from "../../errorContext";
+import { useContext, useLayoutEffect } from "react";
+import { Link, useNavigate } from "react-router-dom";
+import ErrorContext from "../../utils/errorContext";
 
 const Error500 = () => {
-  // const [error, setError] = useContext(ErrorContext);
-  // const navigate = useNavigate();
+  const [error, setError] = useContext(ErrorContext);
+  const navigate = useNavigate();
 
-  // useEffect(() => {
-  //   if (!error) {
-  //     navigate("/404", { replace: true });
-  //   }
+  useLayoutEffect(() => {
+    if (!error) {
+      navigate("/404", { replace: true });
+    }
 
-  //   return () => setError(false);
-  // }, []); // eslint-disable-line react-hooks/exhaustive-deps
+    return () => {
+      setError(false);
+    };
+  });
 
   return (
     <div className="relative">

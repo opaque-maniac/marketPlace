@@ -2,27 +2,31 @@ import { useMutation } from "@tanstack/react-query";
 import Loader from "../../../components/loader";
 import ThumbsUp from "./thumbsUp";
 import submitContactForm from "../submitForm";
-// import { useContext } from "react";
-// import ErrorContext from "../../../errorContext";
+import { FormEventHandler, useContext } from "react";
+import ErrorContext from "../../../utils/errorContext";
 import { useNavigate } from "react-router-dom";
-import { FormEvent } from "react";
 
 const ContactForm = () => {
   const navigate = useNavigate();
-  //   const [, setError] = useContext(ErrorContext);
+  const [, setError] = useContext(ErrorContext);
 
   const mutation = useMutation({
     mutationFn: submitContactForm,
     onError: () => {
-      //   setError(true);
+      setError(true);
       navigate("/error/500", { replace: true });
     },
   });
 
-  const handleSubmit = (e: FormEvent) => {
+  const handleSubmit: FormEventHandler<HTMLFormElement> = (e) => {
     e.preventDefault();
     const formData = new FormData(e.target as HTMLFormElement);
-    const data = Object.fromEntries(formData.entries());
+    const data = {
+      name: formData.get("name") as string,
+      email: formData.get("email") as string,
+      phone: formData.get("phone") as string,
+      message: formData.get("message") as string,
+    };
     mutation.mutate(data);
   };
 
@@ -55,7 +59,7 @@ const ContactForm = () => {
   return (
     <div className="relative">
       <form onSubmit={handleSubmit}>
-        <div className="md:flex justify-center lg:gap-8 md:gap-4 mb-4">
+        <div className="md:flex justify-center lg:gap-8 md:gap-12 mb-4">
           <div className="lg:mb-0 mb-4">
             <label htmlFor="name" className="sr-only">
               Name
@@ -67,7 +71,7 @@ const ContactForm = () => {
               required
               aria-label="Name"
               placeholder="Your name"
-              className="lg:w-56 w-full border-0 outline-none focus:ring-0 bg-gray-200 rounded"
+              className="lg:w-56 w-full border-0 outline-none focus:ring-0 bg-gray-200 rounded block h-12 p-2"
             />
           </div>
           <div className="lg:mb-0 mb-4">
@@ -81,7 +85,7 @@ const ContactForm = () => {
               required
               aria-label="Name"
               placeholder="Your email"
-              className="lg:w-56 w-full border-0 outline-none focus:ring-0 bg-gray-200 rounded"
+              className="lg:w-56 w-full border-0 outline-none focus:ring-0 bg-gray-200 rounded block h-12 p-2"
             />
           </div>
           <div className="lg:mb-0 mb-4">
@@ -94,7 +98,7 @@ const ContactForm = () => {
               name="phone"
               aria-label="Phone"
               placeholder="Phone number"
-              className="lg:w-56 w-full border-0 outline-none focus:ring-0 bg-gray-200 rounded"
+              className="lg:w-56 w-full border-0 outline-none focus:ring-0 bg-gray-200 rounded block h-12 p-2"
             />
           </div>
         </div>
@@ -108,7 +112,7 @@ const ContactForm = () => {
             required
             aria-label="Message"
             placeholder="Your message"
-            className="h-40 lg:w-800 w-full border-0 outline-none focus:ring-0 bg-gray-200 rounded"
+            className="h-40 lg:w-800 w-full border-0 outline-none focus:ring-0 bg-gray-200 rounded block p-2"
           />
         </div>
         <div className="mt-4 flex lg:justify-end justify-center">

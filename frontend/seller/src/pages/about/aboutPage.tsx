@@ -4,8 +4,8 @@ const AboutPage = () => {
       <span className="absolute top-4 left-4">
         <span>Home</span> / <span className="font-bold">About</span>
       </span>
-      <section className="lg:flex justify-center items-start lg:gap-10">
-        <div className="lg:w-500 md:w-10/12 md:mx-auto lg:mx-0 w-auto">
+      <section className="lg:flex justify-center items-center lg:gap-6 gap-4 lg:mx-auto lg:w-800">
+        <div className="lg:w-5/12 md:w-10/12 md:mx-auto lg:mx-0 w-auto">
           <h1 className="text-3xl font-bold lg:text-start text-center">
             About us
           </h1>
@@ -32,12 +32,12 @@ const AboutPage = () => {
           <img
             src="/images/svg/online.svg"
             alt="Someone holding a laptop and bank card"
-            className="md:w-400 md:h-400 h-300 w-300 object-cover rounded lg:mx-0 mx-auto"
+            className="md:w-400 md:h-400 h-300 w-300 object-cover rounded lg:mx-0 mx-auto z-0"
           />
         </div>
       </section>
-      <section className="lg:flex justify-center items-start lg:gap-10 mt-12 mb-8">
-        <div className="lg:w-500 md:w-10/12 md:mx-auto lg:mx-0 w-auto lg:order-2">
+      <section className="lg:flex justify-center items-center lg:gap-6 mt-12 mb-8 lg:mx-auto lg:w-800">
+        <div className="lg:w-5/12 md:w-10/12 md:mx-auto lg:mx-0 w-auto lg:order-2">
           <h1 className="text-3xl font-bold lg:text-start text-center">
             Founder
           </h1>
@@ -67,7 +67,7 @@ const AboutPage = () => {
           <img
             src="/images/svg/founder.svg"
             alt="Hazina founder, Mark Mbithi"
-            className="md:w-400 md:h-400 h-300 w-300 object-cover rounded lg:mx-0 mx-auto"
+            className="md:w-400 md:h-400 h-300 w-300 object-cover rounded lg:mx-0 mx-auto z-0"
           />
         </div>
       </section>

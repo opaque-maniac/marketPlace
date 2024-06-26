@@ -7,7 +7,7 @@ const Header = () => {
   const user = useLoggedInStore((state) => state.user);
 
   return (
-    <header className="border-b bg-gray-200 border-black h-14 flex items-center justify-center fixed top-0 left-0 right-0 w-screen">
+    <header className="border-b bg-gray-200 border-black h-14 flex items-center justify-center fixed top-0 left-0 right-0 w-screen z-30">
       <div className="flex items-center md:justify-center justify-between md:gap-20 lg:w-800 md:w-11/12 md:mx-auto w-full md:px-0 px-4 h-12">
         <div>
           <Link

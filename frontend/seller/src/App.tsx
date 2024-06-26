@@ -4,11 +4,11 @@ import { QueryClient, QueryClientProvider } from "@tanstack/react-query";
 import { lazy, Suspense, useState } from "react";
 import Header from "./components/header";
 import LoginPage from "./pages/login/login";
-import ProductsPage from "./pages/products/products";
 import VerifyAuth from "./utils/verifyAuth";
 import ScrollToTop from "./utils/scrollToTop";
 import Footer from "./components/footer";
 import PageLoader from "./components/pageLoader";
+import ErrorContext from "./utils/errorContext";
 
 const Error404 = lazy(() => import("./pages/404/error404"));
 const Error500 = lazy(() => import("./pages/500/error500"));
@@ -17,6 +17,11 @@ const FAQPage = lazy(() => import("./pages/faq/faqPage"));
 const ContactPage = lazy(() => import("./pages/contact/contactPage"));
 const PrivacyPage = lazy(() => import("./pages/privacy/privacyPage"));
 const RegisterPage = lazy(() => import("./pages/register/register"));
+const ProductsPage = lazy(() => import("./pages/products/products"));
+const IndividualProduct = lazy(
+  () => import("./pages/individualProduct/product")
+);
+const ProfilePage = lazy(() => import("./pages/profile/profile"));
 
 const queryClient = new QueryClient({
   defaultOptions: {
@@ -28,33 +33,39 @@ const queryClient = new QueryClient({
 });
 
 const App = () => {
+  const errorState = useState<boolean>(false);
+
   return (
     <div>
       <BrowserRouter>
-        <QueryClientProvider client={queryClient}>
-          <Suspense fallback={<PageLoader />}>
+        <ErrorContext.Provider value={errorState}>
+          <QueryClientProvider client={queryClient}>
             <Header />
-            <div
-              className="mt-14"
-              style={{ minHeight: "calc(100vh - 3.5rem)" }}
-            >
-              <VerifyAuth />
-              <ScrollToTop />
-              <Routes>
-                <Route path="/about" element={<AboutPage />} />
-                <Route path="/faq" element={<FAQPage />} />
-                <Route path="/contact" element={<ContactPage />} />
-                <Route path="/privacy" element={<PrivacyPage />} />
-                <Route path="/login" element={<LoginPage />} />
-                <Route path="/register" element={<RegisterPage />} />
-                <Route path="/products" element={<ProductsPage />} />
-                <Route path="/error/500" element={<Error500 />} />
-                <Route path="*" element={<Error404 />} />
-              </Routes>
-            </div>
-            <Footer />
-          </Suspense>
-        </QueryClientProvider>
+            <Suspense fallback={<PageLoader />}>
+              <div
+                className="mt-14"
+                style={{ minHeight: "calc(100vh - 3.5rem)" }}
+              >
+                <ScrollToTop />
+                <Routes>
+                  <Route path="/about" element={<AboutPage />} />
+                  <Route path="/faq" element={<FAQPage />} />
+                  <Route path="/contact" element={<ContactPage />} />
+                  <Route path="/privacy" element={<PrivacyPage />} />
+                  <Route path="/login" element={<LoginPage />} />
+                  <Route path="/register" element={<RegisterPage />} />
+                  <Route path="/products" element={<ProductsPage />} />
+                  <Route path="/products/:id" element={<IndividualProduct />} />
+                  <Route path="/profile" element={<ProfilePage />} />
+                  <Route path="/error/500" element={<Error500 />} />
+                  <Route path="*" element={<Error404 />} />
+                </Routes>
+                <VerifyAuth />
+              </div>
+              <Footer />
+            </Suspense>
+          </QueryClientProvider>
+        </ErrorContext.Provider>
       </BrowserRouter>
     </div>
   );

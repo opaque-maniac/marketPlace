@@ -1,6 +1,9 @@
 const PageLoader = () => {
   return (
-    <section className="w-full flex justify-center items-center height-mb lg:height-lg md:height-md lg:mt-20 mt-12 md:mt-14">
+    <section
+      className="w-screen flex justify-center items-center height-mb lg:height-lg md:height-md lg:mt-20 mt-12 md:mt-14"
+      style={{ height: "calc(100vh - 3.5rem)" }}
+    >
       <div className="w-full">
         <div className="w-full flex justify-center items-center">
           <div

@@ -1,3 +1,4 @@
+import { Link } from "react-router-dom";
 import { useLoggedInStore } from "../utils/store";
 
 const Navbar = () => {
@@ -9,31 +10,47 @@ const Navbar = () => {
         {user === null ? (
           <>
             <li>
-              <p>About</p>
+              <Link to={"/about"}>
+                <p>About</p>
+              </Link>
             </li>
             <li>
-              <p>Contact</p>
+              <Link to={"/contact"}>
+                <p>Contact</p>
+              </Link>
             </li>
             <li>
-              <p>Log In</p>
+              <Link to={"/login"}>
+                <p>Log In</p>
+              </Link>
             </li>
             <li>
-              <p>Sign Up</p>
+              <Link to={"/register"}>
+                <p>Sign Up</p>
+              </Link>
             </li>
           </>
         ) : (
           <>
             <li>
-              <p>Products</p>
+              <Link to={"/products"}>
+                <p>Products</p>
+              </Link>
             </li>
             <li>
-              <p>Orders</p>
+              <Link to={"/orders"}>
+                <p>Orders</p>
+              </Link>
             </li>
             <li>
-              <p>Explore</p>
+              <Link to={"/explore"}>
+                <p>Explore</p>
+              </Link>
             </li>
             <li>
-              <p>Log out</p>
+              <Link to={"/logout"}>
+                <p>Log out</p>
+              </Link>
             </li>
           </>
         )}

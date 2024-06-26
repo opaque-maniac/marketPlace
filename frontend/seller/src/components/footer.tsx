@@ -6,7 +6,7 @@ import LinkedinIcon from "./icons/LinkedIn";
 
 const Footer = () => {
   return (
-    <footer className="w-full bg-black text-white md:flex justify-center items-start lg:gap-32 md:gap-14 py-4">
+    <footer className="w-screen bg-black text-white md:flex justify-center items-start lg:gap-32 md:gap-14 py-4">
       <div>
         <h3 className="text-xl text-center font-bold mb-2">Support</h3>
         <ul className="md:mb-0 mb-8">
@@ -41,18 +41,6 @@ const Footer = () => {
           <li className="mb-2 md:block flex justify-center">
             {" "}
             <Link to={"/login"}>Log In</Link>
-          </li>
-          <li className="mb-2 md:block flex justify-center">
-            {" "}
-            <Link to={"/cart"}>Cart</Link>
-          </li>
-          <li className="mb-2 md:block flex justify-center">
-            {" "}
-            <Link to={"/wishlist"}>Wishlist</Link>
-          </li>
-          <li className="mb-2 md:block flex justify-center">
-            {" "}
-            <Link to={"/explore"}>Shop</Link>
           </li>
         </ul>
       </div>
