@@ -59,7 +59,7 @@ sellerRouter.post(
     .isString()
     .isLength({ min: 8 })
     .withMessage("Password should be at least 8 characters long"),
-  registerSeller,
+  registerSeller
 );
 sellerRouter.post(
   "/login",
@@ -68,7 +68,7 @@ sellerRouter.post(
     .isString()
     .isLength({ min: 8 })
     .withMessage("Password should be at least 8 characters long"),
-  loginSeller,
+  loginSeller
 );
 
 // For profile management
@@ -77,7 +77,7 @@ sellerRouter.get(
   allowIfAuthenticated,
   isSeller,
   isProfileOwner,
-  fetchSellerProfile,
+  fetchSellerProfile
 );
 sellerRouter.put(
   "/profile/:id",
@@ -120,14 +120,14 @@ sellerRouter.put(
     .isLength({ min: 2 })
     .withMessage("Country should be at least 2 characters long"),
   sellerUpload.single("image"),
-  updateSellerProfile,
+  updateSellerProfile
 );
 sellerRouter.delete(
   "/profile/:id",
   allowIfAuthenticated,
   isSeller,
   isProfileOwner,
-  deleteSellerProfile,
+  deleteSellerProfile
 );
 
 // Product categories
@@ -146,7 +146,7 @@ sellerRouter.get(
   "/products",
   allowIfAuthenticated,
   isSeller,
-  fetchSellerProducts,
+  fetchSellerProducts
 );
 sellerRouter.post(
   "/products",
@@ -166,18 +166,17 @@ sellerRouter.post(
     .isString()
     .isIn(productCategories)
     .withMessage(
-      "Category should be one of the following: ELECTRONICS, BOOKS, CLOTHING, HOME_KITCHEN, BEAUTY_HEALTH, SPORTS_OUTDOORS, TOYS_GAMES",
+      "Category should be one of the following: ELECTRONICS, BOOKS, CLOTHING, HOME_KITCHEN, BEAUTY_HEALTH, SPORTS_OUTDOORS, TOYS_GAMES"
     ),
-  checkForFiles,
   upload.array("image", 5),
-  createSellerProduct,
+  createSellerProduct
 );
 sellerRouter.get(
   "/products/:id",
   allowIfAuthenticated,
   isSeller,
   isProductSeller,
-  fetchIndividualSellerProduct,
+  fetchIndividualSellerProduct
 );
 sellerRouter.put(
   "/products/:id",
@@ -198,18 +197,18 @@ sellerRouter.put(
     .isString()
     .isIn(productCategories)
     .withMessage(
-      "Category should be one of the following: ELECTRONICS, BOOKS, CLOTHING, HOME_KITCHEN, BEAUTY_HEALTH, SPORTS_OUTDOORS, TOYS_GAMES",
+      "Category should be one of the following: ELECTRONICS, BOOKS, CLOTHING, HOME_KITCHEN, BEAUTY_HEALTH, SPORTS_OUTDOORS, TOYS_GAMES"
     ),
   checkForFiles,
   upload.array("image", 5),
-  updateIndividualSellerProduct,
+  updateIndividualSellerProduct
 );
 sellerRouter.delete(
   "/products/:id",
   allowIfAuthenticated,
   isSeller,
   isProductSeller,
-  deleteIndividualSellerProduct,
+  deleteIndividualSellerProduct
 );
 
 // Product management
@@ -217,7 +216,7 @@ sellerRouter.get(
   "/products/search",
   allowIfAuthenticated,
   isSeller,
-  searchSellerProducts,
+  searchSellerProducts
 );
 
 // For order management
@@ -226,13 +225,13 @@ sellerRouter.get(
   "/orders/:id",
   allowIfAuthenticated,
   isSeller,
-  fetchIndividualSellerOrder,
+  fetchIndividualSellerOrder
 );
 sellerRouter.put(
   "/orders/:id",
   allowIfAuthenticated,
   isSeller,
-  updateIndividualSellerOrder,
+  updateIndividualSellerOrder
 );
 
 export default sellerRouter;

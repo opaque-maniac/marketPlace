@@ -2,9 +2,13 @@ import { Link } from "react-router-dom";
 import { useLoggedInStore } from "../utils/store";
 import Navbar from "./navbar";
 import ActionFeature from "./action";
+import { useContext } from "react";
+import ValidationContext from "../utils/validationContext";
+import clsx from "clsx";
 
 const Header = () => {
   const user = useLoggedInStore((state) => state.user);
+  const [error] = useContext(ValidationContext);
 
   return (
     <header className="border-b bg-gray-200 border-black h-14 flex items-center justify-center fixed top-0 left-0 right-0 w-screen z-30">

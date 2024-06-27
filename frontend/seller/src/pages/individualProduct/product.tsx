@@ -9,7 +9,7 @@ const IndividualProduct = () => {
   const { id } = useParams();
   const navigate = useNavigate();
 
-  if (id) {
+  if (!id) {
     navigate("/error/404", { replace: true });
   }
 

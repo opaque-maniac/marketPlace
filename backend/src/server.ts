@@ -5,6 +5,7 @@ import cors from "cors";
 import customerRouter from "./customer/router";
 import sellerRouter from "./seller/router";
 import staffRouter from "./staff/router";
+import path from "path";
 
 const app = express();
 
@@ -20,8 +21,12 @@ const corsOptions = {
   methods: ["GET", "POST", "PUT", "DELETE"],
 };
 
+const productDir = path.join(__dirname, "../productImages");
+
 // Implimenting cors
 app.use(cors(corsOptions));
+
+app.use("/productImages", express.static(productDir));
 
 app.use("/api-client", customerRouter);
 app.use("/api-seller", sellerRouter);

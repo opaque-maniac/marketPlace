@@ -9,6 +9,7 @@ import RegisterIcon from "./icons/Register";
 import SearchIcon from "./icons/Search";
 import ProductIcon from "./icons/Product";
 import OrderIcon from "./icons/OrderIcon";
+import SmallProfileIcon from "./icons/SmallProfile";
 
 interface MobileNavProps {
   clicked: boolean;
@@ -125,6 +126,19 @@ const MobileNav = ({ clicked, setClicked }: MobileNavProps) => {
                     <SearchIcon />
                   </div>
                   <p>Explore</p>
+                </Link>
+              </li>
+              <li className="mb-1 w-full">
+                <Link
+                  to={"/profile"}
+                  onClick={() => setClicked(false)}
+                  aria-label="Profile page"
+                  className="flex justify-start pl-4 items-center gap-4 h-10 bg-red-500 border-collapse w-full"
+                >
+                  <div>
+                    <SmallProfileIcon />
+                  </div>
+                  <p>Profile</p>
                 </Link>
               </li>
               <li className="mb-1 w-full">

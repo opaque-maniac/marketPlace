@@ -12,7 +12,7 @@ const fetchProducts = async ({
     method: "GET",
     headers: {
       "Content-Type": "application/json",
-      Authorization: `Bearer`,
+      Authorization: `Bearer ${token}`,
     },
   };
 

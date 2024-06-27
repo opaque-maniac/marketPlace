@@ -114,7 +114,7 @@ export const updateSellerProfile = async (req, res, next) => {
 
     if (req.files.length !== 0) {
       fileNames = req.files.map(
-        (file) => `http://localhost:3000/sellerImages/${file.filename}`,
+        (file) => `http://localhost:3000/sellerImages/${file.filename}`
       );
     }
 
@@ -165,7 +165,7 @@ export const updateSellerProfile = async (req, res, next) => {
         maxWait: 5000,
         timeout: 10000,
         isolationLevel: Prisma.TransactionIsolationLevel.Serializable,
-      },
+      }
     );
 
     return res.status(200).json({
@@ -198,7 +198,7 @@ export const deleteSellerProfile = async (req, res, next) => {
 
 export const fetchSellerProducts = async (req, res, next) => {
   try {
-    const itemsPerPage = req.query.itemsPerPage || 20;
+    const itemsPerPage = req.query.itemsPerPage || 10;
     const page = req.query.page || 1;
 
     const products = await prisma.product.findMany({
@@ -230,10 +230,12 @@ export const fetchSellerProducts = async (req, res, next) => {
 
 export const createSellerProduct = async (req, res, next) => {
   try {
-    const { name, description, price, stock, category } = req.body;
+    let { name, description, price, stock, category } = req.body;
     const images = req.files.map(
-      (file) => `http://localhost:3000/productImages/${file.filename}`,
+      (file) => `http://localhost:3000/productImages/${file.filename}`
     );
+    price = parseFloat(price);
+    stock = parseInt(stock);
 
     const product = await prisma.$transaction(
       async (txl) => {
@@ -265,7 +267,7 @@ export const createSellerProduct = async (req, res, next) => {
         maxWait: 5000,
         timeout: 10000,
         isolationLevel: Prisma.TransactionIsolationLevel.Serializable,
-      },
+      }
     );
 
     return res.status(201).json({
@@ -314,7 +316,7 @@ export const updateIndividualSellerProduct = async (req, res, next) => {
 
     if (req.files.length > 0) {
       fileNames = req.files.map(
-        (file) => `http://localhost:3000/productImages/${file.filename}`,
+        (file) => `http://localhost:3000/productImages/${file.filename}`
       );
     }
 
@@ -364,7 +366,7 @@ export const updateIndividualSellerProduct = async (req, res, next) => {
         maxWait: 5000,
         timeout: 10000,
         isolationLevel: Prisma.TransactionIsolationLevel.Serializable,
-      },
+      }
     );
 
     return res.status(200).json({
@@ -507,7 +509,7 @@ export const updateIndividualSellerOrder = async (req, res, next) => {
         maxWait: 5000,
         timeout: 10000,
         isolationLevel: Prisma.TransactionIsolationLevel.Serializable,
-      },
+      }
     );
 
     if (status === "DELIVERED") {

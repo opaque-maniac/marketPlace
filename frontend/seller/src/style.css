@@ -9,6 +9,22 @@ html {
   overflow-x: hidden;
 }
 
+::-webkit-scrollbar {
+  display: none;
+}
+
+/* Hide scrollbar for IE, Edge, and Firefox */
+html {
+  -ms-overflow-style: none; /* IE and Edge */
+  scrollbar-width: none; /* Firefox */
+}
+
+/* Make sure the body is scrollable */
+body {
+  overflow: scroll;
+  overflow-x: hidden; /* Optional: Hide horizontal scrollbar */
+}
+
 body p,
 body span {
   font-size: 1rem;

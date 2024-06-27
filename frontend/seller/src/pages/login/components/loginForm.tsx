@@ -1,4 +1,9 @@
-import { FormEventHandler, MouseEventHandler, useState } from "react";
+import {
+  FormEventHandler,
+  MouseEventHandler,
+  useContext,
+  useState,
+} from "react";
 import EyeIcon from "./eyeIcon";
 import EyeSlashIcon from "./eyeSlashIcon";
 import clsx from "clsx";
@@ -8,12 +13,13 @@ import { useLoggedInStore } from "../../../utils/store";
 import Loader from "../../../components/loader";
 import { setSellerCookie } from "../../../utils/cookieStore";
 import { useNavigate } from "react-router-dom";
-import { ErrorResponse } from "../pageTypes";
+import ValidationContext from "../../../utils/validationContext";
 
 const LoginForm = () => {
   const [clicked, setCicked] = useState<boolean>(false);
-  const [error, setError] = useState<string | null>(null);
+  const [error, setError] = useState<null | string>(null);
   const login = useLoggedInStore((state) => state.login);
+  const [, setValidationError] = useContext(ValidationContext);
   const navigate = useNavigate();
 
   const clickHanlder: MouseEventHandler<HTMLButtonElement> = (e) => {
@@ -24,18 +30,15 @@ const LoginForm = () => {
   const mutation = useMutation({
     mutationFn: submitLoginData,
     onSuccess: (data) => {
+      console.log(data);
       if (data.seller && data.token) {
         login(data.seller.id);
         setSellerCookie(data.token);
         navigate("/products", { replace: true });
       }
     },
-    onError: (error: ErrorResponse) => {
-      if (error.response?.data?.message) {
-        setError(error.response.data.message);
-      } else {
-        setError("An error occurred. Please try again later");
-      }
+    onError: (error: { message: string }) => {
+      setValidationError(error.message);
     },
   });
 
@@ -64,7 +67,7 @@ const LoginForm = () => {
   return (
     <form onSubmit={submitHandler} className="w-400 md:mx-0 mx-auto">
       {error ? (
-        <div id="error" className="w-full bg-red-500 text-white text-center">
+        <div className="w-full bg-red-500 text-white h-6">
           <p>{error}</p>
         </div>
       ) : null}
