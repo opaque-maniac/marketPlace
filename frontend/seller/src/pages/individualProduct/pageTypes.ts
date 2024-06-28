@@ -1,9 +1,9 @@
-interface SellerImage {
-  id: string;
-  sellerId: string;
-  imageUrl: string;
-  dateCreated: Date;
-}
+// interface SellerImage {
+//   id: string;
+//   sellerId: string;
+//   imageUrl: string;
+//   dateCreated: Date;
+// }
 
 interface seller {
   id: string;
@@ -17,8 +17,7 @@ interface seller {
   country?: string;
   phone?: string;
   active: boolean;
-  dateCreate: Date;
-  image?: SellerImage;
+  dateCreate: string;
 }
 
 export interface ProductImage {
@@ -36,7 +35,11 @@ export interface Product {
   quantity: number;
   sellerId: string;
   active: boolean;
-  dateCreated: Date;
+  category: string;
+  dateCreated: string;
+  sales: number;
+  discountPercentage: number;
+  stock: number
   seller: seller;
   images: ProductImage[];
 }

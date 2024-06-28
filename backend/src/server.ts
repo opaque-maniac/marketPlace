@@ -22,11 +22,13 @@ const corsOptions = {
 };
 
 const productDir = path.join(__dirname, "../productImages");
+const sellerDir = path.join(__dirname, "../sellerImages");
 
 // Implimenting cors
 app.use(cors(corsOptions));
 
 app.use("/productImages", express.static(productDir));
+app.use("/sellerImages", express.static(sellerDir));
 
 app.use("/api-client", customerRouter);
 app.use("/api-seller", sellerRouter);

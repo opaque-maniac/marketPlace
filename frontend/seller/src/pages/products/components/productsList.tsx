@@ -34,7 +34,6 @@ const ProductsList = () => {
   }
 
   const data = query.data as ProductData;
-  console.log(data);
 
   return (
     <div>

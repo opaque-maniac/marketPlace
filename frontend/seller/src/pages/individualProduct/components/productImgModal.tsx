@@ -24,12 +24,7 @@ const ProductImgModal = ({ children }: ModalProps) => {
     };
   }, []);
 
-  return createPortal(
-    <div className="z-40 fixed top-0 left-0 right-0 bottom-0 w-screen h-screen">
-      {children}
-    </div>,
-    elRef.current
-  );
+  return createPortal(<div>{children}</div>, elRef.current);
 };
 
 export default ProductImgModal;

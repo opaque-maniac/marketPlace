@@ -10,11 +10,10 @@ const fetchProfile = async ({
 
   const [, id] = queryKey;
 
-  const url = `http://localhost:5000/api-sellers/profile/${id}`;
+  const url = `http://localhost:3000/api-seller/profile/${id}`;
   const options = {
     method: "GET",
-    options: {
-      "Content-Type": "application/json",
+    headers: {
       Authorization: `Bearer ${getSellerCookie()}`,
     },
   };

@@ -79,6 +79,9 @@ export const fetchSellerProfile = async (req, res, next) => {
       where: {
         id,
       },
+      include: {
+        image: true,
+      },
     });
 
     if (!seller) {
@@ -382,10 +385,21 @@ export const deleteIndividualSellerProduct = async (req, res, next) => {
   try {
     const { id } = req.params;
 
+    const _prod = await prisma.product.findFirst({
+      where: {
+        id,
+      },
+    });
+
+    if (_prod.sellerId !== req.user.id) {
+      return res.status(403).json({
+        message: "You are not authorized to delete this product",
+      });
+    }
+
     const product = await prisma.product.delete({
       where: {
         id,
-        sellerId: req.user.id,
       },
     });
 

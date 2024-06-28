@@ -33,7 +33,7 @@ model Customer {
 model CustomerImage {
   id          String   @id @default(uuid())
   customerId  String   @unique
-  user        Customer @relation(fields: [customerId], references: [id])
+  user        Customer @relation(fields: [customerId], references: [id], onDelete: Cascade)
   imageUrl    String
   dateCreaded DateTime @default(now())
 }
@@ -41,7 +41,7 @@ model CustomerImage {
 model Cart {
   id          String      @id @default(uuid())
   customerId  String      @unique
-  user        Customer    @relation(fields: [customerId], references: [id])
+  user        Customer    @relation(fields: [customerId], references: [id], onDelete: Cascade)
   cartItems   CartItems[]
   dateCreated DateTime    @default(now())
 }
@@ -49,9 +49,9 @@ model Cart {
 model CartItems {
   id          String   @id @default(uuid())
   cartId      String
-  cart        Cart     @relation(fields: [cartId], references: [id])
+  cart        Cart     @relation(fields: [cartId], references: [id], onDelete: Cascade)
   productId   String
-  product     Product  @relation(fields: [productId], references: [id])
+  product     Product  @relation(fields: [productId], references: [id], onDelete: Cascade)
   quantity    Int
   dateCreated DateTime @default(now())
 }
@@ -76,7 +76,7 @@ model Seller {
 model SellerImage {
   id          String   @id @default(uuid())
   sellerId    String   @unique
-  seller      Seller   @relation(fields: [sellerId], references: [id])
+  seller      Seller   @relation(fields: [sellerId], references: [id], onDelete: Cascade)
   imageUrl    String
   dateCreated DateTime @default(now())
 }
@@ -104,7 +104,7 @@ model Staff {
 model StaffImage {
   id          String   @id @default(uuid())
   staffId     String   @unique
-  staff       Staff    @relation(fields: [staffId], references: [id])
+  staff       Staff    @relation(fields: [staffId], references: [id], onDelete: Cascade)
   imageUrl    String
   dateCreated DateTime @default(now())
 }
@@ -129,7 +129,7 @@ model Product {
   sales              Int              @default(0)
   discountPercentage Int              @default(0)
   sellerId           String
-  seller             Seller           @relation(fields: [sellerId], references: [id])
+  seller             Seller           @relation(fields: [sellerId], references: [id], onDelete: Cascade)
   images             ProductImages[]
   orders             OrderProducts[]
   cartItems          CartItems[]
@@ -139,7 +139,7 @@ model Product {
 model ProductImages {
   id          String   @id @default(uuid())
   productId   String
-  product     Product  @relation(fields: [productId], references: [id])
+  product     Product  @relation(fields: [productId], references: [id], onDelete: Cascade)
   imageUrl    String
   dateCreated DateTime @default(now())
 }

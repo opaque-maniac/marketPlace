@@ -25,6 +25,9 @@ const IndividualProduct = lazy(
 const ProfilePage = lazy(() => import("./pages/profile/profile"));
 const NewProductPage = lazy(() => import("./pages/newProduct/newProduct"));
 const LogoutPage = lazy(() => import("./pages/logout/logoutPage"));
+const DeleteProductPage = lazy(
+  () => import("./pages/deleteProduct/deleteProduct")
+);
 
 const queryClient = new QueryClient({
   defaultOptions: {
@@ -65,6 +68,10 @@ const App = () => {
                     <Route
                       path="/products/:id"
                       element={<IndividualProduct />}
+                    />
+                    <Route
+                      path="/products/:id/delete"
+                      element={<DeleteProductPage />}
                     />
                     <Route path="/profile" element={<ProfilePage />} />
                     <Route path="/error/500" element={<Error500 />} />

@@ -1,4 +1,4 @@
-import { KeyboardEventHandler, MouseEventHandler, useState } from "react";
+import { MouseEventHandler, useEffect, useState } from "react";
 import { useLoggedInStore } from "../utils/store";
 import CloseIcon from "./icons/closeIcon";
 import MenuIcon from "./icons/menuIcon";
@@ -21,12 +21,19 @@ const ActionFeature = () => {
     setHover(!hover);
   };
 
+  const actionLinkClick: MouseEventHandler<HTMLAnchorElement> = () => {
+    setHover(false);
+  };
+
   return (
     <div>
       {user ? (
         <div className="md:block hidden">
           <div>
-            <button onClick={actionClickHandler}>
+            <button
+              onClick={actionClickHandler}
+              className="bg-red-500 w-8 h-8 flex justify-center items-center rounded-full"
+            >
               <ProfileIcon />
             </button>
           </div>
@@ -34,7 +41,11 @@ const ActionFeature = () => {
             <div className="fixed z-40 top-12 bg-gradient-to-tr from-gray-500 to-blue-200 w-40 h-20 rounded shadow-lg flex items-center justify-start pl-2">
               <ul>
                 <li className="mb-2">
-                  <Link to={"/profile"} className="flex justify-start gap-4">
+                  <Link
+                    to={"/profile"}
+                    onClick={actionLinkClick}
+                    className="flex justify-start gap-4"
+                  >
                     <div>
                       <SmallProfileIcon />
                     </div>
@@ -42,7 +53,11 @@ const ActionFeature = () => {
                   </Link>
                 </li>
                 <li>
-                  <Link to={"/logout"} className="flex justify-start gap-4">
+                  <Link
+                    to={"/logout"}
+                    onClick={actionLinkClick}
+                    className="flex justify-start gap-4"
+                  >
                     <div>
                       <LogoutIcon />
                     </div>

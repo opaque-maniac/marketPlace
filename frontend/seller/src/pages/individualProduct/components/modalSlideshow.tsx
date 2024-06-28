@@ -10,9 +10,11 @@ const ModalSlideShow = ({ images, clickedImg }: ProductModalImagesProps) => {
   }, [clickedImg, images]);
 
   return (
-    <section>
+    <section className="flex relative h-screen w-screen">
       <div>
         <button
+          className="bg-blue-500 text-white px-4 py-2 rounded fixed left-4 z-40"
+          style={{ top: "40vh" }}
           onClick={(e) => {
             e.preventDefault();
             const currentIndex = images.findIndex(
@@ -28,14 +30,20 @@ const ModalSlideShow = ({ images, clickedImg }: ProductModalImagesProps) => {
           Prev
         </button>
       </div>
-      <div>
-        <img
-          src={current?.imageUrl ?? "/placeholder.jpg"}
-          alt={current?.productId}
-        />
+      <div className="fixed top-20 w-screen">
+        <a href={current?.imageUrl} target="_blank" rel="noopener noreferrer">
+          <img
+            src={current?.imageUrl ?? "/placeholder.jpg"}
+            alt={current?.productId}
+            className="w-10/12 lg:w-800 mx-auto"
+            style={{ minHeight: "calc(100vh - 14rem)", objectFit: "contain" }}
+          />
+        </a>
       </div>
       <div>
         <button
+          className="bg-blue-500 text-white px-4 py-2 rounded fixed right-4 z-40"
+          style={{ top: "40vh" }}
           onClick={(e) => {
             e.preventDefault();
             const currentIndex = images.findIndex(

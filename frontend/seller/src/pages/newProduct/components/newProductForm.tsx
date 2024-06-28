@@ -10,7 +10,6 @@ const NewProductForm = () => {
   const mutation = useMutation({
     mutationFn: submitNewProduct,
     onSuccess: (data) => {
-      console.log(data);
       if (data.product) {
         navigate(`/products/${data.product.id}`, { replace: true });
       }

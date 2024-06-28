@@ -1,5 +1,5 @@
 import { useQuery } from "@tanstack/react-query";
-import { useNavigate, useParams } from "react-router-dom";
+import { Link, useNavigate, useParams } from "react-router-dom";
 import fetchProduct from "./components/fetchProduct";
 import Loader from "../../components/loader";
 import { ProductResponse } from "./pageTypes";
@@ -41,8 +41,51 @@ const IndividualProduct = () => {
       <div>
         <ProductImages images={data.product.images} name={data.product.name} />
       </div>
+      <div className="flex justify-center items-center gap-10 mt-10">
+        <Link
+          to={`/products/${data.product.id}/edit`}
+          className="md:hover:underline underline md:no-underline"
+        >
+          Edit Product
+        </Link>
+        <Link
+          to={`/products/${data.product.id}/delete`}
+          className="md:hover:underline underline md:no-underline"
+        >
+          Delete Product
+        </Link>
+      </div>
       <div>
-        <h1>{data.product.name}</h1>
+        <div className="text-center pt-4">
+          <h2 className="text-2xl font-bold">
+            {data.product.name.toUpperCase()}
+          </h2>
+          <p>{data.product.category}</p>
+          <p>
+            Created: <span>{data.product.dateCreated}</span>
+          </p>
+        </div>
+        <div className="flex justify-center items-center gap-4 md:flex-row flex-col">
+          <p>
+            Price:{" "}
+            <span className="font-bold">{`${data.product.price}.00`}</span>
+          </p>
+          <p>
+            Sales: <span className="font-bold">{data.product.sales}</span>
+          </p>
+          <p>
+            Discount:{" "}
+            <span className="font-bold">{`${data.product.discountPercentage}.00`}</span>
+          </p>
+          <p>
+            Stock: <span className="font-bold">{data.product.stock}</span>
+          </p>
+        </div>
+        <div className="pt-4">
+          <p className="md:w-10/12 w-11/12 mx-auto">
+            {data.product.description}
+          </p>
+        </div>
       </div>
     </section>
   );
