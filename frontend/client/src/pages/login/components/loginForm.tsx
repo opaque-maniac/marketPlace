@@ -12,7 +12,7 @@ import submitLoginData from "./submitLogin";
 import { useLoggedInStore } from "../../../utils/store";
 import Loader from "../../../components/loader";
 import { setSellerCookie } from "../../../utils/cookieStore";
-import { useNavigate } from "react-router-dom";
+import { Link, useNavigate } from "react-router-dom";
 import ValidationContext from "../../../utils/validationContext";
 
 const LoginForm = () => {
@@ -31,8 +31,12 @@ const LoginForm = () => {
     mutationFn: submitLoginData,
     onSuccess: (data) => {
       console.log(data);
-      if (data.seller && data.token) {
-        login(data.seller.id);
+      if (data.customer && data.token) {
+        login(
+          data.customer.id,
+          data.customer.cart.cartItems.length.toString(),
+          data.customer.favorites.favoriteItems.length.toString()
+        );
         setSellerCookie(data.token);
         navigate("/products", { replace: true });
       }
@@ -65,13 +69,13 @@ const LoginForm = () => {
   }
 
   return (
-    <form onSubmit={submitHandler} className="w-400 md:mx-0 mx-auto">
+    <form onSubmit={submitHandler} className="" autoComplete="on" autoSave="on">
       {error ? (
         <div className="w-full bg-red-500 text-white h-6">
           <p>{error}</p>
         </div>
       ) : null}
-      <div className="mb-6 lg:w-350 md:w-300 w-8/12 mx-auto">
+      <div className="md:mb-6 mb-10 lg:w-350 md:w-80 w-64 mx-auto">
         <label htmlFor="email" className="sr-only">
           Email
         </label>
@@ -81,12 +85,12 @@ const LoginForm = () => {
           name="email"
           placeholder="Email"
           required
-          className="block w-full h-full px-4 py-2 border-b-2 bg-gray-200 hover:border-gray-400 focus:bg-white focus:outline-none focus:border-black"
+          className="block lg:w-full md:w-80 w-64 h-full px-4 py-2 border-b bg-white focus:outline-none border-black"
         />
       </div>
-      <div className="mb-6 lg:w-350 md:w-300 w-8/12 mx-auto relative">
+      <div className="md:mb-6 mb-10 lg:w-350 md:w-80 w-64 mx-auto relative">
         <label htmlFor="email" className="sr-only">
-          Email
+          Password
         </label>
         <input
           type={clicked ? "text" : "password"}
@@ -94,7 +98,7 @@ const LoginForm = () => {
           name="password"
           placeholder="Password"
           required
-          className="block w-full h-full px-4 py-2 border-b-2 bg-gray-200 hover:border-gray-400 focus:bg-white focus:outline-none focus:border-black"
+          className="block lg:w-full md:w-80 w-64 h-full px-4 py-2 border-b bg-white focus:outline-none border-black"
         />
         <button
           onClick={clickHanlder}
@@ -118,13 +122,16 @@ const LoginForm = () => {
           </div>
         </button>
       </div>
-      <div>
+      <div className="flex justify-center items-center ">
         <button
           type="submit"
-          className="block bg-gray-300 w-20 h-10 rounded shadow-lg mx-auto hover:bg-gray-500 focus:outline-none focus:bg-gray-400 hover:text-white text-black transition duration-300 ease-in-out"
+          className="block w-20 h-10 rounded shadow-lg mx-auto text-white bg-red-500 hover:transform hover:scale-105 transition-transform duration-300 ease-in-out"
         >
           Log in
         </button>
+        <Link to={"/password-reset"} className="text-red-500">
+          Forgot Password
+        </Link>
       </div>
     </form>
   );

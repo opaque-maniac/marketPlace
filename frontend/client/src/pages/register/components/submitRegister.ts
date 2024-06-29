@@ -1,7 +1,7 @@
 import { RegisterData, RegisterResponseType } from "../pageTypes";
 
 const submitRegisterData = async (data: RegisterData) => {
-  const url = "http://localhost:3000/api-seller/register";
+  const url = "http://localhost:3000/api-client/register";
   const options = {
     method: "POST",
     headers: {

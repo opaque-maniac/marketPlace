@@ -1,7 +1,7 @@
 import { LoginData, LoginResponseType } from "../pageTypes";
 
 const submitLoginData = async (data: LoginData) => {
-  const url = "http://localhost:3000/api-seller/login";
+  const url = "http://localhost:3000/api-client/login";
   const options = {
     method: "POST",
     headers: {

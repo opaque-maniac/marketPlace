@@ -43,8 +43,8 @@ const App = () => {
               <Header />
               <Suspense fallback={<PageLoader />}>
                 <div
-                  className="mt-14"
-                  style={{ minHeight: "calc(100vh - 3.5rem)" }}
+                  className="mt-16"
+                  style={{ minHeight: "calc(100vh - 4rem)" }}
                 >
                   <ScrollToTop />
                   <Routes>

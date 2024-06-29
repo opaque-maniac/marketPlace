@@ -1,4 +1,4 @@
-import { MouseEventHandler, useEffect, useState } from "react";
+import { MouseEventHandler, useState } from "react";
 import { useLoggedInStore } from "../utils/store";
 import CloseIcon from "./icons/closeIcon";
 import MenuIcon from "./icons/menuIcon";
@@ -11,7 +11,7 @@ import SearchForm from "./searchForm";
 import ActionNav from "./actionNav";
 
 const ActionFeature = () => {
-  const user = true; // useLoggedInStore((state) => state.user);
+  const user = useLoggedInStore((state) => state.user);
   const cart = useLoggedInStore((state) => state.cart);
   const favorites = useLoggedInStore((state) => state.favorites);
   const [clicked, setClicked] = useState<boolean>(false);
@@ -79,7 +79,7 @@ const ActionFeature = () => {
               </button>
             </div>
             {hover ? (
-              <div className="fixed z-40 top-12 lg:right-28 md:right-2 bg-gradient-to-tr from-gray-500 to-blue-200 w-48 h-38 rounded shadow-lg flex items-center justify-start pl-2 py-2">
+              <div className="fixed z-40 top-12 lg:right-28 md:right-4 bg-gradient-to-tr from-gray-500 to-blue-200 w-48 h-38 rounded shadow-lg flex items-center justify-start pl-2 py-2">
                 <ActionNav actionLinkClick={actionLinkClick} />
               </div>
             ) : null}

@@ -12,7 +12,7 @@ import OrderIcon from "./icons/OrderIcon";
 import SmallProfileIcon from "./icons/SmallProfile";
 import HomeIcon from "./icons/Home";
 import ExploreIcon from "./icons/Explore";
-import SearchForm from "./searchForm";
+import SearchFormMobile from "./searchFormMobile";
 
 interface MobileNavProps {
   clicked: boolean;
@@ -31,10 +31,10 @@ const MobileNav = ({ clicked, setClicked }: MobileNavProps) => {
           "right-0": clicked,
         }
       )}
-      style={{ height: "calc(100vh - 3.5rem)" }}
+      style={{ height: "calc(100vh - 4rem)" }}
     >
       <div className="mb-8">
-        <SearchForm />
+        <SearchFormMobile />
       </div>
       <nav>
         <ul className="flex justify-start items-center flex-col gap-2">

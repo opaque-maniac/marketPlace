@@ -3,8 +3,11 @@ import FacebookIcon from "./icons/Facebook";
 import InstagramIcon from "./icons/Instagram";
 import TwitterIcon from "./icons/Twitter";
 import LinkedinIcon from "./icons/LinkedIn";
+import { useLoggedInStore } from "../utils/store";
 
 const Footer = () => {
+  const user = useLoggedInStore((state) => state.user);
+
   return (
     <footer className="w-screen bg-black text-white md:flex justify-center items-start lg:gap-32 md:gap-14 py-4">
       <div>
@@ -34,14 +37,38 @@ const Footer = () => {
       <div>
         <h3 className="text-xl text-center font-bold mb-2">Account</h3>
         <ul className="md:mb-0 mb-8">
-          <li className="mb-2 md:block flex justify-center">
-            {" "}
-            <Link to={"/profile"}>My Account</Link>
-          </li>
-          <li className="mb-2 md:block flex justify-center">
-            {" "}
-            <Link to={"/login"}>Log In</Link>
-          </li>
+          {user ? (
+            <>
+              <li className="mb-2 md:block flex justify-center">
+                {" "}
+                <Link to={"/profile"}>My Account</Link>
+              </li>
+
+              <li className="mb-2 md:block flex justify-center">
+                {" "}
+                <Link to={"/cart"}>Cart</Link>
+              </li>
+              <li className="mb-2 md:block flex justify-center">
+                {" "}
+                <Link to={"/wishlist"}>Wishlist</Link>
+              </li>
+              <li className="mb-2 md:block flex justify-center">
+                {" "}
+                <Link to={"/orders"}>My Orders</Link>
+              </li>
+            </>
+          ) : (
+            <>
+              <li className="mb-2 md:block flex justify-center">
+                {" "}
+                <Link to={"/login"}>Log In</Link>
+              </li>
+              <li className="mb-2 md:block flex justify-center">
+                {" "}
+                <Link to={"/register"}>Sign Up</Link>
+              </li>
+            </>
+          )}
         </ul>
       </div>
       <div>

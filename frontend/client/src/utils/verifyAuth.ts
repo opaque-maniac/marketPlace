@@ -7,23 +7,17 @@ const VerifyAuth = () => {
   const user = useLoggedInStore((state) => state.user);
   const navigate = useNavigate();
 
-  const generalPaths = ["/about", "/contact", "/faq", "/privacy", "/error/500"];
   const noAuthPaths = ["/login", "/register"];
+  const authPaths = ["/orders", "/cart", "/wishlist", "/profile"];
 
   useEffect(() => {
     if (!user) {
-      if (generalPaths.includes(pathname)) {
-        return;
+      if (authPaths.includes(pathname)) {
+        navigate("/login", { replace: true });
       }
-
-      if (noAuthPaths.includes(pathname)) {
-        return;
-      }
-
-      navigate("/login", { replace: true });
     } else {
       if (noAuthPaths.includes(pathname)) {
-        navigate("/products", { replace: true });
+        navigate("/", { replace: true });
       }
     }
     // eslint-disable-next-line react-hooks/exhaustive-deps

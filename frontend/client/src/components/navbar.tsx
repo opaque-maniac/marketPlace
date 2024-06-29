@@ -1,9 +1,10 @@
-import { Link } from "react-router-dom";
+import { Link, useLocation } from "react-router-dom";
 import { useLoggedInStore } from "../utils/store";
 import clsx from "clsx";
 
 const Navbar = () => {
   const user = useLoggedInStore((state) => state.user);
+  const { pathname } = useLocation();
 
   return (
     <nav>
@@ -14,7 +15,10 @@ const Navbar = () => {
         })}
       >
         <li>
-          <Link to={"/"}>
+          <Link
+            to={"/"}
+            className={pathname === "/" ? "underline-offset-2" : ""}
+          >
             <p>Home</p>
           </Link>
         </li>

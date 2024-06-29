@@ -1,25 +1,25 @@
 export interface RegisterData {
   email: string;
-  storeName: string;
+  firstName: string;
+  lastName: string;
   password: string;
 }
 
-interface Seller {
+interface Customer {
   id: string;
-  firstName: string | null;
-  lastName: string | null;
-  storeName: string;
+  firstName: string;
+  lastName: string;
   email: string;
   password: string;
-  address: string | null;
-  city: string | null;
-  country: string | null;
-  phone: string | null;
+  address?: string;
+  city?: string;
+  country?: string;
+  phone?: string;
   active: boolean;
-  dateCreate: Date;
+  dateCreated: string;
 }
 
 export interface RegisterResponseType {
   message: string;
-  seller?: Seller;
+  customer?: Customer;
 }

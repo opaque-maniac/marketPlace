@@ -1,16 +1,16 @@
 import SearchIcon from "./icons/searchIcon";
 
-const SearchForm = () => {
+const SearchFormMobile = () => {
   return (
     <form className="flex justify-start bg-gray-200 px-2 w-11/12 md:mx-0 mx-auto md:w-auto">
       <div>
-        <label htmlFor="search" className="sr-only">
+        <label htmlFor="searchMobile" className="sr-only">
           Search Bar
         </label>
         <input
           type="search"
           name="search"
-          id="search"
+          id="searchMobile"
           className="bg-transparent h-10 w-48 md:w-32 focus:outline-none focus:border-transparent"
           placeholder="Search"
         />
@@ -24,4 +24,4 @@ const SearchForm = () => {
   );
 };
 
-export default SearchForm;
+export default SearchFormMobile;
