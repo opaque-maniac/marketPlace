@@ -3,6 +3,7 @@ import { body } from "express-validator";
 import multer from "multer";
 import {
   addToCart,
+  addToFavorites,
   createComplaint,
   deleteCustomerPofile,
   deleteOrder,
@@ -10,6 +11,7 @@ import {
   emptyCart,
   fetchCustomerCart,
   fetchCustomerProfile,
+  fetchFavorites,
   fetchInvidualProduct,
   fetchOrders,
   fetchProducts,
@@ -19,6 +21,7 @@ import {
   orderCart,
   registerCustomer,
   removeFromCart,
+  removeFromFavorites,
   searchProduct,
   updateCartItem,
   updateCustomerProfile,
@@ -58,7 +61,7 @@ customerRouter.post(
     .isString()
     .isLength({ min: 8 })
     .withMessage("Password should be at least 8 characters long"),
-  registerCustomer,
+  registerCustomer
 );
 customerRouter.post(
   "/login",
@@ -67,7 +70,7 @@ customerRouter.post(
     .isString()
     .isLength({ min: 8 })
     .withMessage("Password should be at least 8 characters long"),
-  loginCustomer,
+  loginCustomer
 );
 
 // Profile management
@@ -76,7 +79,7 @@ customerRouter.get(
   allowIfAuthenticated,
   isCustomer,
   isProfileOwner,
-  fetchCustomerProfile,
+  fetchCustomerProfile
 );
 customerRouter.put(
   "profile/:id",
@@ -97,14 +100,14 @@ customerRouter.put(
   body("country").optional().isString().isLength({ min: 2 }),
   body("phone").optional().isString().isLength({ min: 10 }),
   upload.single("image"),
-  updateCustomerProfile,
+  updateCustomerProfile
 );
 customerRouter.delete(
   "profile/:id",
   allowIfAuthenticated,
   isCustomer,
   isProfileOwner,
-  deleteCustomerPofile,
+  deleteCustomerPofile
 );
 
 // For seller
@@ -116,7 +119,7 @@ customerRouter.get(
   "/cart",
   allowIfAuthenticated,
   isCustomer,
-  fetchCustomerCart,
+  fetchCustomerCart
 );
 customerRouter.delete("/cart", allowIfAuthenticated, isCustomer, emptyCart);
 customerRouter.post("/cart/:id", allowIfAuthenticated, isCustomer, addToCart);
@@ -125,13 +128,33 @@ customerRouter.put(
   allowIfAuthenticated,
   isCustomer,
   body("quantity").isInt(),
-  updateCartItem,
+  updateCartItem
 );
 customerRouter.delete(
   "/cart/:id",
   allowIfAuthenticated,
   isCustomer,
-  removeFromCart,
+  removeFromCart
+);
+
+// For favorites
+customerRouter.get(
+  "/favorites",
+  allowIfAuthenticated,
+  isCustomer,
+  fetchFavorites
+);
+customerRouter.post(
+  "/favorites/:id",
+  allowIfAuthenticated,
+  isCustomer,
+  addToFavorites
+);
+customerRouter.delete(
+  "/favorites/:id",
+  allowIfAuthenticated,
+  isCustomer,
+  removeFromFavorites
 );
 
 // For product and store management
@@ -146,19 +169,19 @@ customerRouter.delete(
   "/orders/:id",
   allowIfAuthenticated,
   isCustomer,
-  deleteOrder,
+  deleteOrder
 );
 customerRouter.put(
   "/orders/:id/:itemId",
   allowIfAuthenticated,
   isCustomer,
-  updateOrderItem,
+  updateOrderItem
 );
 customerRouter.delete(
   "/orders/:id/:itemId",
   allowIfAuthenticated,
   isCustomer,
-  deleteOrderItem,
+  deleteOrderItem
 );
 
 // For complaints
@@ -178,7 +201,7 @@ customerRouter.post(
     .isString()
     .isLength({ min: 10 })
     .withMessage("Invalid phone number"),
-  createComplaint,
+  createComplaint
 );
 
 export default customerRouter;

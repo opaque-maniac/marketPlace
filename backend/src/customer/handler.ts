@@ -28,13 +28,19 @@ export const registerCustomer = async (req, res, next) => {
           },
         });
 
+        await txl.favorites.create({
+          data: {
+            customerId: customer.id,
+          },
+        });
+
         return customer;
       },
       {
         maxWait: 5000,
         timeout: 10000,
         isolationLevel: Prisma.TransactionIsolationLevel.Serializable,
-      },
+      }
     );
 
     res.status(201).json({
@@ -55,6 +61,18 @@ export const loginCustomer = async (req, res, next) => {
     const customer = await prisma.customer.findFirst({
       where: {
         email,
+      },
+      include: {
+        cart: {
+          include: {
+            cartItems: true,
+          },
+        },
+        favorites: {
+          include: {
+            favoriteItems: true,
+          },
+        },
       },
     });
 
@@ -179,7 +197,7 @@ export const updateCustomerProfile = async (req, res, next) => {
         maxWait: 5000,
         timeout: 10000,
         isolationLevel: Prisma.TransactionIsolationLevel.Serializable,
-      },
+      }
     );
 
     return res.status(200).json({
@@ -279,7 +297,7 @@ export const addToCart = async (req, res, next) => {
         maxWait: 5000,
         timeout: 10000,
         isolationLevel: Prisma.TransactionIsolationLevel.Serializable,
-      },
+      }
     );
 
     return res.status(200).json({
@@ -669,7 +687,7 @@ export const orderCart = async (req, res, next) => {
         maxWait: 5000,
         timeout: 10000,
         isolationLevel: Prisma.TransactionIsolationLevel.Serializable,
-      },
+      }
     );
 
     return res.status(201).json({
@@ -831,6 +849,97 @@ export const createComplaint = async (req, res, next) => {
     return res.status(201).json({
       message: "Complaint created",
       complaint,
+    });
+  } catch (e) {
+    return next(e);
+  }
+};
+
+export const fetchFavorites = async (req, res, next) => {
+  try {
+    const favorites = await prisma.favorites.findFirst({
+      where: {
+        customerId: req.user.id,
+      },
+      include: {
+        favoriteItems: {
+          include: {
+            product: {
+              include: {
+                images: true,
+              },
+            },
+          },
+        },
+      },
+    });
+
+    if (!favorites) {
+      return res.status(404).json({
+        message: "Favorites not found",
+      });
+    }
+
+    return res.status(200).json({
+      message: "Fetched favorites",
+      favorites,
+    });
+  } catch (e) {
+    return next(e);
+  }
+};
+
+export const addToFavorites = async (req, res, next) => {
+  try {
+    const { id } = req.params;
+
+    const product = await prisma.product.findFirst({
+      where: {
+        id,
+      },
+    });
+
+    if (!product) {
+      return res.status(404).json({
+        message: "Product not found",
+      });
+    }
+
+    const favorite = await prisma.favorites.findFirst({
+      where: {
+        customerId: req.user.id,
+      },
+    });
+
+    const favoriteItem = await prisma.favoriteItems.create({
+      data: {
+        productId: product.id,
+        favoriteId: favorite.id,
+      },
+    });
+
+    return res.status(201).json({
+      message: "Added to favorites",
+      favoriteItem,
+    });
+  } catch (e) {
+    return next(e);
+  }
+};
+
+export const removeFromFavorites = async (req, res, next) => {
+  try {
+    const { id } = req.params;
+
+    const favoriteItem = await prisma.favoriteItems.delete({
+      where: {
+        id,
+      },
+    });
+
+    return res.status(204).json({
+      message: "Removed from favorites",
+      favoriteItem,
     });
   } catch (e) {
     return next(e);

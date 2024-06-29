@@ -1,4 +1,4 @@
-const ProfileIcon = () => {
+const Profile = () => {
   return (
     <svg
       xmlns="http://www.w3.org/2000/svg"
@@ -6,7 +6,7 @@ const ProfileIcon = () => {
       viewBox="0 0 24 24"
       strokeWidth={1.5}
       stroke="currentColor"
-      className="w-full h-full"
+      className="h-6 w-6"
     >
       <path
         strokeLinecap="round"
@@ -17,4 +17,4 @@ const ProfileIcon = () => {
   );
 };
 
-export default ProfileIcon;
+export default Profile;

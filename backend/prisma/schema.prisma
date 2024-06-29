@@ -27,6 +27,7 @@ model Customer {
   dateCreated DateTime       @default(now())
   orders      Order[]
   cart        Cart?
+  favorites   Favorites?
   image       CustomerImage?
 }
 
@@ -41,9 +42,17 @@ model CustomerImage {
 model Cart {
   id          String      @id @default(uuid())
   customerId  String      @unique
-  user        Customer    @relation(fields: [customerId], references: [id], onDelete: Cascade)
+  customer    Customer    @relation(fields: [customerId], references: [id], onDelete: Cascade)
   cartItems   CartItems[]
   dateCreated DateTime    @default(now())
+}
+
+model Favorites {
+  id            String          @id @default(uuid())
+  customerId    String          @unique
+  customer      Customer        @relation(fields: [customerId], references: [id], onDelete: Cascade)
+  favoriteItems FavoriteItems[]
+  dateCreated   DateTime        @default(now())
 }
 
 model CartItems {
@@ -54,6 +63,15 @@ model CartItems {
   product     Product  @relation(fields: [productId], references: [id], onDelete: Cascade)
   quantity    Int
   dateCreated DateTime @default(now())
+}
+
+model FavoriteItems {
+  id          String    @id @default(uuid())
+  favoriteId  String
+  favorite    Favorites @relation(fields: [favoriteId], references: [id], onDelete: Cascade)
+  productId   String
+  product     Product   @relation(fields: [productId], references: [id], onDelete: Cascade)
+  dateCreated DateTime  @default(now())
 }
 
 model Seller {
@@ -133,6 +151,7 @@ model Product {
   images             ProductImages[]
   orders             OrderProducts[]
   cartItems          CartItems[]
+  favoriteItems      FavoriteItems[]
   dateCreated        DateTime         @default(now())
 }
 
