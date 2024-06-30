@@ -233,7 +233,7 @@ export const fetchSellerProducts = async (req, res, next) => {
 
 export const createSellerProduct = async (req, res, next) => {
   try {
-    let { name, description, price, stock, category } = req.body;
+    let { name, description, price, stock, category, discount } = req.body;
     const images = req.files.map(
       (file) => `http://localhost:3000/productImages/${file.filename}`
     );
@@ -246,9 +246,10 @@ export const createSellerProduct = async (req, res, next) => {
           data: {
             name,
             description,
-            price,
+            price: parseFloat(price),
             stock,
             category,
+            discountPercentage: discount ? parseFloat(discount) : 0,
             sellerId: req.user.id,
           },
         });

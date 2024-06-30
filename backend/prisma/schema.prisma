@@ -146,7 +146,7 @@ model Product {
   stock              Int
   category           PRODUCT_CATEGORY
   sales              Int              @default(0)
-  discountPercentage Int              @default(0)
+  discountPercentage Float              @default(0)
   sellerId           String
   seller             Seller           @relation(fields: [sellerId], references: [id], onDelete: Cascade)
   images             ProductImages[]

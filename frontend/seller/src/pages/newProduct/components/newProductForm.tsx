@@ -58,7 +58,7 @@ const NewProductForm = () => {
               Product Price
             </label>
             <input
-              type="number"
+              type="text"
               name="price"
               id="price"
               placeholder="Product Price"
@@ -115,18 +115,33 @@ const NewProductForm = () => {
             </select>
           </div>
         </div>
-        <div className="md:mb-0 mb-8">
-          <label htmlFor="image" className="sr-only">
-            Product Image
-          </label>
-          <input
-            type="file"
-            name="image"
-            id="image"
-            required
-            multiple
-            className="block md:w-64 md:mx-0 w-11/12 mx-auto px-4 py-2 border-b-2 bg-gray-200 hover:border-gray-400 focus:bg-white focus:outline-none focus:border-transparent h-10"
-          />
+        <div>
+          <div className="md:mb-0 mb-8">
+            <label htmlFor="image" className="sr-only">
+              Product Image
+            </label>
+            <input
+              type="file"
+              name="image"
+              id="image"
+              required
+              multiple
+              className="block md:w-64 md:mx-0 w-11/12 mx-auto px-4 py-2 border-b-2 bg-gray-200 hover:border-gray-400 focus:bg-white focus:outline-none focus:border-transparent h-10"
+            />
+          </div>
+          <div className="pt-4">
+            <label htmlFor="discount" className="sr-only">
+              Product Discount
+            </label>
+            <input
+              type="text"
+              name="discount"
+              id="discount"
+              placeholder="Product Discount"
+              required
+              className="block md:w-64 md:mx-0 w-11/12 mx-auto px-4 py-2 border-b-2 bg-gray-200 hover:border-gray-400 focus:bg-white focus:outline-none focus:border-transparent h-10"
+            />
+          </div>
         </div>
       </div>
       <div className="flex justify-center items-center pt-4">

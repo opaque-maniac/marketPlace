@@ -1,4 +1,5 @@
 import { Link } from "react-router-dom";
+import FourthProducts from "./products";
 
 const FourthSection = () => {
   return (
@@ -22,6 +23,7 @@ const FourthSection = () => {
       <div>
         <h2 className="text-2xl">Deals of the Day</h2>
       </div>
+      <FourthProducts />
     </section>
   );
 };

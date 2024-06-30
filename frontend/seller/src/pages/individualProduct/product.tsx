@@ -67,15 +67,14 @@ const IndividualProduct = () => {
         </div>
         <div className="flex justify-center items-center gap-4 md:flex-row flex-col">
           <p>
-            Price:{" "}
-            <span className="font-bold">{`${data.product.price}.00`}</span>
+            Price: <span className="font-bold">{`${data.product.price}`}</span>
           </p>
           <p>
             Sales: <span className="font-bold">{data.product.sales}</span>
           </p>
           <p>
             Discount:{" "}
-            <span className="font-bold">{`${data.product.discountPercentage}.00`}</span>
+            <span className="font-bold">{`${data.product.discountPercentage}`}</span>
           </p>
           <p>
             Stock: <span className="font-bold">{data.product.stock}</span>
