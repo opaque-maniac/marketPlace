@@ -4,11 +4,15 @@ import multer from "multer";
 import {
   addToCart,
   addToFavorites,
+  createComment,
   createComplaint,
+  deleteComment,
   deleteCustomerPofile,
   deleteOrder,
   deleteOrderItem,
   emptyCart,
+  emptyFavorites,
+  fetchComments,
   fetchCustomerCart,
   fetchCustomerProfile,
   fetchFavorites,
@@ -18,6 +22,7 @@ import {
   fetchSellerProducts,
   fetchSellerProfile,
   loginCustomer,
+  orderAllFavorites,
   orderCart,
   registerCustomer,
   removeFromCart,
@@ -144,6 +149,18 @@ customerRouter.get(
   isCustomer,
   fetchFavorites
 );
+customerRouter.put(
+  "/favorites",
+  allowIfAuthenticated,
+  isCustomer,
+  orderAllFavorites
+);
+customerRouter.delete(
+  "/favorites",
+  allowIfAuthenticated,
+  isCustomer,
+  emptyFavorites
+);
 customerRouter.post(
   "/favorites/:id",
   allowIfAuthenticated,
@@ -161,6 +178,22 @@ customerRouter.delete(
 customerRouter.get("/products", fetchProducts);
 customerRouter.get("/products/:id", fetchInvidualProduct);
 customerRouter.post("/products/search", searchProduct);
+
+// For comments
+customerRouter.get("/products/:id/comments", fetchComments);
+customerRouter.post(
+  "/products/:id/comments",
+  allowIfAuthenticated,
+  isCustomer,
+  body("content").isString().isLength({ min: 2, max: 255 }),
+  createComment
+);
+customerRouter.delete(
+  "/products/:id/comments/:commentId",
+  allowIfAuthenticated,
+  isCustomer,
+  deleteComment
+);
 
 // For order management
 customerRouter.get("/orders", allowIfAuthenticated, isCustomer, fetchOrders);

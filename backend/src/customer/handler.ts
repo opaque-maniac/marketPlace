@@ -385,7 +385,7 @@ export const emptyCart = async (req, res, next) => {
 // Fetch products with pagination
 export const fetchProducts = async (req, res, next) => {
   try {
-    const itemsPerPage = req.query.itemsPerPage || 20;
+    const itemsPerPage = parseInt(req.query.itemsPerPage) || 20;
     const page = req.query.page || 1;
     const category = req.query.category || "";
     let query;
@@ -411,11 +411,7 @@ export const fetchProducts = async (req, res, next) => {
       skip: (page - 1) * itemsPerPage,
       include: {
         images: true,
-        seller: {
-          include: {
-            image: true,
-          },
-        },
+        seller: true,
       },
     });
 
@@ -498,7 +494,7 @@ export const fetchSellerProfile = async (req, res, next) => {
 export const fetchSellerProducts = async (req, res, next) => {
   try {
     const { id } = req.params;
-    const itemsPerPage = req.query.itemsPerPage || 20;
+    const itemsPerPage = parseInt(req.query.itemsPerPage) || 20;
     const page = req.query.page || 1;
 
     const products = await prisma.product.findMany({
@@ -540,7 +536,7 @@ export const searchProduct = async (req, res, next) => {
   try {
     const { query } = req.body;
 
-    const itemsPerPage = req.query.itemsPerPage || 20;
+    const itemsPerPage = parseInt(req.query.itemsPerPage) || 20;
     const page = req.query.page || 1;
 
     const products = await prisma.product.findMany({
@@ -940,6 +936,224 @@ export const removeFromFavorites = async (req, res, next) => {
     return res.status(204).json({
       message: "Removed from favorites",
       favoriteItem,
+    });
+  } catch (e) {
+    return next(e);
+  }
+};
+
+export const emptyFavorites = async (req, res, next) => {
+  try {
+    const favorites = await prisma.favorites.findFirst({
+      where: {
+        customerId: req.user.id,
+      },
+    });
+
+    if (!favorites) {
+      return res.status(404).json({
+        message: "Favorites not found",
+      });
+    }
+
+    const favoriteItems = await prisma.favoriteItems.deleteMany({
+      where: {
+        favoriteId: favorites.id,
+      },
+    });
+
+    return res.status(204).json({
+      message: "Favorites emptied",
+      favoriteItems,
+    });
+  } catch (e) {
+    return next(e);
+  }
+};
+
+export const orderAllFavorites = async (req, res, next) => {
+  try {
+    const favorites = await prisma.favorites.findFirst({
+      where: {
+        customerId: req.user.id,
+      },
+    });
+
+    if (!favorites) {
+      return res.status(404).json({
+        message: "Favorites not found",
+      });
+    }
+
+    const favoriteItems = await prisma.favoriteItems.findMany({
+      where: {
+        favoriteId: favorites.id,
+      },
+      include: {
+        product: true,
+      },
+    });
+
+    const order = await prisma.$transaction(async (txl) => {
+      const order = await txl.order.create({
+        data: {
+          customerId: req.user.id,
+          total: 0,
+        },
+      });
+
+      let total = 0;
+
+      for (let i = 0; i < favoriteItems.length; i++) {
+        const item = favoriteItems[i];
+
+        await txl.orderProducts.create({
+          data: {
+            orderId: order.id,
+            productId: item.productId,
+            quantity: 1,
+            price: item.product.price,
+          },
+        });
+
+        total += item.product.price;
+      }
+
+      const updatedOrder = await txl.order.update({
+        where: {
+          id: order.id,
+        },
+        data: {
+          total,
+        },
+      });
+
+      return updatedOrder;
+    });
+
+    return res.status(201).json({
+      message: "Order created",
+      order,
+    });
+  } catch (e) {
+    return next(e);
+  }
+};
+
+export const fetchComments = async (req, res, next) => {
+  try {
+    const { id } = req.params;
+    const itemsPerPage = parseInt(req.query.itemsPerPage) || 20;
+    const page = req.query.page || 1;
+
+    const product = await prisma.product.findFirst({
+      where: {
+        id,
+      },
+    });
+
+    if (!product) {
+      return res.status(404).json({
+        message: "Product not found",
+      });
+    }
+
+    const comments = await prisma.comment.findMany({
+      where: {
+        productId: product.id,
+      },
+      include: {
+        customer: {
+          include: {
+            image: true,
+          },
+        },
+      },
+      take: itemsPerPage + 1,
+      skip: (page - 1) * itemsPerPage,
+    });
+
+    const hasNextPage = comments.length > itemsPerPage;
+
+    if (hasNextPage) {
+      comments.pop();
+    }
+
+    return res.status(200).json({
+      message: "Fetched comments",
+      comments,
+      hasNextPage,
+    });
+  } catch (e) {
+    return next(e);
+  }
+};
+
+export const createComment = async (req, res, next) => {
+  try {
+    const { id } = req.params;
+    const { content } = req.body;
+
+    const product = await prisma.product.findFirst({
+      where: {
+        id,
+      },
+    });
+
+    if (!product) {
+      return res.status(404).json({
+        message: "Product not found",
+      });
+    }
+
+    const comment = await prisma.comment.create({
+      data: {
+        customerId: req.user.id,
+        productId: product.id,
+        content,
+      },
+    });
+
+    return res.status(201).json({
+      message: "Created comment successfully",
+      comment,
+    });
+  } catch (e) {
+    return next(e);
+  }
+};
+
+export const deleteComment = async (req, res, next) => {
+  try {
+    const { id, commentId } = req.params;
+
+    const comment = await prisma.comment.findFirst({
+      where: {
+        id: commentId,
+        productId: id,
+      },
+    });
+
+    if (!comment) {
+      return res.status(404).json({
+        message: "Comment not found",
+      });
+    }
+
+    if (comment.customerId !== req.user.id) {
+      return res.status(403).json({
+        message: "You are not authorized to delete this comment",
+      });
+    }
+
+    await prisma.comment.delete({
+      where: {
+        id: commentId,
+      },
+    });
+
+    return res.status(204).json({
+      message: "Deleted comment successfully",
     });
   } catch (e) {
     return next(e);
