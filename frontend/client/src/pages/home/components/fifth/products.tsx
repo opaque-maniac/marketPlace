@@ -1,11 +1,51 @@
+import { useQuery } from "@tanstack/react-query";
+import fetchProducts from "../first/fetchProducts";
+import Loader from "../../../../components/loader";
+import { ResponseType } from "../first/types";
+import { Link } from "react-router-dom";
+import ProductItem from "./productItem";
+
 const FifthProducts = () => {
-  return (
-    <div className="h-full">
-      <div className="h-full w-full flex justify-center items-center">
-        <h3 className="text-2xl text-center text-white">
-          No Products Have Been Posted Yet!
-        </h3>
+  const query = useQuery(["products", { page: 4, limit: 6 }], fetchProducts);
+
+  if (query.isLoading) {
+    return (
+      <div className="bg-white">
+        <Loader />
       </div>
+    );
+  }
+
+  const data = query.data as ResponseType;
+
+  return (
+    <div className="bg-black h-350 w-full flex items-center">
+      {data.products.length > 0 ? (
+        <div className="w-full">
+          <ul
+            className="flex overflow-x-scroll justify-start gap-4 mx-auto"
+            style={{
+              scrollbarWidth: "thin",
+              scrollbarGutter: "inherit",
+              scrollbarColor: "#333 #000000",
+            }}
+          >
+            {data.products.map((product) => (
+              <li key={product.id} className="md:px-2">
+                <Link to={`/products/${product.id}`}>
+                  <ProductItem product={product} />
+                </Link>
+              </li>
+            ))}
+          </ul>
+        </div>
+      ) : (
+        <div className="h-full w-full text-white flex justify-center items-center">
+          <h3 className="text-2xl text-center">
+            No Products Have Been Posted Yet!
+          </h3>
+        </div>
+      )}
     </div>
   );
 };

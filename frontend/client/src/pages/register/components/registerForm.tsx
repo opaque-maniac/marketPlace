@@ -26,8 +26,7 @@ const RegisterForm = () => {
 
   const mutation = useMutation({
     mutationFn: submitRegisterData,
-    onSuccess: (data) => {
-      console.log(data);
+    onSuccess: () => {
       navigate("/login");
     },
     onError: (error: { message: string }) => {

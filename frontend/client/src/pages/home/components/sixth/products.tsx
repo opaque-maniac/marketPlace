@@ -1,11 +1,39 @@
+import { useQuery } from "@tanstack/react-query";
+import fetchProducts from "../first/fetchProducts";
+import Loader from "../../../../components/loader";
+import { ResponseType } from "../first/types";
+import { Link } from "react-router-dom";
+
 const SixthProducts = () => {
+  const query = useQuery(["products", { page: 5, limit: 12 }], fetchProducts);
+
+  if (query.isLoading) {
+    return (
+      <div>
+        <Loader />
+      </div>
+    );
+  }
+
+  const data = query.data as ResponseType;
+
   return (
     <div className="h-732">
-      <div className="h-full w-full flex justify-center items-center">
-        <h3 className="text-2xl text-center text-black">
-          No Products Have Been Posted Yet!
-        </h3>
-      </div>
+      {data.products.length > 0 ? (
+        <ul>
+          {data.products.map((product) => (
+            <li key={product.id}>
+              <Link to={`/products/${product.id}`}></Link>
+            </li>
+          ))}
+        </ul>
+      ) : (
+        <div className="h-full w-full flex justify-center items-center">
+          <h3 className="text-2xl text-center text-black">
+            No Products Have Been Posted Yet!
+          </h3>
+        </div>
+      )}
     </div>
   );
 };

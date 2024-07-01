@@ -30,7 +30,6 @@ const LoginForm = () => {
   const mutation = useMutation({
     mutationFn: submitLoginData,
     onSuccess: (data) => {
-      console.log(data);
       if (data.customer && data.token) {
         login(
           data.customer.id,

@@ -18,8 +18,6 @@ const FirstProducts = () => {
 
   const data = query.data as ResponseType;
 
-  console.log(data);
-
   return (
     <div className="lg:w-700 bg-black h-350 w-11/12 flex items-center">
       {data.products.length > 0 ? (
