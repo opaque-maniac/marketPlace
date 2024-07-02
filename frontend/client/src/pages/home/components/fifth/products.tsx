@@ -3,7 +3,7 @@ import fetchProducts from "../first/fetchProducts";
 import Loader from "../../../../components/loader";
 import { ResponseType } from "../first/types";
 import { Link } from "react-router-dom";
-import ProductItem from "./productItem";
+import ProductItem from "../first/productItem";
 
 const FifthProducts = () => {
   const query = useQuery(["products", { page: 4, limit: 6 }], fetchProducts);
@@ -20,7 +20,7 @@ const FifthProducts = () => {
 
   return (
     <div className="bg-black h-350 w-full flex items-center">
-      {data.products.length > 0 ? (
+      {data.products && data.products.length > 0 ? (
         <div className="w-full">
           <ul
             className="flex overflow-x-scroll justify-start gap-4 mx-auto"
@@ -33,7 +33,7 @@ const FifthProducts = () => {
             {data.products.map((product) => (
               <li key={product.id} className="md:px-2">
                 <Link to={`/products/${product.id}`}>
-                  <ProductItem product={product} />
+                  <ProductItem product={product} color="black" />
                 </Link>
               </li>
             ))}

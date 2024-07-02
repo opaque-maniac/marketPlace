@@ -275,6 +275,31 @@ export const addToCart = async (req, res, next) => {
       });
     }
 
+    const _cart = await prisma.cart.findFirst({
+      where: {
+        customerId: req.user.id,
+      },
+    });
+
+    if (!_cart) {
+      return res.status(404).json({
+        message: "Cart not found",
+      });
+    }
+
+    const cartItem = await prisma.cartItems.findFirst({
+      where: {
+        productId: product.id,
+        cartId: _cart.id,
+      },
+    });
+
+    if (cartItem) {
+      return res.status(200).json({
+        message: "Product already in cart",
+      });
+    }
+
     const cart = await prisma.$transaction(
       async (txl) => {
         const cart = await txl.cart.findFirst({
@@ -906,6 +931,19 @@ export const addToFavorites = async (req, res, next) => {
         customerId: req.user.id,
       },
     });
+
+    const _favorite = await prisma.favoriteItems.findFirst({
+      where: {
+        favoriteId: favorite.id,
+        productId: id,
+      },
+    });
+
+    if (_favorite) {
+      return res.status(200).json({
+        message: "Product already in favorites",
+      });
+    }
 
     const favoriteItem = await prisma.favoriteItems.create({
       data: {

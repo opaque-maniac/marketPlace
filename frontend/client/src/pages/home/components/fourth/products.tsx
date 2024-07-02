@@ -3,7 +3,7 @@ import fetchProducts from "../first/fetchProducts";
 import Loader from "../../../../components/loader";
 import { ResponseType } from "../first/types";
 import { Link } from "react-router-dom";
-import ProductItem from "./productItem";
+import ProductItem from "../first/productItem";
 
 const FourthProducts = () => {
   const query = useQuery(["products", { page: 3, limit: 6 }], fetchProducts);
@@ -32,7 +32,7 @@ const FourthProducts = () => {
           {data.products.map((product) => (
             <li key={product.id}>
               <Link to={`/product/${product.id}`}>
-                <ProductItem product={product} />
+                <ProductItem product={product} color="white" />
               </Link>
             </li>
           ))}

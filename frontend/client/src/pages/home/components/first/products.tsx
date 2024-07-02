@@ -19,9 +19,9 @@ const FirstProducts = () => {
   const data = query.data as ResponseType;
 
   return (
-    <div className="lg:w-700 bg-black h-350 w-11/12 flex items-center">
+    <div className="lg:w-900 md:w-10/12 bg-black h-350 w-11/12 flex items-center">
       {data.products.length > 0 ? (
-        <div className="lg:w-700 w-11/12">
+        <div className="lg:w-900 w-11/12">
           <ul
             className="flex overflow-x-scroll justify-start gap-4 mx-auto"
             style={{

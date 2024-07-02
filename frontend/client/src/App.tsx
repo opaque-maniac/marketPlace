@@ -20,6 +20,10 @@ const PrivacyPage = lazy(() => import("./pages/privacy/privacyPage"));
 const RegisterPage = lazy(() => import("./pages/register/register"));
 const LogoutPage = lazy(() => import("./pages/logout/logoutPage"));
 const HomePage = lazy(() => import("./pages/home/homePage"));
+const ExplorePage = lazy(() => import("./pages/explore/explorePage"));
+const IndividualProduct = lazy(
+  () => import("./pages/individualProduct/individualProduct")
+);
 
 const queryClient = new QueryClient({
   defaultOptions: {
@@ -49,6 +53,11 @@ const App = () => {
                   <ScrollToTop />
                   <Routes>
                     <Route path="/" element={<HomePage />} />
+                    <Route
+                      path="/products/:id"
+                      element={<IndividualProduct />}
+                    />
+                    <Route path="/explore" element={<ExplorePage />} />
                     <Route path="/about" element={<AboutPage />} />
                     <Route path="/faq" element={<FAQPage />} />
                     <Route path="/contact" element={<ContactPage />} />

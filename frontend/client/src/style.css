@@ -74,3 +74,13 @@ body span {
   background-color: #1a202c; /* Tailwind gray-900 */
   border-radius: 4px;
 }
+
+.m-nav {
+  display: none;
+}
+
+@media screen and (max-width: 480px) {
+  .m-nav {
+    display: block;
+  }
+}

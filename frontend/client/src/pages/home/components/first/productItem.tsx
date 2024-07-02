@@ -1,8 +1,13 @@
-import { Link } from "react-router-dom";
-import CartIcon from "../../../../components/icons/cartIcon";
 import { Product } from "./types";
+import AddToCartButton from "./addToCartButton";
+import clsx from "clsx";
 
-const ProductItem = ({ product }: { product: Product }) => {
+interface Props {
+  product: Product;
+  color: string;
+}
+
+const ProductItem = ({ product, color = "black" }: Props) => {
   return (
     <div>
       <div className="w-270 relative">
@@ -17,16 +22,19 @@ const ProductItem = ({ product }: { product: Product }) => {
         />
       </div>
       <div className="h-100 w-270">
-        <p className="text-base text-center font-semibold text-white py-2">
+        <p
+          className={clsx("text-base text-center font-semibold py-2", {
+            "text-white": color === "black",
+            "text-black": color === "white",
+          })}
+        >
           {product.name}
         </p>
         <div>
-          <button className="bg-white h-8 w-9/12 mx-auto rounded flex justify-center items-center gap-4">
-            <div className="h-6 w-6">
-              <CartIcon />
-            </div>
-            <p>Add To Cart</p>
-          </button>
+          <AddToCartButton
+            id={product.id}
+            color={color === "white" ? "black" : "white"}
+          />
         </div>
         <div className="flex justify-around items-center py-2">
           <span className="text-base text-red-500">${product.price}</span>
