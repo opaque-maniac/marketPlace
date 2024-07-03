@@ -15,12 +15,14 @@ interface Props {
 
 const AddToCartButton = ({ id, color }: Props) => {
   const user = useLoggedInStore((state) => state.user);
+  const incrementCart = useLoggedInStore((state) => state.incrementCart);
   const [, setError] = useContext(ErrorContext);
   const navigate = useNavigate();
 
   const mutation = useMutation({
     mutationFn: sendAddToCart,
     onSuccess: () => {
+      incrementCart();
       navigate("/cart");
     },
     onError: (error: { message: string }) => {

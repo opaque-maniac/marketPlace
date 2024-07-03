@@ -39,7 +39,7 @@ const ActionFeature = () => {
           <>
             <div className="md:block hidden">
               <Link
-                to={"/login"}
+                to={"/wishlist"}
                 className="block lg:w-6 lg:h-6 md:w-8 md:h-8 w-5 h-5 relative"
               >
                 <HeartIcon />
@@ -53,7 +53,7 @@ const ActionFeature = () => {
             </div>
             <div className="md:block hidden">
               <Link
-                to={"/login"}
+                to={"/cart"}
                 className="block lg:w-6 lg:h-6 md:w-8 md:h-8 w-5 h-5 relative"
               >
                 <CartIcon />
@@ -90,7 +90,7 @@ const ActionFeature = () => {
         {user ? (
           <>
             <div className="md:hidden block">
-              <Link to={"/login"} className="block w-7 h-7 relative">
+              <Link to={"/wishlist"} className="block w-7 h-7 relative">
                 <HeartIcon />
                 <div
                   className="w-4 h-4 bg-red-500 text-white rounded-full absolute top-0 -right-1 flex justify-center items-center"
@@ -101,7 +101,7 @@ const ActionFeature = () => {
               </Link>
             </div>
             <div className="block md:hidden">
-              <Link to={"/login"} className="block w-7 h-7 relative">
+              <Link to={"/cart"} className="block w-7 h-7 relative">
                 <CartIcon />
                 <div
                   className="w-4 h-4 bg-red-500 text-white rounded-full absolute top-0 -right-1 flex justify-center items-center"

@@ -13,21 +13,20 @@ interface Props {
 
 const AddToCartButton = ({ id }: Props) => {
   const user = useLoggedInStore((state) => state.user);
+  const incrementCart = useLoggedInStore((state) => state.incrementCart);
   const [, setError] = useContext(ErrorContext);
   const navigate = useNavigate();
 
   const mutation = useMutation({
     mutationFn: sendAddToCart,
-    onSuccess: () => {},
-    onError: (error: { message: string }) => {
-      if (error.message === "Product not found") {
-        navigate("/error/404", { replace: true });
-      } else if (error.message === "Token expired") {
-        navigate("/logout");
-      } else {
-        setError(true);
-        navigate("/error/500", { replace: true });
+    onSuccess: (data) => {
+      if (data.message === "Added to cart") {
+        incrementCart();
       }
+    },
+    onError: (error: { message: string }) => {
+      setError(true);
+      navigate("/error/500", { replace: true });
     },
   });
 

@@ -1,4 +1,5 @@
 import { getSellerCookie } from "../../../../utils/cookieStore";
+import { AddToCartRes } from "../../../individualProduct/types";
 
 const sendAddToCart = async (id: string) => {
   const url = `http://localhost:3000/api-client/cart/${id}`;
@@ -13,7 +14,8 @@ const sendAddToCart = async (id: string) => {
 
   const res = await fetch(url, options);
 
-  return res.json();
+  const data = (await res.json()) as AddToCartRes;
+  return data;
 };
 
 export default sendAddToCart;

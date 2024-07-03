@@ -295,7 +295,7 @@ export const addToCart = async (req, res, next) => {
     });
 
     if (cartItem) {
-      return res.status(200).json({
+      return res.status(400).json({
         message: "Product already in cart",
       });
     }

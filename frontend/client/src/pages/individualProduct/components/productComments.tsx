@@ -47,7 +47,7 @@ const ProductComment = ({ id }: Props) => {
           <div className="h-full w-full">
             {data.comments && data.comments.length > 0 ? (
               <ul
-                className="overflow-y-scroll w-full"
+                className="overflow-y-scroll w-full h-full"
                 style={{
                   scrollbarWidth: "thin",
                   scrollbarGutter: "inherit",

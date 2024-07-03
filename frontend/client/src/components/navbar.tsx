@@ -15,30 +15,33 @@ const Navbar = () => {
         })}
       >
         <li>
-          <Link
-            to={"/"}
-            className={pathname === "/" ? "underline-offset-2" : ""}
-          >
-            <p>Home</p>
+          <Link to={"/"}>
+            <p className={pathname === "/" ? "underline" : ""}>Home</p>
           </Link>
         </li>
         {user !== null ? (
           <>
             <li>
               <Link to={"/about"}>
-                <p>About</p>
+                <p className={pathname === "/about" ? "underline" : ""}>
+                  About
+                </p>
               </Link>
             </li>
             <li>
               <Link to={"/contact"}>
-                <p>Contact</p>
+                <p className={pathname === "/contact" ? "underline" : ""}>
+                  Contact
+                </p>
               </Link>
             </li>
           </>
         ) : null}
         <li>
           <Link to={"/explore"}>
-            <p>Explore</p>
+            <p className={pathname === "/explore" ? "underline" : ""}>
+              Explore
+            </p>
           </Link>
         </li>
 
@@ -46,12 +49,16 @@ const Navbar = () => {
           <>
             <li>
               <Link to={"/login"}>
-                <p>Log In</p>
+                <p className={pathname === "/login" ? "underline" : ""}>
+                  Log In
+                </p>
               </Link>
             </li>
             <li>
               <Link to={"/register"}>
-                <p>Sign Up</p>
+                <p className={pathname === "/register" ? "underline" : ""}>
+                  Sign Up
+                </p>
               </Link>
             </li>
           </>

@@ -13,12 +13,17 @@ interface Props {
 
 const AddToWishlistButton = ({ id }: Props) => {
   const user = useLoggedInStore((state) => state.user);
+  const incrimentFavorites = useLoggedInStore(
+    (state) => state.incrimentFavorites
+  );
   const navigate = useNavigate();
   const [, setError] = useContext(ErrorContext);
 
   const mutation = useMutation({
     mutationFn: sendAddToWishlist,
-    onSuccess: () => {},
+    onSuccess: () => {
+      incrimentFavorites();
+    },
     onError: (error: { message: string }) => {
       if (error.message === "Product not found") {
         navigate("/error/404", { replace: true });

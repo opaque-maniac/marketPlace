@@ -24,6 +24,7 @@ const ExplorePage = lazy(() => import("./pages/explore/explorePage"));
 const IndividualProduct = lazy(
   () => import("./pages/individualProduct/individualProduct")
 );
+const CartPage = lazy(() => import("./pages/cart/cartPage"));
 
 const queryClient = new QueryClient({
   defaultOptions: {
@@ -64,6 +65,7 @@ const App = () => {
                     <Route path="/privacy" element={<PrivacyPage />} />
                     <Route path="/login" element={<LoginPage />} />
                     <Route path="/register" element={<RegisterPage />} />
+                    <Route path="/cart" element={<CartPage />} />
                     <Route path="/logout" element={<LogoutPage />} />
                     <Route path="/error/500" element={<Error500 />} />
                     <Route path="*" element={<Error404 />} />

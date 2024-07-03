@@ -64,3 +64,24 @@ export interface CommentData {
   content: string;
   id: string;
 }
+
+interface CartItem {
+  id: string;
+  product: Product;
+  cartId: string;
+  productId: string;
+  quantity: number;
+  dateCreated: Date;
+}
+
+interface Cart {
+  id: string;
+  customerId: string;
+  dateCreated: Date;
+  cartItems: CartItem[];
+}
+
+export interface AddToCartRes {
+  message: string;
+  cart: Cart;
+}
