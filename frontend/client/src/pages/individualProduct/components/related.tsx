@@ -3,8 +3,10 @@ import fetchRelatedProducts from "./fetchRelated";
 import Loader from "../../../components/loader";
 import { ResponseType } from "../../home/components/first/types";
 import NoProducts from "../../login/components/noPoducts";
-import { Link } from "react-router-dom";
+import { Link, useNavigate } from "react-router-dom";
 import ProductItem from "../../home/components/first/productItem";
+import { useContext } from "react";
+import ErrorContext from "../../../utils/errorContext";
 
 interface Props {
   category: string;
@@ -15,6 +17,8 @@ const RelatedProducts = ({ category }: Props) => {
     ["related", { limit: 6, category }],
     fetchRelatedProducts
   );
+  const navigate = useNavigate();
+  const [, setError] = useContext(ErrorContext);
 
   if (query.isLoading) {
     return (
@@ -22,6 +26,11 @@ const RelatedProducts = ({ category }: Props) => {
         <Loader />
       </div>
     );
+  }
+
+  if (query.isError) {
+    setError(true);
+    navigate("/error/500", { replace: true });
   }
 
   const data = query.data as ResponseType;

@@ -9,8 +9,9 @@ export const allowIfAuthenticated = (req, res, next) => {
     req.user = decoded;
     next();
   } catch (e) {
-    e.type = "not-auth";
-    next(e);
+    return res.status(404).json({
+      message: "Token expired",
+    });
   }
 };
 

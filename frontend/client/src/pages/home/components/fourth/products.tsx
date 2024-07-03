@@ -2,11 +2,15 @@ import { useQuery } from "@tanstack/react-query";
 import fetchProducts from "../first/fetchProducts";
 import Loader from "../../../../components/loader";
 import { ResponseType } from "../first/types";
-import { Link } from "react-router-dom";
+import { Link, useNavigate } from "react-router-dom";
 import ProductItem from "../first/productItem";
+import { useContext } from "react";
+import ErrorContext from "../../../../utils/errorContext";
 
 const FourthProducts = () => {
   const query = useQuery(["products", { page: 3, limit: 6 }], fetchProducts);
+  const [, setError] = useContext(ErrorContext);
+  const navigate = useNavigate();
 
   if (query.isLoading) {
     return (
@@ -16,11 +20,16 @@ const FourthProducts = () => {
     );
   }
 
+  if (query.isError) {
+    setError(true);
+    navigate("/error/500");
+  }
+
   const data = query.data as ResponseType;
 
   return (
     <div className="h-350">
-      {data.products.length > 0 ? (
+      {data.products && data.products.length > 0 ? (
         <ul
           className="flex justify-start items-center overflow-x-scroll gap-4 mx-auto"
           style={{
@@ -31,7 +40,7 @@ const FourthProducts = () => {
         >
           {data.products.map((product) => (
             <li key={product.id}>
-              <Link to={`/product/${product.id}`}>
+              <Link to={`/products/${product.id}`}>
                 <ProductItem product={product} color="white" />
               </Link>
             </li>

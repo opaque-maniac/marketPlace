@@ -11,11 +11,18 @@ interface Props {
 
 const IndividualProductItem = ({ product }: Props) => {
   const [clicked, setClicked] = useState<boolean>(false);
+  const [selectedImg, setSelectedImg] = useState<string | null>(null);
 
   const clickHandler: MouseEventHandler<HTMLButtonElement> = (e) => {
     e.preventDefault();
     setClicked(!clicked);
   };
+
+  const setCurrentImage = (url: string) => {
+    setSelectedImg(url);
+  };
+
+  const images = product.images.map((img) => img.imageUrl);
 
   return (
     <section className="flex justify-center items-start gap-8 lg:flex-row flex-col">
@@ -29,11 +36,13 @@ const IndividualProductItem = ({ product }: Props) => {
                 }
                 return (
                   <li key={index} className="lg:mb-2 mb-0">
-                    <img
-                      src={img.imageUrl}
-                      alt={product.name}
-                      style={{ objectFit: "scale-down", height: "120px" }}
-                    />
+                    <button>
+                      <img
+                        src={img.imageUrl}
+                        alt={product.name}
+                        style={{ objectFit: "scale-down", height: "120px" }}
+                      />
+                    </button>
                   </li>
                 );
               })}
@@ -44,7 +53,7 @@ const IndividualProductItem = ({ product }: Props) => {
           <img
             src={product.images[0].imageUrl}
             alt={product.name}
-            className="lg:w-500 w-300 lg:h-600 object-cover"
+            className="lg:w-500 w-300 lg:h-520 object-cover"
             style={{ objectFit: "fill" }}
           />
         </div>
@@ -63,7 +72,7 @@ const IndividualProductItem = ({ product }: Props) => {
           <p>{product.category.split("_").join(" & ")}</p>
           <p className="text-green-500">{product.stock} left</p>
           <p className="bg-red-500 rounded p-1">
-            {product.discountPercentage}%
+            -{product.discountPercentage}%
           </p>
         </div>
         <div
@@ -79,15 +88,9 @@ const IndividualProductItem = ({ product }: Props) => {
             ).toFixed(2)}
           </span>
         </div>
-        <div
-          className="flex lg:justify-start justify-around lg:gap-16 items-center mb-4 py-8"
-          style={{ height: "21px", fontSize: "24px" }}
-        >
-          <AddToCartButton id={product.id} />
-          <AddToWishlistButton id={product.id} />
-        </div>
-        <div className="mb-6">
-          {product.description.length > 50 ? (
+
+        <div className="mb-6 border-b border-black pb-2">
+          {product.description.length > 100 ? (
             <>
               <p
                 className="lg:text-start text-center"
@@ -95,7 +98,7 @@ const IndividualProductItem = ({ product }: Props) => {
               >
                 {clicked
                   ? product.description
-                  : `${product.description.substring(0, 50)}...`}
+                  : `${product.description.substring(0, 100)}...`}
               </p>
               <div className="pt-2">
                 <button
@@ -114,6 +117,13 @@ const IndividualProductItem = ({ product }: Props) => {
               {product.description}
             </p>
           )}
+        </div>
+        <div
+          className="flex lg:justify-start justify-around lg:gap-16 items-center py-8"
+          style={{ height: "21px", fontSize: "24px" }}
+        >
+          <AddToCartButton id={product.id} />
+          <AddToWishlistButton id={product.id} />
         </div>
         <div>
           <div className="h-20 border border-black flex gap-6 justify-start pl-6 items-center border-collapse">

@@ -2,11 +2,15 @@ import { useQuery } from "@tanstack/react-query";
 import fetchProducts from "../first/fetchProducts";
 import Loader from "../../../../components/loader";
 import { ResponseType } from "../first/types";
-import { Link } from "react-router-dom";
+import { Link, useNavigate } from "react-router-dom";
 import ProductItem from "../first/productItem";
+import { useContext } from "react";
+import ErrorContext from "../../../../utils/errorContext";
 
 const FifthProducts = () => {
   const query = useQuery(["products", { page: 4, limit: 6 }], fetchProducts);
+  const [, setError] = useContext(ErrorContext);
+  const navigate = useNavigate();
 
   if (query.isLoading) {
     return (
@@ -14,6 +18,11 @@ const FifthProducts = () => {
         <Loader />
       </div>
     );
+  }
+
+  if (query.isError) {
+    setError(true);
+    navigate("/error/500");
   }
 
   const data = query.data as ResponseType;

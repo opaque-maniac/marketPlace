@@ -1,12 +1,13 @@
-import { MouseEventHandler, useState } from "react";
+import { MouseEventHandler, useContext, useState } from "react";
 import PrevIcon from "../login/components/arrowLeft";
 import NextIcon from "../login/components/arrowRight";
 import { useQuery } from "@tanstack/react-query";
 import fetchProducts from "../home/components/first/fetchProducts";
 import { ResponseType } from "../home/components/first/types";
 import Loader from "../../components/loader";
-import { Link } from "react-router-dom";
+import { Link, useNavigate } from "react-router-dom";
 import ProductItem from "../home/components/first/productItem";
+import ErrorContext from "../../utils/errorContext";
 
 interface NewResponseType extends ResponseType {
   hasNextPage: boolean;
@@ -16,6 +17,8 @@ const ExplorePage = () => {
   const [page, setPage] = useState<number>(1);
 
   const query = useQuery(["products", { page, limit: 12 }], fetchProducts);
+  const navigate = useNavigate();
+  const [, setError] = useContext(ErrorContext);
 
   if (query.isLoading) {
     return (
@@ -23,6 +26,11 @@ const ExplorePage = () => {
         <Loader />
       </div>
     );
+  }
+
+  if (query.isError) {
+    setError(true);
+    navigate("/error/500", { replace: true });
   }
 
   const data = query.data as NewResponseType;

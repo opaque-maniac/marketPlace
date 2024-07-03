@@ -4,8 +4,9 @@ import { useLoggedInStore } from "../../../../utils/store";
 import { useMutation } from "@tanstack/react-query";
 import sendAddToCart from "./sendAddToCart";
 import Loader from "../../../../components/loader";
-import { MouseEventHandler } from "react";
+import { MouseEventHandler, useContext } from "react";
 import { useNavigate } from "react-router-dom";
+import ErrorContext from "../../../../utils/errorContext";
 
 interface Props {
   id: string;
@@ -14,6 +15,7 @@ interface Props {
 
 const AddToCartButton = ({ id, color }: Props) => {
   const user = useLoggedInStore((state) => state.user);
+  const [, setError] = useContext(ErrorContext);
   const navigate = useNavigate();
 
   const mutation = useMutation({
@@ -21,7 +23,16 @@ const AddToCartButton = ({ id, color }: Props) => {
     onSuccess: () => {
       navigate("/cart");
     },
-    onError: () => {},
+    onError: (error: { message: string }) => {
+      if (error.message === "Product not found") {
+        navigate("/error/404", { replace: true });
+      } else if (error.message === "Token expired") {
+        navigate("/logout");
+      } else {
+        setError(true);
+        navigate("/error/500", { replace: true });
+      }
+    },
   });
 
   const clickHandler: MouseEventHandler<HTMLButtonElement> = (e) => {

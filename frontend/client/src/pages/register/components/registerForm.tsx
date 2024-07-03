@@ -12,11 +12,13 @@ import submitRegisterData from "./submitRegister";
 import Loader from "../../../components/loader";
 import { useNavigate } from "react-router-dom";
 import ValidationContext from "../../../utils/validationContext";
+import ErrorContext from "../../../utils/errorContext";
 
 const RegisterForm = () => {
   const [clicked, setCicked] = useState<boolean>(false);
   const [error, setError] = useState<null | string>(null);
   const [, setValidationError] = useContext(ValidationContext);
+  const [, setConError] = useContext(ErrorContext);
   const navigate = useNavigate();
 
   const clickHanlder: MouseEventHandler<HTMLButtonElement> = (e) => {
@@ -30,7 +32,12 @@ const RegisterForm = () => {
       navigate("/login");
     },
     onError: (error: { message: string }) => {
-      setValidationError(error.message);
+      if (error.message === "Something went wrong") {
+        setConError(true);
+        navigate("/error/500", { replace: true });
+      } else {
+        setValidationError(error.message);
+      }
     },
   });
 

@@ -23,3 +23,44 @@ export interface ProdResponseType {
   message: string;
   product: ProductRes;
 }
+
+interface CustomerImage {
+  id: string;
+  imageUrl: string;
+  dateCreated: string;
+  customerId: string;
+}
+
+interface Customer {
+  id: string;
+  firstName: string;
+  lastName: string;
+  email: string;
+  password: string;
+  address?: string;
+  city?: string;
+  country?: string;
+  phone?: string;
+  active: boolean;
+  dateCreated: string;
+  image: CustomerImage;
+}
+
+export interface Comment {
+  id: string;
+  productId: string;
+  customerId: string;
+  customer: Customer;
+  content: string;
+  dateCreated: Date;
+}
+
+export interface CommentRes {
+  message: string;
+  comments: Comment[];
+}
+
+export interface CommentData {
+  content: string;
+  id: string;
+}

@@ -2,8 +2,10 @@ import { useMutation } from "@tanstack/react-query";
 import HeartIcon from "../../../components/icons/Heart";
 import { useLoggedInStore } from "../../../utils/store";
 import sendAddToWishlist from "./sendAddToWishlist";
-import { MouseEventHandler } from "react";
+import { MouseEventHandler, useContext } from "react";
 import Loader from "../../../components/loader";
+import { useNavigate } from "react-router-dom";
+import ErrorContext from "../../../utils/errorContext";
 
 interface Props {
   id: string;
@@ -11,11 +13,22 @@ interface Props {
 
 const AddToWishlistButton = ({ id }: Props) => {
   const user = useLoggedInStore((state) => state.user);
+  const navigate = useNavigate();
+  const [, setError] = useContext(ErrorContext);
 
   const mutation = useMutation({
     mutationFn: sendAddToWishlist,
     onSuccess: () => {},
-    onError: () => {},
+    onError: (error: { message: string }) => {
+      if (error.message === "Product not found") {
+        navigate("/error/404", { replace: true });
+      } else if (error.message === "Token expired") {
+        navigate("/logout");
+      } else {
+        setError(true);
+        navigate("/error/500", { replace: true });
+      }
+    },
   });
 
   const clickHandler: MouseEventHandler<HTMLButtonElement> = (e) => {

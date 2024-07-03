@@ -4,9 +4,19 @@ import fetchProducts from "../first/fetchProducts";
 import { ResponseType } from "../first/types";
 import Loader from "../../../../components/loader";
 import ProductSlideShow from "./productsSlideshow";
+import { useContext } from "react";
+import ErrorContext from "../../../../utils/errorContext";
+import { useNavigate } from "react-router-dom";
 
 const SeventhProducts = () => {
   const query = useQuery(["products", { page: 4, limit: 12 }], fetchProducts);
+  const [, setError] = useContext(ErrorContext);
+  const navigate = useNavigate();
+
+  if (query.isError) {
+    setError(true);
+    navigate("/error/500");
+  }
 
   const data = query.data as ResponseType;
 
@@ -22,8 +32,16 @@ const SeventhProducts = () => {
         ) : (
           <>
             <div className="flex justify-center items-center flex-col h-full gap-4">
-              <ProductSlideShow products={data.products.slice(0, 3)} />
-              <ProductSlideShow products={data.products.slice(3, 6)} />
+              {data.products ? (
+                <>
+                  <ProductSlideShow products={data.products.slice(0, 3)} />
+                  <ProductSlideShow products={data.products.slice(3, 6)} />
+                </>
+              ) : (
+                <>
+                  <NoProducts />
+                </>
+              )}
             </div>
           </>
         )}
@@ -39,7 +57,15 @@ const SeventhProducts = () => {
           ) : (
             <>
               <div className="flex justify-center items-center h-full gap-4">
-                <ProductSlideShow products={data.products.slice(6, 9)} />
+                {data.products ? (
+                  <>
+                    <ProductSlideShow products={data.products.slice(6, 9)} />
+                  </>
+                ) : (
+                  <>
+                    <NoProducts />
+                  </>
+                )}
               </div>
             </>
           )}
@@ -55,9 +81,17 @@ const SeventhProducts = () => {
             ) : (
               <>
                 <div className="flex justify-center items-center h-full gap-4">
-                  <ProductSlideShow
-                    products={data.products.slice(9, data.products.length)}
-                  />
+                  {data.products ? (
+                    <>
+                      <ProductSlideShow
+                        products={data.products.slice(9, data.products.length)}
+                      />{" "}
+                    </>
+                  ) : (
+                    <>
+                      <NoProducts />
+                    </>
+                  )}
                 </div>
               </>
             )}

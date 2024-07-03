@@ -14,12 +14,14 @@ import Loader from "../../../components/loader";
 import { setSellerCookie } from "../../../utils/cookieStore";
 import { Link, useNavigate } from "react-router-dom";
 import ValidationContext from "../../../utils/validationContext";
+import ErrorContext from "../../../utils/errorContext";
 
 const LoginForm = () => {
   const [clicked, setCicked] = useState<boolean>(false);
   const [error, setError] = useState<null | string>(null);
   const login = useLoggedInStore((state) => state.login);
   const [, setValidationError] = useContext(ValidationContext);
+  const [, setConError] = useContext(ErrorContext);
   const navigate = useNavigate();
 
   const clickHanlder: MouseEventHandler<HTMLButtonElement> = (e) => {
@@ -41,7 +43,12 @@ const LoginForm = () => {
       }
     },
     onError: (error: { message: string }) => {
-      setValidationError(error.message);
+      if (error.message === "Something went wrong") {
+        setConError(true);
+        navigate("/error/500", { replace: true });
+      } else {
+        setValidationError(error.message);
+      }
     },
   });
 
