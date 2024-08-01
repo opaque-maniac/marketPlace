@@ -15,11 +15,11 @@ import {
   registerSeller,
   updateSellerProfile,
 } from "./handlers/profile";
-import { fetchSellerProducts } from "../staff/handler";
 import {
   createSellerProduct,
   deleteIndividualSellerProduct,
   fetchIndividualSellerProduct,
+  fetchSellerProducts,
   searchSellerProducts,
   updateIndividualSellerProduct,
 } from "./handlers/products";

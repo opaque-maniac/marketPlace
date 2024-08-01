@@ -40,13 +40,12 @@ import {
   fetchComments,
 } from "./handlers/comments";
 import {
+  fetchInvidualProduct,
   fetchProducts,
-  fetchSellerProducts,
   searchProduct,
-} from "../staff/handler";
-import { fetchInvidualProduct } from "./handlers/products";
-import { fetchSellerProfile } from "../seller/handler";
+} from "./handlers/products";
 import { createComplaint } from "./handlers/complaints";
+import { fetchSellerProducts, fetchSellerProfile } from "./handlers/seller";
 
 const storage = multer.diskStorage({
   destination: (req, file, cb) => {
