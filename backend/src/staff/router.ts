@@ -8,29 +8,35 @@ import {
 } from "../middleware/authMiddleware";
 import { checkForFiles } from "../middleware/dataMiddleware";
 import {
-  deleteCustomerProfile,
-  deleteProduct,
-  deleteSeller,
   deleteStaffProfile,
-  fetchCustomers,
-  fetchIndividualCustomer,
-  fetchIndividualProduct,
-  fetchIndividualSeller,
-  fetchProducts,
-  fetchSellerProducts,
-  fetchSellers,
   loginStaff,
   registerStaff,
   retrieveIndividualStaffProfile,
   retrieveStaffProfiles,
-  searchCustomer,
-  searchProduct,
-  searchSeller,
-  searchStaff,
-  updateCustomerProfile,
   updateIndividualStaffProfile,
+} from "./handlers/profile";
+import { searchStaff } from "./handlers/staff";
+import {
+  deleteCustomerProfile,
+  fetchCustomers,
+  fetchIndividualCustomer,
+  searchCustomer,
+  updateCustomerProfile,
+} from "./handlers/customers";
+import {
+  deleteProduct,
+  fetchIndividualProduct,
+  fetchProducts,
+  searchProduct,
+} from "./handlers/products";
+import {
+  deleteSeller,
+  fetchIndividualSeller,
+  fetchSellerProducts,
+  fetchSellers,
+  searchSeller,
   updateSeller,
-} from "./handler";
+} from "./handlers/seller";
 
 const storage = multer.diskStorage({
   destination: (req, file, cb) => {
@@ -55,7 +61,7 @@ staffRouter.post(
     .isString()
     .isLength({ min: 8 })
     .withMessage("Password should be at least 8 characters long"),
-  loginStaff,
+  loginStaff
 );
 staffRouter.post(
   "/register",
@@ -81,7 +87,7 @@ staffRouter.post(
     .withMessage("Role should be either ADMIN, SALES or MODERATOR"),
   checkForFiles,
   upload.single("image"),
-  registerStaff,
+  registerStaff
 );
 
 // Profile management
@@ -89,13 +95,13 @@ staffRouter.get(
   "/profile",
   allowIfAuthenticated,
   isStaff,
-  retrieveStaffProfiles,
+  retrieveStaffProfiles
 );
 staffRouter.get(
   "/profile/:id",
   allowIfAuthenticated,
   isStaff,
-  retrieveIndividualStaffProfile,
+  retrieveIndividualStaffProfile
 );
 staffRouter.put(
   "/profile/:id",
@@ -122,13 +128,13 @@ staffRouter.put(
   body("active").isBoolean().withMessage("Active should be a boolean"),
   checkForFiles,
   upload.single("image"),
-  updateIndividualStaffProfile,
+  updateIndividualStaffProfile
 );
 staffRouter.delete(
   "/profile/:id",
   allowIfAuthenticated,
   isAdmin,
-  deleteStaffProfile,
+  deleteStaffProfile
 );
 staffRouter.post(
   "/profile/search",
@@ -138,7 +144,7 @@ staffRouter.post(
     .isString()
     .isLength({ min: 1 })
     .withMessage("Query should be at least 1 character long"),
-  searchStaff,
+  searchStaff
 );
 
 // For user management
@@ -147,20 +153,20 @@ staffRouter.get(
   "/customers/:id",
   allowIfAuthenticated,
   isStaff,
-  fetchIndividualCustomer,
+  fetchIndividualCustomer
 );
 staffRouter.put(
   "/customer/:id",
   allowIfAuthenticated,
   isStaff,
   body("active").isBoolean().withMessage("Invalid active value"),
-  updateCustomerProfile,
+  updateCustomerProfile
 );
 staffRouter.delete(
   "/customer/:id",
   allowIfAuthenticated,
   isStaff,
-  deleteCustomerProfile,
+  deleteCustomerProfile
 );
 staffRouter.post(
   "/customer/search",
@@ -170,7 +176,7 @@ staffRouter.post(
     .isString()
     .isLength({ min: 1 })
     .withMessage("Query should be at least 1 character long"),
-  searchCustomer,
+  searchCustomer
 );
 
 // For product management
@@ -179,13 +185,13 @@ staffRouter.get(
   "/products/:id",
   allowIfAuthenticated,
   isStaff,
-  fetchIndividualProduct,
+  fetchIndividualProduct
 );
 staffRouter.delete(
   "/products/:id",
   allowIfAuthenticated,
   isStaff,
-  deleteProduct,
+  deleteProduct
 );
 staffRouter.post(
   "/products/search",
@@ -195,7 +201,7 @@ staffRouter.post(
     .isString()
     .isLength({ min: 1 })
     .withMessage("Query should be at least 1 character long"),
-  searchProduct,
+  searchProduct
 );
 
 // For seller management
@@ -204,20 +210,20 @@ staffRouter.get(
   "/sellers/:id",
   allowIfAuthenticated,
   isStaff,
-  fetchIndividualSeller,
+  fetchIndividualSeller
 );
 staffRouter.get(
   "/sellers/:id",
   allowIfAuthenticated,
   isStaff,
-  fetchSellerProducts,
+  fetchSellerProducts
 );
 staffRouter.put(
   "/sellers/:id",
   allowIfAuthenticated,
   isStaff,
   body("active").isBoolean().withMessage("Invalid active value"),
-  updateSeller,
+  updateSeller
 );
 staffRouter.delete("/sellers/:id", allowIfAuthenticated, isStaff, deleteSeller);
 staffRouter.post(
@@ -228,7 +234,7 @@ staffRouter.post(
     .isString()
     .isLength({ min: 1 })
     .withMessage("Query should be at least 1 character long"),
-  searchSeller,
+  searchSeller
 );
 
 export default staffRouter;

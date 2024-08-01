@@ -2,41 +2,51 @@ import { Router } from "express";
 import { body } from "express-validator";
 import multer from "multer";
 import {
-  addToCart,
-  addToFavorites,
-  createComment,
-  createComplaint,
-  deleteComment,
-  deleteCustomerPofile,
   deleteOrder,
   deleteOrderItem,
-  emptyCart,
-  emptyFavorites,
-  fetchComments,
-  fetchCustomerCart,
-  fetchCustomerProfile,
-  fetchFavorites,
-  fetchInvidualProduct,
   fetchOrders,
-  fetchProducts,
-  fetchSellerProducts,
-  fetchSellerProfile,
-  loginCustomer,
-  orderAllFavorites,
-  orderCart,
-  registerCustomer,
-  removeFromCart,
-  removeFromFavorites,
-  searchProduct,
-  updateCartItem,
-  updateCustomerProfile,
   updateOrderItem,
-} from "./handler";
+} from "./handlers/orders";
 import {
   allowIfAuthenticated,
   isCustomer,
   isProfileOwner,
 } from "../middleware/authMiddleware";
+import {
+  deleteCustomerPofile,
+  fetchCustomerProfile,
+  loginCustomer,
+  registerCustomer,
+  updateCustomerProfile,
+} from "./handlers/profile";
+import {
+  addToCart,
+  emptyCart,
+  fetchCustomerCart,
+  orderCart,
+  removeFromCart,
+  updateCartItem,
+} from "./handlers/cart";
+import {
+  addToFavorites,
+  emptyFavorites,
+  fetchFavorites,
+  orderAllFavorites,
+  removeFromFavorites,
+} from "./handlers/favorites";
+import {
+  createComment,
+  deleteComment,
+  fetchComments,
+} from "./handlers/comments";
+import {
+  fetchProducts,
+  fetchSellerProducts,
+  searchProduct,
+} from "../staff/handler";
+import { fetchInvidualProduct } from "./handlers/products";
+import { fetchSellerProfile } from "../seller/handler";
+import { createComplaint } from "./handlers/complaints";
 
 const storage = multer.diskStorage({
   destination: (req, file, cb) => {

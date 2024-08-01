@@ -7,23 +7,27 @@ import {
   isProfileOwner,
   isSeller,
 } from "../middleware/authMiddleware";
+import { checkForFiles } from "../middleware/dataMiddleware";
 import {
-  createSellerProduct,
-  deleteIndividualSellerProduct,
   deleteSellerProfile,
-  fetchIndividualSellerOrder,
-  fetchIndividualSellerProduct,
-  fetchSellerOrders,
-  fetchSellerProducts,
   fetchSellerProfile,
   loginSeller,
   registerSeller,
-  searchSellerProducts,
-  updateIndividualSellerOrder,
-  updateIndividualSellerProduct,
   updateSellerProfile,
-} from "./handler";
-import { checkForFiles } from "../middleware/dataMiddleware";
+} from "./handlers/profile";
+import { fetchSellerProducts } from "../staff/handler";
+import {
+  createSellerProduct,
+  deleteIndividualSellerProduct,
+  fetchIndividualSellerProduct,
+  searchSellerProducts,
+  updateIndividualSellerProduct,
+} from "./handlers/products";
+import {
+  fetchIndividualSellerOrder,
+  fetchSellerOrders,
+  updateIndividualSellerOrder,
+} from "./handlers/orders";
 
 const storage = multer.diskStorage({
   destination: (req, file, cb) => {
