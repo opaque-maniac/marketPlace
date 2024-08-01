@@ -15,7 +15,7 @@ const SearchForm = () => {
           placeholder="Search"
         />
       </div>
-      <div className="bg-gray-200 h-10 bg-white w-6 flex items-center">
+      <div className="bg-transparent h-10 w-6 flex items-center">
         <button type="submit" className="h-6 w-6 rounded-full">
           <SearchIcon />
         </button>
