@@ -3,6 +3,11 @@ module.exports = {
   content: ["./src/**/*.{js,ts,jsx,tsx,html}"],
   theme: {
     extend: {
+      animation: {
+        "bounce-delay-1": "bounce 1s infinite 0.1s",
+        "bounce-delay-2": "bounce 1s infinite 0.2s",
+        "bounce-delay-3": "bounce 1s infinite 0.3s",
+      },
       width: {
         243: "243px",
         800: "800px",

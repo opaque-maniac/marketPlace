@@ -22,8 +22,13 @@ const ExplorePage = () => {
 
   if (query.isLoading) {
     return (
-      <div>
-        <Loader />
+      <div
+        style={{ height: "60vh" }}
+        className="w-full flex justify-center items-center"
+      >
+        <div className="h-20 w-20">
+          <Loader />
+        </div>
       </div>
     );
   }
