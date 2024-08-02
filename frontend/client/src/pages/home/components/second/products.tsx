@@ -14,8 +14,10 @@ const SecondProducts = () => {
 
   if (query.isLoading) {
     return (
-      <div>
-        <Loader />
+      <div className="h-350 flex justify-center items-center">
+        <div className="h-14 w-14">
+          <Loader />
+        </div>
       </div>
     );
   }

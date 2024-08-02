@@ -14,8 +14,13 @@ const SixthProducts = () => {
 
   if (query.isLoading) {
     return (
-      <div>
-        <Loader />
+      <div
+        style={{ minHeight: "30vh" }}
+        className="h-full w-full flex justify-center items-center"
+      >
+        <div className="w-20 h-20">
+          <Loader />
+        </div>
       </div>
     );
   }

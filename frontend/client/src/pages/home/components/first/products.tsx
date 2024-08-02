@@ -14,8 +14,10 @@ const FirstProducts = () => {
 
   if (query.isLoading) {
     return (
-      <div>
-        <Loader />
+      <div className="h-350 w-full flex justify-center items-center">
+        <div className="h-10 w-10">
+          <Loader />
+        </div>
       </div>
     );
   }

@@ -14,8 +14,10 @@ const FifthProducts = () => {
 
   if (query.isLoading) {
     return (
-      <div className="bg-white">
-        <Loader />
+      <div className="w-full flex justify-center items-center">
+        <div className="bg-white rounded-full h-12 w-12">
+          <Loader />
+        </div>
       </div>
     );
   }

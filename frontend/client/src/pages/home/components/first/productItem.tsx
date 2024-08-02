@@ -8,6 +8,10 @@ interface Props {
 }
 
 const ProductItem = ({ product, color = "black" }: Props) => {
+  if (!product) {
+    return null;
+  }
+
   return (
     <div>
       <div className="w-270 relative">

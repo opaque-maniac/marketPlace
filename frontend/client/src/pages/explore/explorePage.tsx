@@ -52,16 +52,25 @@ const ExplorePage = () => {
 
   return (
     <div className="lg:w-1200 mx-auto pt-4 h-full">
-      <section className="h-full">
-        <ul className="flex justify-center items-start flex-wrap lg:gap-8">
-          {data.products.map((product) => (
-            <li key={product.id}>
-              <Link to={`/products/${product.id}`}>
-                <ProductItem product={product} color="white" />
-              </Link>
-            </li>
-          ))}
-        </ul>
+      <section style={{ minHeight: "60vh" }}>
+        {data.products && data.products.length > 0 ? (
+          <ul className="flex justify-center items-start flex-wrap lg:gap-8">
+            {data.products.map((product) => (
+              <li key={product.id}>
+                <Link to={`/products/${product.id}`}>
+                  <ProductItem product={product} color="white" />
+                </Link>
+              </li>
+            ))}
+          </ul>
+        ) : (
+          <div
+            style={{ height: "60vh" }}
+            className="w-full flex justify-center items-center"
+          >
+            <h2 className="text-xl">No Products Have Been Posted Yet</h2>
+          </div>
+        )}
       </section>
       <div
         id="pagination"
