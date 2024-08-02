@@ -113,6 +113,7 @@ export const loginCustomer = async (req, res, next) => {
 export const fetchCustomerProfile = async (req, res, next) => {
   try {
     const { id } = req.params;
+    console.log(`Fetching profile for ${id}`);
 
     const customer = await prisma.customer.findFirst({
       where: {

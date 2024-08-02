@@ -57,6 +57,12 @@ export const fetchInvidualProduct = async (req, res, next) => {
   try {
     const { id } = req.params;
 
+    if (!id) {
+      return res.status(400).json({
+        message: "Product ID is required",
+      });
+    }
+
     const product = await prisma.product.findFirst({
       where: {
         id,
