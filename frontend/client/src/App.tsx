@@ -41,52 +41,40 @@ const App = () => {
 
   return (
     <div>
-      <BrowserRouter>
-        <ErrorContext.Provider value={errorState}>
-          <ValidationContext.Provider value={validationState}>
-            <QueryClientProvider client={queryClient}>
-              <Header />
-              <Suspense fallback={<PageLoader />}>
-                <div
-                  className="mt-16"
-                  style={{ minHeight: "calc(100vh - 4rem)" }}
-                >
-                  <ScrollToTop />
-                  <Routes>
-                    <Route path="/" element={<HomePage />} />
-                    <Route
-                      path="/products/:id"
-                      element={<IndividualProduct />}
-                    />
-                    <Route path="/explore" element={<ExplorePage />} />
-                    <Route path="/about" element={<AboutPage />} />
-                    <Route path="/faq" element={<FAQPage />} />
-                    <Route path="/contact" element={<ContactPage />} />
-                    <Route path="/privacy" element={<PrivacyPage />} />
-                    <Route path="/login" element={<LoginPage />} />
-                    <Route path="/register" element={<RegisterPage />} />
-                    <Route path="/cart" element={<CartPage />} />
-                    <Route path="/logout" element={<LogoutPage />} />
-                    <Route path="/error/500" element={<Error500 />} />
-                    <Route path="*" element={<Error404 />} />
-                  </Routes>
-                  <VerifyAuth />
-                </div>
-                <Footer />
-              </Suspense>
-            </QueryClientProvider>
-          </ValidationContext.Provider>
-        </ErrorContext.Provider>
-      </BrowserRouter>
+      <ErrorContext.Provider value={errorState}>
+        <ValidationContext.Provider value={validationState}>
+          <QueryClientProvider client={queryClient}>
+            <Header />
+            <Suspense fallback={<PageLoader />}>
+              <div
+                className="mt-16"
+                style={{ minHeight: "calc(100vh - 4rem)" }}
+              >
+                <ScrollToTop />
+                <Routes>
+                  <Route path="/" element={<HomePage />} />
+                  <Route path="/products/:id" element={<IndividualProduct />} />
+                  <Route path="/explore" element={<ExplorePage />} />
+                  <Route path="/about" element={<AboutPage />} />
+                  <Route path="/faq" element={<FAQPage />} />
+                  <Route path="/contact" element={<ContactPage />} />
+                  <Route path="/privacy" element={<PrivacyPage />} />
+                  <Route path="/login" element={<LoginPage />} />
+                  <Route path="/register" element={<RegisterPage />} />
+                  <Route path="/cart" element={<CartPage />} />
+                  <Route path="/logout" element={<LogoutPage />} />
+                  <Route path="/error/500" element={<Error500 />} />
+                  <Route path="*" element={<Error404 />} />
+                </Routes>
+                <VerifyAuth />
+              </div>
+              <Footer />
+            </Suspense>
+          </QueryClientProvider>
+        </ValidationContext.Provider>
+      </ErrorContext.Provider>
     </div>
   );
 };
 
-const container = document.getElementById("root");
-
-if (!container) {
-  throw new Error("no container to render to");
-}
-
-const root = createRoot(container);
-root.render(<App />);
+export default App;

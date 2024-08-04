@@ -4,7 +4,7 @@ module.exports = {
   theme: {
     extend: {
       animation: {
-        "bounce-delay-1": "bounce 1s infinite 0.1s",
+        "bounce-delay-1": "bounce 1s infinite 0s",
         "bounce-delay-2": "bounce 1s infinite 0.2s",
         "bounce-delay-3": "bounce 1s infinite 0.3s",
       },
