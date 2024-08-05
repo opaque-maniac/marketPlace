@@ -1,1 +1,1 @@
-This is the backend for staff
+This is the backend for sellers

@@ -1,1 +1,1 @@
-This is the backend for customers
+This is the backend for sellers
