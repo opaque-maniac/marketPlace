@@ -61,6 +61,12 @@ export const login = async (
       });
     }
 
+    if (!seller.active) {
+      return res.status(401).json({
+        message: "Account is not active",
+      });
+    }
+
     const isPasswordValid = await bcrypt.compare(password, seller.password);
 
     if (!isPasswordValid) {
@@ -69,7 +75,7 @@ export const login = async (
       });
     }
 
-    const token = generateToken(seller.id, seller.email);
+    const token = generateToken(seller.id, seller.email, "seller");
 
     return res.status(200).json({
       message: "Login successful",

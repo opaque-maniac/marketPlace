@@ -19,6 +19,7 @@ model Customer {
   firstName String
   lastName  String
   password  String
+  active    Boolean    @default(true)
   image     UserImage?
   wishlist  WishList?
   cart      Cart?
@@ -31,7 +32,7 @@ model UserImage {
   id         String   @id @default(uuid())
   customerID String   @unique
   url        String
-  customer   Customer @relation(fields: [customerID], references: [id])
+  customer   Customer @relation(fields: [customerID], references: [id], onDelete: Cascade)
   createdAt  DateTime @default(now())
 }
 
@@ -40,6 +41,9 @@ model Seller {
   email     String       @unique
   name      String
   password  String
+  address   String?
+  phone     String?
+  active    Boolean      @default(true)
   image     SellerImage?
   products  Product[]
   createdAt DateTime     @default(now())
@@ -50,7 +54,7 @@ model SellerImage {
   id        String   @id @default(uuid())
   sellerID  String   @unique
   url       String
-  seller    Seller   @relation(fields: [sellerID], references: [id])
+  seller    Seller   @relation(fields: [sellerID], references: [id], onDelete: Cascade)
   createdAt DateTime @default(now())
 }
 
@@ -66,6 +70,7 @@ model Staff {
   firstName  String
   lastName   String
   password   String
+  active     Boolean     @default(true)
   role       STAFF_ROLE
   image      StaffImage?
   complaints Complaint[]
@@ -77,7 +82,7 @@ model StaffImage {
   id        String   @id @default(uuid())
   staffID   String   @unique
   url       String
-  staff     Staff    @relation(fields: [staffID], references: [id])
+  staff     Staff    @relation(fields: [staffID], references: [id], onDelete: Cascade)
   createdAt DateTime @default(now())
 }
 
@@ -100,7 +105,7 @@ model Product {
   price         Float
   category      CATEGORIES
   sellerID      String
-  seller        Seller         @relation(fields: [sellerID], references: [id])
+  seller        Seller         @relation(fields: [sellerID], references: [id], onDelete: Cascade)
   images        ProductImage[]
   cartItems     CartItem[]
   wishlistItems WishListItem[]
@@ -114,14 +119,14 @@ model ProductImage {
   id        String   @id @default(uuid())
   productID String   @unique
   url       String
-  product   Product  @relation(fields: [productID], references: [id])
+  product   Product  @relation(fields: [productID], references: [id], onDelete: Cascade)
   createdAt DateTime @default(now())
 }
 
 model Cart {
   id         String     @id @default(uuid())
   customerID String     @unique
-  customer   Customer   @relation(fields: [customerID], references: [id])
+  customer   Customer   @relation(fields: [customerID], references: [id], onDelete: Cascade)
   cartItems  CartItem[]
   createdAt  DateTime   @default(now())
 }
@@ -131,8 +136,8 @@ model CartItem {
   quantity  Int
   productID String
   cartID    String
-  product   Product  @relation(fields: [productID], references: [id])
-  cart      Cart     @relation(fields: [cartID], references: [id])
+  product   Product  @relation(fields: [productID], references: [id], onDelete: Cascade)
+  cart      Cart     @relation(fields: [cartID], references: [id], onDelete: Cascade)
   createdAt DateTime @default(now())
   updatedAt DateTime @updatedAt
 }
@@ -140,7 +145,7 @@ model CartItem {
 model WishList {
   id            String         @id @default(uuid())
   customerID    String         @unique
-  customer      Customer       @relation(fields: [customerID], references: [id])
+  customer      Customer       @relation(fields: [customerID], references: [id], onDelete: Cascade)
   wishlistItems WishListItem[]
   createdAt     DateTime       @default(now())
 }
@@ -149,8 +154,8 @@ model WishListItem {
   id         String   @id @default(uuid())
   productID  String
   wishlistID String
-  product    Product  @relation(fields: [productID], references: [id])
-  wishlist   WishList @relation(fields: [wishlistID], references: [id])
+  product    Product  @relation(fields: [productID], references: [id], onDelete: Cascade)
+  wishlist   WishList @relation(fields: [wishlistID], references: [id], onDelete: Cascade)
   createdAt  DateTime @default(now())
 }
 
@@ -174,12 +179,15 @@ model Order {
 }
 
 model OrderItem {
-  id        String  @id @default(uuid())
-  quantity  Int
-  productID String
-  orderID   String
-  product   Product @relation(fields: [productID], references: [id])
-  order     Order   @relation(fields: [orderID], references: [id])
+  id          String   @id @default(uuid())
+  quantity    Int
+  productID   String
+  orderID     String
+  ready       Boolean  @default(false)
+  product     Product  @relation(fields: [productID], references: [id])
+  order       Order    @relation(fields: [orderID], references: [id])
+  dateCreated DateTime @default(now())
+  dateUpdated DateTime @updatedAt
 }
 
 model Complaint {

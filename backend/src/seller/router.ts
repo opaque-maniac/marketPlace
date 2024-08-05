@@ -1,14 +1,43 @@
 import { Router } from "express";
 import { body } from "express-validator";
 import { login, register } from "./handlers/auth";
-import { stringConfig, passwordConfig } from "../utils/globals";
+import {
+  stringConfig,
+  passwordConfig,
+  createStorage,
+  productCategories,
+} from "../utils/globals";
 import {
   allowIfAuthenticated,
+  isProductOwner,
   isProfileOwner,
+  isSeller,
 } from "../middleware/auth-middleware";
-import { fetchProfile } from "./handlers/profile";
+import { deleteProfile, fetchProfile, updateProfie } from "./handlers/profile";
+import multer from "multer";
+import {
+  createProduct,
+  deleteIndividualProduct,
+  fetchIndividualProduct,
+  fetchProducts,
+  searchProducts,
+  updateIndividualProduct,
+} from "./handlers/products";
+import {
+  fetchIndividualOrder,
+  fetchOrders,
+  makeOrderReady,
+  searchOrder,
+} from "./handlers/orders";
 
 const sellerRouter = Router();
+
+// File upload
+const sellerStorage = createStorage("uploads/sellers");
+const productStorage = createStorage("uploads/products");
+
+const sellerUpload = multer({ storage: sellerStorage });
+const productUpload = multer({ storage: productStorage });
 
 // For authentication
 sellerRouter.post(
@@ -29,8 +58,94 @@ sellerRouter.post(
 sellerRouter.get(
   "profile/:id",
   allowIfAuthenticated,
+  isSeller,
   isProfileOwner,
   fetchProfile
+);
+sellerRouter.put(
+  "profile/:id",
+  allowIfAuthenticated,
+  isSeller,
+  isProfileOwner,
+  body("name").isString().isLength(stringConfig),
+  body("email").isEmail(),
+  body("phone")
+    .isString()
+    .matches(/^[0-9]{10}$/),
+  body("address").isString().isLength(stringConfig),
+  sellerUpload.single("image"),
+  updateProfie
+);
+sellerRouter.delete(
+  "profile/:id",
+  allowIfAuthenticated,
+  isSeller,
+  isProfileOwner,
+  deleteProfile
+);
+
+// Product management
+sellerRouter.get("/products", allowIfAuthenticated, isSeller, fetchProducts);
+sellerRouter.post(
+  "/products",
+  allowIfAuthenticated,
+  isSeller,
+  body("name").isString().isLength(stringConfig),
+  body("description").isString().isLength({ min: 10, max: 255 }),
+  body("price").isNumeric(),
+  body("category").isIn(productCategories),
+  productUpload.array("images", 5),
+  createProduct
+);
+sellerRouter.get(
+  "/products/:id",
+  allowIfAuthenticated,
+  isSeller,
+  isProductOwner,
+  fetchIndividualProduct
+);
+sellerRouter.put(
+  "/products/:id",
+  allowIfAuthenticated,
+  isSeller,
+  isProductOwner,
+  body("name").isString().isLength(stringConfig),
+  body("description").isString().isLength({ min: 10, max: 255 }),
+  body("price").isNumeric(),
+  body("category").isIn(productCategories),
+  productUpload.array("images", 5),
+  updateIndividualProduct
+);
+sellerRouter.delete(
+  "/products/:id",
+  allowIfAuthenticated,
+  isSeller,
+  isProductOwner,
+  deleteIndividualProduct
+);
+sellerRouter.post(
+  "/products/search",
+  allowIfAuthenticated,
+  isSeller,
+  body("query").isString().isLength(stringConfig),
+  searchProducts
+);
+
+// For order management
+sellerRouter.get("/orders", allowIfAuthenticated, isSeller, fetchOrders);
+sellerRouter.get(
+  "/orders/:id",
+  allowIfAuthenticated,
+  isSeller,
+  fetchIndividualOrder
+);
+sellerRouter.put("/orders/:id", allowIfAuthenticated, isSeller, makeOrderReady);
+sellerRouter.post(
+  "/orders/search",
+  allowIfAuthenticated,
+  isSeller,
+  body("query").isString().isLength(stringConfig),
+  searchOrder
 );
 
 export default sellerRouter;
