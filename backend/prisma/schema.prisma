@@ -14,21 +14,24 @@ datasource db {
 }
 
 model Customer {
-  id        String     @id @default(uuid())
-  email     String     @unique
+  id        String         @id @default(uuid())
+  email     String         @unique
   firstName String
   lastName  String
   password  String
-  active    Boolean    @default(true)
-  image     UserImage?
+  address   String?
+  phone     String?
+  active    Boolean        @default(true)
+  image     CustomerImage?
   wishlist  WishList?
   cart      Cart?
   orders    Order[]
-  createdAt DateTime   @default(now())
-  updatedAt DateTime   @updatedAt
+  comments  Comment[]
+  createdAt DateTime       @default(now())
+  updatedAt DateTime       @updatedAt
 }
 
-model UserImage {
+model CustomerImage {
   id         String   @id @default(uuid())
   customerID String   @unique
   url        String
@@ -110,6 +113,7 @@ model Product {
   cartItems     CartItem[]
   wishlistItems WishListItem[]
   orderItems    OrderItem[]
+  comments      Comment[]
   createdAt     DateTime       @default(now())
   updatedAt     DateTime       @updatedAt
   inventory     Int
@@ -121,6 +125,16 @@ model ProductImage {
   url       String
   product   Product  @relation(fields: [productID], references: [id], onDelete: Cascade)
   createdAt DateTime @default(now())
+}
+
+model Comment {
+  id         String   @id @default(uuid())
+  productID  String
+  customerID String
+  product    Product  @relation(fields: [productID], references: [id], onDelete: Cascade)
+  customer   Customer @relation(fields: [customerID], references: [id], onDelete: Cascade)
+  message    String
+  createdAt  DateTime @default(now())
 }
 
 model Cart {

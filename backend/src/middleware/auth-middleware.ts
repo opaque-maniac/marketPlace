@@ -135,3 +135,23 @@ export const isSeller = async (
     return next(e as Error);
   }
 };
+
+export const isCustomer = async (
+  req: AuthenticatedRequest,
+  res: Response,
+  next: NextFunction
+) => {
+  try {
+    const { user } = req;
+
+    if (user && user.userType !== "customer") {
+      return res.status(403).json({
+        message: "You are not authorized to perform this action",
+      });
+    }
+
+    next();
+  } catch (e) {
+    return next(e as Error);
+  }
+};

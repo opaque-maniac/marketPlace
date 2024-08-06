@@ -54,3 +54,27 @@ export interface OrderSearchRequest extends AuthenticatedRequest {
     query: string;
   };
 }
+
+export interface RegisterCustomerRequest extends Request {
+  body: {
+    email: string;
+    firstName: string;
+    lastName: string;
+    password: string;
+  };
+}
+
+export interface CustomerUpdateRequest extends AuthenticatedRequest {
+  body: {
+    firstName: string;
+    lastName: string;
+    phone?: string;
+    address?: string;
+  };
+}
+
+export interface CommentCreateRequest extends AuthenticatedRequest {
+  body: {
+    message: string;
+  };
+}

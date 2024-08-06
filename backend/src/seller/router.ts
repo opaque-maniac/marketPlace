@@ -29,6 +29,10 @@ import {
   makeOrderReady,
   searchOrder,
 } from "./handlers/orders";
+import {
+  fetchIndividualComment,
+  fetchProductComments,
+} from "./handlers/comments";
 
 const sellerRouter = Router();
 
@@ -71,8 +75,9 @@ sellerRouter.put(
   body("email").isEmail(),
   body("phone")
     .isString()
-    .matches(/^[0-9]{10}$/),
-  body("address").isString().isLength(stringConfig),
+    .matches(/^[0-9]{10}$/)
+    .optional(),
+  body("address").isString().isLength(stringConfig).optional(),
   sellerUpload.single("image"),
   updateProfie
 );
@@ -127,8 +132,23 @@ sellerRouter.post(
   "/products/search",
   allowIfAuthenticated,
   isSeller,
-  body("query").isString().isLength(stringConfig),
   searchProducts
+);
+
+// Comment management
+sellerRouter.get(
+  "/products/:id/comments",
+  allowIfAuthenticated,
+  isSeller,
+  isProductOwner,
+  fetchProductComments
+);
+sellerRouter.get(
+  "/poducts/:id/comments/commentId",
+  allowIfAuthenticated,
+  isSeller,
+  isProductOwner,
+  fetchIndividualComment
 );
 
 // For order management
@@ -144,7 +164,6 @@ sellerRouter.post(
   "/orders/search",
   allowIfAuthenticated,
   isSeller,
-  body("query").isString().isLength(stringConfig),
   searchOrder
 );
 
