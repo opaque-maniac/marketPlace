@@ -2,6 +2,7 @@ import express from "express";
 import morgan from "morgan";
 import cors from "cors";
 import { allowIfActive } from "./middleware/auth-middleware";
+import { refreshToken } from "./utils/publicHandlers";
 
 const app = express();
 
@@ -20,5 +21,6 @@ const corsOptions = {
 // Implimenting cors
 app.use(cors(corsOptions));
 app.use(allowIfActive);
+app.post("/api/tokenrefresh", refreshToken);
 
 export default app;

@@ -78,7 +78,7 @@ export const createProduct = async (
       });
     }
 
-    const product = prisma.$transaction(async (txl) => {
+    const product = await prisma.$transaction(async (txl) => {
       const newProduct = await txl.product.create({
         data: {
           name,
@@ -153,7 +153,7 @@ export const updateIndividualProduct = async (
       filenames = req.files.map((file) => file.filename);
     }
 
-    const product = prisma.$transaction(async (txl) => {
+    const product = await prisma.$transaction(async (txl) => {
       const updatedProduct = await txl.product.update({
         where: {
           id,

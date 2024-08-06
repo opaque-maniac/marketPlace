@@ -1,11 +1,6 @@
 import { Router } from "express";
 import { body } from "express-validator";
-import {
-  stringConfig,
-  passwordConfig,
-  createStorage,
-  productCategories,
-} from "../utils/globals";
+import { stringConfig, passwordConfig, createStorage } from "../utils/globals";
 import {
   allowIfAuthenticated,
   isCustomer,
@@ -25,7 +20,27 @@ import {
   fetchIndividualComment,
   fetchProductComments,
 } from "./handlers/comments";
-import { fetchCart, fetchCartItem } from "./handlers/cart";
+import {
+  addToCart,
+  emptyCart,
+  fetchCart,
+  fetchCartItem,
+  orderAllCartItems,
+  orderCartItem,
+  removeFromCart,
+} from "./handlers/cart";
+import {
+  addToWishlist,
+  emptyWishlist,
+  fetchWishlist,
+  fetchWishlistItem,
+  removeFromWishlist,
+} from "./handlers/wishlist";
+import {
+  cancelOrder,
+  fetchIndividualOrder,
+  fetchOrders,
+} from "./handlers/orders";
 
 const customerRouter = Router();
 
@@ -105,11 +120,81 @@ customerRouter.delete(
 
 // For cart management
 customerRouter.get("/cart", allowIfAuthenticated, isCustomer, fetchCart);
+customerRouter.put(
+  "/cart",
+  allowIfAuthenticated,
+  isCustomer,
+  orderAllCartItems
+);
+customerRouter.delete("/cart", allowIfAuthenticated, isCustomer, emptyCart);
+customerRouter.post("/cart/:id", allowIfAuthenticated, isCustomer, addToCart);
 customerRouter.get(
   "/cart/:id",
   allowIfAuthenticated,
   isCustomer,
   fetchCartItem
 );
+customerRouter.put(
+  "/cart/:id",
+  allowIfAuthenticated,
+  isCustomer,
+  orderCartItem
+);
+customerRouter.delete(
+  "/cart/:id",
+  allowIfAuthenticated,
+  isCustomer,
+  removeFromCart
+);
+
+// For wishlist management
+customerRouter.get(
+  "/wishlist",
+  allowIfAuthenticated,
+  isCustomer,
+  fetchWishlist
+);
+customerRouter.delete(
+  "/wishlist",
+  allowIfAuthenticated,
+  isCustomer,
+  emptyWishlist
+);
+customerRouter.post(
+  "/wishlist/:id",
+  allowIfAuthenticated,
+  isCustomer,
+  addToWishlist
+);
+customerRouter.get(
+  "/wishlist/:id",
+  allowIfAuthenticated,
+  isCustomer,
+  fetchWishlistItem
+);
+customerRouter.delete(
+  "/wishlist/:id",
+  allowIfAuthenticated,
+  isCustomer,
+  removeFromWishlist
+);
+
+// For order management
+customerRouter.get("/orders", allowIfAuthenticated, isCustomer, fetchOrders);
+customerRouter.get(
+  "/orders/:id",
+  allowIfAuthenticated,
+  isCustomer,
+  fetchIndividualOrder
+);
+customerRouter.delete(
+  "/orders/:id",
+  allowIfAuthenticated,
+  isCustomer,
+  cancelOrder
+);
+
+// Add endpoints for creating orders after figuring out how to handle
+// payment processing
 
 export default customerRouter;

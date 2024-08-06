@@ -10,12 +10,28 @@ export const allowIfAuthenticated = (
 ) => {
   try {
     const token = req.headers.authorization?.split(" ")[1];
+
+    if (!token) {
+      return res.status(401).json({
+        message: "You need to be logged in to access this route",
+      });
+    }
     const decoded = jwt.verify(token, process.env.JWT_SECRET);
     req.user = decoded;
     next();
   } catch (e) {
-    return res.status(403).json({
-      message: "Unauthorized",
+    if (e instanceof jwt.JsonWebTokenError) {
+      if (e.message === "jwt expired") {
+        return res.status(401).json({
+          message: "Token expired, please log in again",
+        });
+      }
+      return res.status(403).json({
+        message: "Unauthorized",
+      });
+    }
+    return res.status(500).json({
+      message: "Internal server error",
     });
   }
 };

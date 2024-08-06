@@ -36,7 +36,7 @@ export const register = async (
     const salt = await bcrypt.genSalt(10);
     const hashedPassword = await bcrypt.hash(password, salt);
 
-    const customer = prisma.$transaction(
+    const customer = await prisma.$transaction(
       async (txl) => {
         const newCustomer = await txl.customer.create({
           data: {
@@ -50,6 +50,12 @@ export const register = async (
         await txl.cart.create({
           data: {
             customerID: newCustomer.id,
+          },
+        });
+
+        await txl.wishList.create({
+          data: {
+            customerID: customer.id,
           },
         });
 

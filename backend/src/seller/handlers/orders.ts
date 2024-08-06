@@ -109,39 +109,81 @@ export const makeOrderReady = async (
 ) => {
   try {
     const { id } = req.params;
+    const sellerID = req.user?.id;
 
-    const orderItem = await prisma.orderItem.findUnique({
-      where: {
-        id,
-      },
-      include: {
-        product: true,
-      },
-    });
-
-    if (!orderItem) {
-      return res.status(404).json({
-        message: "Order not found",
-      });
-    }
-
-    if (orderItem.product.sellerID !== req.user?.id) {
-      return res.status(403).json({
-        message: "Unauthorized",
-      });
+    if (!sellerID) {
+      throw new Error("Unauthorized");
     }
 
     const updatedOrderItem = await prisma.orderItem.update({
       where: {
         id,
+        product: {
+          sellerID,
+        },
       },
       data: {
         ready: true,
       },
     });
 
+    const order = await prisma.order.findUnique({
+      where: {
+        id: updatedOrderItem.orderID,
+      },
+      include: {
+        orderItems: true,
+      },
+    });
+
+    if (!order) {
+      throw new Error("Order not found");
+    }
+
+    if (order.status === "CANCELLED") {
+      return res.status(400).json({
+        message: "Order has been cancelled",
+      });
+    }
+
+    if (order.status === "PENDING") {
+      const updatedOrder = await prisma.order.update({
+        where: {
+          id: order.id,
+        },
+        data: {
+          status: "PROCESSING",
+        },
+      });
+
+      return res.status(200).json({
+        message: "Order updated successfully",
+        order: updatedOrder,
+      });
+    }
+
+    const orderComplete = order.orderItems.every(
+      (orderItem) => orderItem.ready
+    );
+
+    if (orderComplete) {
+      const updatedOrder = await prisma.order.update({
+        where: {
+          id: order.id,
+        },
+        data: {
+          status: "READY",
+        },
+      });
+
+      return res.status(200).json({
+        message: "Order updated successfully",
+        order: updatedOrder,
+      });
+    }
+
     return res.status(200).json({
-      message: "Order marked as ready",
+      message: "Order updated successfully",
       order: updatedOrderItem,
     });
   } catch (e) {

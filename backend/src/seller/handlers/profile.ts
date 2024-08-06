@@ -52,7 +52,7 @@ export const updateProfie = async (
     const { name, email, phone, address } = req.body;
     const filename = req.files ? (req.files[0].filename as string) : null;
 
-    const seller = prisma.$transaction(
+    const seller = await prisma.$transaction(
       async (txl) => {
         const updatedSeller = await txl.seller.update({
           where: {

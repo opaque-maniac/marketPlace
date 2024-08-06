@@ -78,3 +78,9 @@ export interface CommentCreateRequest extends AuthenticatedRequest {
     message: string;
   };
 }
+
+export interface TokenRefreshRequest extends Request {
+  body: {
+    refreshToken: string;
+  };
+}
