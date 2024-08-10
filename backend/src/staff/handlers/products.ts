@@ -1,17 +1,22 @@
 /**
- * Handlers for managing products for customers
+ * Handlers for managing products for staff
  * @param {Request} req - Request object
  * @param {Response} res - Response object
  * @param {NextFunction} next - Next function
  */
 
-import { Response, NextFunction, Request } from "express";
+import { Response, NextFunction } from "express";
 import prisma from "../../utils/db";
-import { ProductSearchRequest } from "../../types";
+import {
+  AuthenticatedRequest,
+  ProductCreateUpdateRequest,
+  ProductSearchRequest,
+} from "../../types";
+import { CATEGORIES } from "@prisma/client";
 
 // Function to fetch products
 export const fetchProducts = async (
-  req: Request,
+  req: AuthenticatedRequest,
   res: Response,
   next: NextFunction
 ) => {
@@ -21,7 +26,7 @@ export const fetchProducts = async (
 
     const products = await prisma.product.findMany({
       include: {
-        seller: true,
+        images: true,
       },
       skip: (page - 1) * limit,
       take: limit + 1,
@@ -35,7 +40,7 @@ export const fetchProducts = async (
 
     return res.status(200).json({
       message: "Products fetched successfully",
-      data: products,
+      products,
       hasNext,
     });
   } catch (e) {
@@ -43,9 +48,9 @@ export const fetchProducts = async (
   }
 };
 
-// Function to fetch individual product
+// Function to fetch a single product
 export const fetchIndividualProduct = async (
-  req: Request,
+  req: AuthenticatedRequest,
   res: Response,
   next: NextFunction
 ) => {
@@ -74,21 +79,107 @@ export const fetchIndividualProduct = async (
 
     return res.status(200).json({
       message: "Product fetched successfully",
-      data: product,
+      product,
     });
   } catch (e) {
     return next(e as Error);
   }
 };
 
-// Function to search products
+// Function to update a product
+export const updateProduct = async (
+  req: ProductCreateUpdateRequest,
+  res: Response,
+  next: NextFunction
+) => {
+  try {
+    const { id } = req.params;
+    const { name, description, price, category, inventory } = req.body;
+    let filenames: string[] | undefined;
+
+    if (req.files && Array.isArray(req.files)) {
+      filenames = req.files.map((file) => file.filename);
+    }
+
+    const product = await prisma.$transaction(
+      async (txl) => {
+        const updatedProduct = await txl.product.update({
+          where: {
+            id,
+          },
+          data: {
+            name,
+            description,
+            price: parseFloat(price),
+            category: category as CATEGORIES,
+            inventory: parseInt(inventory),
+          },
+        });
+
+        if (filenames) {
+          await txl.productImage.deleteMany({
+            where: {
+              productID: id,
+            },
+          });
+
+          await txl.productImage.createMany({
+            data: filenames.map((filename) => ({
+              productID: id,
+              url: `uploads/products/${filename}`,
+            })),
+          });
+        }
+
+        return updatedProduct;
+      },
+      {
+        maxWait: 5000,
+        timeout: 10000,
+      }
+    );
+
+    return res.status(200).json({
+      message: "Product updated successfully",
+      product,
+    });
+  } catch (e) {
+    return next(e as Error);
+  }
+};
+
+// Function to delete a product
+export const deleteProduct = async (
+  req: AuthenticatedRequest,
+  res: Response,
+  next: NextFunction
+) => {
+  try {
+    const { id } = req.params;
+
+    const product = await prisma.product.delete({
+      where: {
+        id,
+      },
+    });
+
+    return res.status(203).json({
+      message: "Product deleted successfully",
+      product,
+    });
+  } catch (e) {
+    return next(e as Error);
+  }
+};
+
+// Function to search for products
 export const searchProduct = async (
   req: ProductSearchRequest,
   res: Response,
   next: NextFunction
 ) => {
   try {
-    const query = req.query.query as string;
+    const { query } = req.body;
     const page = req.query.page ? parseInt(req.query.page as string) : 1;
     const limit = req.query.limit ? parseInt(req.query.limit as string) : 10;
 
@@ -100,6 +191,8 @@ export const searchProduct = async (
               contains: query,
               mode: "insensitive",
             },
+          },
+          {
             description: {
               contains: query,
               mode: "insensitive",
@@ -109,9 +202,6 @@ export const searchProduct = async (
       },
       skip: (page - 1) * limit,
       take: limit + 1,
-      include: {
-        images: true,
-      },
     });
 
     const hasNext = products.length > limit;
@@ -121,8 +211,8 @@ export const searchProduct = async (
     }
 
     return res.status(200).json({
-      message: "Products fetched successfully",
-      data: products,
+      message: "Fetched product query",
+      products,
     });
   } catch (e) {
     return next(e as Error);

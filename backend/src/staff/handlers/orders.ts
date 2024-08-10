@@ -1,52 +1,42 @@
 /**
- * Handlers for managing orders for customers
+ * Handlers for managing products for staff
  * @param {Request} req - Request object
  * @param {Response} res - Response object
  * @param {NextFunction} next - Next function
  */
 
-import { Response, NextFunction, Request } from "express";
+import { Response, NextFunction } from "express";
 import prisma from "../../utils/db";
-import { AuthenticatedRequest } from "../../types";
+import { AuthenticatedRequest, UpdateOrderStatusRequest } from "../../types";
 
-// Function to fetch orders
-export const fetchOrders = async (
+// Function to fetch all orders
+export const fetchAllOrders = async (
   req: AuthenticatedRequest,
   res: Response,
   next: NextFunction
 ) => {
   try {
-    const customerID = req.user?.id;
     const page = req.query.page ? parseInt(req.query.page as string) : 1;
     const limit = req.query.limit ? parseInt(req.query.limit as string) : 10;
-    const cancel = req.query.cancel === "true";
 
-    if (!customerID) {
-      throw new Error("Customer ID not found");
-    }
-
-    const orders = await prisma.order.findMany({
-      where: {
-        customerID,
-        status: cancel
-          ? "CANCELLED"
-          : {
-              not: "CANCELLED",
-            },
+    const order = await prisma.order.findMany({
+      include: {
+        customer: true,
+        orderItems: true,
       },
       skip: (page - 1) * limit,
       take: limit + 1,
     });
 
-    const hasNext = orders.length > limit;
+    const hasNext = order.length > limit;
 
     if (hasNext) {
-      orders.pop();
+      order.pop();
     }
 
     return res.status(200).json({
-      message: "Fetched orders",
-      orders,
+      message: "Orders fetched successfully",
+      order,
       hasNext,
     });
   } catch (e) {
@@ -54,25 +44,17 @@ export const fetchOrders = async (
   }
 };
 
-// Function to fetch individual order
-export const fetchIndividualOrder = async (
+// Fetch individual order
+export const fetchndividualOrder = async (
   req: AuthenticatedRequest,
   res: Response,
   next: NextFunction
 ) => {
   try {
     const { id } = req.params;
-    const customerID = req.user?.id;
-
-    if (!customerID) {
-      throw new Error("Customer ID not found");
-    }
 
     const order = await prisma.order.findUnique({
-      where: {
-        id,
-        customerID,
-      },
+      where: { id },
       include: {
         orderItems: {
           include: {
@@ -81,6 +63,11 @@ export const fetchIndividualOrder = async (
                 images: true,
               },
             },
+          },
+        },
+        customer: {
+          include: {
+            image: true,
           },
         },
       },
@@ -93,7 +80,7 @@ export const fetchIndividualOrder = async (
     }
 
     return res.status(200).json({
-      message: "Fetched order",
+      message: "Order fetched successfully",
       order,
     });
   } catch (e) {
@@ -101,32 +88,51 @@ export const fetchIndividualOrder = async (
   }
 };
 
-// Function to cancel order
-export const cancelOrder = async (
+// Update order status
+export const updateOrderStatus = async (
+  req: UpdateOrderStatusRequest,
+  res: Response,
+  next: NextFunction
+) => {
+  try {
+    const { id } = req.params;
+    const { status } = req.body;
+
+    const order = await prisma.order.update({
+      where: {
+        id,
+      },
+      data: {
+        status: status,
+      },
+    });
+
+    return res.status(200).json({
+      message: "Order status updated successfully",
+      order,
+    });
+  } catch (e) {
+    return next(e as Error);
+  }
+};
+
+// Delete order
+export const deleteOrder = async (
   req: AuthenticatedRequest,
   res: Response,
   next: NextFunction
 ) => {
   try {
     const { id } = req.params;
-    const customerID = req.user?.id;
 
-    if (!customerID) {
-      throw new Error("Customer ID not found");
-    }
-
-    const order = await prisma.order.update({
+    const order = await prisma.order.delete({
       where: {
         id,
-        customerID,
-      },
-      data: {
-        status: "CANCELLED",
       },
     });
 
-    return res.status(200).json({
-      message: "Order cancelled",
+    return res.status(203).json({
+      message: "Order deleted successfully",
       order,
     });
   } catch (e) {

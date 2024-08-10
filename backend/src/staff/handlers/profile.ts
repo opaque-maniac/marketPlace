@@ -1,5 +1,5 @@
 /**
- * Handlers for managing customer profile
+ * Handlers for managing products for staff
  * @param {Request} req - Request object
  * @param {Response} res - Response object
  * @param {NextFunction} next - Next function
@@ -7,9 +7,9 @@
 
 import { Response, NextFunction } from "express";
 import prisma from "../../utils/db";
-import { AuthenticatedRequest, CustomerUpdateRequest } from "../../types";
+import { AuthenticatedRequest, StaffUpdateProfileRequest } from "../../types";
 
-// Function to fetch profile
+// Fetch profile
 export const fetchProfile = async (
   req: AuthenticatedRequest,
   res: Response,
@@ -18,7 +18,7 @@ export const fetchProfile = async (
   try {
     const { id } = req.params;
 
-    const customer = await prisma.customer.findUnique({
+    const profile = await prisma.staff.findUnique({
       where: {
         id,
       },
@@ -27,62 +27,61 @@ export const fetchProfile = async (
       },
     });
 
-    if (!customer) {
+    if (!profile) {
       return res.status(404).json({
-        message: "Customer not found",
+        message: "Profile not found",
       });
     }
 
     return res.status(200).json({
-      message: "Customer fetched successfully",
-      data: customer,
+      message: "Profile fetched successfully",
+      data: profile,
     });
   } catch (e) {
-    return next(e);
+    return next(e as Error);
   }
 };
 
-// Function to update profile
+// Update profile
 export const updateProfile = async (
-  req: CustomerUpdateRequest,
+  req: StaffUpdateProfileRequest,
   res: Response,
   next: NextFunction
 ) => {
   try {
     const { id } = req.params;
-    const { firstName, lastName, phone, address } = req.body;
+    const { email, firstName, lastName } = req.body;
     const filename = req.files ? req.files[0].filename : undefined;
 
-    const customer = await prisma.$transaction(
+    const staff = await prisma.$transaction(
       async (txl) => {
-        const updatedCustomer = await txl.customer.update({
+        const updatedStaff = await prisma.staff.update({
           where: {
             id,
           },
           data: {
+            email,
             firstName,
             lastName,
-            phone,
-            address,
           },
         });
 
         if (filename) {
-          await txl.customerImage.deleteMany({
+          await prisma.staffImage.deleteMany({
             where: {
-              customerID: updatedCustomer.id,
+              staffID: id,
             },
           });
 
-          await txl.customerImage.create({
+          await prisma.staffImage.create({
             data: {
-              customerID: updatedCustomer.id,
-              url: `uploads/customers/${filename}`,
+              url: `uploads/staff/${filename}`,
+              staffID: id,
             },
           });
         }
 
-        return updatedCustomer;
+        return updatedStaff;
       },
       {
         maxWait: 5000,
@@ -91,15 +90,15 @@ export const updateProfile = async (
     );
 
     return res.status(200).json({
-      message: "Customer updated successfully",
-      customer,
+      message: "Profile updated successfully",
+      data: staff,
     });
   } catch (e) {
     return next(e as Error);
   }
 };
 
-// Function to delete profile
+// Delete profile
 export const deleteProfile = async (
   req: AuthenticatedRequest,
   res: Response,
@@ -108,15 +107,15 @@ export const deleteProfile = async (
   try {
     const { id } = req.params;
 
-    const customer = await prisma.customer.delete({
+    const profile = await prisma.staff.delete({
       where: {
         id,
       },
     });
 
     return res.status(203).json({
-      message: "Customer deleted successfully",
-      customer,
+      message: "Profile deleted successfully",
+      data: profile,
     });
   } catch (e) {
     return next(e as Error);

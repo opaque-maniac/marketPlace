@@ -14,7 +14,6 @@ interface RequestUSer {
   email: string;
   id: string;
   userType: string;
-  r;
 }
 
 // To refresh the token
@@ -24,27 +23,31 @@ export const refreshToken = async (
   next: NextFunction
 ) => {
   try {
-    const { refreshToken } = req.body;
+    const refresh = req.cookies["refresh-token"];
 
-    if (!refreshToken) {
+    if (!refresh) {
       return res.status(401).json({
-        message: "Refresh token is required",
+        message: "Unauthorized. No refresh token provided",
       });
     }
 
-    const decoded = jwt.verify(
-      refreshToken,
-      process.env.JWT_SECRET
-    ) as RequestUSer;
-
-    const token = generateToken(decoded.id, decoded.email, decoded.userType);
+    const user = jwt.verify(refresh, process.env.REFRESH_SECRET) as RequestUSer;
+    const token = generateToken(user.id, user.email, user.userType);
 
     return res.status(200).json({
       token,
     });
   } catch (e) {
-    return res.status(403).json({
-      message: "Unauthorized",
-    });
+    if (e instanceof jwt.JsonWebTokenError) {
+      if (e.message === "jwt expired") {
+        return res.status(401).json({
+          message: "Refresh token expired, log in again",
+        });
+      }
+      return res.status(403).json({
+        message: "Unauthorized",
+      });
+    }
+    next(e as Error);
   }
 };

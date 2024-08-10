@@ -171,3 +171,83 @@ export const isCustomer = async (
     return next(e as Error);
   }
 };
+
+export const isStaff = async (
+  req: AuthenticatedRequest,
+  res: Response,
+  next: NextFunction
+) => {
+  try {
+    const { user } = req;
+
+    if (user?.userType !== "staff") {
+      return res.status(403).json({
+        message: "You are not authorized to perform this action",
+      });
+    }
+
+    next();
+  } catch (e) {
+    return next(e as Error);
+  }
+};
+
+export const isAdminOrProfileOwner = async (
+  req: AuthenticatedRequest,
+  res: Response,
+  next: NextFunction
+) => {
+  try {
+    const { id } = req.params;
+
+    const staff = await prisma.staff.findUnique({
+      where: { id },
+    });
+
+    if (!staff) {
+      return res.status(403).json({
+        message: "You are not authorized to perform this action",
+      });
+    }
+
+    if (staff.role !== "ADMIN" || staff.id != req.user?.id) {
+      return res.status(403).json({
+        message: "You are not authorized to perform this action",
+      });
+    }
+    next();
+  } catch (e) {
+    return next(e as Error);
+  }
+};
+
+export const isAdmin = async (
+  req: AuthenticatedRequest,
+  res: Response,
+  next: NextFunction
+) => {
+  try {
+    const { user } = req;
+
+    if (!user || user.userType !== "staff") {
+      return res.status(403).json({
+        message: "You are not authorized to perform this action",
+      });
+    }
+
+    const staff = await prisma.staff.findUnique({
+      where: {
+        id: user.id,
+      },
+    });
+
+    if (!staff || staff?.role !== "ADMIN") {
+      return res.status(403).json({
+        message: "You are not authorized to perform this action",
+      });
+    }
+    next();
+  } catch (e) {
+    return next(e as Error);
+  }
+};

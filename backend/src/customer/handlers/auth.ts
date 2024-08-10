@@ -9,7 +9,7 @@ import { Response, NextFunction } from "express";
 import prisma from "../../utils/db";
 import bcrypt from "bcrypt";
 import { LoginRequest, RegisterCustomerRequest } from "../../types";
-import generateToken from "../../utils/token";
+import generateToken, { generateRefreshToken } from "../../utils/token";
 
 // Function to authenticate customer
 export const register = async (
@@ -119,10 +119,16 @@ export const login = async (
     }
 
     const token = generateToken(customer.id, customer.email, "customer");
+    const refreshToken = generateRefreshToken(
+      customer.id,
+      customer.email,
+      "customer"
+    );
 
     return res.status(200).json({
       message: "Login successful",
       token,
+      refreshToken,
     });
   } catch (e) {
     return next(e as Error);

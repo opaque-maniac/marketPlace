@@ -1,3 +1,4 @@
+import { ORDER_STATUS } from "@prisma/client";
 import { Request } from "express";
 
 export interface RegisterSellerRequest extends Request {
@@ -82,5 +83,54 @@ export interface CommentCreateRequest extends AuthenticatedRequest {
 export interface TokenRefreshRequest extends Request {
   body: {
     refreshToken: string;
+  };
+}
+
+export interface CustomerSearchRequest extends AuthenticatedRequest {
+  body: {
+    query: string;
+  };
+}
+
+export interface StaffSearchRequest extends AuthenticatedRequest {
+  body: {
+    query: string;
+  };
+}
+
+export interface StaffUpdateRequest extends AuthenticatedRequest {
+  body: {
+    email: string;
+    firstName: string;
+    lastName: string;
+  };
+}
+
+export interface SellerSearchRequest extends AuthenticatedRequest {
+  body: {
+    query: string;
+  };
+}
+
+export interface SellerUpdateStaffRequest extends AuthenticatedRequest {
+  body: {
+    email: string;
+    name: string;
+    address: string;
+    phone: string;
+  };
+}
+
+export interface UpdateOrderStatusRequest extends AuthenticatedRequest {
+  body: {
+    status: ORDER_STATUS;
+  };
+}
+
+export interface StaffUpdateProfileRequest extends AuthenticatedRequest {
+  body: {
+    email: string;
+    firstName: string;
+    lastName: string;
   };
 }
