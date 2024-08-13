@@ -1,7 +1,9 @@
 import jwt from "jsonwebtoken";
 
+const tokenSecret = process.env.JWT_SECRET || "somethingintheorange";
+
 const generateToken = (id: string, email: string, userType: string) => {
-  const token = jwt.sign({ id, email, userType }, process.env.JWT_SECRET, {
+  const token = jwt.sign({ id, email, userType }, tokenSecret, {
     expiresIn: "7d",
   });
 
@@ -13,7 +15,7 @@ export const generateRefreshToken = (
   email: string,
   userType: string
 ) => {
-  const token = jwt.sign({ id, email, userType }, process.env.JWT_SECRET, {
+  const token = jwt.sign({ id, email, userType }, tokenSecret, {
     expiresIn: "30d",
   });
 

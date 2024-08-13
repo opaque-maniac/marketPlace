@@ -1,7 +1,13 @@
 import { Request, Response, NextFunction } from "express";
-import jwt from "jsonwebtoken";
+import jwt, { JwtPayload } from "jsonwebtoken";
 import { AuthenticatedRequest } from "../types";
 import prisma from "../utils/db";
+
+interface DecodedToken extends JwtPayload {
+  id: string;
+  email: string;
+  userType: string;
+}
 
 export const allowIfAuthenticated = (
   req: AuthenticatedRequest,
@@ -16,7 +22,16 @@ export const allowIfAuthenticated = (
         message: "You need to be logged in to access this route",
       });
     }
-    const decoded = jwt.verify(token, process.env.JWT_SECRET);
+    const decoded = jwt.verify(
+      token,
+      process.env.JWT_SECRET || "something in the orange"
+    ) as DecodedToken;
+
+    if (!decoded) {
+      return res.status(401).json({
+        message: "Invalid token",
+      });
+    }
     req.user = decoded;
     next();
   } catch (e) {
@@ -86,7 +101,7 @@ export const allowIfActive = async (
         });
       }
 
-      if (!currentUser?.active) {
+      if (currentUser && !currentUser.active) {
         return res.status(401).json({
           message: "Account is not active",
         });

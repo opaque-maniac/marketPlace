@@ -139,7 +139,15 @@ export const updateSeller = async (
   try {
     const { id } = req.params;
     const { email, name, phone, address } = req.body;
-    const filename = req.files ? req.files[0].filename : null;
+    let filename: string | undefined;
+
+    if (Array.isArray(req.files)) {
+      filename = req.files ? req.files[0].filename : undefined;
+    } else if (req.files && typeof req.files === "object") {
+      filename = req.files["image"][0].filename || undefined;
+    } else {
+      filename = undefined;
+    }
 
     const seller = await prisma.$transaction(
       async (txl) => {

@@ -5,8 +5,9 @@ import { allowIfActive } from "./middleware/auth-middleware";
 import { refreshToken } from "./utils/publicHandlers";
 import customerRouter from "./customer/router";
 import sellerRouter from "./seller/router";
-// import { rateLimiter } from "express-rate-limiter";
+import rateLimit from "express-rate-limit";
 import { slowDown } from "express-slow-down";
+import staffRouter from "./staff/router";
 
 const app = express();
 
@@ -22,13 +23,11 @@ const corsOptions = {
   methods: ["GET", "POST", "PUT", "DELETE"],
 };
 
-/*
-const limiter = rateLimiter({
+const limiter = rateLimit({
   windowMs: 15 * 60 * 1000,
   limit: 10,
   message: "Too many requests",
 });
-*/
 
 const slowDowner = slowDown({
   windowMs: 15 * 60 * 1000,
@@ -40,10 +39,11 @@ const slowDowner = slowDown({
 app.use(cors(corsOptions));
 app.use(allowIfActive);
 app.use(slowDowner);
-app.use("/api/customers", customerRouter);
-app.use("/api/seller", sellerRouter);
+app.use("/customers", customerRouter);
+app.use("/seller", sellerRouter);
+app.use("/staff", staffRouter);
 
 // Token refresh route
-app.post("/api/tokenrefresh", /*limiter*/ refreshToken);
+app.post("/api/tokenrefresh", limiter, refreshToken);
 
 export default app;

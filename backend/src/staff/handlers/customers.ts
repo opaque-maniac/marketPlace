@@ -83,7 +83,15 @@ export const updateCustomer = async (
   try {
     const { id } = req.params;
     const { firstName, lastName, phone, address } = req.body;
-    const filename = req.files ? req.files[0].filename : undefined;
+    let filename: string | undefined;
+
+    if (Array.isArray(req.files)) {
+      filename = req.files ? req.files[0].filename : undefined;
+    } else if (req.files && typeof req.files === "object") {
+      filename = req.files["image"][0].filename || undefined;
+    } else {
+      filename = undefined;
+    }
 
     const customer = await prisma.$transaction(
       async (txl) => {

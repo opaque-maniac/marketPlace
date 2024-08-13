@@ -51,11 +51,19 @@ export const updateProfile = async (
   try {
     const { id } = req.params;
     const { email, firstName, lastName } = req.body;
-    const filename = req.files ? req.files[0].filename : undefined;
+    let filename: string | undefined;
+
+    if (Array.isArray(req.files)) {
+      filename = req.files ? req.files[0].filename : undefined;
+    } else if (req.files && typeof req.files === "object") {
+      filename = req.files["image"][0].filename || undefined;
+    } else {
+      filename = undefined;
+    }
 
     const staff = await prisma.$transaction(
       async (txl) => {
-        const updatedStaff = await prisma.staff.update({
+        const updatedStaff = await txl.staff.update({
           where: {
             id,
           },
@@ -67,13 +75,13 @@ export const updateProfile = async (
         });
 
         if (filename) {
-          await prisma.staffImage.deleteMany({
+          await txl.staffImage.deleteMany({
             where: {
               staffID: id,
             },
           });
 
-          await prisma.staffImage.create({
+          await txl.staffImage.create({
             data: {
               url: `uploads/staff/${filename}`,
               staffID: id,

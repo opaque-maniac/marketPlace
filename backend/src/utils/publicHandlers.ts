@@ -8,13 +8,15 @@
 import { Response, NextFunction } from "express";
 import generateToken from "./token";
 import { TokenRefreshRequest } from "../types";
-import jwt from "jsonwebtoken";
+import jwt, { JwtPayload } from "jsonwebtoken";
 
-interface RequestUSer {
-  email: string;
+interface DecodedToken extends JwtPayload {
   id: string;
+  email: string;
   userType: string;
 }
+
+const tokenSecret = process.env.JWT_SECRET || "somethingintheorange";
 
 // To refresh the token
 export const refreshToken = async (
@@ -31,7 +33,7 @@ export const refreshToken = async (
       });
     }
 
-    const user = jwt.verify(refresh, process.env.REFRESH_SECRET) as RequestUSer;
+    const user = jwt.verify(refresh, tokenSecret) as DecodedToken;
     const token = generateToken(user.id, user.email, user.userType);
 
     return res.status(200).json({
