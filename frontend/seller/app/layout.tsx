@@ -2,6 +2,8 @@ import type { Metadata } from "next";
 import { Inter } from "next/font/google";
 import "./globals.css";
 import Header from "./_components/header";
+import Footer from "./_components/footer";
+import ReactQueryProvider from "./_components/reactQuery";
 
 const inter = Inter({ subsets: ["latin"] });
 
@@ -19,7 +21,10 @@ export default function RootLayout({
     <html lang="en">
       <body className={inter.className}>
         <Header />
-        {children}
+        <div className="pt-16" style={{ minHeight: "100vh" }}>
+          <ReactQueryProvider>{children}</ReactQueryProvider>
+        </div>
+        <Footer />
       </body>
     </html>
   );

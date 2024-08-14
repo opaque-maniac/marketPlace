@@ -38,7 +38,7 @@ export const allowIfAuthenticated = (
     if (e instanceof jwt.JsonWebTokenError) {
       if (e.message === "jwt expired") {
         return res.status(401).json({
-          message: "Token expired, please log in again",
+          message: "Token expired",
         });
       }
       return res.status(403).json({
