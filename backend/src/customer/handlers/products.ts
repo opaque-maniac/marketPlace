@@ -69,6 +69,7 @@ export const fetchIndividualProduct = async (
     if (!product) {
       return res.status(404).json({
         message: "Product not found",
+        errorCode: "P400",
       });
     }
 

@@ -21,7 +21,7 @@ export const fetchWishlist = async (
     const limit = req.query.limit ? parseInt(req.query.limit as string) : 10;
 
     if (!customerID) {
-      throw new Error("Customer not found");
+      throw new Error("User not found");
     }
 
     const wishlist = await prisma.wishList.findUnique({
@@ -79,7 +79,7 @@ export const addToWishlist = async (
     const customerID = req.user?.id;
 
     if (!customerID) {
-      throw new Error("Customer not found");
+      throw new Error("User not found");
     }
     const product = await prisma.product.findUnique({
       where: {
@@ -130,7 +130,7 @@ export const fetchWishlistItem = async (
     const wishlistItemID = req.params.id;
 
     if (!customerID) {
-      throw new Error("Customer not found");
+      throw new Error("User not found");
     }
 
     const wishlistItem = await prisma.wishListItem.findUnique({
@@ -150,7 +150,7 @@ export const fetchWishlistItem = async (
     });
 
     if (!wishlistItem) {
-      throw new Error("Wishlist item not found");
+      throw new Error("Wishlist not found");
     }
 
     return res.status(200).json({
@@ -175,7 +175,7 @@ export const removeFromWishlist = async (
     const customerID = req.user?.id;
 
     if (!customerID) {
-      throw new Error("Customer not found");
+      throw new Error("User not found");
     }
 
     const wishlistItem = await prisma.wishListItem.delete({
@@ -206,7 +206,7 @@ export const emptyWishlist = async (
     const customerID = req.user?.id;
 
     if (!customerID) {
-      throw new Error("User is undefined");
+      throw new Error("User not found");
     }
 
     const wishlist = await prisma.wishList.findUnique({

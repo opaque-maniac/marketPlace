@@ -22,7 +22,7 @@ export const fetchOrders = async (
     const cancel = req.query.cancel === "true";
 
     if (!customerID) {
-      throw new Error("Customer ID not found");
+      throw new Error("User not found");
     }
 
     const orders = await prisma.order.findMany({
@@ -65,7 +65,7 @@ export const fetchIndividualOrder = async (
     const customerID = req.user?.id;
 
     if (!customerID) {
-      throw new Error("Customer ID not found");
+      throw new Error("User not found");
     }
 
     const order = await prisma.order.findUnique({
@@ -87,9 +87,7 @@ export const fetchIndividualOrder = async (
     });
 
     if (!order) {
-      return res.status(404).json({
-        message: "Order not found",
-      });
+      throw new Error("Order not found");
     }
 
     return res.status(200).json({

@@ -134,3 +134,11 @@ export interface StaffUpdateProfileRequest extends AuthenticatedRequest {
     lastName: string;
   };
 }
+
+export interface SendComplantsRequest extends Request {
+  body: {
+    name: string;
+    email: string;
+    message: string;
+  };
+}

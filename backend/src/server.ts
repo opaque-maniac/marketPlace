@@ -8,6 +8,7 @@ import sellerRouter from "./seller/router";
 import rateLimit from "express-rate-limit";
 import { slowDown } from "express-slow-down";
 import staffRouter from "./staff/router";
+import errorHandler from "./utils/errorHandler";
 
 const app = express();
 
@@ -45,5 +46,7 @@ app.use("/staff", staffRouter);
 
 // Token refresh route
 app.post("/api/tokenrefresh", limiter, refreshToken);
+
+app.use(errorHandler);
 
 export default app;

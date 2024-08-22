@@ -19,7 +19,8 @@ export const allowIfAuthenticated = (
 
     if (!token) {
       return res.status(401).json({
-        message: "You need to be logged in to access this route",
+        message: "Auth token not found",
+        errorCode: "J400",
       });
     }
     const decoded = jwt.verify(
@@ -30,24 +31,13 @@ export const allowIfAuthenticated = (
     if (!decoded) {
       return res.status(401).json({
         message: "Invalid token",
+        errorCode: "J402",
       });
     }
     req.user = decoded;
     next();
   } catch (e) {
-    if (e instanceof jwt.JsonWebTokenError) {
-      if (e.message === "jwt expired") {
-        return res.status(401).json({
-          message: "Token expired",
-        });
-      }
-      return res.status(403).json({
-        message: "Unauthorized",
-      });
-    }
-    return res.status(500).json({
-      message: "Internal server error",
-    });
+    return next(e as Error);
   }
 };
 
@@ -60,9 +50,14 @@ export const isProfileOwner = async (
     const { id } = req.params;
     const { user } = req;
 
-    if (id !== user?.id) {
+    if (!user) {
+      throw new Error("User not found");
+    }
+
+    if (id !== user.id) {
       return res.status(403).json({
         message: "You are not authorized to perform this action",
+        errorCode: "J406",
       });
     }
     next();
@@ -104,6 +99,7 @@ export const allowIfActive = async (
       if (currentUser && !currentUser.active) {
         return res.status(401).json({
           message: "Account is not active",
+          errorCode: "I402",
         });
       }
     }
@@ -123,6 +119,10 @@ export const isProductOwner = async (
     const { id } = req.params;
     const { user } = req;
 
+    if (!user) {
+      throw new Error("User not found");
+    }
+
     const product = await prisma.product.findUnique({
       where: {
         id,
@@ -132,12 +132,14 @@ export const isProductOwner = async (
     if (!product) {
       return res.status(404).json({
         message: "Product not found",
+        errorCode: "P400",
       });
     }
 
-    if (product.sellerID !== user?.id) {
+    if (product.sellerID !== user.id) {
       return res.status(403).json({
         message: "You are not authorized to perform this action",
+        errorCode: "J406",
       });
     }
 
@@ -155,9 +157,14 @@ export const isSeller = async (
   try {
     const { user } = req;
 
-    if (user?.userType !== "seller") {
+    if (!user) {
+      throw new Error("User not found");
+    }
+
+    if (user.userType !== "seller") {
       return res.status(403).json({
         message: "You are not authorized to perform this action",
+        errorCode: "J406",
       });
     }
 
@@ -175,9 +182,14 @@ export const isCustomer = async (
   try {
     const { user } = req;
 
-    if (user && user.userType !== "customer") {
+    if (!user) {
+      throw new Error("User not found");
+    }
+
+    if (user.userType !== "customer") {
       return res.status(403).json({
         message: "You are not authorized to perform this action",
+        errorCode: "J406",
       });
     }
 
@@ -195,9 +207,14 @@ export const isStaff = async (
   try {
     const { user } = req;
 
-    if (user?.userType !== "staff") {
+    if (!user) {
+      throw new Error("User not found");
+    }
+
+    if (user.userType !== "staff") {
       return res.status(403).json({
         message: "You are not authorized to perform this action",
+        errorCode: "J406",
       });
     }
 
@@ -222,12 +239,14 @@ export const isAdminOrProfileOwner = async (
     if (!staff) {
       return res.status(403).json({
         message: "You are not authorized to perform this action",
+        errorCode: "J406",
       });
     }
 
     if (staff.role !== "ADMIN" || staff.id != req.user?.id) {
       return res.status(403).json({
         message: "You are not authorized to perform this action",
+        errorCode: "J406",
       });
     }
     next();
@@ -244,9 +263,14 @@ export const isAdmin = async (
   try {
     const { user } = req;
 
-    if (!user || user.userType !== "staff") {
+    if (!user) {
+      throw new Error("User not found");
+    }
+
+    if (user.userType !== "staff") {
       return res.status(403).json({
         message: "You are not authorized to perform this action",
+        errorCode: "J406",
       });
     }
 
@@ -259,6 +283,7 @@ export const isAdmin = async (
     if (!staff || staff?.role !== "ADMIN") {
       return res.status(403).json({
         message: "You are not authorized to perform this action",
+        errorCode: "J406",
       });
     }
     next();

@@ -29,6 +29,7 @@ export const fetchProductComments = async (
     if (!product) {
       return res.status(404).json({
         message: "Product not found",
+        errorCode: "P400",
       });
     }
 
@@ -82,6 +83,7 @@ export const createProductComment = async (
     if (!product) {
       return res.status(404).json({
         message: "Product not found",
+        errorCode: "P400",
       });
     }
 
@@ -128,6 +130,18 @@ export const fetchIndividualComment = async (
         },
       },
     });
+
+    if (!comment) {
+      return res.status(404).json({
+        message: "Comment not found",
+        errorCode: "C400",
+      });
+    }
+
+    return res.status(200).json({
+      message: "Comment found",
+      comment,
+    });
   } catch (e) {
     return next(e as Error);
   }
@@ -151,6 +165,7 @@ export const deleteProductComment = async (
     if (!product) {
       return res.status(404).json({
         message: "Product not found",
+        errorCode: "P400",
       });
     }
 

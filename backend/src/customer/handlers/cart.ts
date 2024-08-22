@@ -89,6 +89,7 @@ export const fetchCartItem = async (
     if (!cartItems) {
       return res.status(404).json({
         message: "Cart item not found",
+        errorCode: "M400",
       });
     }
 
@@ -159,6 +160,11 @@ export const orderCartItem = async (
         timeout: 10000,
       }
     );
+
+    return res.status(201).json({
+      message: "Order created",
+      order,
+    });
   } catch (e) {
     return next(e as Error);
   }
@@ -267,7 +273,7 @@ export const removeFromCart = async (
     const customerID = req.user?.id;
 
     if (!customerID) {
-      throw new Error("User is undefined");
+      throw new Error("User not found");
     }
 
     const cartItem = await prisma.cartItem.delete({
@@ -300,7 +306,7 @@ export const addToCart = async (
     const customerID = req.user?.id;
 
     if (!customerID) {
-      throw new Error("User is undefined");
+      throw new Error("User not found");
     }
 
     const cart = await prisma.cart.findUnique({
@@ -375,7 +381,7 @@ export const emptyCart = async (
     const customerID = req.user?.id;
 
     if (!customerID) {
-      throw new Error("User is undefined");
+      throw new Error("User not found");
     }
 
     const cart = await prisma.cart.findUnique({

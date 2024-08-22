@@ -30,6 +30,7 @@ export const register = async (
     if (alreadyExists) {
       return res.status(400).json({
         message: "User already exists",
+        errorCode: "I400",
       });
     }
 
@@ -101,12 +102,14 @@ export const login = async (
     if (!customer) {
       return res.status(401).json({
         message: "Invalid email or password",
+        errorCode: "I401",
       });
     }
 
     if (!customer.active) {
       return res.status(401).json({
         message: "Account is not active",
+        errorCode: "I402",
       });
     }
 
@@ -115,6 +118,7 @@ export const login = async (
     if (!isPasswordValid) {
       return res.status(401).json({
         message: "Invalid email or password",
+        errorCode: "I403",
       });
     }
 

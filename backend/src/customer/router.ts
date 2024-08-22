@@ -41,6 +41,14 @@ import {
   fetchIndividualOrder,
   fetchOrders,
 } from "./handlers/orders";
+import rateLimit from "express-rate-limit";
+import { sendComplaints } from "./handlers/complaints";
+
+const limiter = rateLimit({
+  windowMs: 15 * 60 * 1000,
+  limit: 10,
+  message: "Too many requests",
+});
 
 const customerRouter = Router();
 
@@ -192,6 +200,16 @@ customerRouter.delete(
   allowIfAuthenticated,
   isCustomer,
   cancelOrder
+);
+
+// For complaints
+customerRouter.post(
+  "/complaints",
+  limiter,
+  body("email").isEmail(),
+  body("name").isString().isLength(stringConfig),
+  body("message").isString().isLength(stringConfig),
+  sendComplaints
 );
 
 // Add endpoints for creating orders after figuring out how to handle

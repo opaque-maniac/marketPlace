@@ -33,6 +33,14 @@ import {
   fetchIndividualComment,
   fetchProductComments,
 } from "./handlers/comments";
+import { sendComplaints } from "./handlers/complaints";
+import rateLimit from "express-rate-limit";
+
+const limiter = rateLimit({
+  windowMs: 15 * 60 * 1000,
+  limit: 10,
+  message: "Too many requests",
+});
 
 const sellerRouter = Router();
 
@@ -165,6 +173,16 @@ sellerRouter.post(
   allowIfAuthenticated,
   isSeller,
   searchOrder
+);
+
+// For complaints
+sellerRouter.post(
+  "/complaints",
+  limiter,
+  body("email").isEmail(),
+  body("name").isString().isLength(stringConfig),
+  body("message").isString().isLength(stringConfig),
+  sendComplaints
 );
 
 export default sellerRouter;
