@@ -19,12 +19,17 @@ export const fetchOrders = async (
     const page = req.query.page ? parseInt(req.query.page as string) : 1;
     const limit = req.query.limit ? parseInt(req.query.limit as string) : 10;
     const ready = req.query.ready === "true";
+    const { user } = req;
+
+    if (!user) {
+      throw new Error("User not found");
+    }
 
     const orderItems = await prisma.orderItem.findMany({
       where: {
         ready,
         product: {
-          sellerID: req.user?.id,
+          sellerID: user.id,
         },
       },
       include: {
@@ -61,6 +66,11 @@ export const fetchIndividualOrder = async (
 ) => {
   try {
     const { id } = req.params;
+    const { user } = req;
+
+    if (!user) {
+      throw new Error("User not found");
+    }
 
     const orderItem = await prisma.orderItem.findUnique({
       where: {
@@ -86,7 +96,7 @@ export const fetchIndividualOrder = async (
       });
     }
 
-    if (orderItem.product.sellerID !== req.user?.id) {
+    if (orderItem.product.sellerID !== user.id) {
       return res.status(403).json({
         message: "Unauthorized",
       });
@@ -109,17 +119,17 @@ export const makeOrderReady = async (
 ) => {
   try {
     const { id } = req.params;
-    const sellerID = req.user?.id;
+    const { user } = req;
 
-    if (!sellerID) {
-      throw new Error("Unauthorized");
+    if (!user) {
+      throw new Error("User not found");
     }
 
     const updatedOrderItem = await prisma.orderItem.update({
       where: {
         id,
         product: {
-          sellerID,
+          sellerID: user.id,
         },
       },
       data: {

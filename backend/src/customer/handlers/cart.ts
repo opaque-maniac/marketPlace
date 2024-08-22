@@ -20,9 +20,13 @@ export const fetchCart = async (
     const page = req.query.page ? parseInt(req.query.page as string) : 1;
     const limit = req.query.limit ? parseInt(req.query.limit as string) : 10;
 
+    if (!user) {
+      throw new Error("User not found");
+    }
+
     const cart = await prisma.cart.findUnique({
       where: {
-        customerID: user?.id,
+        customerID: user.id,
       },
     });
 
@@ -110,17 +114,17 @@ export const orderCartItem = async (
 ) => {
   try {
     const { id } = req.params;
-    const customerID = req.user?.id;
+    const { user } = req;
 
-    if (!customerID) {
-      throw new Error("User is undefined");
+    if (!user) {
+      throw new Error("User not found");
     }
 
     const cartItem = await prisma.cartItem.findUnique({
       where: {
         id,
         cart: {
-          customerID,
+          customerID: user.id,
         },
       },
     });
@@ -133,7 +137,7 @@ export const orderCartItem = async (
       async (txl) => {
         const newOrder = await txl.order.create({
           data: {
-            customerID,
+            customerID: user.id,
             status: "PENDING",
           },
         });
@@ -177,15 +181,15 @@ export const orderAllCartItems = async (
   next: NextFunction
 ) => {
   try {
-    const customerID = req.user?.id;
+    const { user } = req;
 
-    if (!customerID) {
-      throw new Error("User is undefined");
+    if (!user) {
+      throw new Error("User not found");
     }
 
     const cart = await prisma.cart.findUnique({
       where: {
-        customerID,
+        customerID: user.id,
       },
     });
 
@@ -210,7 +214,7 @@ export const orderAllCartItems = async (
       async (txl) => {
         const newOrder = await txl.order.create({
           data: {
-            customerID,
+            customerID: user.id,
             status: "PENDING",
           },
         });
@@ -270,9 +274,9 @@ export const removeFromCart = async (
   try {
     const { id } = req.params;
 
-    const customerID = req.user?.id;
+    const { user } = req;
 
-    if (!customerID) {
+    if (!user) {
       throw new Error("User not found");
     }
 
@@ -280,7 +284,7 @@ export const removeFromCart = async (
       where: {
         id,
         cart: {
-          customerID,
+          customerID: user.id,
         },
       },
     });
@@ -303,15 +307,15 @@ export const addToCart = async (
   try {
     const { id } = req.params;
 
-    const customerID = req.user?.id;
+    const { user } = req;
 
-    if (!customerID) {
+    if (!user) {
       throw new Error("User not found");
     }
 
     const cart = await prisma.cart.findUnique({
       where: {
-        customerID,
+        customerID: user.id,
       },
       include: {
         cartItems: true,
@@ -331,6 +335,7 @@ export const addToCart = async (
     if (!product) {
       return res.status(404).json({
         message: "Product not found",
+        errorCode: "P400",
       });
     }
 
@@ -378,15 +383,15 @@ export const emptyCart = async (
   next: NextFunction
 ) => {
   try {
-    const customerID = req.user?.id;
+    const { user } = req;
 
-    if (!customerID) {
+    if (!user) {
       throw new Error("User not found");
     }
 
     const cart = await prisma.cart.findUnique({
       where: {
-        customerID,
+        customerID: user.id,
       },
     });
 

@@ -30,6 +30,7 @@ export const fetchProfile = async (
     if (!profile) {
       return res.status(404).json({
         message: "Profile not found",
+        errorCode: "I401",
       });
     }
 

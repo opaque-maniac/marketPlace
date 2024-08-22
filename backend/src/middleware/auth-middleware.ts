@@ -231,6 +231,11 @@ export const isAdminOrProfileOwner = async (
 ) => {
   try {
     const { id } = req.params;
+    const { user } = req;
+
+    if (!user) {
+      throw new Error("User not found");
+    }
 
     const staff = await prisma.staff.findUnique({
       where: { id },
@@ -243,7 +248,7 @@ export const isAdminOrProfileOwner = async (
       });
     }
 
-    if (staff.role !== "ADMIN" || staff.id != req.user?.id) {
+    if (staff.role !== "ADMIN" || staff.id != user.id) {
       return res.status(403).json({
         message: "You are not authorized to perform this action",
         errorCode: "J406",

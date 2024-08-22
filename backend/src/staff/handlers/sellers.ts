@@ -68,6 +68,7 @@ export const fetchIndividualSeller = async (
     if (!seller) {
       return res.status(404).json({
         message: "Seller not found",
+        errorCode: "I401",
       });
     }
 
@@ -100,6 +101,7 @@ export const fetchSellerProducts = async (
     if (!seller) {
       return res.status(404).json({
         message: "Seller not found",
+        errorCode: "I401",
       });
     }
 

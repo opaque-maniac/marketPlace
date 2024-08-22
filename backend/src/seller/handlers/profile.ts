@@ -30,6 +30,7 @@ export const fetchProfile = async (
     if (!seller) {
       return res.status(404).json({
         message: "Seller not found",
+        errorCode: "I403",
       });
     }
 

@@ -65,6 +65,13 @@ export const fetchIndividualCustomer = async (
       },
     });
 
+    if (!customer) {
+      return res.status(404).json({
+        message: "Customer not found",
+        errorCode: "I401",
+      });
+    }
+
     return res.status(200).json({
       message: "Customer fetched successfully",
       customer,

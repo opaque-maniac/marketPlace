@@ -20,7 +20,7 @@ const errorHandler = async (error: Error, req: Request, res: Response) => {
   if (error.message === "User not found") {
     return res.status(404).json({
       message: "User not found",
-      errorCode: "J406",
+      errorCode: "I403",
     });
   }
 
@@ -52,6 +52,14 @@ const errorHandler = async (error: Error, req: Request, res: Response) => {
     return res.status(404).json({
       message: "Order not found",
       errorCode: "O400",
+    });
+  }
+
+  // Cart item not found
+  if (error.message === "Cart item not found") {
+    return res.status(404).json({
+      message: "Cart item not found",
+      errorCode: "M402",
     });
   }
 

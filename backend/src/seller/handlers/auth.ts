@@ -72,6 +72,7 @@ export const login = async (
     if (!isPasswordValid) {
       return res.status(401).json({
         message: "Invalid email or password",
+        errorCode: "I403",
       });
     }
 

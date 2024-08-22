@@ -9,6 +9,9 @@ import rateLimit from "express-rate-limit";
 import { slowDown } from "express-slow-down";
 import staffRouter from "./staff/router";
 import errorHandler from "./utils/errorHandler";
+import { sendComplaints } from "./seller/handlers/complaints";
+import { stringConfig } from "./utils/globals";
+import { body } from "express-validator";
 
 const app = express();
 
@@ -46,6 +49,14 @@ app.use("/staff", staffRouter);
 
 // Token refresh route
 app.post("/api/tokenrefresh", limiter, refreshToken);
+app.post(
+  "/complaints",
+  limiter,
+  body("email").isEmail(),
+  body("name").isString().isLength(stringConfig),
+  body("message").isString().isLength(stringConfig),
+  sendComplaints
+);
 
 app.use(errorHandler);
 

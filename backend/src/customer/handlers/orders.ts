@@ -16,18 +16,18 @@ export const fetchOrders = async (
   next: NextFunction
 ) => {
   try {
-    const customerID = req.user?.id;
+    const { user } = req;
     const page = req.query.page ? parseInt(req.query.page as string) : 1;
     const limit = req.query.limit ? parseInt(req.query.limit as string) : 10;
     const cancel = req.query.cancel === "true";
 
-    if (!customerID) {
+    if (!user) {
       throw new Error("User not found");
     }
 
     const orders = await prisma.order.findMany({
       where: {
-        customerID,
+        customerID: user.id,
         status: cancel
           ? "CANCELLED"
           : {
@@ -62,16 +62,16 @@ export const fetchIndividualOrder = async (
 ) => {
   try {
     const { id } = req.params;
-    const customerID = req.user?.id;
+    const { user } = req;
 
-    if (!customerID) {
+    if (!user) {
       throw new Error("User not found");
     }
 
     const order = await prisma.order.findUnique({
       where: {
         id,
-        customerID,
+        customerID: user.id,
       },
       include: {
         orderItems: {
@@ -107,16 +107,16 @@ export const cancelOrder = async (
 ) => {
   try {
     const { id } = req.params;
-    const customerID = req.user?.id;
+    const { user } = req;
 
-    if (!customerID) {
-      throw new Error("Customer ID not found");
+    if (!user) {
+      throw new Error("User not found");
     }
 
     const order = await prisma.order.update({
       where: {
         id,
-        customerID,
+        customerID: user.id,
       },
       data: {
         status: "CANCELLED",

@@ -29,6 +29,7 @@ export const fetchProductComments = async (
     if (!product) {
       return res.status(404).json({
         message: "Product not found",
+        errorCode: "P400",
       });
     }
 
@@ -89,6 +90,7 @@ export const fetchIndividualComment = async (
     if (!comment) {
       return res.status(404).json({
         message: "Comment not found",
+        errorCode: "C400",
       });
     }
 

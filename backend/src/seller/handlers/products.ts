@@ -25,9 +25,13 @@ export const fetchProducts = async (
     const page = req.query.page ? parseInt(req.query.page as string) : 1;
     const limit = req.query.limit ? parseInt(req.query.limit as string) : 10;
 
+    if (!user) {
+      throw new Error("User not found");
+    }
+
     const products = await prisma.product.findMany({
       where: {
-        sellerID: user?.id,
+        sellerID: user.id,
       },
       include: {
         images: true,
@@ -61,6 +65,11 @@ export const createProduct = async (
   try {
     const { name, description, price, category, inventory } = req.body;
     let filenames: string[] | undefined;
+    const { user } = req;
+
+    if (!user) {
+      throw new Error("User not found");
+    }
 
     if (req.files && Array.isArray(req.files)) {
       filenames = req.files.map((file) => file.filename);
@@ -68,7 +77,7 @@ export const createProduct = async (
 
     const seller = await prisma.seller.findUnique({
       where: {
-        id: req.user?.id,
+        id: user.id,
       },
     });
 
@@ -228,6 +237,11 @@ export const searchProducts = async (
     const { query } = req.body;
     const page = req.query.page ? parseInt(req.query.page as string) : 1;
     const limit = req.query.limit ? parseInt(req.query.limit as string) : 10;
+    const { user } = req;
+
+    if (!user) {
+      throw new Error("User not found");
+    }
 
     const products = await prisma.product.findMany({
       where: {
@@ -235,7 +249,7 @@ export const searchProducts = async (
           contains: query,
           mode: "insensitive",
         },
-        sellerID: req.user?.id,
+        sellerID: user.id,
       },
       include: {
         images: true,

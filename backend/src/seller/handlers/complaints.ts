@@ -5,7 +5,7 @@
  * @param {NextFunction} next - Next function
  */
 
-import { Request, Response, NextFunction } from "express";
+import { Response, NextFunction } from "express";
 import prisma from "../../utils/db";
 import { SendComplantsRequest } from "../../types";
 

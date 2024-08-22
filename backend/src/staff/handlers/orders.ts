@@ -76,6 +76,7 @@ export const fetchndividualOrder = async (
     if (!order) {
       return res.status(404).json({
         message: "Order not found",
+        errorCode: "O400",
       });
     }
 

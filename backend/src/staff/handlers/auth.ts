@@ -29,6 +29,7 @@ export const login = async (
     if (!staff) {
       return res.status(401).json({
         message: "Invalid email or password",
+        errorCode: "I403",
       });
     }
 
@@ -37,6 +38,7 @@ export const login = async (
     if (!match) {
       return res.status(401).json({
         message: "Invalid email or password",
+        errorCode: "I403",
       });
     }
 

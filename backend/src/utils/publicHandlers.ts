@@ -44,10 +44,12 @@ export const refreshToken = async (
       if (e.message === "jwt expired") {
         return res.status(401).json({
           message: "Refresh token expired, log in again",
+          errorCode: "J404",
         });
       }
       return res.status(403).json({
         message: "Unauthorized",
+        errorCode: "J406",
       });
     }
     next(e as Error);

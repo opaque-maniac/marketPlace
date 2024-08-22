@@ -16,17 +16,17 @@ export const fetchWishlist = async (
   next: NextFunction
 ) => {
   try {
-    const customerID = req.user?.id;
+    const { user } = req;
     const page = req.query.page ? parseInt(req.query.page as string) : 1;
     const limit = req.query.limit ? parseInt(req.query.limit as string) : 10;
 
-    if (!customerID) {
+    if (!user) {
       throw new Error("User not found");
     }
 
     const wishlist = await prisma.wishList.findUnique({
       where: {
-        customerID,
+        customerID: user.id,
       },
     });
 
@@ -76,9 +76,9 @@ export const addToWishlist = async (
   try {
     const { id } = req.params;
 
-    const customerID = req.user?.id;
+    const { user } = req;
 
-    if (!customerID) {
+    if (!user) {
       throw new Error("User not found");
     }
     const product = await prisma.product.findUnique({
@@ -95,7 +95,7 @@ export const addToWishlist = async (
 
     const wishlist = await prisma.wishList.findUnique({
       where: {
-        customerID,
+        customerID: user.id,
       },
     });
 
@@ -126,10 +126,10 @@ export const fetchWishlistItem = async (
   next: NextFunction
 ) => {
   try {
-    const customerID = req.user?.id;
+    const { user } = req;
     const wishlistItemID = req.params.id;
 
-    if (!customerID) {
+    if (!user) {
       throw new Error("User not found");
     }
 
@@ -137,7 +137,7 @@ export const fetchWishlistItem = async (
       where: {
         id: wishlistItemID,
         wishlist: {
-          customerID,
+          customerID: user.id,
         },
       },
       include: {
@@ -172,9 +172,9 @@ export const removeFromWishlist = async (
 ) => {
   try {
     const { id } = req.params;
-    const customerID = req.user?.id;
+    const { user } = req;
 
-    if (!customerID) {
+    if (!user) {
       throw new Error("User not found");
     }
 
@@ -182,7 +182,7 @@ export const removeFromWishlist = async (
       where: {
         id,
         wishlist: {
-          customerID,
+          customerID: user.id,
         },
       },
     });
@@ -203,15 +203,15 @@ export const emptyWishlist = async (
   next: NextFunction
 ) => {
   try {
-    const customerID = req.user?.id;
+    const { user } = req;
 
-    if (!customerID) {
+    if (!user) {
       throw new Error("User not found");
     }
 
     const wishlist = await prisma.wishList.findUnique({
       where: {
-        customerID,
+        customerID: user.id,
       },
     });
 
