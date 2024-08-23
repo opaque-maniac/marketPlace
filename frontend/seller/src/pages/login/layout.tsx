@@ -5,7 +5,7 @@ interface Props {
 
 const AuthLayout = ({ children, page }: Props) => {
   return (
-    <main className="h-full pt-20 relative">
+    <main role="main" className="h-full pt-20 relative">
       <p className="absolute top-4 left-4">
         {" "}
         Home / <span className="font-extrabold">{page}</span>

@@ -16,7 +16,7 @@ const SearchForm = () => {
         />
       </div>
       <div>
-        <button className="block h-6 w-6">
+        <button aria-label="Send Search Query" className="block h-6 w-6">
           <SearchIcon />
         </button>
       </div>

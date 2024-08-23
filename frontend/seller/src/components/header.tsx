@@ -20,7 +20,10 @@ const Header = () => {
   };
 
   return (
-    <header className="flex justify-between items-center px-10 border-b border-black/50 h-14 fixed top-0 left-0 right-0 bg-white shadow-md z-10">
+    <header
+      role="banner"
+      className="flex justify-between items-center px-10 border-b border-black/50 h-14 fixed top-0 left-0 right-0 bg-white shadow-md z-10"
+    >
       <div className="h-10 w-10">
         <Link to={user ? "/" : "/login"}>
           <Logo />
@@ -29,7 +32,7 @@ const Header = () => {
       <button
         onClick={handleMenuToggle}
         className="h-8 w-8 border border-black rounded-lg flex items-center justify-center"
-        aria-label="Toggle menu"
+        aria-label="Open menu"
       >
         <MenuIcon />
       </button>

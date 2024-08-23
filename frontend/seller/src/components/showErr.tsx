@@ -9,9 +9,12 @@ interface Props {
 const ShowError = ({ error, callback }: Props) => {
   return (
     <Transition>
-      <div className="w-56 h-12 flex justify-start items-center gap-2">
-        <p className="text-white text-wrap">{error}</p>
+      <div className="w-56 h-12 flex justify-start items-center gap-2 bg-red-400 rounded-lg">
+        <p aria-live="assertive" role="alert" className="text-white text-wrap">
+          {error}
+        </p>
         <button
+          aria-label="Close Error"
           onClick={(e) => {
             e.preventDefault();
             callback();

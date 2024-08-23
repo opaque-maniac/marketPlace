@@ -1,6 +1,8 @@
 const EmailIcon = () => {
   return (
     <svg
+      role="img"
+      aria-labelledby="title"
       xmlns="http://www.w3.org/2000/svg"
       fill="none"
       viewBox="0 0 24 24"
@@ -8,6 +10,7 @@ const EmailIcon = () => {
       stroke="#ffffff"
       className="w-full h-full"
     >
+      <title id="title">Email Icon</title>
       <path
         strokeLinecap="round"
         strokeLinejoin="round"

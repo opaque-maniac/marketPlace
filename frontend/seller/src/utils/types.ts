@@ -44,7 +44,7 @@ export interface Product {
   name: string;
   description: string;
   price: number;
-  stock: number;
+  inventory: number;
   discountPercentage: number;
   images: ProductImages[];
   dateCreated: string;

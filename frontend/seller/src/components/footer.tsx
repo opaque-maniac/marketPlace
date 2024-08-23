@@ -8,7 +8,10 @@ const Footer = () => {
   const user = userStore((state) => state.user);
 
   return (
-    <footer className="bg-black w-full flex lg:justify-evenly justify-center lg:items-start items-center center lg:flex-row flex-col text-white pt-4 lg:pb-4 pb-2">
+    <footer
+      role="contentinfo"
+      className="bg-black w-full flex lg:justify-evenly justify-center lg:items-start items-center center lg:flex-row flex-col text-white pt-4 lg:pb-4 pb-2"
+    >
       <div className="flex justify-center items-center flex-col lg:mb-0 mb-8">
         <h3 className="text-lg font-bold">Support</h3>
         <ul className="flex justify-center items-center flex-col gap-2">

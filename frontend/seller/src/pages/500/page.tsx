@@ -2,6 +2,7 @@ import { useContext, useLayoutEffect } from "react";
 import ErrorContext from "../../utils/errorContext";
 import { Link, useNavigate } from "react-router-dom";
 import Transition from "../../components/transition";
+import { Helmet } from "react-helmet";
 
 const Error500 = () => {
   const [error, setError] = useContext(ErrorContext);
@@ -19,7 +20,14 @@ const Error500 = () => {
 
   return (
     <Transition>
-      <main className="h-full pt-20 relative">
+      <Helmet>
+        <title>500 Server Error</title>
+        <meta name="description" content="404 Not Found" />
+        <meta name="robots" content="noindex" />
+        <meta name="googlebot" content="noindex" />
+        <meta name="google" content="nositelinkssearchbox" />
+      </Helmet>
+      <main role="main" className="h-full pt-20 relative">
         <p className="absolute top-4 left-4">
           {" "}
           Home / <span className="font-extrabold">500</span>

@@ -1,3 +1,4 @@
+import { Helmet } from "react-helmet";
 import EmailIcon from "../../components/icons/email";
 import PhoneIcon from "../../components/icons/phone";
 import Transition from "../../components/transition";
@@ -6,7 +7,14 @@ import ContactForm from "./form";
 const ContactPage = () => {
   return (
     <Transition>
-      <main className="h-full pt-20 relative md:pb-0 pb-6">
+      <Helmet>
+        <title>Contact</title>
+        <meta name="description" content="Contact Hazina" />
+        <meta name="robots" content="nofollow" />
+        <meta name="googlebot" content="nofollow" />
+        <meta name="google" content="nositelinkssearchbox" />
+      </Helmet>
+      <main role="main" className="h-full pt-20 relative md:pb-0 pb-6">
         <p className="absolute top-4 left-4">
           {" "}
           Home / <span className="font-extrabold">Contact</span>

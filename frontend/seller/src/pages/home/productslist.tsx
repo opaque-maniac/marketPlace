@@ -11,7 +11,9 @@ const ProductsList = ({ products }: Props): JSX.Element => {
     <section>
       {products.length === 0 ? (
         <div
-          style={{ minHeight: "30rem" }}
+          style={{
+            minHeight: "calc(100vh - 13.8rem)",
+          }}
           className="flex justify-center items-center"
         >
           <div>

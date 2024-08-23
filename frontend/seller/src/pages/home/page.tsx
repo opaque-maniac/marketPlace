@@ -12,6 +12,7 @@ import { homePageStore } from "../../utils/pageStore";
 import ErrorContext from "../../utils/errorContext";
 import ArrowLeft from "../../components/icons/arrowleft";
 import ArrowRight from "../../components/icons/arrowright";
+import { Helmet } from "react-helmet";
 
 const HomePage = () => {
   const page = homePageStore((state) => state.page);
@@ -76,16 +77,25 @@ const HomePage = () => {
 
   return (
     <Transition>
-      <main>
+      <Helmet>
+        <title>Home</title>
+        <meta name="description" content="Home page for Hazina seller app" />
+        <meta name="robots" content="noindex, nofollow" />
+        <meta name="googlebot" content="noindex, nofollow" />
+        <meta name="google" content="nositelinkssearchbox" />
+      </Helmet>
+      <main role="main">
         <section className="h-full">
-          <div>
-            <h2 className="text-center">Products</h2>
-          </div>
           <div className="h-12">
             {err && <ShowError error={err} callback={callback} />}
           </div>
           {query.isLoading && (
-            <div className="flex justify-center items-center h-80">
+            <div
+              className="flex justify-center items-center"
+              style={{
+                minHeight: "calc(100vh - 13.8rem)",
+              }}
+            >
               <div className="h-20 w-20">
                 <Loader color="#000000" />
               </div>
@@ -99,6 +109,7 @@ const HomePage = () => {
               className="h-7 w-7 p-1 border border-black rounded-full"
               onClick={handlePrev}
               disabled={page === 1}
+              aria-label="Previous Page"
             >
               <ArrowLeft />
             </button>
@@ -109,6 +120,7 @@ const HomePage = () => {
               className="h-7 w-7 p-1 border border-black rounded-full"
               onClick={handleNext}
               disabled={!query.data?.hasNext}
+              aria-label="Next Page"
             >
               <ArrowRight />
             </button>

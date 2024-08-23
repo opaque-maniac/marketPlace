@@ -88,7 +88,12 @@ const Modal = ({ children, callback }: Props) => {
   }, []);
 
   return createPortal(
-    <div className="fixed top-0 left-0 right-0 bottom-0 z-30 bg-black bg-opacity-80">
+    <div
+      role="dialog"
+      aria-modal="true"
+      aria-labelledby="Navigation Modal"
+      className="fixed top-0 left-0 right-0 bottom-0 z-30 bg-black bg-opacity-80"
+    >
       <div className="relative">{children}</div>
     </div>,
     elRef.current,

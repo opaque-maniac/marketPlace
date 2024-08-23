@@ -41,6 +41,7 @@ const CommentList = ({ id }: Props) => {
       <div>
         <div>
           <button
+            aria-label="Previous Page"
             onClick={(e) => {
               e.preventDefault();
               if (page === 1) {
@@ -55,6 +56,7 @@ const CommentList = ({ id }: Props) => {
         <div>{page}</div>
         <div>
           <button
+            aria-label="Next Page"
             onClick={(e) => {
               e.preventDefault();
               if (!query.data?.hasNext) {

@@ -2,17 +2,20 @@ import { Link, useNavigate, useParams } from "react-router-dom";
 import Transition from "../../components/transition";
 import { useQuery } from "@tanstack/react-query";
 import { fetchIndividualProduct } from "../../utils/queries/products";
-import { useEffect, useState } from "react";
+import { useContext, useEffect, useState } from "react";
 import errorHandler from "../../utils/errorHandler";
 import { ErrorResponse } from "../../utils/types";
 import ShowError from "../../components/showErr";
 import Loader from "../../components/loader";
 import CommentList from "./comments";
+import ErrorContext from "../../utils/errorContext";
+import { Helmet } from "react-helmet";
 
 const ProductPage = () => {
   const { id } = useParams();
   const navigate = useNavigate();
   const [err, setErr] = useState<string | null>(null);
+  const [, setError] = useContext(ErrorContext);
 
   useEffect(() => {
     if (!id) {
@@ -30,9 +33,16 @@ const ProductPage = () => {
     const data = query.error;
     try {
       const error = JSON.parse(data.message) as ErrorResponse;
-      const show = errorHandler(error.errorCode, navigate);
+      const [show, url] = errorHandler(error.errorCode);
       if (show) {
         setErr(error.message);
+      } else {
+        if (url) {
+          if (url === "/500") {
+            setError(true);
+          }
+          navigate(url);
+        }
       }
     } catch (e) {
       if (e instanceof Error) {
@@ -49,7 +59,14 @@ const ProductPage = () => {
 
   return (
     <Transition>
-      <main>
+      <Helmet>
+        <title>Products</title>
+        <meta name="description" content="User's current products" />
+        <meta name="robots" content="noindex, nofollow" />
+        <meta name="googlebot" content="noindex, nofollow" />
+        <meta name="google" content="nositelinkssearchbox" />
+      </Helmet>
+      <main role="main">
         <div className="h-12">
           {err && <ShowError error={err} callback={callback} />}
         </div>

@@ -26,6 +26,7 @@ const Navigation = ({ callback }: Props) => {
   return (
     <>
       <button
+        aria-label="Close Menu"
         onClick={(e) => {
           e.preventDefault();
           callback();
@@ -36,7 +37,7 @@ const Navigation = ({ callback }: Props) => {
       </button>
       <div className="fixed h-screen md:w-96 w-52 top-0 right-0 z-40 bg-white px-2">
         <div className="h-20 mt-20">{user ? <SearchForm /> : null}</div>
-        <nav>
+        <nav role="navigation">
           <ul className="flex flex-col justify-start items-center gap-4">
             {user ? (
               <li>

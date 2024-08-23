@@ -23,9 +23,16 @@ const ContactForm = () => {
     mutationFn: sendContact,
     onError: (error) => {
       const obj = JSON.parse(error.message) as ErrorResponse;
-      const show = errorHandler(obj.errorCode, navigate);
+      const [show, url] = errorHandler(obj.errorCode);
       if (show) {
         setErr(obj.message);
+      } else {
+        if (url) {
+          if (url === "/500") {
+            setError(true);
+          }
+          navigate(url);
+        }
       }
     },
     onSuccess: (data) => {
@@ -112,6 +119,7 @@ const ContactForm = () => {
         </div>
         <div className="flex md:justify-end justify-center items-center h-24 md:pr-2">
           <button
+            aria-label="Send Message"
             disabled={mutation.isIdle ? false : true}
             className="flex justify-center items-center bg-red-400 rounded-lg"
             type="submit"
