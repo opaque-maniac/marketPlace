@@ -87,6 +87,7 @@ export const login = async (
       message: "Login successful",
       token,
       refreshToken,
+      seller,
     });
   } catch (e) {
     return next(e as Error);

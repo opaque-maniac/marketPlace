@@ -133,6 +133,7 @@ export const login = async (
       message: "Login successful",
       token,
       refreshToken,
+      customer
     });
   } catch (e) {
     return next(e as Error);

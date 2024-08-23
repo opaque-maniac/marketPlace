@@ -6,15 +6,15 @@ import ContactForm from "./form";
 const ContactPage = () => {
   return (
     <Transition>
-      <main className="h-full pt-20 relative">
+      <main className="h-full pt-20 relative md:pb-0 pb-6">
         <p className="absolute top-4 left-4">
           {" "}
           Home / <span className="font-extrabold">Contact</span>
         </p>
-        <div className="">
-          <div>
+        <div className="flex justify-center items-center md:flex-row flex-col gap-4">
+          <div className="shadow-lg lg:w-auto md:w-250 w-80 md:mx-0 mx-auto px-2">
             <div className="">
-              <div>
+              <div className="flex justify-start items-center gap-2">
                 <div className="h-10 w-10 bg-red-400 rounded-full p-2">
                   <PhoneIcon />
                 </div>
@@ -23,8 +23,9 @@ const ContactPage = () => {
               <p>We are available 24/7 days a week.</p>
               <p>Phone: +12345678910</p>
             </div>
+            <hr className="block my-4" />
             <div>
-              <div>
+              <div className="flex justify-start items-center gap-2">
                 <div className="h-10 w-10 bg-red-400 rounded-full p-2">
                   <EmailIcon />
                 </div>
@@ -35,7 +36,7 @@ const ContactPage = () => {
               <p>Email: complaints@hazina.com</p>
             </div>
           </div>
-          <div>
+          <div className="lg:w-600 md:w-500 shadow-lg">
             <ContactForm />
           </div>
         </div>

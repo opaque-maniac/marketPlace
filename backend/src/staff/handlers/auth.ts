@@ -49,6 +49,7 @@ export const login = async (
       message: "Login successful",
       token,
       refreshToken,
+      staff,
     });
   } catch (e) {
     return next(e as Error);

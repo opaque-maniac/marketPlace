@@ -7,6 +7,7 @@ import Header from "./components/header";
 import Footer from "./components/footer";
 import CheckPermissions from "./utils/permissions";
 import PageLoader from "./components/pageloader";
+import ScrollToTop from "./utils/scrolltotop";
 
 const HomePage = lazy(() => import("./pages/home/page"));
 const LoginPage = lazy(() => import("./pages/login/page"));
@@ -33,6 +34,7 @@ const App = () => {
         <ErrorContext.Provider value={error}>
           <QueryClientProvider client={queryClient}>
             <CheckPermissions />
+            <ScrollToTop />
             <Header />
             <div
               className="pt-14 mx-auto lg:max-w-1300"
