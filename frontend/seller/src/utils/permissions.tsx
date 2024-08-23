@@ -3,7 +3,7 @@ import userStore from "./store";
 import { useLocation, useNavigate } from "react-router-dom";
 
 const CheckPermissions = () => {
-  const noPermissonRequired = [
+  const noPermissionRequired = [
     "/about",
     "/contact",
     "/terms",
@@ -22,12 +22,11 @@ const CheckPermissions = () => {
   const path = useLocation().pathname;
 
   useEffect(() => {
-    console.log(path);
-    if (noPermissonRequired.includes(path)) {
+    if (noPermissionRequired.includes(path)) {
       return;
     } else if (noAuthRequired.includes(path)) {
       if (user) {
-        navigate("/login", { replace: true });
+        navigate("/", { replace: true }); // Redirect to home or another appropriate page
       }
       return;
     } else {
@@ -36,7 +35,7 @@ const CheckPermissions = () => {
       }
     }
     // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [path, user, noAuthRequired, noPermissonRequired]);
+  }, [path, user]);
 
   return null;
 };

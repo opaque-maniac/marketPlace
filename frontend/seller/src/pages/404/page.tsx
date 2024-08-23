@@ -4,13 +4,13 @@ import Transition from "../../components/transition";
 const Error404 = () => {
   return (
     <Transition>
-      <main className="h-full pt-20 relative">
+      <main className="h-full pt-20 relative pb-4">
         <p className="absolute top-4 left-4">
           {" "}
           Home / <span className="font-extrabold">404</span>
         </p>
         <div className="flex justify-center items-center">
-          <h3 className="mx-auto" style={{ fontSize: "110px" }}>
+          <h3 className="mx-auto text-center" style={{ fontSize: "110px" }}>
             404 Not Found
           </h3>
         </div>

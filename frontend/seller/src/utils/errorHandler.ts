@@ -1,9 +1,6 @@
-import { NavigateFunction } from "react-router-dom";
-
 export default function errorHandler(
   errCode: string,
-  navigate: NavigateFunction,
-): boolean {
+): [boolean, string | null] {
   const ignoreErrors = ["I403", "M401", "C400"];
   const redirectToRefreshToken = ["J406", "J404"];
   const logoutErrors = ["J402", "J403"];
@@ -11,30 +8,26 @@ export default function errorHandler(
   const show500Errors = ["S500"];
 
   if (ignoreErrors.includes(errCode)) {
-    return false;
+    return [true, null];
   }
 
   if (redirectToRefreshToken.includes(errCode)) {
-    navigate("/refresh-token");
-    return false;
+    return [false, "/refresh-token"];
   }
 
   if (logoutErrors.includes(errCode)) {
     // Trigger logout process here
-    navigate("/logout");
-    return false;
+    return [false, "/logout"];
   }
 
   if (show404Errors.includes(errCode)) {
-    navigate("/404");
-    return false;
+    return [false, "/404"];
   }
 
   if (show500Errors.includes(errCode)) {
-    navigate("/500");
-    return false;
+    return [false, "/500"];
   }
 
   // If the error should be shown as a message
-  return true;
+  return [true, null];
 }

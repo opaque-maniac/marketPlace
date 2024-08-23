@@ -25,9 +25,52 @@ export interface SuccessLoginRespose {
   message: string;
   token: string;
   refreshToken: string;
-  user: User;
+  seller: User;
 }
 
 export interface SuccessRegisterResponse {
   message: string;
+}
+
+export interface ProductImages {
+  id: string;
+  url: string;
+  productID: string;
+  createdAt: string;
+}
+
+export interface Product {
+  id: string;
+  name: string;
+  description: string;
+  price: number;
+  stock: number;
+  discountPercentage: number;
+  images: ProductImages[];
+  dateCreated: string;
+}
+
+export interface SuccessProductsResponse {
+  message: string;
+  products: Product[];
+  hasNext: boolean;
+}
+
+export interface SuccessProductResponse {
+  message: string;
+  product: Product;
+}
+
+export interface Comment {
+  id: string;
+  productID: string;
+  customerID: string;
+  message: string;
+  createdAt: string;
+}
+
+export interface SuccessCommentsResponse {
+  message: string;
+  comments: Comment[];
+  hasNext: boolean;
 }

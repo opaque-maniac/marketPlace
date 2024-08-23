@@ -2,7 +2,6 @@ import { useMutation } from "@tanstack/react-query";
 import { sendContact } from "../../utils/mutations/contact";
 import {
   FormEventHandler,
-  MouseEventHandler,
   MutableRefObject,
   useContext,
   useState,
@@ -11,8 +10,8 @@ import ErrorContext from "../../utils/errorContext";
 import { useNavigate } from "react-router-dom";
 import { ErrorResponse } from "../../utils/types";
 import errorHandler from "../../utils/errorHandler";
-import CloseIcon from "../../components/icons/closeIcon";
 import Loader from "../../components/loader";
+import ShowError from "../../components/showErr";
 
 const ContactForm = () => {
   const [, setError] = useContext(ErrorContext);
@@ -48,22 +47,14 @@ const ContactForm = () => {
     mutation.mutate({ email, name, phone, message });
   };
 
-  const clickHandler: MouseEventHandler<HTMLButtonElement> = (e) => {
-    e.preventDefault();
-    setErr(null);
+  const callBack = () => {
+    setErr(() => null);
   };
 
   return (
     <>
-      <div className="h-10">
-        {err != null && (
-          <div className="w-full rounded-lg bg-red-400 flex justify-end items-center h-10">
-            <div>{err}</div>
-            <button onClick={clickHandler} className="h-8 w-8">
-              <CloseIcon />
-            </button>
-          </div>
-        )}
+      <div className="h-12">
+        {err && <ShowError error={err} callback={callBack} />}
       </div>
       <form
         onSubmit={submitHandler}
@@ -119,7 +110,7 @@ const ContactForm = () => {
             className="block w-full h-40 bg-gray-200 focus:outline-none pl-1 focus:border-b border-black"
           ></textarea>
         </div>
-        <div className="flex md:justify-end justify-center items-center h-24">
+        <div className="flex md:justify-end justify-center items-center h-24 md:pr-2">
           <button
             disabled={mutation.isIdle ? false : true}
             className="flex justify-center items-center bg-red-400 rounded-lg"

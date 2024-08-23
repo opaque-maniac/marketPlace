@@ -16,6 +16,11 @@ const Error500 = lazy(() => import("./pages/500/page"));
 const ContactPage = lazy(() => import("./pages/contact/page"));
 const AboutPage = lazy(() => import("./pages/about/page"));
 const RegisterPage = lazy(() => import("./pages/register/page"));
+const ProductPage = lazy(() => import("./pages/product/page"));
+const NewProductPage = lazy(() => import("./pages/new/page"));
+const DeleteProductPage = lazy(() => import("./pages/delete/page"));
+const EditProductPage = lazy(() => import("./pages/edit/page"));
+const LogoutPage = lazy(() => import("./pages/logout/page"));
 
 const queryClient = new QueryClient({
   defaultOptions: {
@@ -45,10 +50,15 @@ const App = () => {
               <Suspense fallback={<PageLoader />}>
                 <Routes>
                   <Route path="/" element={<HomePage />} />
+                  <Route path="/products/:id" element={<ProductPage />} />
+                  <Route path="/:id/delete" element={<DeleteProductPage />} />
+                  <Route path="/:id/edit" element={<EditProductPage />} />
+                  <Route path="/new" element={<NewProductPage />} />
                   <Route path="/contact" element={<ContactPage />} />
                   <Route path="/about" element={<AboutPage />} />
                   <Route path="/login" element={<LoginPage />} />
                   <Route path="/register" element={<RegisterPage />} />
+                  <Route path="/logout" element={<LogoutPage />} />
                   <Route path="/500" element={<Error500 />} />
                   <Route path="*" element={<Error404 />} />
                 </Routes>

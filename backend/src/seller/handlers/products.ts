@@ -63,7 +63,8 @@ export const createProduct = async (
   next: NextFunction
 ) => {
   try {
-    const { name, description, price, category, inventory } = req.body;
+    const { name, description, price, category, inventory, discount } =
+      req.body;
     let filenames: string[] | undefined;
     const { user } = req;
 
@@ -96,6 +97,7 @@ export const createProduct = async (
           category: category as CATEGORIES,
           inventory: parseInt(inventory),
           sellerID: seller.id,
+          discountPercentage: parseFloat(discount),
         },
       });
 

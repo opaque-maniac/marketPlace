@@ -5,21 +5,19 @@ import { useMutation } from "@tanstack/react-query";
 import { sendLogin } from "../../utils/mutations/auth";
 import { ErrorResponse } from "../../utils/types";
 import errorHandler from "../../utils/errorHandler";
-import {
-  FormEventHandler,
-  MouseEventHandler,
-  useContext,
-  useState,
-} from "react";
-import CloseIcon from "../../components/icons/closeIcon";
+import { FormEventHandler, useContext, useState } from "react";
 import Loader from "../../components/loader";
 import ErrorContext from "../../utils/errorContext";
 import { setAccessToken, setRefreshToken } from "../../utils/cookies";
 import userStore from "../../utils/store";
+import ShowError from "../../components/showErr";
+import EyeClosed from "../../components/icons/hide";
+import EyeOpen from "../../components/icons/show";
 
 const LoginPage = () => {
   const navigate = useNavigate();
   const [err, setErr] = useState<string | null>(null);
+  const [show, setShow] = useState<boolean>(false);
   const [, setError] = useContext(ErrorContext);
   const setUser = userStore((state) => state.setUser);
 
@@ -27,20 +25,25 @@ const LoginPage = () => {
     mutationFn: sendLogin,
     onError: (error) => {
       const obj = JSON.parse(error.message) as ErrorResponse;
-      const show = errorHandler(obj.errorCode, navigate);
+      const [show, url] = errorHandler(obj.errorCode);
       if (show) {
         setErr(obj.message);
+      } else {
+        if (url) {
+          if (url === "/500") {
+            setError(true);
+          }
+          navigate(url);
+        }
       }
     },
     onSuccess: (data) => {
-      if (data && data.token && data.refreshToken && data.user) {
+      if (data) {
         setAccessToken(data.token);
         setRefreshToken(data.refreshToken);
-        setUser(data.user.id);
+        setUser(data.seller.id);
+        console.log(data);
         navigate("/");
-      } else {
-        setError(true);
-        navigate("/500");
       }
     },
   });
@@ -53,9 +56,8 @@ const LoginPage = () => {
     mutation.mutate({ email, password });
   };
 
-  const clickHandler: MouseEventHandler<HTMLButtonElement> = (e) => {
-    e.preventDefault();
-    setErr(null);
+  const callback = () => {
+    setErr(() => null);
   };
 
   return (
@@ -66,14 +68,7 @@ const LoginPage = () => {
           <p>Enter your details below</p>
         </div>
         <div className="h-12">
-          {err && (
-            <div className="w-full h-10 bg-red-400 flex justify-start items-center gap-1">
-              <p className="text-white text-center">{err}</p>
-              <button onClick={clickHandler} className="h-8 w-8">
-                <CloseIcon />
-              </button>
-            </div>
-          )}
+          {err && <ShowError error={err} callback={callback} />}
         </div>
         <form
           onSubmit={submitHandler}
@@ -92,18 +87,27 @@ const LoginPage = () => {
               className="block w-80 h-14 px-2 text-lg auth-input focus:auth-input focus:outline-none bg-white"
             />
           </div>
-          <div>
+          <div className="relative">
             <label htmlFor="password" className="sr-only">
               Password
             </label>
             <input
-              type="password"
+              type={show ? "text" : "password"}
               id="password"
               name="password"
               placeholder="Password"
               required
-              className="block w-80 h-14 px-2 text-lg auth-input focus:auth-input focus:outline-none bg-white"
+              className="block w-80 h-14 px-2 text-lg auth-input focus:auth-input focus:outline-none bg-white pr-1"
             />
+            <button
+              onClick={(e) => {
+                e.preventDefault();
+                setShow(() => !show);
+              }}
+              className="absolute h-8 bg-transparent top-3 bottom-3 right-1"
+            >
+              {show ? <EyeClosed /> : <EyeOpen />}
+            </button>
           </div>
           <div className="pt-4 flex justify-center gap-4 items-center">
             <button

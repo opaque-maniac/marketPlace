@@ -41,6 +41,7 @@ export interface ProductCreateUpdateRequest extends AuthenticatedRequest {
     category: string;
     sellerID: string;
     inventory: string;
+    discount: string
   };
 }
 
