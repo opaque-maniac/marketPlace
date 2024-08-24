@@ -16,12 +16,13 @@ export const sendComplaints = async (
   next: NextFunction
 ) => {
   try {
-    const { email, name, message } = req.body;
+    const { email, name, message, phone } = req.body;
 
     await prisma.complaint.create({
       data: {
         email,
         name,
+        phone,
         message,
       },
     });

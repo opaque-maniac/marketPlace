@@ -106,6 +106,8 @@ sellerRouter.post(
   body("name").isString().isLength(stringConfig),
   body("description").isString().isLength({ min: 10, max: 255 }),
   body("price").isNumeric(),
+  body("inventory").isNumeric(),
+  body("discount").isNumeric().optional(),
   body("category").isIn(productCategories),
   productUpload.array("images", 5),
   createProduct
@@ -125,6 +127,8 @@ sellerRouter.put(
   body("name").isString().isLength(stringConfig),
   body("description").isString().isLength({ min: 10, max: 255 }),
   body("price").isNumeric(),
+  body("inventory").isNumeric(),
+  body("discount").isNumeric().optional(),
   body("category").isIn(productCategories),
   productUpload.array("images", 5),
   updateIndividualProduct

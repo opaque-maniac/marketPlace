@@ -85,6 +85,7 @@ export const createProduct = async (
     if (!seller) {
       return res.status(404).json({
         message: "Seller not found",
+        errorCode: "J406",
       });
     }
 
@@ -97,7 +98,7 @@ export const createProduct = async (
           category: category as CATEGORIES,
           inventory: parseInt(inventory),
           sellerID: seller.id,
-          discountPercentage: parseFloat(discount),
+          discountPercentage: discount ? parseFloat(discount) : 0,
         },
       });
 
@@ -157,7 +158,8 @@ export const updateIndividualProduct = async (
 ) => {
   try {
     const { id } = req.params;
-    const { name, description, price, category, inventory } = req.body;
+    const { name, description, price, category, inventory, discount } =
+      req.body;
     let filenames: string[] | undefined;
 
     if (req.files && Array.isArray(req.files)) {
@@ -175,6 +177,7 @@ export const updateIndividualProduct = async (
           price: parseFloat(price),
           category: category as CATEGORIES,
           inventory: parseInt(inventory),
+          discountPercentage: discount ? parseInt(discount) : 0,
         },
       });
 

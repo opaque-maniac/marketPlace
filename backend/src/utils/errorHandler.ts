@@ -1,3 +1,9 @@
+import {
+  PrismaClientInitializationError,
+  PrismaClientKnownRequestError,
+  PrismaClientRustPanicError,
+  PrismaClientValidationError,
+} from "@prisma/client/runtime/library";
 import { Request, Response } from "express";
 import { JsonWebTokenError } from "jsonwebtoken";
 
@@ -63,8 +69,38 @@ const errorHandler = async (error: Error, req: Request, res: Response) => {
     });
   }
 
+  // Prisma errors
+  if (error instanceof PrismaClientRustPanicError) {
+    return res.status(500).json({
+      message: "Internal server error",
+      errorCode: "DB101",
+    });
+  }
+
+  if (error instanceof PrismaClientInitializationError) {
+    return res.status(500).json({
+      message: "Internal server error",
+      errorCode: "DB102",
+    });
+  }
+
+  if (error instanceof PrismaClientKnownRequestError) {
+    return res.status(400).json({
+      message: error.message,
+      errorCode: "DB100",
+    });
+  }
+
+  if (error instanceof PrismaClientValidationError) {
+    return res.status(400).json({
+      message: error.message,
+      errorCode: "DB103",
+    });
+  }
+
   return res.status(500).json({
     message: "Internal server error",
+    errorCode: "S500",
   });
 };
 

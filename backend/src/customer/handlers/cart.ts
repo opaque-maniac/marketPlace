@@ -31,9 +31,7 @@ export const fetchCart = async (
     });
 
     if (!cart) {
-      return res.status(404).json({
-        message: "Cart not found",
-      });
+      throw new Error("Cart not found");
     }
 
     const cartItems = await prisma.cartItem.findMany({
@@ -76,10 +74,18 @@ export const fetchCartItem = async (
 ) => {
   try {
     const { id } = req.params;
+    const { user } = req;
+
+    if (!user) {
+      throw new Error("User not found");
+    }
 
     const cartItems = await prisma.cartItem.findUnique({
       where: {
         id,
+        cart: {
+          customerID: user.id,
+        },
       },
       include: {
         product: {

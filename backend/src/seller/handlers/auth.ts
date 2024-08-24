@@ -58,12 +58,14 @@ export const login = async (
     if (!seller) {
       return res.status(401).json({
         message: "Invalid email or password",
+        errorCode: "I403",
       });
     }
 
     if (!seller.active) {
       return res.status(401).json({
         message: "Account is not active",
+        errorCode: "I402",
       });
     }
 

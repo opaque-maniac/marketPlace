@@ -93,12 +93,14 @@ export const fetchIndividualOrder = async (
     if (!orderItem) {
       return res.status(404).json({
         message: "Order not found",
+        errorCode: "O400",
       });
     }
 
     if (orderItem.product.sellerID !== user.id) {
       return res.status(403).json({
         message: "Unauthorized",
+        errorCode: "J406",
       });
     }
 
@@ -153,6 +155,7 @@ export const makeOrderReady = async (
     if (order.status === "CANCELLED") {
       return res.status(400).json({
         message: "Order has been cancelled",
+        errorCode: "O401",
       });
     }
 

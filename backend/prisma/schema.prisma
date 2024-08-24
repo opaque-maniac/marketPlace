@@ -211,6 +211,7 @@ model Complaint {
   email     String
   name      String
   message   String
+  phone     String
   createdAt DateTime @default(now())
   resolved  Boolean  @default(false)
   staffID   String?

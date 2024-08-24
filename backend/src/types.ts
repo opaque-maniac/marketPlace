@@ -41,7 +41,7 @@ export interface ProductCreateUpdateRequest extends AuthenticatedRequest {
     category: string;
     sellerID: string;
     inventory: string;
-    discount: string
+    discount?: string;
   };
 }
 
@@ -140,6 +140,7 @@ export interface SendComplantsRequest extends Request {
   body: {
     name: string;
     email: string;
+    phone: string;
     message: string;
   };
 }

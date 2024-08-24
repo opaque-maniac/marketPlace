@@ -54,6 +54,10 @@ app.post(
   limiter,
   body("email").isEmail(),
   body("name").isString().isLength(stringConfig),
+  body("phone")
+    .isString()
+    .matches(/^[0-9]+$/)
+    .isLength({ min: 10, max: 10 }),
   body("message").isString().isLength(stringConfig),
   sendComplaints
 );
