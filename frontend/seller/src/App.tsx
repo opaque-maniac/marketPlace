@@ -8,6 +8,7 @@ import Footer from "./components/footer";
 import CheckPermissions from "./utils/permissions";
 import PageLoader from "./components/pageloader";
 import ScrollToTop from "./utils/scrolltotop";
+import DeleteProfilePage from "./pages/deleteprofile/page";
 
 const HomePage = lazy(() => import("./pages/home/page"));
 const LoginPage = lazy(() => import("./pages/login/page"));
@@ -21,6 +22,8 @@ const NewProductPage = lazy(() => import("./pages/new/page"));
 const DeleteProductPage = lazy(() => import("./pages/delete/page"));
 const EditProductPage = lazy(() => import("./pages/edit/page"));
 const LogoutPage = lazy(() => import("./pages/logout/page"));
+const ProfilePage = lazy(() => import("./pages/profile/page"));
+const UpdateProfilePage = lazy(() => import("./pages/editprofile/page"));
 
 const queryClient = new QueryClient({
   defaultOptions: {
@@ -56,6 +59,15 @@ const App = () => {
                   <Route path="/new" element={<NewProductPage />} />
                   <Route path="/contact" element={<ContactPage />} />
                   <Route path="/about" element={<AboutPage />} />
+                  <Route path="/profile" element={<ProfilePage />} />
+                  <Route
+                    path="/profile/update"
+                    element={<UpdateProfilePage />}
+                  />
+                  <Route
+                    path="/profile/delete"
+                    element={<DeleteProfilePage />}
+                  />
                   <Route path="/login" element={<LoginPage />} />
                   <Route path="/register" element={<RegisterPage />} />
                   <Route path="/logout" element={<LogoutPage />} />

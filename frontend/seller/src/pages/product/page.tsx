@@ -1,4 +1,4 @@
-import { Link, useNavigate, useParams } from "react-router-dom";
+import { useNavigate, useParams } from "react-router-dom";
 import Transition from "../../components/transition";
 import { useQuery } from "@tanstack/react-query";
 import { fetchIndividualProduct } from "../../utils/queries/products";
@@ -25,7 +25,7 @@ const ProductPage = () => {
   }, []);
 
   const query = useQuery({
-    queryKey: ["product", id ?? ""],
+    queryKey: ["product", id as string],
     queryFn: fetchIndividualProduct,
   });
 
@@ -71,8 +71,13 @@ const ProductPage = () => {
           {err && <ShowError error={err} callback={callback} />}
         </div>
         {query.isLoading && (
-          <div className="h-40 w-40">
-            <Loader color="#000000" />
+          <div
+            style={{ width: "screen", height: "calc(100vh - 10.8rem)" }}
+            className="flex justify-center items-center"
+          >
+            <div className="h-20 w-20">
+              <Loader color="#000000" />
+            </div>
           </div>
         )}
         {query.isSuccess && (
@@ -80,16 +85,17 @@ const ProductPage = () => {
             {data && data.product ? (
               <>
                 <div>
-                  <section>
-                    <div>
+                  <section className="flex justify-center items-center md:flex-row flex-col md:gap-6">
+                    <div className="md:mb-0 mb-6">
                       <img
-                        src={data.product.images[0].url}
+                        src={`http://localhost:3020/${data.product.images[0].url}`}
                         alt={data.product.name}
+                        className="md:w-600 w-80 md:h-600 h-300 mx-auto"
                       />
                     </div>
                     <div>
                       {data.product.images.length > 1 ? (
-                        <ul>
+                        <ul className="flex justify-center items-center md:flex-col flex-row gap-4 flex-wrap">
                           {data.product.images.map((image, index) => {
                             if (index === 0) {
                               return null;
@@ -99,6 +105,7 @@ const ProductPage = () => {
                                 <img
                                   src={`http://localhost:3020/${image.url}`}
                                   alt={data.product.name}
+                                  className="w-32 h-32"
                                 />
                               </li>
                             );
@@ -107,7 +114,7 @@ const ProductPage = () => {
                       ) : null}
                     </div>
                   </section>
-                  <section>
+                  <section className="md:w-8/12 w-11/12 mx-auto border shadow-xl rounded-lg mt-8 p-2">
                     <h3>{data.product.name}</h3>
                     <div>
                       <span>{data.product.price}</span>
@@ -122,23 +129,41 @@ const ProductPage = () => {
                     <p>{data.product.description}</p>
                     <div>
                       <p>
-                        Created: <span>{data.product.dateCreated}</span>
+                        Created: <span>{data.product.createdAt}</span>
                       </p>
                       <p>
-                        Stock: <span>{data.product.stock}</span>
+                        Stock: <span>{data.product.inventory}</span>
                       </p>
                     </div>
                   </section>
                 </div>
-                <section>
+                <section className="md:w-8/12 w-11/12 mx-auto border shadow-xl rounded-lg mt-8 p-2 flex justify-center items-center md:flex-row flex-col md:gap-14 gap-8">
                   <div>
-                    <Link to={`/${data.product.id}/edit`}>Edit</Link>
+                    <button
+                      className="bg-green-400 w-40 h-10 rounded-lg text-center"
+                      onClick={(e) => {
+                        e.preventDefault();
+                        navigate(`/products/${data.product.id}/edit`);
+                      }}
+                      aria-label="Update Product"
+                    >
+                      Update
+                    </button>
                   </div>
                   <div>
-                    <Link to={`/${data.product.id}/delete`}>Delete</Link>
+                    <button
+                      className="bg-red-400 w-40 h-10 rounded-lg text-center"
+                      onClick={(e) => {
+                        e.preventDefault();
+                        navigate(`/products/${data.product.id}/delete`);
+                      }}
+                      aria-label="Delete Product"
+                    >
+                      Delete
+                    </button>
                   </div>
                 </section>
-                <section>
+                <section className="my-8">
                   {data.product ? (
                     <div>
                       <Transition>

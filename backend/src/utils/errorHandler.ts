@@ -4,10 +4,16 @@ import {
   PrismaClientRustPanicError,
   PrismaClientValidationError,
 } from "@prisma/client/runtime/library";
-import { Request, Response } from "express";
+import { Request, Response, NextFunction } from "express";
 import { JsonWebTokenError } from "jsonwebtoken";
 
-const errorHandler = async (error: Error, req: Request, res: Response) => {
+const errorHandler = async (
+  error: Error,
+  req: Request,
+  res: Response,
+  next: NextFunction
+) => {
+  console.log(error);
   // JWT errors
   if (error instanceof JsonWebTokenError) {
     if (error.message === "jwt expired") {
@@ -53,7 +59,7 @@ const errorHandler = async (error: Error, req: Request, res: Response) => {
     });
   }
 
-  // Order errros
+  // Order errors
   if (error.message === "Order not found") {
     return res.status(404).json({
       message: "Order not found",

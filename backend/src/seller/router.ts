@@ -68,14 +68,14 @@ sellerRouter.post(
 
 // Profile management
 sellerRouter.get(
-  "profile/:id",
+  "/profile/:id",
   allowIfAuthenticated,
   isSeller,
   isProfileOwner,
   fetchProfile
 );
 sellerRouter.put(
-  "profile/:id",
+  "/profile/:id",
   allowIfAuthenticated,
   isSeller,
   isProfileOwner,
@@ -90,7 +90,7 @@ sellerRouter.put(
   updateProfie
 );
 sellerRouter.delete(
-  "profile/:id",
+  "/profile/:id",
   allowIfAuthenticated,
   isSeller,
   isProfileOwner,

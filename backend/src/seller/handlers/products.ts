@@ -103,12 +103,14 @@ export const createProduct = async (
       });
 
       if (filenames) {
-        await txl.productImage.createMany({
-          data: filenames.map((filename) => ({
-            productID: newProduct.id,
-            url: `uploads/products/${filename}`,
-          })),
-        });
+        for (let i = 0; i < filenames.length; i++) {
+          await txl.productImage.create({
+            data: {
+              productID: newProduct.id,
+              url: `uploads/products/${filenames[i]}`,
+            },
+          });
+        }
       }
 
       return newProduct;
@@ -188,12 +190,14 @@ export const updateIndividualProduct = async (
           },
         });
 
-        await txl.productImage.createMany({
-          data: filenames.map((filename) => ({
-            productID: id,
-            url: `uploads/products/${filename}`,
-          })),
-        });
+        for (let i = 0; i < filenames.length; i++) {
+          await txl.productImage.create({
+            data: {
+              productID: updatedProduct.id,
+              url: `uploads/products/${filenames[i]}`,
+            },
+          });
+        }
       }
 
       return updatedProduct;

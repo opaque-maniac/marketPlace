@@ -12,6 +12,7 @@ import errorHandler from "./utils/errorHandler";
 import { sendComplaints } from "./seller/handlers/complaints";
 import { stringConfig } from "./utils/globals";
 import { body } from "express-validator";
+import path from "path";
 
 const app = express();
 
@@ -19,6 +20,7 @@ const app = express();
 app.use(express.json());
 app.use(express.urlencoded({ extended: true }));
 app.use(morgan("dev"));
+app.use("/uploads", express.static(path.join(__dirname, "../uploads")));
 
 // Options for cors
 const corsOptions = {

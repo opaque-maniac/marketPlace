@@ -1,39 +1,14 @@
-import { useNavigate, useParams } from "react-router-dom";
-import Transition from "../../components/transition";
 import { Helmet } from "react-helmet";
-import { MouseEventHandler, useEffect } from "react";
-import { useMutation } from "@tanstack/react-query";
-import { sendDeleteProduct } from "../../utils/mutations/products";
+import Transition from "../../components/transition";
+import { MouseEventHandler } from "react";
+import { useNavigate } from "react-router-dom";
 
-const DeleteProductPage = () => {
-  const { id } = useParams();
+const DeleteProfilePage = () => {
   const navigate = useNavigate();
-
-  useEffect(() => {
-    if (!id) {
-      navigate("/404");
-    }
-    // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, []);
-
-  const mutation = useMutation({
-    mutationFn: sendDeleteProduct,
-    onSuccess: (data) => {
-      console.log(data);
-    },
-    onError: (error) => {
-      console.log(error);
-    },
-  });
-
-  const handleAccept: MouseEventHandler<HTMLButtonElement> = (e) => {
-    e.preventDefault();
-    mutation.mutate(id as string);
-  };
 
   const handleCancel: MouseEventHandler<HTMLButtonElement> = (e) => {
     e.preventDefault();
-    navigate(`/products/${id}`);
+    navigate("/profile");
   };
 
   return (
@@ -58,12 +33,11 @@ const DeleteProductPage = () => {
           }}
         >
           <div>
-            <h2 className="text-center text-2xl md:pb-0 pb-4 mb-6">
+            <h2 className="text-center text-2xl md:pb-0 pb-4 mb-6 md:pt-0 pt-4">
               Are you sure you want to delete your profile
             </h2>
             <div className="flex md:justify-around justify-center items-center md:flex-row flex-col md:gap-0 gap-4">
               <button
-                onClick={handleAccept}
                 className="block h-10 w-40 rounded-lg bg-red-400 md:mb-0 mb-8"
                 aria-label="Delete Product"
               >
@@ -84,4 +58,4 @@ const DeleteProductPage = () => {
   );
 };
 
-export default DeleteProductPage;
+export default DeleteProfilePage;

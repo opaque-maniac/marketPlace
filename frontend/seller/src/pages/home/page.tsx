@@ -93,7 +93,7 @@ const HomePage = () => {
             <div
               className="flex justify-center items-center"
               style={{
-                minHeight: "calc(100vh - 13.8rem)",
+                minHeight: "calc(100vh - 10.8rem)",
               }}
             >
               <div className="h-20 w-20">

@@ -17,6 +17,7 @@ export const fetchProfile = async (
 ) => {
   try {
     const { id } = req.params;
+    console.log(id);
 
     const seller = await prisma.seller.findUnique({
       where: {

@@ -12,7 +12,7 @@ const ProductsList = ({ products }: Props): JSX.Element => {
       {products.length === 0 ? (
         <div
           style={{
-            minHeight: "calc(100vh - 13.8rem)",
+            minHeight: "calc(100vh - 10.8rem)",
           }}
           className="flex justify-center items-center"
         >
@@ -21,7 +21,12 @@ const ProductsList = ({ products }: Props): JSX.Element => {
           </div>
         </div>
       ) : (
-        <ul>
+        <ul
+          style={{
+            minHeight: "calc(100vh - 10.8rem)",
+          }}
+          className="flex md:justify-start justify-center items-center gap-6 flex-wrap h-full"
+        >
           {products.map((product) => (
             <li key={product.id}>
               <ProductItem product={product} />

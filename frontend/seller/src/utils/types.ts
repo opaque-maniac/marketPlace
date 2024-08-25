@@ -14,18 +14,11 @@ export interface SuccessComplaintResponse {
   message: string;
 }
 
-export interface User {
-  id: string;
-  email: string;
-  name: string;
-  password: string;
-}
-
 export interface SuccessLoginRespose {
   message: string;
   token: string;
   refreshToken: string;
-  seller: User;
+  seller: Seller;
 }
 
 export interface SuccessRegisterResponse {
@@ -39,15 +32,29 @@ export interface ProductImages {
   createdAt: string;
 }
 
+type Categories =
+  | "ELECTRONICS"
+  | "FASHION"
+  | "HOME"
+  | "BEAUTY"
+  | "SPORTS"
+  | "FOOD"
+  | "BOOKS"
+  | "TOYS"
+  | "OTHER";
+
 export interface Product {
   id: string;
   name: string;
   description: string;
   price: number;
   inventory: number;
+  category: Categories;
   discountPercentage: number;
   images: ProductImages[];
-  dateCreated: string;
+  createdAt: string;
+  updatedAt: string | null;
+  sellerID: string;
 }
 
 export interface SuccessProductsResponse {
@@ -71,6 +78,38 @@ export interface Comment {
 
 export interface SuccessCommentsResponse {
   message: string;
-  comments: Comment[];
+  data: Comment[];
   hasNext: boolean;
+}
+
+export interface SuccessNewProductResponse {
+  message: string;
+  product: Product;
+}
+
+export interface SuccessProductDelete {
+  message: string;
+}
+
+export interface SellerImage {
+  id: string;
+  url: string;
+  createdAt: string;
+  sellerID: string;
+}
+
+export interface Seller {
+  id: string;
+  name: string;
+  email: string;
+  address?: string;
+  phone?: string;
+  createdAt: string;
+  updatedAt: string | null;
+  image?: SellerImage;
+}
+
+export interface SuccessSellerResponse {
+  message: string;
+  seller: Seller;
 }

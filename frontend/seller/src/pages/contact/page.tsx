@@ -20,7 +20,7 @@ const ContactPage = () => {
           Home / <span className="font-extrabold">Contact</span>
         </p>
         <div className="flex justify-center items-center md:flex-row flex-col gap-4">
-          <div className="shadow-lg lg:w-auto md:w-250 w-80 md:mx-0 mx-auto px-2">
+          <div className="shadow-xl border rounded-lg lg:w-auto md:w-250 w-80 md:mx-0 mx-auto px-2 py-2">
             <div className="">
               <div className="flex justify-start items-center gap-2">
                 <div className="h-10 w-10 bg-red-400 rounded-full p-2">
@@ -44,7 +44,7 @@ const ContactPage = () => {
               <p>Email: complaints@hazina.com</p>
             </div>
           </div>
-          <div className="lg:w-600 md:w-500 shadow-lg">
+          <div className="lg:w-600 md:w-500 shadow-xl border rounded-lg">
             <ContactForm />
           </div>
         </div>

@@ -1,11 +1,24 @@
 export default function errorHandler(
   errCode: string,
 ): [boolean, string | null] {
-  const ignoreErrors = ["I403", "M401", "C400"];
-  const redirectToRefreshToken = ["J406", "J404"];
-  const logoutErrors = ["J402", "J403"];
-  const show404Errors = ["P400", "C400", "M400", "W400", "O400", "I401"];
-  const show500Errors = ["S500"];
+  const ignoreErrors = [
+    "C400",
+    "M400",
+    "W400",
+    "O401",
+    "I400",
+    "I401",
+    "I403",
+    "I402",
+  ];
+  const redirectToRefreshToken = ["J401"];
+  const logoutErrors = ["J400", "J402", "J403", "J404", "J405", "R400"];
+  const show404Errors = ["J406", "P400", "M402", "O400"];
+  const show500Errors = ["S500", "M401", "BD100", "BD101", "BD102", "BD103"];
+
+  if (!errCode) {
+    return [false, "/500"];
+  }
 
   if (ignoreErrors.includes(errCode)) {
     return [true, null];
@@ -28,6 +41,10 @@ export default function errorHandler(
     return [false, "/500"];
   }
 
+  if (ignoreErrors.includes(errCode)) {
+    return [true, null];
+  }
+
   // If the error should be shown as a message
-  return [true, null];
+  return [false, "/500"];
 }
