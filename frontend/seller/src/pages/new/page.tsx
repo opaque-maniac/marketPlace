@@ -3,13 +3,17 @@ import Transition from "../../components/transition";
 import { Link, useNavigate } from "react-router-dom";
 import { useMutation } from "@tanstack/react-query";
 import { sendNewProduct } from "../../utils/mutations/products";
-import { FormEventHandler, useContext } from "react";
+import { FormEventHandler, useContext, useState } from "react";
 import Loader from "../../components/loader";
 import ErrorContext from "../../utils/errorContext";
+import { ErrorResponse } from "../../utils/types";
+import errorHandler from "../../utils/errorHandler";
+import ShowError from "../../components/showErr";
 
 const NewProductPage = () => {
   const navigate = useNavigate();
   const [, setError] = useContext(ErrorContext);
+  const [err, setErr] = useState<string | null>(null);
 
   const mutation = useMutation({
     mutationFn: sendNewProduct,
@@ -22,7 +26,22 @@ const NewProductPage = () => {
       }
     },
     onError: (error) => {
-      console.log(error);
+      const errorObj = JSON.parse(error.message) as ErrorResponse;
+      const [show, url] = errorHandler(errorObj.errorCode);
+
+      if (show) {
+        setErr(errorObj.message);
+      } else {
+        if (url) {
+          if (url === "/500") {
+            setError(true);
+          }
+          navigate(url, { replace: true });
+        } else {
+          setError(true);
+          navigate("/500", { replace: true });
+        }
+      }
     },
   });
 
@@ -30,6 +49,10 @@ const NewProductPage = () => {
     e.preventDefault();
     const formData = new FormData(e.currentTarget);
     mutation.mutate({ data: formData });
+  };
+
+  const callback = () => {
+    setErr(() => null);
   };
 
   return (
@@ -49,6 +72,9 @@ const NewProductPage = () => {
         </p>
         <div className="pt-4">
           <h2 className="text-center text-3xl md:pb-0 pb-4">New Product</h2>
+        </div>
+        <div className="h-12">
+          {err && <ShowError error={err} callback={callback} />}
         </div>
         <section
           className="md:flex justify-center items-center"

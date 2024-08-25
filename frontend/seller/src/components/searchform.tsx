@@ -1,8 +1,23 @@
+import { FormEventHandler } from "react";
 import SearchIcon from "./icons/searchIcon";
+import { useNavigate } from "react-router-dom";
 
 const SearchForm = () => {
+  const navigate = useNavigate();
+
+  const submitHandler: FormEventHandler<HTMLFormElement> = (e) => {
+    e.preventDefault();
+    const formDate = new FormData(e.currentTarget);
+    const query = formDate.get("query") as string;
+    const encoded = encodeURIComponent(query);
+    navigate(`/search?query=${encoded}`);
+  };
+
   return (
-    <form className="flex justify-start items-center border border-black rounded-xl h-12 px-2 w-full md:w-80 mx-auto">
+    <form
+      onSubmit={submitHandler}
+      className="flex justify-start items-center border border-black rounded-xl h-12 px-2 w-full md:w-80 mx-auto"
+    >
       <div>
         <label htmlFor="query" className="sr-only">
           Query

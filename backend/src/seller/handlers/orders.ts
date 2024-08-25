@@ -18,7 +18,7 @@ export const fetchOrders = async (
   try {
     const page = req.query.page ? parseInt(req.query.page as string) : 1;
     const limit = req.query.limit ? parseInt(req.query.limit as string) : 10;
-    const ready = req.query.ready === "true";
+    const ready = req.query.ready === "true" ? true : req.query.ready === "all" ? undefined : false;
     const { user } = req;
 
     if (!user) {

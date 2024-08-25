@@ -8,7 +8,6 @@ import Footer from "./components/footer";
 import CheckPermissions from "./utils/permissions";
 import PageLoader from "./components/pageloader";
 import ScrollToTop from "./utils/scrolltotop";
-import DeleteProfilePage from "./pages/deleteprofile/page";
 
 const HomePage = lazy(() => import("./pages/home/page"));
 const LoginPage = lazy(() => import("./pages/login/page"));
@@ -19,11 +18,17 @@ const AboutPage = lazy(() => import("./pages/about/page"));
 const RegisterPage = lazy(() => import("./pages/register/page"));
 const ProductPage = lazy(() => import("./pages/product/page"));
 const NewProductPage = lazy(() => import("./pages/new/page"));
-const DeleteProductPage = lazy(() => import("./pages/delete/page"));
-const EditProductPage = lazy(() => import("./pages/edit/page"));
 const LogoutPage = lazy(() => import("./pages/logout/page"));
 const ProfilePage = lazy(() => import("./pages/profile/page"));
 const UpdateProfilePage = lazy(() => import("./pages/editprofile/page"));
+const DeleteProductPage = lazy(() => import("./pages/delete/page"));
+const EditProductPage = lazy(() => import("./pages/edit/page"));
+const FeePage = lazy(() => import("./pages/fee/page"));
+const PrivacyPage = lazy(() => import("./pages/privacy/page"));
+const FAQPage = lazy(() => import("./pages/faq/page"));
+const TermsPage = lazy(() => import("./pages/terms/page"));
+const DeleteProfilePage = lazy(() => import("./pages/deleteprofile/page"));
+const OrdersPage = lazy(() => import("./pages/orders/page"));
 
 const queryClient = new QueryClient({
   defaultOptions: {
@@ -54,11 +59,21 @@ const App = () => {
                 <Routes>
                   <Route path="/" element={<HomePage />} />
                   <Route path="/products/:id" element={<ProductPage />} />
-                  <Route path="/:id/delete" element={<DeleteProductPage />} />
-                  <Route path="/:id/edit" element={<EditProductPage />} />
+                  <Route
+                    path="/products/:id/delete"
+                    element={<DeleteProductPage />}
+                  />
+                  <Route
+                    path="/products/:id/edit"
+                    element={<EditProductPage />}
+                  />
                   <Route path="/new" element={<NewProductPage />} />
                   <Route path="/contact" element={<ContactPage />} />
                   <Route path="/about" element={<AboutPage />} />
+                  <Route path="/fees" element={<FeePage />} />
+                  <Route path="/privacy" element={<PrivacyPage />} />
+                  <Route path="/faq" element={<FAQPage />} />
+                  <Route path="/terms" element={<TermsPage />} />
                   <Route path="/profile" element={<ProfilePage />} />
                   <Route
                     path="/profile/update"
@@ -68,6 +83,7 @@ const App = () => {
                     path="/profile/delete"
                     element={<DeleteProfilePage />}
                   />
+                  <Route path="/orders" element={<OrdersPage />} />
                   <Route path="/login" element={<LoginPage />} />
                   <Route path="/register" element={<RegisterPage />} />
                   <Route path="/logout" element={<LogoutPage />} />

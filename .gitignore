@@ -2,4 +2,13 @@ node_modules/
 package-lock.json
 .env
 dist/
-uploads/
+
+# Upload folder
+uploads/**/*
+!uploads
+!uploads/seller
+!uploads/customer
+!uploads/staff
+!uploads/products
+
+!uploads/**/.gitkeep

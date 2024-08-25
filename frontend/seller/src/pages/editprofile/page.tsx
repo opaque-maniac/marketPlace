@@ -56,10 +56,30 @@ const UpdateProfilePage = () => {
   const mutation = useMutation({
     mutationFn: sendUpdateProfile,
     onSuccess: (data) => {
-      console.log(data);
+      if (data) {
+        navigate("/profile", { replace: true });
+      } else {
+        setError(true);
+        navigate("/500", { replace: true });
+      }
     },
     onError: (error) => {
-      console.log(error);
+      const errorObj = JSON.parse(error.message) as ErrorResponse;
+      const [show, url] = errorHandler(errorObj.errorCode);
+
+      if (show) {
+        setErr(errorObj.message);
+      } else {
+        if (url) {
+          if (url === "/500") {
+            setError(true);
+          }
+          navigate(url, { replace: true });
+        } else {
+          setError(true);
+          navigate("/500", { replace: true });
+        }
+      }
     },
   });
 

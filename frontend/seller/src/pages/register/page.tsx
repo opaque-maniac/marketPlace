@@ -22,16 +22,20 @@ const RegisterPage = () => {
   const mutation = useMutation({
     mutationFn: sendRegister,
     onError: (error) => {
-      const obj = JSON.parse(error.message) as ErrorResponse;
-      const [show, url] = errorHandler(obj.errorCode);
+      const errorObj = JSON.parse(error.message) as ErrorResponse;
+      const [show, url] = errorHandler(errorObj.errorCode);
+
       if (show) {
-        setErr(obj.message);
+        setErr(errorObj.message);
       } else {
         if (url) {
           if (url === "/500") {
             setError(true);
           }
-          navigate(url);
+          navigate(url, { replace: true });
+        } else {
+          setError(true);
+          navigate("/500", { replace: true });
         }
       }
     },

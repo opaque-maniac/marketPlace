@@ -113,3 +113,58 @@ export interface SuccessSellerResponse {
   message: string;
   seller: Seller;
 }
+
+export type OrderStatus =
+  | "PENDING"
+  | "PROCESSING"
+  | "SHIPPED"
+  | "READY"
+  | "DELIVERED"
+  | "CANCELLED";
+
+export interface Order {
+  id: string;
+  totalAmount: number;
+  status: OrderStatus;
+  customerID: string;
+  createdAt: string;
+  updatedAt: string | null;
+}
+
+export interface OrderItem {
+  id: string;
+  quantity: number;
+  productID: string;
+  product: Product;
+  ready: boolean;
+  orderID: string;
+  createdAt: string;
+  updatedAt: string | null;
+}
+
+export interface Customer {
+  id: string;
+  email: string;
+  firstName: string;
+  lastName: string;
+  address: string;
+}
+
+export interface OrderWithCustomer extends Order {
+  customer: Customer;
+}
+
+export interface OrderItemWithOrder extends OrderItem {
+  order: OrderWithCustomer;
+}
+
+export interface SuccessOrdersResponse {
+  message: string;
+  orders: OrderItemWithOrder[];
+  hasNext: boolean;
+}
+
+export interface SuccessOrderResponse {
+  message: string;
+  order: OrderItemWithOrder;
+}

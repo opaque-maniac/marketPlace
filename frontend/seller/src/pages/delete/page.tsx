@@ -1,13 +1,19 @@
 import { useNavigate, useParams } from "react-router-dom";
 import Transition from "../../components/transition";
 import { Helmet } from "react-helmet";
-import { MouseEventHandler, useEffect } from "react";
+import { MouseEventHandler, useContext, useEffect, useState } from "react";
 import { useMutation } from "@tanstack/react-query";
 import { sendDeleteProduct } from "../../utils/mutations/products";
+import { ErrorResponse } from "../../utils/types";
+import errorHandler from "../../utils/errorHandler";
+import ErrorContext from "../../utils/errorContext";
+import ShowError from "../../components/showErr";
 
 const DeleteProductPage = () => {
   const { id } = useParams();
   const navigate = useNavigate();
+  const [, setError] = useContext(ErrorContext);
+  const [err, setErr] = useState<string | null>(null);
 
   useEffect(() => {
     if (!id) {
@@ -18,11 +24,26 @@ const DeleteProductPage = () => {
 
   const mutation = useMutation({
     mutationFn: sendDeleteProduct,
-    onSuccess: (data) => {
-      console.log(data);
+    onSuccess: () => {
+      navigate("/", { replace: true });
     },
     onError: (error) => {
-      console.log(error);
+      const errorObj = JSON.parse(error.message) as ErrorResponse;
+      const [show, url] = errorHandler(errorObj.errorCode);
+
+      if (show) {
+        setErr(errorObj.message);
+      } else {
+        if (url) {
+          if (url === "/500") {
+            setError(true);
+          }
+          navigate(url, { replace: true });
+        } else {
+          setError(true);
+          navigate("/500", { replace: true });
+        }
+      }
     },
   });
 
@@ -34,6 +55,10 @@ const DeleteProductPage = () => {
   const handleCancel: MouseEventHandler<HTMLButtonElement> = (e) => {
     e.preventDefault();
     navigate(`/products/${id}`);
+  };
+
+  const callback = () => {
+    setErr(() => null);
   };
 
   return (
@@ -58,6 +83,9 @@ const DeleteProductPage = () => {
           }}
         >
           <div>
+            <div className="h-12">
+              {err && <ShowError error={err} callback={callback} />}
+            </div>
             <h2 className="text-center text-2xl md:pb-0 pb-4 mb-6">
               Are you sure you want to delete your profile
             </h2>

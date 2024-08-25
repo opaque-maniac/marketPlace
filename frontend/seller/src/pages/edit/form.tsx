@@ -227,11 +227,6 @@ const ProductForm = ({ product, handler, isLoading }: Props) => {
           </div>
         </form>
       </section>
-      <div className="flex justify-center items-center md:py-0 py-6">
-        <Link className="underline" to="/">
-          Go back to home
-        </Link>
-      </div>
     </Transition>
   );
 };

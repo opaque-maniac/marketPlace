@@ -16,6 +16,7 @@ const ProductPage = () => {
   const navigate = useNavigate();
   const [err, setErr] = useState<string | null>(null);
   const [, setError] = useContext(ErrorContext);
+  const [show, setShow] = useState<boolean>(false);
 
   useEffect(() => {
     if (!id) {
@@ -53,6 +54,10 @@ const ProductPage = () => {
 
   const callback = () => {
     setErr(() => null);
+  };
+
+  const calclulateOriginal = (price: number, discount: number) => {
+    return price - (price * discount) / 100;
   };
 
   const { data } = query;
@@ -115,19 +120,41 @@ const ProductPage = () => {
                     </div>
                   </section>
                   <section className="md:w-8/12 w-11/12 mx-auto border shadow-xl rounded-lg mt-8 p-2">
-                    <h3>{data.product.name}</h3>
-                    <div>
-                      <span>{data.product.price}</span>
-                      <span>{}</span>
-                      <span>
-                        {data.product.price -
-                          (data.product.price *
-                            data.product.discountPercentage) /
-                            100}
+                    <h3 className="font-semibold text-center text-xl py-4">
+                      {data.product.name}
+                    </h3>
+                    <div className="flex justify-center items-center gap-20">
+                      <span className="text-red-400">
+                        ${data.product.price.toFixed(2)}
+                      </span>
+                      <span className="line-through">
+                        $
+                        {calclulateOriginal(
+                          data.product.price,
+                          data.product.discountPercentage,
+                        ).toFixed(2)}
                       </span>
                     </div>
-                    <p>{data.product.description}</p>
-                    <div>
+                    <div className="md:w-10/12 mx-auto w-11/12">
+                      <p>
+                        {show
+                          ? data.product.description
+                          : `${data.product.description.slice(0, 100)}...`}
+                      </p>
+                      <a
+                        href="clkdcslcnsls"
+                        role="button"
+                        aria-label={show ? "Show Less" : "Show More"}
+                        className="underline"
+                        onClick={(e) => {
+                          e.preventDefault();
+                          setShow(() => !show);
+                        }}
+                      >
+                        {show ? "Show Less" : "Show More"}
+                      </a>
+                    </div>
+                    <div className="flex justify-center items-center flex-col">
                       <p>
                         Created: <span>{data.product.createdAt}</span>
                       </p>
