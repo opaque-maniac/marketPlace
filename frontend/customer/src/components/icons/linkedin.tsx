@@ -1,11 +1,14 @@
 const LinkedinIcon = () => {
   return (
     <svg
+      role="img"
+      aria-labelledby="title"
       className="h-full w-full"
       viewBox="0 0 24 24"
       fill="none"
       xmlns="http://www.w3.org/2000/svg"
     >
+      <title id="title">Linkedin Icon</title>
       <path
         d="M6.5 8C7.32843 8 8 7.32843 8 6.5C8 5.67157 7.32843 5 6.5 5C5.67157 5 5 5.67157 5 6.5C5 7.32843 5.67157 8 6.5 8Z"
         fill="#ffffff"

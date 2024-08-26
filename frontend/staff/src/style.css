@@ -1,3 +1,13 @@
 @tailwind base;
 @tailwind components;
 @tailwind utilities;
+
+.auth-input {
+  @apply border-r-0 border-l-0 border-t-0 border-b border-black/25;
+}
+
+a,
+svg,
+button {
+  user-select: none;
+}

@@ -1,39 +1,40 @@
+/* eslint-disable import/no-unresolved */
+/* eslint-disable @typescript-eslint/no-unsafe-assignment */
+/* eslint-disable @typescript-eslint/no-unsafe-call */
+/* eslint-disable @typescript-eslint/no-unsafe-member-access */
 import Cookies from "universal-cookie";
 
 const cookies = new Cookies();
 
-// Function to set the access token in a secure cookie
-export const setAccessToken = (accessToken: string) => {
-  cookies.set("access_token", accessToken, {
-    secure: true,
+const accessLabel: string = "access-token";
+const refreshLabel: string = "refresh-token";
+
+export const setAccessToken = (token: string) => {
+  cookies.set(accessLabel, token, {
     sameSite: "strict",
+    expires: new Date(new Date().getTime() + 60 * 60 * 1000 * 24 * 7),
   });
 };
 
-// Function to set the refresh token in a secure cookie
-export const setRefreshToken = (refreshToken: string) => {
-  cookies.set("refresh_token", refreshToken, {
-    secure: true,
+export const setRefreshToken = (token: string) => {
+  cookies.set(refreshLabel, token, {
     sameSite: "strict",
+    expires: new Date(new Date().getTime() + 60 * 60 * 1000 * 24 * 30),
   });
 };
 
-// Function to get the access token from the secure cookie
 export const getAccessToken = () => {
-  return cookies.get("access_token") as string | undefined;
+  return cookies.get(accessLabel) as string | undefined;
 };
 
-// Function to get the refresh token from the secure cookie
-export const getRefreshToken = (): string | undefined => {
-  return cookies.get("refresh_token") as string | undefined;
+export const getRefreshToken = () => {
+  return cookies.get(refreshLabel) as string | undefined;
 };
 
-// Function to update the access token in the secure cookie
-export const updateAccessToken = (newAccessToken: string) => {
-  setAccessToken(newAccessToken);
+export const removeAccessToken = () => {
+  cookies.remove(accessLabel);
 };
 
-// Function to update the refresh token in the secure cookie
-export const updateRefreshToken = (newRefreshToken: string) => {
-  setRefreshToken(newRefreshToken);
+export const removeRefreshToken = () => {
+  cookies.remove(refreshLabel);
 };

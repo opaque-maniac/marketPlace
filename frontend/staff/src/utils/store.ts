@@ -2,34 +2,38 @@ import { create } from "zustand";
 
 interface UserStore {
   user: string | null;
-  setUser: (newUser: string) => void;
+  setUser: (newUser: string | null) => void;
   removeUser: () => void;
 }
 
-let INITIAL_USER: null | string = null;
 const USER_KEY = "hazina-seller";
 
-if (typeof window !== "undefined") {
-  const user = window.localStorage.getItem(USER_KEY);
-  if (user) {
-    INITIAL_USER = user;
+const useUserStore = create<UserStore>((set) => {
+  let initialUser: string | null = null;
+
+  if (typeof window !== "undefined") {
+    // Ensure this runs only in the browser
+    const user = window.localStorage.getItem(USER_KEY);
+    if (user) {
+      initialUser = user;
+    }
   }
-}
 
-const userStore = create<UserStore>((set) => ({
-  user: INITIAL_USER,
-  setUser: (newUser) => {
-    if (typeof window !== "undefined") {
-      window.localStorage.setItem(USER_KEY, newUser);
-    }
-    set({ user: newUser });
-  },
-  removeUser: () => {
-    if (typeof window !== "undefined") {
+  return {
+    user: initialUser,
+    setUser: (newUser: string | null) => {
+      if (newUser !== null) {
+        window.localStorage.setItem(USER_KEY, newUser);
+      } else {
+        window.localStorage.removeItem(USER_KEY);
+      }
+      set({ user: newUser });
+    },
+    removeUser: () => {
       window.localStorage.removeItem(USER_KEY);
-    }
-    set({ user: null });
-  },
-}));
+      set({ user: null });
+    },
+  };
+});
 
-export default userStore;
+export default useUserStore;

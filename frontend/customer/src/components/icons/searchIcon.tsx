@@ -1,6 +1,8 @@
 const SearchIcon = () => {
   return (
     <svg
+      role="img"
+      aria-labelledby="title"
       xmlns="http://www.w3.org/2000/svg"
       fill="none"
       viewBox="0 0 24 24"
@@ -8,6 +10,7 @@ const SearchIcon = () => {
       stroke="currentColor"
       className="h-full w-full"
     >
+      <title id="title">Search Icon</title>
       <path
         strokeLinecap="round"
         strokeLinejoin="round"
