@@ -9,7 +9,7 @@ interface LoginData {
 // Mutation for login
 export const sendLogin = async (data: LoginData) => {
   try {
-    const url = "http://localhost:3020/seller/login";
+    const url = "http://localhost:3020/customer/login";
     const options = {
       method: "POST",
       headers: {
@@ -43,7 +43,7 @@ interface RegisterData {
 // Mutation for register
 export const sendRegister = async (data: RegisterData) => {
   try {
-    const url = "http://localhost:3020/seller/register";
+    const url = "http://localhost:3020/customer/register";
     const options = {
       method: "POST",
       headers: {

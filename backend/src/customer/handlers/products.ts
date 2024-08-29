@@ -8,6 +8,7 @@
 import { Response, NextFunction, Request } from "express";
 import prisma from "../../utils/db";
 import { ProductSearchRequest } from "../../types";
+import { CATEGORIES } from "@prisma/client";
 
 // Function to fetch products
 export const fetchProducts = async (
@@ -18,10 +19,15 @@ export const fetchProducts = async (
   try {
     const page = req.query.page ? parseInt(req.query.page as string) : 1;
     const limit = req.query.limit ? parseInt(req.query.limit as string) : 10;
+    const category = req.query.category as CATEGORIES | undefined;
 
     const products = await prisma.product.findMany({
+      where: {
+        category,
+      },
       include: {
         seller: true,
+        images: true,
       },
       skip: (page - 1) * limit,
       take: limit + 1,

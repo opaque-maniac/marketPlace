@@ -11,8 +11,9 @@ const CheckPermissions = () => {
     /^\/faq$/,
     /^\/privacy$/,
     /^\/explore$/,
-    /^\/products\/\d+$/, // Public route for /products/:id where :id is a number
+    /^\/products\/[^/]+$/, // Public route for /products/:id where :id is a number
   ];
+
   const noAuthRequired = [
     /^\/login$/,
     /^\/register$/,
@@ -22,24 +23,33 @@ const CheckPermissions = () => {
 
   const user = userStore((state) => state.user);
   const navigate = useNavigate();
-
   const path = useLocation().pathname;
 
   useEffect(() => {
-    if (noPermissionRequired.some((regex) => regex.test(path))) {
+    const isNoPermissionRequired = noPermissionRequired.some((regex) =>
+      regex.test(path),
+    );
+    const isNoAuthRequired = noAuthRequired.some((regex) => regex.test(path));
+
+    if (isNoPermissionRequired) {
+      // No permission check needed
       return;
-    } else if (noAuthRequired.some((regex) => regex.test(path))) {
+    }
+
+    if (isNoAuthRequired) {
+      // No authentication required, but user is logged in
       if (user) {
         navigate("/", { replace: true }); // Redirect to home or another appropriate page
       }
       return;
-    } else {
-      if (!user) {
-        navigate("/login", { replace: true });
-      }
+    }
+
+    // All other routes require authentication
+    if (!user) {
+      navigate("/login", { replace: true });
     }
     // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [path, user]);
+  }, [path, user, navigate]);
 
   return null;
 };

@@ -7,17 +7,16 @@ import { ErrorResponse } from "../../utils/types";
 import errorHandler from "../../utils/errorHandler";
 import { FormEventHandler, useContext, useState } from "react";
 import Loader from "../../components/loader";
-import ErrorContext from "../../utils/errorContext";
+import ErrorContext, { ShowErrorContext } from "../../utils/errorContext";
 import { setAccessToken, setRefreshToken } from "../../utils/cookies";
 import userStore from "../../utils/store";
-import ShowError from "../../components/showErr";
 import EyeClosed from "../../components/icons/hide";
 import EyeOpen from "../../components/icons/show";
 import { Helmet } from "react-helmet";
 
 const LoginPage = () => {
   const navigate = useNavigate();
-  const [err, setErr] = useState<string | null>(null);
+  const [, setErr] = useContext(ShowErrorContext);
   const [show, setShow] = useState<boolean>(false);
   const [, setError] = useContext(ErrorContext);
   const setUser = userStore((state) => state.setUser);
@@ -64,10 +63,6 @@ const LoginPage = () => {
     mutation.mutate({ email, password });
   };
 
-  const callback = () => {
-    setErr(() => null);
-  };
-
   return (
     <Transition>
       <Helmet>
@@ -81,9 +76,6 @@ const LoginPage = () => {
         <div className="mb-4">
           <h3 className="text-4xl mb-4">Log in to Hazina</h3>
           <p>Enter your details below</p>
-        </div>
-        <div className="h-12">
-          {err && <ShowError error={err} callback={callback} />}
         </div>
         <form
           onSubmit={submitHandler}

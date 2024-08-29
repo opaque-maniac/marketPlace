@@ -59,13 +59,13 @@ export interface Product {
 
 export interface SuccessProductsResponse {
   message: string;
-  products: Product[];
+  data: Product[];
   hasNext: boolean;
 }
 
 export interface SuccessProductResponse {
   message: string;
-  product: Product;
+  data: Product;
 }
 
 export interface Comment {

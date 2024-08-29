@@ -4,9 +4,8 @@ import { useQuery } from "@tanstack/react-query";
 import { useContext, useEffect, useState } from "react";
 import errorHandler from "../../utils/errorHandler";
 import { ErrorResponse } from "../../utils/types";
-import ShowError from "../../components/showErr";
 import Loader from "../../components/loader";
-import ErrorContext from "../../utils/errorContext";
+import ErrorContext, { ShowErrorContext } from "../../utils/errorContext";
 import { Helmet } from "react-helmet";
 import { fetchOrder } from "../../utils/queries/orders";
 import OrderButton from "./orderbutton";
@@ -14,7 +13,7 @@ import OrderButton from "./orderbutton";
 const OrderPage = () => {
   const { id } = useParams();
   const navigate = useNavigate();
-  const [err, setErr] = useState<string | null>(null);
+  const [, setErr] = useContext(ShowErrorContext);
   const [, setError] = useContext(ErrorContext);
   const [, setUpdated] = useState<boolean>(false);
 
@@ -52,10 +51,6 @@ const OrderPage = () => {
     }
   }
 
-  const callback = () => {
-    setErr(() => null);
-  };
-
   const onSuccess = () => {
     setUpdated(() => true);
   };
@@ -72,9 +67,6 @@ const OrderPage = () => {
         <meta name="google" content="nositelinkssearchbox" />
       </Helmet>
       <main role="main">
-        <div className="h-12">
-          {err && <ShowError error={err} callback={callback} />}
-        </div>
         {query.isLoading && (
           <div
             style={{ width: "screen", height: "calc(100vh - 10.8rem)" }}

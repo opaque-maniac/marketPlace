@@ -1,8 +1,14 @@
 import { useQuery } from "@tanstack/react-query";
-import { useState } from "react";
-import { fetchProductComments } from "../../utils/queries/products";
+import { useContext, useState } from "react";
 import Loader from "../../components/loader";
 import CommentItem from "../../components/comment";
+import { fetchProductComments } from "../../utils/queries/products";
+import ArrowRight from "../../components/icons/arrowright";
+import ArrowLeft from "../../components/icons/arrowleft";
+import ErrorContext, { ShowErrorContext } from "../../utils/errorContext";
+import { useNavigate } from "react-router-dom";
+import { ErrorResponse } from "../../utils/types";
+import errorHandler from "../../utils/errorHandler";
 
 interface Props {
   id: string;
@@ -10,15 +16,43 @@ interface Props {
 
 const CommentList = ({ id }: Props) => {
   const [page, setPage] = useState<number>(1);
+  const [, setErr] = useContext(ShowErrorContext);
+  const [, setError] = useContext(ErrorContext);
+  const navigate = useNavigate();
 
   const query = useQuery({
     queryFn: fetchProductComments,
     queryKey: ["comments", id, page],
   });
 
+  if (query.isError) {
+    const data = query.error;
+    try {
+      const error = JSON.parse(data.message) as ErrorResponse;
+      const [show, url] = errorHandler(error.errorCode);
+      if (show) {
+        setErr(error.message);
+      } else {
+        if (url) {
+          if (url === "/500") {
+            setError(true);
+          }
+          navigate(url);
+        } else {
+          setError(true);
+          navigate("/500", { replace: true });
+        }
+      }
+    } catch (e) {
+      if (e instanceof Error) {
+        setErr("An unexpected error occurred.");
+      }
+    }
+  }
+
   return (
     <div
-      className={`h-72 border rounded-lg md:w-8/12 w-11/12 mx-auto ${query.data && query.data.data.length > 3 ? "overflow-y-scroll" : ""}`}
+      className={`h-full border rounded-lg w-full mx-auto ${query.data && query.data.data.length > 3 ? "overflow-y-scroll" : ""}`}
     >
       <div className="h-60">
         {query.isLoading && (
@@ -33,7 +67,7 @@ const CommentList = ({ id }: Props) => {
             {query.data ? (
               <div>
                 {query.data.data.length > 0 ? (
-                  <ul>
+                  <ul className="overflow-y-auto">
                     {query.data.data.map((comment) => (
                       <li key={comment.id}>
                         <CommentItem comment={comment} />
@@ -61,8 +95,9 @@ const CommentList = ({ id }: Props) => {
               }
               setPage(() => page - 1);
             }}
+            className="h-6 w-6 border border-black p-1 rounded-full"
           >
-            Prev
+            <ArrowLeft />
           </button>
         </div>
         <div>{page}</div>
@@ -76,8 +111,9 @@ const CommentList = ({ id }: Props) => {
               }
               setPage(() => page + 1);
             }}
+            className="h-6 w-6 border border-black p-1 rounded-full"
           >
-            Next
+            <ArrowRight />
           </button>
         </div>
       </div>

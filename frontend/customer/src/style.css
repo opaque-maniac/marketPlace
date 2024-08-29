@@ -11,3 +11,26 @@ svg,
 button {
   user-select: none;
 }
+
+.scroll-mod {
+  -webkit-scrollbar-width: thin;
+  scrollbar-width: thin;
+}
+
+.scroll-mod::-webkit-scrollbar {
+  width: 5px;
+}
+
+.scroll-mod::-webkit-scrollbar-thumb {
+  border-radius: 10px;
+}
+
+.scroll-black::-webkit-scrollbar-thumb {
+  background-color: white;
+  scrollbar-color: black;
+}
+
+.scroll-white::-webkit-scrollbar-thumb {
+  background-color: black;
+  scrollbar-color: white;
+}
