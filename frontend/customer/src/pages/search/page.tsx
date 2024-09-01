@@ -25,6 +25,10 @@ const SearchPage = () => {
 
   useEffect(() => {
     navigate(`/search?page=${page}`, { replace: true });
+    return () => {
+      setPage(1);
+    };
+    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [page, navigate]);
 
   const query = useQuery({

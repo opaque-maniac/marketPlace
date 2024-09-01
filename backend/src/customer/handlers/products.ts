@@ -90,12 +90,12 @@ export const fetchIndividualProduct = async (
 
 // Function to search products
 export const searchProduct = async (
-  req: ProductSearchRequest,
+  req: Request,
   res: Response,
   next: NextFunction
 ) => {
   try {
-    const query = req.query.query as string;
+    let query = req.query.query ? (req.query.query as string) : "";
     const page = req.query.page ? parseInt(req.query.page as string) : 1;
     const limit = req.query.limit ? parseInt(req.query.limit as string) : 10;
     const category = req.query.category
@@ -104,26 +104,13 @@ export const searchProduct = async (
 
     const products = await prisma.product.findMany({
       where: {
-        OR: [
-          {
-            description: {
-              contains: query,
-              mode: "insensitive",
-            },
-          },
-          {
-            name: {
-              contains: query,
-              mode: "insensitive",
-            },
-          },
-        ],
-        ...(category && { category }), // Only include category if it's valid
-      },
-      skip: (page - 1) * limit,
-      take: limit + 1,
-      include: {
-        images: true,
+        name: {
+          contains: query, // Search for names containing the query string
+          mode: "insensitive", // Case-insensitive search
+        },
+        category: {
+          equals: category,
+        },
       },
     });
 

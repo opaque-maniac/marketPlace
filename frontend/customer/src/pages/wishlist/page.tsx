@@ -10,9 +10,9 @@ import ErrorContext, { ShowErrorContext } from "../../utils/errorContext";
 import ArrowLeft from "../../components/icons/arrowleft";
 import ArrowRight from "../../components/icons/arrowright";
 import { Helmet } from "react-helmet";
-import { fetchCart } from "../../utils/queries/cart";
+import { fetchWishlist } from "../../utils/queries/wishlist";
 
-const CartPage = () => {
+const WishlistPage = () => {
   const page = cartPageStore((state) => state.page);
   const setPage = cartPageStore((state) => state.setPage);
   const [, setError] = useContext(ErrorContext);
@@ -22,11 +22,16 @@ const CartPage = () => {
 
   useEffect(() => {
     navigate(`/cart?page=${page}`, { replace: true });
+
+    return () => {
+      setPage(1);
+    };
+    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [page, navigate]);
 
   const query = useQuery({
-    queryKey: ["cart", page, 10],
-    queryFn: fetchCart,
+    queryKey: ["wishlist", page, 10],
+    queryFn: fetchWishlist,
   });
 
   if (query.isError) {
@@ -101,7 +106,7 @@ const CartPage = () => {
           ) : (
             <div className="h-full w-full">
               <div>
-                <h2>Loaded cart</h2>
+                <h2>Loaded wishlist</h2>
               </div>
             </div>
           )}
@@ -132,4 +137,4 @@ const CartPage = () => {
   );
 };
 
-export default CartPage;
+export default WishlistPage;

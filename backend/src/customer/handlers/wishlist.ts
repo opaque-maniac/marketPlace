@@ -57,10 +57,9 @@ export const fetchWishlist = async (
 
     return res.status(200).json({
       success: true,
-      data: {
-        wishlist: wishlistItems,
-        hasNext,
-      },
+      wishlist,
+      wishlistItems,
+      hasNext,
     });
   } catch (e) {
     return next(e as Error);

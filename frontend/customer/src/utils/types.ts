@@ -226,3 +226,10 @@ export interface SuccessSearchResponse {
   data: Product[];
   hasNext: boolean;
 }
+
+export interface SuccessWishlistQueryResponse {
+  message: string;
+  wishlist: Wishlist;
+  wishlistItems: WishlistItem[];
+  hasNext: boolean;
+}
