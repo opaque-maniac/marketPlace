@@ -18,11 +18,24 @@ export interface SuccessLoginRespose {
   message: string;
   token: string;
   refreshToken: string;
-  seller: Seller;
+  cart: number;
+  wishlist: number;
+  customer: Customer;
+}
+
+export interface Customer {
+  id: string;
+  firstName: string;
+  lastName: string;
+  password: string;
+  active: boolean;
+  address?: string;
+  phone?: string;
 }
 
 export interface SuccessRegisterResponse {
   message: string;
+  customer: Customer;
 }
 
 export interface ProductImages {
@@ -142,14 +155,6 @@ export interface OrderItem {
   updatedAt: string | null;
 }
 
-export interface Customer {
-  id: string;
-  email: string;
-  firstName: string;
-  lastName: string;
-  address: string;
-}
-
 export interface OrderWithCustomer extends Order {
   customer: Customer;
 }
@@ -167,4 +172,57 @@ export interface SuccessOrdersResponse {
 export interface SuccessOrderResponse {
   message: string;
   order: OrderItemWithOrder;
+}
+
+export interface CartItem {
+  id: string;
+  quantity: number;
+  cartID: string;
+  productID: string;
+  product: Product;
+}
+
+export interface Cart {
+  id: string;
+  customerID: string;
+  dateCreated: string;
+}
+
+export interface SuccessCartResponse {
+  message: string;
+  cart: Cart;
+  cartItems: CartItem[];
+  hasNext: boolean;
+}
+
+export interface SuccessAddToCartResponse {
+  message: string;
+  cartItem: CartItem;
+  new: boolean;
+}
+
+export interface Wishlist {
+  id: string;
+  customerID: string;
+  createdAt: string;
+}
+
+export interface WishlistItem {
+  id: string;
+  productID: string;
+  wishlistID: string;
+  product: Product;
+  createdAt: string;
+}
+
+export interface SuccessAddToWishlistResponse {
+  message: string;
+  wishlistItem: WishlistItem;
+  new: boolean;
+}
+
+export interface SuccessSearchResponse {
+  message: string;
+  data: Product[];
+  hasNext: boolean;
 }

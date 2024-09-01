@@ -13,3 +13,9 @@ export const explorePageStore = create<PageStore>((set) => ({
   setPage: (page) => set({ page }),
   resetPage: () => set({ page: INITIAL_PAGE }),
 }));
+
+export const searchPageStore = create<PageStore>((set) => ({
+  page: INITIAL_PAGE,
+  setPage: (page) => set({ page }),
+  resetPage: () => set({ page: INITIAL_PAGE }),
+}));

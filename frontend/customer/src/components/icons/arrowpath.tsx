@@ -2,7 +2,7 @@ const ArrowPath = () => {
   return (
     <svg
       role="img"
-      aria-labelledby="title"
+      aria-label="Arrow Round Path Icon"
       xmlns="http://www.w3.org/2000/svg"
       fill="none"
       viewBox="0 0 24 24"
@@ -10,7 +10,6 @@ const ArrowPath = () => {
       stroke="currentColor"
       className="w-full h-full"
     >
-      <title id="title">Arrow Round Path</title>
       <path
         strokeLinecap="round"
         strokeLinejoin="round"

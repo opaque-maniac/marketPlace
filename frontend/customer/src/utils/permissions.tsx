@@ -11,6 +11,7 @@ const CheckPermissions = () => {
     /^\/faq$/,
     /^\/privacy$/,
     /^\/explore$/,
+    /^\/search/,
     /^\/products\/[^/]+$/, // Public route for /products/:id where :id is a number
   ];
 

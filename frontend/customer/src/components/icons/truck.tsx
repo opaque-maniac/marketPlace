@@ -2,7 +2,7 @@ const TruckIcon = () => {
   return (
     <svg
       role="img"
-      aria-labelledby="title"
+      aria-label="Truck Icon"
       xmlns="http://www.w3.org/2000/svg"
       fill="none"
       viewBox="0 0 24 24"
@@ -10,7 +10,6 @@ const TruckIcon = () => {
       stroke="currentColor"
       className="h-full w-full"
     >
-      <title className="title">Truck Icon</title>
       <path
         strokeLinecap="round"
         strokeLinejoin="round"

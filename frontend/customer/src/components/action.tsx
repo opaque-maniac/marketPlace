@@ -9,6 +9,8 @@ import ProfileMenu from "./profilemenu";
 
 const Action = () => {
   const user = useUserStore((state) => state.user);
+  const cart = useUserStore((state) => state.cart);
+  const wishlist = useUserStore((state) => state.wishlit);
   const [clicked, setClicked] = useState<boolean>(false);
   const navigate = useNavigate();
 
@@ -32,8 +34,11 @@ const Action = () => {
                   e.preventDefault();
                   navigate("/cart");
                 }}
-                className="w-6 h-6 rounded-full"
+                className="w-6 h-6 rounded-full relative"
               >
+                <div className="absolute bg-red-400 h-4 w-4 -top-1  rounded-full -right-2 flex justify-center items-center">
+                  <span className="text-white">{cart}</span>
+                </div>
                 <CartIcon />
               </button>
             </div>
@@ -44,8 +49,11 @@ const Action = () => {
                   e.preventDefault();
                   navigate("/wishlist");
                 }}
-                className="w-6 h-6 rounded-full"
+                className="w-6 h-6 rounded-full relative"
               >
+                <div className="absolute bg-red-400 h-4 w-4 -top-1  rounded-full -right-2 flex justify-center items-center">
+                  <span className="text-white">{wishlist}</span>
+                </div>
                 <HeartIcon />
               </button>
             </div>

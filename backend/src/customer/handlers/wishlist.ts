@@ -98,23 +98,39 @@ export const addToWishlist = async (
       where: {
         customerID: user.id,
       },
+      include: {
+        wishlistItems: true,
+      },
     });
 
     if (!wishlist) {
       throw new Error("Wishlist not found");
     }
 
-    const wishlistItem = await prisma.wishListItem.create({
-      data: {
-        productID: product.id,
-        wishlistID: wishlist.id,
-      },
-    });
+    const existingItem = wishlist.wishlistItems.find(
+      (item) => item.productID === product.id
+    );
 
-    return res.status(201).json({
-      message: "Item added to wishlist",
-      wishlistItem,
-    });
+    if (existingItem) {
+      return res.status(200).json({
+        message: "Item already in wishlist",
+        wishlistItem: existingItem,
+        new: false,
+      });
+    } else {
+      const wishlistItem = await prisma.wishListItem.create({
+        data: {
+          productID: product.id,
+          wishlistID: wishlist.id,
+        },
+      });
+
+      return res.status(201).json({
+        message: "Item added to wishlist",
+        wishlistItem,
+        new: true,
+      });
+    }
   } catch (e) {
     return next(e as Error);
   }

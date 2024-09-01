@@ -312,6 +312,9 @@ export const addToCart = async (
 ) => {
   try {
     const { id } = req.params;
+    const quantity = req.query.quantity
+      ? parseInt(req.query.quantity as string)
+      : 1;
 
     const { user } = req;
 
@@ -355,26 +358,28 @@ export const addToCart = async (
           id: existingCartItem.id,
         },
         data: {
-          quantity: existingCartItem.quantity + 1,
+          quantity: quantity,
         },
       });
 
       return res.status(200).json({
         message: "Item added to cart",
         cartItem: updatedCartItem,
+        new: false,
       });
     } else {
       const newCartItem = await prisma.cartItem.create({
         data: {
           cartID: cart.id,
           productID: product.id,
-          quantity: 1,
+          quantity: quantity,
         },
       });
 
       return res.status(201).json({
         message: "Item added to cart",
         cartItem: newCartItem,
+        new: true,
       });
     }
   } catch (e) {

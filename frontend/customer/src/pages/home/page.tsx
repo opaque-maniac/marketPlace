@@ -12,6 +12,12 @@ import errorHandler from "../../utils/errorHandler";
 import { ErrorResponse } from "../../utils/types";
 import { useContext } from "react";
 import ErrorContext, { ShowErrorContext } from "../../utils/errorContext";
+import BallIcon from "../../components/icons/ball";
+import ElectronicsIcon from "../../components/icons/electronics";
+import DressIcon from "../../components/icons/dress";
+import SpoonIcon from "../../components/icons/spoon";
+import ToyIcon from "../../components/icons/toy";
+import BooksIcon from "../../components/icons/books";
 
 const HomePage = () => {
   const [, setError] = useContext(ErrorContext);
@@ -204,24 +210,72 @@ const HomePage = () => {
           </div>
           <h2 className="text-3xl font-semibold">Browser By Category</h2>
           <div className="pt-10 pb-12">
-            <ul className="flex lg:justify-between justify-center lg:gap-0 gap-4 items-center border border-green-500 flex-wrap">
+            <ul className="flex lg:justify-between justify-center lg:gap-0 gap-4 items-center flex-wrap">
               <li>
-                <div className="w-44 h-36 border border-black/25"></div>
+                <div className="w-44 h-36 border border-black/25">
+                  <div className="h-24 w-full pt-2">
+                    <BallIcon />
+                  </div>
+                  <div>
+                    <h3 className="text-xl font-semibold text-center">
+                      SPORTS
+                    </h3>
+                  </div>
+                </div>
               </li>
               <li>
-                <div className="w-44 h-36 border border-black/25"></div>
+                <div className="w-44 h-36 border border-black/25">
+                  <div className="h-24 w-full pt-2">
+                    <DressIcon />
+                  </div>
+                  <div>
+                    <h3 className="text-xl font-semibold text-center">
+                      FASHION
+                    </h3>
+                  </div>
+                </div>
               </li>
               <li>
-                <div className="w-44 h-36 border border-black/25"></div>
+                <div className="w-44 h-36 border border-black/25">
+                  <div className="h-24 w-full pt-2">
+                    <ElectronicsIcon />
+                  </div>
+                  <div>
+                    <h3 className="text-xl font-semibold text-center">
+                      ELECTRONICS
+                    </h3>
+                  </div>
+                </div>
               </li>
               <li>
-                <div className="w-44 h-36 border border-black/25"></div>
+                <div className="w-44 h-36 border border-black/25">
+                  <div className="h-24 w-full pt-2">
+                    <SpoonIcon />
+                  </div>
+                  <div>
+                    <h3 className="text-xl font-semibold text-center">FOOD</h3>
+                  </div>
+                </div>
               </li>
               <li>
-                <div className="w-44 h-36 border border-black/25"></div>
+                <div className="w-44 h-36 border border-black/25">
+                  <div className="h-24 w-full pt-2">
+                    <ToyIcon />
+                  </div>
+                  <div>
+                    <h3 className="text-xl font-semibold text-center">TOYS</h3>
+                  </div>
+                </div>
               </li>
               <li>
-                <div className="w-44 h-36 border border-black/25"></div>
+                <div className="w-44 h-36 border border-black/25">
+                  <div className="h-24 w-full flex justify-center pt-2">
+                    <BooksIcon />
+                  </div>
+                  <div>
+                    <h3 className="text-xl font-semibold text-center">BOOKS</h3>
+                  </div>
+                </div>
               </li>
             </ul>
           </div>

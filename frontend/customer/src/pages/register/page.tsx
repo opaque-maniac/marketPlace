@@ -38,8 +38,12 @@ const RegisterPage = () => {
         }
       }
     },
-    onSuccess: () => {
-      navigate("/login");
+    onSuccess: (data) => {
+      if (data && data.customer) {
+        navigate("/login");
+      } else {
+        setErr("Something unexpected happened");
+      }
     },
   });
 
@@ -47,9 +51,10 @@ const RegisterPage = () => {
     e.preventDefault();
     const formData = new FormData(e.currentTarget);
     const email = formData.get("email") as string;
-    const name = formData.get("name") as string;
+    const firstName = formData.get("firstName") as string;
+    const lastName = formData.get("lastName") as string;
     const password = formData.get("password") as string;
-    mutation.mutate({ email, name, password });
+    mutation.mutate({ email, firstName, lastName, password });
   };
 
   return (

@@ -56,7 +56,7 @@ export const register = async (
 
         await txl.wishList.create({
           data: {
-            customerID: customer.id,
+            customerID: newCustomer.id,
           },
         });
 
@@ -96,16 +96,27 @@ export const login = async (
             cartItems: true,
           },
         },
+        wishlist: {
+          include: {
+            wishlistItems: true,
+          },
+        },
       },
     });
 
+    console.log(
+      `Email: ${email}\nPassword: ${password}\nCustomer:\n${customer}`
+    );
+
     if (!customer) {
+      console.log("Here is the last point");
       return res.status(401).json({
         message: "Invalid email or password",
         errorCode: "I401",
       });
     }
 
+    console.log("Here above active check");
     if (!customer.active) {
       return res.status(401).json({
         message: "Account is not active",
@@ -115,6 +126,7 @@ export const login = async (
 
     const isPasswordValid = await bcrypt.compare(password, customer.password);
 
+    console.log("Password check failed");
     if (!isPasswordValid) {
       return res.status(401).json({
         message: "Invalid email or password",
@@ -133,7 +145,9 @@ export const login = async (
       message: "Login successful",
       token,
       refreshToken,
-      customer
+      customer,
+      cart: customer.cart?.cartItems.length ?? 0,
+      wishlist: customer.wishlist?.wishlistItems.length ?? 0,
     });
   } catch (e) {
     return next(e as Error);

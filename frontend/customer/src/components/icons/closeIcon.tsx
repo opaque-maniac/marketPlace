@@ -2,7 +2,7 @@ const CloseIcon = () => {
   return (
     <svg
       role="img"
-      aria-labelledby="title"
+      aria-label="Close Icon"
       xmlns="http://www.w3.org/2000/svg"
       fill="none"
       viewBox="0 0 24 24"

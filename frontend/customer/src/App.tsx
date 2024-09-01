@@ -26,6 +26,8 @@ const TermsPage = lazy(() => import("./pages/terms/page"));
 const DeleteProfilePage = lazy(() => import("./pages/deleteprofile/page"));
 const OrdersPage = lazy(() => import("./pages/orders/page"));
 const IndividualProductPage = lazy(() => import("./pages/product/page"));
+const ExplorePage = lazy(() => import("./pages/explore/page"));
+const SearchPage = lazy(() => import("./pages/search/page"));
 
 const queryClient = new QueryClient({
   defaultOptions: {
@@ -61,6 +63,8 @@ const App = () => {
                       path="/products/:id"
                       element={<IndividualProductPage />}
                     />
+                    <Route path="/explore" element={<ExplorePage />} />
+                    <Route path="/search" element={<SearchPage />} />
                     <Route path="/contact" element={<ContactPage />} />
                     <Route path="/about" element={<AboutPage />} />
                     <Route path="/fees" element={<FeePage />} />

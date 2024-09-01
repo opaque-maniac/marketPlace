@@ -48,7 +48,7 @@ const Header = () => {
             <div>
               <button
                 onClick={clickHandler}
-                className="w-10 h-10 border border-black rounded-full"
+                className="w-8 h-8 border border-black rounded-full"
               >
                 <CloseIcon />
               </button>

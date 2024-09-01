@@ -1,3 +1,4 @@
+import { Link } from "react-router-dom";
 import Transition from "./transition";
 
 const ProfileMenu = () => {
@@ -17,7 +18,9 @@ const ProfileMenu = () => {
             }}
           >
             <div>
-              <p>Manage My Account</p>
+              <Link to={"/profile"}>
+                <p>Manage My Account</p>
+              </Link>
             </div>
           </li>
           <li
@@ -26,7 +29,9 @@ const ProfileMenu = () => {
             }}
           >
             <div>
-              <p>My Orders</p>
+              <Link to={"/orders"}>
+                <p>My Orders</p>
+              </Link>
             </div>
           </li>
           <li
@@ -35,7 +40,9 @@ const ProfileMenu = () => {
             }}
           >
             <div>
-              <p>Log Out</p>
+              <Link to={"/logout"}>
+                <p>Log Out</p>
+              </Link>
             </div>
           </li>
         </ul>

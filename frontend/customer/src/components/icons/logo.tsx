@@ -2,14 +2,13 @@ const Logo = () => {
   return (
     <svg
       role="img"
-      aria-labelledby="title"
+      aria-label="Hazina Logo"
       fill="#000000"
       className="w-full h-full"
       viewBox="0 0 25.999998 31.917"
       version="1.1"
       id="svg1"
     >
-      <title id="title">Hazina Logo</title>
       <defs id="defs1">
         <rect
           x="266.66666"

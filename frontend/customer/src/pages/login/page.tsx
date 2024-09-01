@@ -20,6 +20,8 @@ const LoginPage = () => {
   const [show, setShow] = useState<boolean>(false);
   const [, setError] = useContext(ErrorContext);
   const setUser = userStore((state) => state.setUser);
+  const setCart = userStore((state) => state.setCart);
+  const setWishlist = userStore((state) => state.setWishlist);
 
   const mutation = useMutation({
     mutationFn: sendLogin,
@@ -45,12 +47,13 @@ const LoginPage = () => {
       if (data) {
         setAccessToken(data.token);
         setRefreshToken(data.refreshToken);
-        setUser(data.seller.id);
+        setUser(data.customer.id);
+        setCart(data.cart);
+        setWishlist(data.wishlist);
         console.log(data);
         navigate("/");
       } else {
-        setError(true);
-        navigate("/500", { replace: true });
+        setErr("Something unexpected happened");
       }
     },
   });

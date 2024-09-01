@@ -2,7 +2,7 @@ const HeartIcon = () => {
   return (
     <svg
       role="img"
-      aria-labelledby="title"
+      aria-label="Heart Icon"
       xmlns="http://www.w3.org/2000/svg"
       fill="none"
       viewBox="0 0 24 24"
@@ -10,7 +10,6 @@ const HeartIcon = () => {
       stroke="currentColor"
       className="w-full h-full"
     >
-      <title id="title">Heart Icon</title>
       <path
         strokeLinecap="round"
         strokeLinejoin="round"

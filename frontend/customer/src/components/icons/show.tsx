@@ -2,7 +2,7 @@ const EyeOpen = () => {
   return (
     <svg
       role="img"
-      aria-labelledby="title"
+      aria-label="Eye Open Icon"
       xmlns="http://www.w3.org/2000/svg"
       fill="none"
       viewBox="0 0 24 24"
@@ -10,7 +10,6 @@ const EyeOpen = () => {
       stroke="currentColor"
       className="h-full w-full"
     >
-      <title id="title">Eye Open Icon</title>
       <path
         strokeLinecap="round"
         strokeLinejoin="round"
