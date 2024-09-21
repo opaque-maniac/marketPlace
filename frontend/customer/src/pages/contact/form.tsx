@@ -1,21 +1,15 @@
 import { useMutation } from "@tanstack/react-query";
 import { sendContact } from "../../utils/mutations/contact";
-import {
-  FormEventHandler,
-  MutableRefObject,
-  useContext,
-  useState,
-} from "react";
-import ErrorContext from "../../utils/errorContext";
+import { FormEventHandler, MutableRefObject, useContext } from "react";
+import ErrorContext, { ShowErrorContext } from "../../utils/errorContext";
 import { useNavigate } from "react-router-dom";
 import { ErrorResponse } from "../../utils/types";
 import errorHandler from "../../utils/errorHandler";
 import Loader from "../../components/loader";
-import ShowError from "../../components/showErr";
 
 const ContactForm = () => {
   const [, setError] = useContext(ErrorContext);
-  const [err, setErr] = useState<string | null>(null);
+  const [, setErr] = useContext(ShowErrorContext);
   const ref: MutableRefObject<HTMLFormElement | null> = { current: null };
   const navigate = useNavigate();
 
@@ -58,15 +52,8 @@ const ContactForm = () => {
     mutation.mutate({ email, name, phone, message });
   };
 
-  const callBack = () => {
-    setErr(() => null);
-  };
-
   return (
     <>
-      <div className="h-12">
-        {err && <ShowError error={err} callback={callBack} />}
-      </div>
       <form
         onSubmit={submitHandler}
         ref={ref}

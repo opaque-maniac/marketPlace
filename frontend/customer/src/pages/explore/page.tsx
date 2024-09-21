@@ -1,6 +1,5 @@
 import { useQuery } from "@tanstack/react-query";
 import Transition from "../../components/transition";
-import Loader from "../../components/loader";
 import { ErrorResponse } from "../../utils/types";
 import errorHandler from "../../utils/errorHandler";
 import { useNavigate } from "react-router-dom";
@@ -12,6 +11,7 @@ import ArrowRight from "../../components/icons/arrowright";
 import { Helmet } from "react-helmet";
 import { fetchProducts } from "../../utils/queries/products";
 import ProductList from "../../components/productlist";
+import PageLoader from "../../components/pageloader";
 
 const ExplorePage = () => {
   const page = explorePageStore((state) => state.page);
@@ -80,7 +80,7 @@ const ExplorePage = () => {
   return (
     <Transition>
       <Helmet>
-        <title>Orders</title>
+        <title>Explore</title>
         <meta name="description" content="Orders page for Hazina seller app" />
         <meta name="robots" content="noindex, nofollow" />
         <meta name="googlebot" content="noindex, nofollow" />
@@ -92,11 +92,7 @@ const ExplorePage = () => {
           style={{ minHeight: "calc(100vh - 1.4rem )" }}
         >
           {query.isLoading ? (
-            <div className="h-full w-full flex justify-center items-center">
-              <div className="h-20 w-20">
-                <Loader color="#fff" />
-              </div>
-            </div>
+            <PageLoader />
           ) : (
             <div className="h-full w-full">
               {data && (

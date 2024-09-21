@@ -25,3 +25,9 @@ export const cartPageStore = create<PageStore>((set) => ({
   setPage: (page) => set({ page }),
   resetPage: () => set({ page: INITIAL_PAGE }),
 }));
+
+export const orderPageStore = create<PageStore>((set) => ({
+  page: INITIAL_PAGE,
+  setPage: (page) => set({ page }),
+  resetPage: () => set({ page: INITIAL_PAGE }),
+}));

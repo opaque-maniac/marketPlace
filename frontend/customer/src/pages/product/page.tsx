@@ -6,7 +6,6 @@ import { useContext, useEffect, useState } from "react";
 import ErrorContext, { ShowErrorContext } from "../../utils/errorContext";
 import errorHandler from "../../utils/errorHandler";
 import { ErrorResponse } from "../../utils/types";
-import Loader from "../../components/loader";
 import { Helmet } from "react-helmet";
 import TickIcon from "../../components/icons/tick";
 import CloseIcon from "../../components/icons/closeIcon";
@@ -16,6 +15,7 @@ import TruckIcon from "../../components/icons/truck";
 import ArrowPath from "../../components/icons/arrowpath";
 import Related from "./related";
 import CommentList from "./comments";
+import PageLoader from "../../components/pageloader";
 
 const IndividualProductPage = () => {
   const navigate = useNavigate();
@@ -91,14 +91,7 @@ const IndividualProductPage = () => {
       </Helmet>
       <main role="main" className="h-full w-full">
         {query.isLoading ? (
-          <section
-            style={{ height: "calc(100vh - 1.4rem)" }}
-            className="w-full flex justify-center items-center"
-          >
-            <div className="w-20 h-20">
-              <Loader color="#000000" />
-            </div>
-          </section>
+          <PageLoader />
         ) : (
           <>
             <div className="flex pb-8 lg:flex-row flex-col items-center pt-8 md:justify-around">

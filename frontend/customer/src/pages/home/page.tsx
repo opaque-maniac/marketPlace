@@ -78,7 +78,7 @@ const HomePage = () => {
               <ul className="flex md:flex-col flex-row flex-wrap justify-center md:items-start items-center md:gap-3 gap-8">
                 <li>
                   <Link
-                    to={""}
+                    to={`/categories/ELECTRONICS`}
                     className="lg:no-underline underline lg:hover:underline"
                   >
                     ELECTRONICS
@@ -86,7 +86,7 @@ const HomePage = () => {
                 </li>
                 <li>
                   <Link
-                    to={""}
+                    to={`/categories/FASHION`}
                     className="lg:no-underline underline lg:hover:underline"
                   >
                     FASHION
@@ -94,7 +94,7 @@ const HomePage = () => {
                 </li>
                 <li>
                   <Link
-                    to={""}
+                    to={"/categories/HOME"}
                     className="lg:no-underline underline lg:hover:underline"
                   >
                     HOME
@@ -102,7 +102,7 @@ const HomePage = () => {
                 </li>
                 <li>
                   <Link
-                    to={""}
+                    to={"/categories/BEAUTY"}
                     className="lg:no-underline underline lg:hover:underline"
                   >
                     BEAUTY
@@ -110,7 +110,7 @@ const HomePage = () => {
                 </li>
                 <li>
                   <Link
-                    to={""}
+                    to={"/categories/SPORTS"}
                     className="lg:no-underline underline lg:hover:underline"
                   >
                     SPORTS
@@ -118,7 +118,7 @@ const HomePage = () => {
                 </li>
                 <li>
                   <Link
-                    to={""}
+                    to={"/categories/FOOD"}
                     className="lg:no-underline underline lg:hover:underline"
                   >
                     FOOD
@@ -126,7 +126,7 @@ const HomePage = () => {
                 </li>
                 <li>
                   <Link
-                    to={""}
+                    to={"/categories/BOOKS"}
                     className="lg:no-underline underline lg:hover:underline"
                   >
                     BOOKS
@@ -134,7 +134,7 @@ const HomePage = () => {
                 </li>
                 <li>
                   <Link
-                    to={""}
+                    to={"/categories/TOYS"}
                     className="lg:no-underline underline lg:hover:underline"
                   >
                     TOYS

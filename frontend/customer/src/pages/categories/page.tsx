@@ -1,35 +1,44 @@
 import { useQuery } from "@tanstack/react-query";
 import Transition from "../../components/transition";
-import Loader from "../../components/loader";
 import { ErrorResponse } from "../../utils/types";
 import errorHandler from "../../utils/errorHandler";
-import { useNavigate } from "react-router-dom";
-import { useContext, useEffect, useState } from "react";
-import ShowError from "../../components/showErr";
-import { orderPageStore } from "../../utils/pageStore";
+import { useNavigate, useParams } from "react-router-dom";
+import { useContext, useEffect } from "react";
+import { explorePageStore } from "../../utils/pageStore";
 import ErrorContext, { ShowErrorContext } from "../../utils/errorContext";
 import ArrowLeft from "../../components/icons/arrowleft";
 import ArrowRight from "../../components/icons/arrowright";
 import { Helmet } from "react-helmet";
-import OrdersList from "./orderlist";
-import { fetchOrders } from "../../utils/queries/orders";
+import { fetchCategoryProducts } from "../../utils/queries/products";
+import ProductList from "../../components/productlist";
+import PageLoader from "../../components/pageloader";
 
-const HomePage = () => {
-  const page = orderPageStore((state) => state.page);
-  const setPage = orderPageStore((state) => state.setPage);
+const CategoriesPage = () => {
+  const { category } = useParams();
+  const page = explorePageStore((state) => state.page);
+  const setPage = explorePageStore((state) => state.setPage);
   const [, setError] = useContext(ErrorContext);
 
   const navigate = useNavigate();
   const [, setErr] = useContext(ShowErrorContext);
-  const [ready, setReady] = useState<string>("all");
+
+  if (!category) {
+    setError(true);
+    navigate("/500", { replace: true });
+  }
 
   useEffect(() => {
-    navigate(`?page=${page}`, { replace: true });
+    navigate(`/categories/${category}?page=${page}`, { replace: true });
+
+    return () => {
+      setPage(1);
+    };
+    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [page, navigate]);
 
   const query = useQuery({
-    queryKey: ["orders", page, 10, ready],
-    queryFn: fetchOrders,
+    queryKey: ["products", page, 20, category as string],
+    queryFn: fetchCategoryProducts,
   });
 
   if (query.isError) {
@@ -72,64 +81,51 @@ const HomePage = () => {
     }
   };
 
+  const data = query.data?.data;
+
   return (
     <Transition>
       <Helmet>
-        <title>Orders</title>
+        <title>Explore</title>
         <meta name="description" content="Orders page for Hazina seller app" />
         <meta name="robots" content="noindex, nofollow" />
         <meta name="googlebot" content="noindex, nofollow" />
         <meta name="google" content="nositelinkssearchbox" />
       </Helmet>
       <main role="main">
-        <section className="h-full">
-          <div>
-            <select
-              name="ready"
-              id="ready"
-              aria-label="Filter for whether order is ready or not"
-              value={ready}
-              onChange={(e) => setReady(e.target.value)}
-              className="border border-black rounded-md p-2"
-              onBlur={(e) => setReady(e.target.value)}
-            >
-              <option value="all">All</option>
-              <option value="true">Ready</option>
-              <option value="false">Not Ready</option>
-            </select>
-          </div>
-          {query.isLoading && (
+        <section
+          className="px-2 py-2"
+          style={{ minHeight: "calc(100vh - 1.4rem )" }}
+        >
+          {query.isLoading ? (
+            <PageLoader />
+          ) : (
             <div
-              className="flex justify-center items-center"
-              style={{
-                minHeight: "calc(100vh - 10.8rem)",
-              }}
+              style={{ minHeight: "calc(100vh - 1.4rem )" }}
+              className="h-full w-full"
             >
-              <div className="h-20 w-20">
-                <Loader color="#000000" />
-              </div>
+              {data && (
+                <ProductList products={data} color="black" overflow={false} />
+              )}
             </div>
           )}
-          {query.isSuccess && <OrdersList orders={query.data.orders} />}
         </section>
-        <section className="flex justify-center items-center gap-6 py-4">
+        <section className="flex justify-center items-center gap-6 py-2">
           <div>
             <button
-              className="h-7 w-7 p-1 border border-black rounded-full"
+              disabled={!data || page == 1}
+              className="w-8 h-8 p-1 rounded-full border border-black"
               onClick={handlePrev}
-              disabled={page === 1}
-              aria-label="Previous Page"
             >
               <ArrowLeft />
             </button>
           </div>
-          <div>{`Page ${page}`}</div>
+          <div>{page}</div>
           <div>
             <button
-              className="h-7 w-7 p-1 border border-black rounded-full"
+              disabled={!data || query.data?.hasNext === false}
+              className="w-8 h-8 p-1 rounded-full border border-black"
               onClick={handleNext}
-              disabled={!query.data?.hasNext}
-              aria-label="Next Page"
             >
               <ArrowRight />
             </button>
@@ -140,4 +136,4 @@ const HomePage = () => {
   );
 };
 
-export default HomePage;
+export default CategoriesPage;

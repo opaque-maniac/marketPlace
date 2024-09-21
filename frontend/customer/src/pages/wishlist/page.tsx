@@ -11,6 +11,7 @@ import ArrowLeft from "../../components/icons/arrowleft";
 import ArrowRight from "../../components/icons/arrowright";
 import { Helmet } from "react-helmet";
 import { fetchWishlist } from "../../utils/queries/wishlist";
+import ProductList from "../../components/productlist";
 
 const WishlistPage = () => {
   const page = cartPageStore((state) => state.page);
@@ -21,7 +22,7 @@ const WishlistPage = () => {
   const [, setErr] = useContext(ShowErrorContext);
 
   useEffect(() => {
-    navigate(`/cart?page=${page}`, { replace: true });
+    navigate(`/wishlist?page=${page}`, { replace: true });
 
     return () => {
       setPage(1);
@@ -77,16 +78,15 @@ const WishlistPage = () => {
   };
 
   const data = query.data;
-
-  console.log(data);
+  const products = data?.wishlistItems.map((item) => item.product) || [];
 
   return (
     <Transition>
       <Helmet>
-        <title>Cart</title>
+        <title>Wishlist</title>
         <meta
           name="description"
-          content="Cart page for Hazina marketplace app"
+          content="Wishlist page for Hazina marketplace app"
         />
         <meta name="robots" content="noindex, nofollow" />
         <meta name="googlebot" content="noindex, nofollow" />
@@ -105,9 +105,7 @@ const WishlistPage = () => {
             </div>
           ) : (
             <div className="h-full w-full">
-              <div>
-                <h2>Loaded wishlist</h2>
-              </div>
+              <ProductList products={products} color="black" overflow={false} />
             </div>
           )}
         </section>

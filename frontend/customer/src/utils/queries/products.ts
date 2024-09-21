@@ -127,3 +127,33 @@ export const fetchProductComments: QueryFunction<
     throw e;
   }
 };
+
+export const fetchCategoryProducts: QueryFunction<
+  SuccessProductsResponse,
+  ["products", number, number, string]
+> = async ({ queryKey }) => {
+  try {
+    const [, page, limit, category] = queryKey;
+    const url = `http://localhost:3020/customers/products?page=${page}&limit=${limit}&category=${category}`;
+    const options = {
+      method: "GET",
+      headers: {
+        "Content-Type": "application/json",
+      },
+    };
+
+    const response = await fetch(url, options);
+
+    if (!response.ok) {
+      const obj = (await response.json()) as ErrorResponse;
+      throw new Error(JSON.stringify(obj));
+    }
+
+    return response.json() as Promise<SuccessProductsResponse>;
+  } catch (e) {
+    if (e instanceof Error) {
+      throw new Error(e.message);
+    }
+    throw e;
+  }
+};

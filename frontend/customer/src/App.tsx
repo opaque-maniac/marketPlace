@@ -30,6 +30,7 @@ const ExplorePage = lazy(() => import("./pages/explore/page"));
 const SearchPage = lazy(() => import("./pages/search/page"));
 const WishlistPage = lazy(() => import("./pages/wishlist/page"));
 const CartPage = lazy(() => import("./pages/cart/page"));
+const CategoriesPage = lazy(() => import("./pages/categories/page"));
 
 const queryClient = new QueryClient({
   defaultOptions: {
@@ -64,6 +65,10 @@ const App = () => {
                     <Route
                       path="/products/:id"
                       element={<IndividualProductPage />}
+                    />
+                    <Route
+                      path="/categories/:category"
+                      element={<CategoriesPage />}
                     />
                     <Route path="/explore" element={<ExplorePage />} />
                     <Route path="/search" element={<SearchPage />} />

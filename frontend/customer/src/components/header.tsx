@@ -1,5 +1,4 @@
 import Logo from "./icons/logo";
-import userStore from "../utils/store";
 import { Link } from "react-router-dom";
 import Navbar from "./navbart";
 import Action from "./action";
@@ -10,7 +9,6 @@ import Transition from "./transition";
 import CloseIcon from "./icons/closeIcon";
 
 const Header = () => {
-  const user = userStore((state) => state.user);
   const [err, setErr] = useContext(ShowErrorContext);
 
   const clickHandler: MouseEventHandler<HTMLButtonElement> = (e) => {
@@ -25,7 +23,7 @@ const Header = () => {
         className="flex justify-between items-center md:px-10 px-6 border-b border-black/50 h-14 fixed top-0 left-0 right-0 bg-white z-10 lg:max-w-1770"
       >
         <div className="h-10 w-10 relative">
-          <Link to={user ? "/" : "/login"}>
+          <Link to={"/"}>
             <Logo />
           </Link>
         </div>

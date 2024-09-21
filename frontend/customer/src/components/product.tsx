@@ -31,6 +31,7 @@ const ProductItem = ({ product, color }: Props) => {
             src={`http://localhost:3020/${product.images[0].url}`}
             alt={product.name}
             className="h-full w-full"
+            loading="lazy"
           />
           <div className="absolute top-4 right-4">
             <button
