@@ -6,7 +6,7 @@ import errorHandler from "../../utils/errorHandler";
 import { useNavigate } from "react-router-dom";
 import { useContext, useEffect } from "react";
 import { cartPageStore } from "../../utils/pageStore";
-import ErrorContext, { ShowErrorContext } from "../../utils/errorContext";
+import { ErrorContext, ShowErrorContext } from "../../utils/errorContext";
 import ArrowLeft from "../../components/icons/arrowleft";
 import ArrowRight from "../../components/icons/arrowright";
 import { Helmet } from "react-helmet";
@@ -78,7 +78,7 @@ const WishlistPage = () => {
   };
 
   const data = query.data;
-  const products = data?.wishlistItems.map((item) => item.product) || [];
+  const products = data?.wishlistItems?.map((item) => item.product) || [];
 
   return (
     <Transition>

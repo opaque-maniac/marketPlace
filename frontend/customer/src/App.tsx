@@ -2,7 +2,7 @@ import { createRoot } from "react-dom/client";
 import { BrowserRouter, Route, Routes } from "react-router-dom";
 import { QueryClient, QueryClientProvider } from "@tanstack/react-query";
 import { lazy, Suspense, useState } from "react";
-import ErrorContext, { ShowErrorContext } from "./utils/errorContext";
+import { ErrorContext, ShowErrorContext } from "./utils/errorContext";
 import Header from "./components/header";
 import Footer from "./components/footer";
 import CheckPermissions from "./utils/permissions";
@@ -31,6 +31,7 @@ const SearchPage = lazy(() => import("./pages/search/page"));
 const WishlistPage = lazy(() => import("./pages/wishlist/page"));
 const CartPage = lazy(() => import("./pages/cart/page"));
 const CategoriesPage = lazy(() => import("./pages/categories/page"));
+const RefreshTokenPage = lazy(() => import("./pages/refreshtoken/page"));
 
 const queryClient = new QueryClient({
   defaultOptions: {
@@ -93,6 +94,10 @@ const App = () => {
                     <Route path="/login" element={<LoginPage />} />
                     <Route path="/register" element={<RegisterPage />} />
                     <Route path="/logout" element={<LogoutPage />} />
+                    <Route
+                      path="/refresh-token"
+                      element={<RefreshTokenPage />}
+                    />
                     <Route path="/500" element={<Error500 />} />
                     <Route path="*" element={<Error404 />} />
                   </Routes>

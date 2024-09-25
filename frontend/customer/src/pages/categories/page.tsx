@@ -5,7 +5,7 @@ import errorHandler from "../../utils/errorHandler";
 import { useNavigate, useParams } from "react-router-dom";
 import { useContext, useEffect } from "react";
 import { explorePageStore } from "../../utils/pageStore";
-import ErrorContext, { ShowErrorContext } from "../../utils/errorContext";
+import { ErrorContext, ShowErrorContext } from "../../utils/errorContext";
 import ArrowLeft from "../../components/icons/arrowleft";
 import ArrowRight from "../../components/icons/arrowright";
 import { Helmet } from "react-helmet";
@@ -105,7 +105,12 @@ const CategoriesPage = () => {
               className="h-full w-full"
             >
               {data && (
-                <ProductList products={data} color="black" overflow={false} />
+                <ProductList
+                  full={true}
+                  products={data}
+                  color="black"
+                  overflow={false}
+                />
               )}
             </div>
           )}

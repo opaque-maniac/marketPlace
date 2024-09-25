@@ -2,7 +2,7 @@ import { useContext, useEffect } from "react";
 import Transition from "../../components/transition";
 import useUserStore from "../../utils/store";
 import { useNavigate } from "react-router-dom";
-import ErrorContext, { ShowErrorContext } from "../../utils/errorContext";
+import { ErrorContext, ShowErrorContext } from "../../utils/errorContext";
 import { useQuery } from "@tanstack/react-query";
 import { fetchProfile } from "../../utils/queries/profile";
 import Loader from "../../components/loader";
@@ -51,6 +51,8 @@ const ProfilePage = () => {
     }
   }
 
+  const customer = query.data?.data;
+
   return (
     <Transition>
       <Helmet>
@@ -79,34 +81,34 @@ const ProfilePage = () => {
         )}
         {query.isSuccess && query.data ? (
           <>
-            {query.data.seller ? (
+            {customer ? (
               <section>
                 <div className="md:w-10/12 w-11/12 mx-auto rounded-lg shadow-xl border flex justify-around items-center md:flex-row flex-col mb-10 md:gap-0 gap-4 py-2">
                   <div>
                     <img
                       src={
-                        query.data.seller.image
-                          ? `http://localhost:3000/uploads/seller/${query.data.seller.image.url}`
+                        customer.image
+                          ? `http://localhost:3000/uploads/seller/${customer.image.url}`
                           : "/images/profile.svg"
                       }
-                      alt={query.data.seller.name}
+                      alt={`${customer.firstName} ${customer.lastName}`}
                       className="w-80 h-80"
                     />
                   </div>
                   <div>
-                    <p>{query.data.seller.name}</p>
-                    <p>{query.data.seller.email}</p>
+                    <p>{`${customer.firstName} ${customer.lastName}`}</p>
+                    <p>{customer.email}</p>
                     <p>
-                      Phone: <span>{query.data.seller.phone}</span>
+                      Phone: <span>{customer.phone ?? "No phone number"}</span>
                     </p>
                     <p>
-                      Address: <span>{query.data.seller.address}</span>
+                      Address: <span>{customer.address ?? "No address"}</span>
                     </p>
                     <p>
-                      Joined: <span>{query.data.seller.createdAt}</span>
+                      Joined: <span>{customer.createdAt}</span>
                     </p>
                     <p>
-                      Last updated: <span>{query.data.seller.updatedAt}</span>
+                      Last updated: <span>{customer.updatedAt}</span>
                     </p>
                   </div>
                 </div>

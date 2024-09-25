@@ -5,7 +5,7 @@ import { MouseEventHandler, useContext } from "react";
 import Loader from "../../components/loader";
 import { ErrorResponse } from "../../utils/types";
 import errorHandler from "../../utils/errorHandler";
-import ErrorContext, { ShowErrorContext } from "../../utils/errorContext";
+import { ShowErrorContext, ErrorContext } from "../../utils/errorContext";
 import { useNavigate } from "react-router-dom";
 
 interface Props {
@@ -35,21 +35,28 @@ const AddToCart = ({ id, color, text }: Props) => {
       }
     },
     onError: (error) => {
-      const errorObj = JSON.parse(error.message) as ErrorResponse;
-      const [show, url] = errorHandler(errorObj.errorCode);
+      try {
+        const errorObj = JSON.parse(error.message) as ErrorResponse;
+        const [show, url] = errorHandler(errorObj.errorCode);
 
-      if (show) {
-        setErr(errorObj.message);
-      } else {
-        if (url) {
-          if (url === "/500") {
-            setError(true);
-          }
-          navigate(url, { replace: true });
+        if (show) {
+          setErr(errorObj.message);
         } else {
-          setError(true);
-          navigate("/500", { replace: true });
+          if (url) {
+            if (url === "/500") {
+              setError(true);
+            }
+            navigate(url, { replace: true });
+          } else {
+            setError(true);
+            navigate("/500", { replace: true });
+          }
         }
+      } catch (e) {
+        if (e instanceof Error) {
+          setErr("Something unexpected happened");
+        }
+        navigate("/", { replace: true });
       }
     },
   });
@@ -66,7 +73,13 @@ const AddToCart = ({ id, color, text }: Props) => {
       title={user ? "Add product to cart" : "Log in to take this action"}
       className={`rounded h-10 w-40 bg-${color} text-${text}`}
     >
-      {mutation.isPending ? <Loader color="#ffffff" /> : "Add To Cart"}
+      {mutation.isPending ? (
+        <div className="h-8 w-8 pt-1 mx-auto">
+          <Loader color={color === "white" ? "#000" : "#fff"} />
+        </div>
+      ) : (
+        "Add To Cart"
+      )}
     </button>
   );
 };

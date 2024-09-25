@@ -5,7 +5,7 @@ import Loader from "../../components/loader";
 import ProductList from "../../components/productlist";
 import errorHandler from "../../utils/errorHandler";
 import { useContext } from "react";
-import ErrorContext, { ShowErrorContext } from "../../utils/errorContext";
+import { ErrorContext, ShowErrorContext } from "../../utils/errorContext";
 import { useNavigate } from "react-router-dom";
 
 interface Props {

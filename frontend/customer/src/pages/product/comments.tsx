@@ -5,7 +5,7 @@ import CommentItem from "../../components/comment";
 import { fetchProductComments } from "../../utils/queries/products";
 import ArrowRight from "../../components/icons/arrowright";
 import ArrowLeft from "../../components/icons/arrowleft";
-import ErrorContext, { ShowErrorContext } from "../../utils/errorContext";
+import { ErrorContext, ShowErrorContext } from "../../utils/errorContext";
 import { useNavigate } from "react-router-dom";
 import { ErrorResponse } from "../../utils/types";
 import errorHandler from "../../utils/errorHandler";

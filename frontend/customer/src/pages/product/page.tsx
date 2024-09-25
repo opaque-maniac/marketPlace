@@ -3,7 +3,7 @@ import Transition from "../../components/transition";
 import { fetchProduct } from "../../utils/queries/products";
 import { useNavigate, useParams } from "react-router-dom";
 import { useContext, useEffect, useState } from "react";
-import ErrorContext, { ShowErrorContext } from "../../utils/errorContext";
+import { ErrorContext, ShowErrorContext } from "../../utils/errorContext";
 import errorHandler from "../../utils/errorHandler";
 import { ErrorResponse } from "../../utils/types";
 import { Helmet } from "react-helmet";

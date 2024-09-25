@@ -5,7 +5,6 @@ import { ErrorResponse } from "../../utils/types";
 import errorHandler from "../../utils/errorHandler";
 import { useNavigate } from "react-router-dom";
 import { useContext, useEffect, useState } from "react";
-import ShowError from "../../components/showErr";
 import { orderPageStore } from "../../utils/pageStore";
 import ErrorContext, { ShowErrorContext } from "../../utils/errorContext";
 import ArrowLeft from "../../components/icons/arrowleft";

@@ -67,7 +67,9 @@ const Action = () => {
               >
                 <ProfileIcon />
               </button>
-              {clicked && <ProfileMenu />}
+              {clicked && (
+                <ProfileMenu callback={() => setClicked(() => false)} />
+              )}
             </div>
           </div>
         </>

@@ -1,7 +1,18 @@
 import { Link } from "react-router-dom";
 import Transition from "./transition";
+import { MouseEventHandler } from "react";
 
-const ProfileMenu = () => {
+interface Props {
+  callback: () => void;
+}
+
+const ProfileMenu = ({ callback }: Props) => {
+  const clickHandler: MouseEventHandler<HTMLAnchorElement> = () => {
+    setTimeout(() => {
+      callback();
+    }, 100);
+  };
+
   return (
     <Transition>
       <div
@@ -18,7 +29,7 @@ const ProfileMenu = () => {
             }}
           >
             <div>
-              <Link to={"/profile"}>
+              <Link onClick={clickHandler} to={"/profile"}>
                 <p>Manage My Account</p>
               </Link>
             </div>
@@ -29,7 +40,7 @@ const ProfileMenu = () => {
             }}
           >
             <div>
-              <Link to={"/orders"}>
+              <Link onClick={clickHandler} to={"/orders"}>
                 <p>My Orders</p>
               </Link>
             </div>
@@ -40,7 +51,7 @@ const ProfileMenu = () => {
             }}
           >
             <div>
-              <Link to={"/logout"}>
+              <Link onClick={clickHandler} to={"/logout"}>
                 <p>Log Out</p>
               </Link>
             </div>

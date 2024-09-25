@@ -1,15 +1,15 @@
 import { QueryFunction } from "@tanstack/react-query";
-import { SuccessSellerResponse } from "../types";
+import { SuccessCustomerResponse } from "../types";
 import { getAccessToken } from "../cookies";
 import { tokenError } from "../errors";
 
 export const fetchProfile: QueryFunction<
-  SuccessSellerResponse,
+  SuccessCustomerResponse,
   ["profile", string]
 > = async ({ queryKey }) => {
   try {
     const [, id] = queryKey;
-    const url = `http://localhost:3020/seller/profile/${id}`;
+    const url = `http://localhost:3020/customers/profile/${id}`;
 
     const token = getAccessToken();
 
@@ -30,7 +30,7 @@ export const fetchProfile: QueryFunction<
       throw new Error("An error occurred while fetching the profile");
     }
 
-    return response.json() as Promise<SuccessSellerResponse>;
+    return response.json() as Promise<SuccessCustomerResponse>;
   } catch (e) {
     if (e instanceof Error) {
       throw new Error(e.message);

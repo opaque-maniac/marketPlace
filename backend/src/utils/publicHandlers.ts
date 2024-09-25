@@ -25,15 +25,15 @@ export const refreshToken = async (
   next: NextFunction
 ) => {
   try {
-    const refresh = req.cookies["refresh-token"];
+    const { refreshToken } = req.body;
 
-    if (!refresh) {
+    if (!refreshToken) {
       return res.status(401).json({
         message: "Unauthorized. No refresh token provided",
       });
     }
 
-    const user = jwt.verify(refresh, tokenSecret) as DecodedToken;
+    const user = jwt.verify(refreshToken, tokenSecret) as DecodedToken;
     const token = generateToken(user.id, user.email, user.userType);
 
     return res.status(200).json({

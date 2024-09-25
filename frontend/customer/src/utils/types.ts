@@ -28,9 +28,19 @@ export interface Customer {
   firstName: string;
   lastName: string;
   password: string;
+  email: string;
   active: boolean;
-  address?: string;
-  phone?: string;
+  address: string | null;
+  phone: string | null;
+  createdAt: string;
+  updatedAt: string | null;
+  image: CustomerImage | null;
+}
+
+export interface CustomerImage {
+  id: string;
+  url: string;
+  createdAt: string;
 }
 
 export interface SuccessRegisterResponse {
@@ -232,4 +242,9 @@ export interface SuccessWishlistQueryResponse {
   wishlist: Wishlist;
   wishlistItems: WishlistItem[];
   hasNext: boolean;
+}
+
+export interface SuccessCustomerResponse {
+  message: string;
+  data: Customer;
 }

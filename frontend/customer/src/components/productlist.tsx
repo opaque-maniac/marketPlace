@@ -6,31 +6,26 @@ interface Props {
   products: Product[];
   color: string;
   overflow: boolean;
+  full: boolean;
+  center?: boolean;
 }
 
-function makeFull(path: string) {
-  if (
-    path.includes("explore") ||
-    path.includes("search") ||
-    path.includes("categories") ||
-    path.includes("wishlist") ||
-    path.includes("cart")
-  ) {
-    return true;
-  }
-  return false;
-}
-
-const ProductList = ({ products, color, overflow }: Props) => {
+const ProductList = ({ products, color, overflow, full, center }: Props) => {
   const { pathname } = useLocation();
 
-  const full = makeFull(pathname);
+  const justify =
+    overflow === true ? "justify-start" : "justify-center lg:gap-10 md:gap-20";
+  const scrollColor = color == "white" ? "scroll-black" : "scroll-white";
+  const overflowStyle = overflow
+    ? "overflow-x-auto scroll-mod overflow-y-hidden pb-2"
+    : "flex-wrap md:flex-row flex-col";
+  const align = center ? "items-center" : "items-start";
 
   return (
     <div className="h-full w-full">
       {products.length > 0 ? (
         <ul
-          className={`flex h-full justify-start items-center gap-4 ${color == "white" ? "scroll-black" : "scroll-white"} ${overflow ? "overflow-x-auto scroll-mod overflow-y-hidden pb-2" : "flex-wrap md:flex-row flex-col"}`}
+          className={`flex h-full ${justify} ${align} gap-4 ${scrollColor} ${overflowStyle}`}
         >
           {products.map((product) => (
             <li key={product.id}>
