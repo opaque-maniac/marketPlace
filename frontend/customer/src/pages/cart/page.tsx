@@ -73,8 +73,6 @@ const CartPage = () => {
 
   const data = query.data;
 
-  console.log(data);
-
   return (
     <Transition>
       <Helmet>

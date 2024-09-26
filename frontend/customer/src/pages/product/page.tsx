@@ -75,7 +75,6 @@ const IndividualProductPage = () => {
   }
 
   const product = query.data?.data;
-  console.log(product);
 
   return (
     <Transition>
@@ -129,14 +128,14 @@ const IndividualProductPage = () => {
                     <h3 className="text-2xl font-semibold">{product.name}</h3>
                     <div className="flex justify-start items-center gap-10 text-xl">
                       <span className="text-red-400">
-                        ${product.price.toFixed(3)}
+                        ${product.price.toFixed(2)}
                       </span>
                       <span className="line-through text-gray-400">
                         $
                         {calculateOriginalPrice(
                           product.price,
                           product.discountPercentage,
-                        ).toFixed(3)}
+                        ).toFixed(2)}
                       </span>
                     </div>
                     <div className="flex justify-start items-center gap-4">
@@ -169,6 +168,7 @@ const IndividualProductPage = () => {
                               setClicked(() => !clicked);
                             }}
                             className="underline"
+                            aria-label="toggle description"
                           >
                             {clicked ? "Read Less" : "Read More"}
                           </button>
@@ -215,7 +215,7 @@ const IndividualProductPage = () => {
                 </div>
               </section>
             </div>
-            <section className="md:w-8/12 w-11/12 mx-auto rounded h-80 border mt-8">
+            <section className="md:w-8/12 w-11/12 mx-auto rounded min-h-80 border mt-8">
               {product && <CommentList id={product.id} />}
             </section>
             <section className="min-h-400 w-full px-2">

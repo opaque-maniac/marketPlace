@@ -23,14 +23,10 @@ const AddToWishlist = ({ id }: Props) => {
   const mutation = useMutation({
     mutationFn: addToWishlist,
     onSuccess: (data) => {
-      if (data && data.wishlistItem) {
-        if (wishlist && data.new) {
-          setWishlist(wishlist + 1);
-        }
-        navigate("/cart");
-      } else {
-        setErr("An unexpected error occurred.");
+      if (data.new && wishlist !== null) {
+        setWishlist(wishlist + 1);
       }
+      navigate("/wishlist");
     },
     onError: (error) => {
       try {
@@ -54,7 +50,6 @@ const AddToWishlist = ({ id }: Props) => {
         if (e instanceof Error) {
           setErr("Something unexpected happened");
         }
-        navigate("/", { replace: true });
       }
     },
   });

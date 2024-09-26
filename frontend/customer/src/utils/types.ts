@@ -95,6 +95,7 @@ export interface Comment {
   id: string;
   productID: string;
   customerID: string;
+  customer: Customer;
   message: string;
   createdAt: string;
 }
@@ -247,4 +248,14 @@ export interface SuccessWishlistQueryResponse {
 export interface SuccessCustomerResponse {
   message: string;
   data: Customer;
+}
+
+export interface SuccessCommentCreateResponse {
+  message: string;
+  data: Comment;
+}
+
+export interface SuccessRemoveFromWishlistResonse {
+  message: string;
+  wishlistItem: WishlistItem;
 }

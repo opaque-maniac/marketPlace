@@ -1,5 +1,6 @@
 import { QueryFunction } from "@tanstack/react-query";
 import { ErrorResponse, SuccessSearchResponse } from "../types";
+import { responseError } from "../errors";
 
 export const searchProducts: QueryFunction<
   SuccessSearchResponse,
@@ -26,8 +27,14 @@ export const searchProducts: QueryFunction<
     const response = await fetch(url, options);
 
     if (!response.ok) {
-      const json = (await response.json()) as ErrorResponse;
-      throw new Error(JSON.stringify(json));
+      try {
+        const error = (await response.json()) as ErrorResponse;
+        throw new Error(JSON.stringify(error));
+      } catch (e) {
+        if (e instanceof Error) {
+          throw responseError();
+        }
+      }
     }
 
     return response.json() as Promise<SuccessSearchResponse>;

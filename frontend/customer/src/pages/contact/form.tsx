@@ -1,15 +1,22 @@
 import { useMutation } from "@tanstack/react-query";
 import { sendContact } from "../../utils/mutations/contact";
-import { FormEventHandler, MutableRefObject, useContext } from "react";
+import {
+  FormEventHandler,
+  MutableRefObject,
+  useContext,
+  useState,
+} from "react";
 import { ErrorContext, ShowErrorContext } from "../../utils/errorContext";
 import { useNavigate } from "react-router-dom";
 import { ErrorResponse } from "../../utils/types";
 import errorHandler from "../../utils/errorHandler";
 import Loader from "../../components/loader";
+import SuccessComponent from "../../components/success";
 
 const ContactForm = () => {
   const [, setError] = useContext(ErrorContext);
   const [, setErr] = useContext(ShowErrorContext);
+  const [success, setSuccess] = useState<boolean>(false);
   const ref: MutableRefObject<HTMLFormElement | null> = { current: null };
   const navigate = useNavigate();
 
@@ -46,6 +53,10 @@ const ContactForm = () => {
         navigate("/500");
       }
       ref.current?.reset();
+      setSuccess(true);
+      setTimeout(() => {
+        setSuccess(false);
+      }, 5000);
     },
   });
 
@@ -61,6 +72,7 @@ const ContactForm = () => {
 
   return (
     <>
+      {success && <SuccessComponent message="Successfully Sent Complaint" />}
       <form
         onSubmit={submitHandler}
         ref={ref}
@@ -113,6 +125,8 @@ const ContactForm = () => {
             id="message"
             placeholder="Your Message"
             className="block w-full h-40 bg-gray-200 focus:outline-none pl-1 focus:border-b border-black"
+            maxLength={255}
+            minLength={10}
           ></textarea>
         </div>
         <div className="flex md:justify-end justify-center items-center h-24 md:pr-2">

@@ -57,12 +57,18 @@ const Related = ({ product }: Props) => {
     }
   }
 
-  const products = query.data?.data;
+  const productData = query.data?.data || [];
+  const products = productData.filter((p: Product) => p.id !== product.id);
 
   return (
-    <div className="h-full w-full">
+    <div className="h-full w-full pb-4">
       {products && products.length > 0 && (
-        <ProductList products={products} overflow={true} color="black" />
+        <ProductList
+          products={products}
+          overflow={true}
+          color="black"
+          full={false}
+        />
       )}
       {products && products.length === 0 && (
         <div className="flex justify-center h-full w-full items-center">

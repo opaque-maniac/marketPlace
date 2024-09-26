@@ -1,5 +1,5 @@
 import { useQuery } from "@tanstack/react-query";
-import { useContext, useState } from "react";
+import { useCallback, useContext, useState } from "react";
 import Loader from "../../components/loader";
 import CommentItem from "../../components/comment";
 import { fetchProductComments } from "../../utils/queries/products";
@@ -9,6 +9,8 @@ import { ErrorContext, ShowErrorContext } from "../../utils/errorContext";
 import { useNavigate } from "react-router-dom";
 import { ErrorResponse } from "../../utils/types";
 import errorHandler from "../../utils/errorHandler";
+import CommentForm from "../../components/commentform";
+import useUserStore from "../../utils/store";
 
 interface Props {
   id: string;
@@ -18,6 +20,7 @@ const CommentList = ({ id }: Props) => {
   const [page, setPage] = useState<number>(1);
   const [, setErr] = useContext(ShowErrorContext);
   const [, setError] = useContext(ErrorContext);
+  const user = useUserStore((state) => state.user);
   const navigate = useNavigate();
 
   const query = useQuery({
@@ -50,11 +53,16 @@ const CommentList = ({ id }: Props) => {
     }
   }
 
+  const refetchComments = useCallback(() => {
+    // eslint-disable-next-line @typescript-eslint/no-floating-promises
+    query.refetch();
+  }, [query]);
+
   return (
     <div
       className={`h-full border rounded-lg w-full mx-auto ${query.data && query.data.data.length > 3 ? "overflow-y-scroll" : ""}`}
     >
-      <div className="h-60">
+      <div className="min-h-60">
         {query.isLoading && (
           <div className="h-64 w-full flex justify-center items-center">
             <div className="w-20 h-20 mx-auto">
@@ -67,10 +75,14 @@ const CommentList = ({ id }: Props) => {
             {query.data ? (
               <div>
                 {query.data.data.length > 0 ? (
-                  <ul className="overflow-y-auto">
+                  <ul className="flex flex-col justify-center items-center gap-4 py-2">
                     {query.data.data.map((comment) => (
-                      <li key={comment.id}>
-                        <CommentItem comment={comment} />
+                      <li key={comment.id} className="w-10/12">
+                        <CommentItem
+                          refetch={refetchComments}
+                          comment={comment}
+                          productId={id}
+                        />
                       </li>
                     ))}
                   </ul>
@@ -95,6 +107,7 @@ const CommentList = ({ id }: Props) => {
               }
               setPage(() => page - 1);
             }}
+            disabled={page === 1}
             className="h-6 w-6 border border-black p-1 rounded-full"
           >
             <ArrowLeft />
@@ -111,12 +124,14 @@ const CommentList = ({ id }: Props) => {
               }
               setPage(() => page + 1);
             }}
+            disabled={!query.data?.hasNext}
             className="h-6 w-6 border border-black p-1 rounded-full"
           >
             <ArrowRight />
           </button>
         </div>
       </div>
+      {user && <CommentForm refetch={refetchComments} id={id} />}
     </div>
   );
 };

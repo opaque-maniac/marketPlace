@@ -1,7 +1,7 @@
 import { QueryFunction } from "@tanstack/react-query";
 import { ErrorResponse, SuccessCartResponse } from "../types";
 import { getAccessToken } from "../cookies";
-import { tokenError } from "../errors";
+import { responseError, tokenError } from "../errors";
 
 export const fetchCart: QueryFunction<
   SuccessCartResponse,
@@ -27,8 +27,14 @@ export const fetchCart: QueryFunction<
     const response = await fetch(url, options);
 
     if (!response.ok) {
-      const json = (await response.json()) as ErrorResponse;
-      throw new Error(JSON.stringify(json));
+      try {
+        const error = (await response.json()) as ErrorResponse;
+        throw new Error(JSON.stringify(error));
+      } catch (e) {
+        if (e instanceof Error) {
+          throw responseError();
+        }
+      }
     }
 
     return response.json() as Promise<SuccessCartResponse>;

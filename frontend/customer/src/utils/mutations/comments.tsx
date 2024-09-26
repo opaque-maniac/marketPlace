@@ -1,17 +1,16 @@
 import { getAccessToken } from "../cookies";
 import { responseError, tokenError } from "../errors";
-import { ErrorResponse, SuccessSellerResponse } from "../types";
+import { ErrorResponse, SuccessCommentCreateResponse } from "../types";
 
-export const sendUpdateProfile = async ({
-  data,
+export const sendComment = async ({
+  message,
   id,
 }: {
-  data: FormData;
+  message: string;
   id: string;
 }) => {
   try {
-    const url = `http://localhost:3020/seller/profile/${id}`;
-
+    const url = `http://localhost:3020/customers/products/${id}/comments`;
     const token = getAccessToken();
 
     if (!token) {
@@ -19,11 +18,12 @@ export const sendUpdateProfile = async ({
     }
 
     const options = {
-      method: "PUT",
+      method: "POST",
       headers: {
+        "Content-Type": "application/json",
         Authorization: `Bearer ${token}`,
       },
-      body: data,
+      body: JSON.stringify({ message }),
     };
 
     const response = await fetch(url, options);
@@ -39,8 +39,8 @@ export const sendUpdateProfile = async ({
       }
     }
 
-    const json = (await response.json()) as SuccessSellerResponse;
-    return json;
+    const data = (await response.json()) as SuccessCommentCreateResponse;
+    return data;
   } catch (e) {
     if (e instanceof Error) {
       throw new Error(e.message);
@@ -49,10 +49,15 @@ export const sendUpdateProfile = async ({
   }
 };
 
-export const sendDeleteProfile = async (id: string) => {
+export const deleteComment = async ({
+  productId,
+  commentId,
+}: {
+  productId: string;
+  commentId: string;
+}) => {
   try {
-    const url = `http://localhost:3020/seller/profile/${id}`;
-
+    const url = `http://localhost:3020/customers/products/${productId}/comments/${commentId}`;
     const token = getAccessToken();
 
     if (!token) {
@@ -79,8 +84,8 @@ export const sendDeleteProfile = async (id: string) => {
       }
     }
 
-    const json = (await response.json()) as SuccessSellerResponse;
-    return json;
+    const data = (await response.json()) as { message: string };
+    return data;
   } catch (e) {
     if (e instanceof Error) {
       throw new Error(e.message);

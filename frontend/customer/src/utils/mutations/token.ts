@@ -1,5 +1,5 @@
 import { getRefreshToken } from "../cookies";
-import { refreshTokenError } from "../errors";
+import { refreshTokenError, responseError } from "../errors";
 import { ErrorResponse } from "../types";
 
 export const sendRefreshToken = async () => {
@@ -22,8 +22,14 @@ export const sendRefreshToken = async () => {
     const response = await fetch(url, options);
 
     if (!response.ok) {
-      const json = (await response.json()) as ErrorResponse;
-      throw new Error(JSON.stringify(json));
+      try {
+        const error = (await response.json()) as ErrorResponse;
+        throw new Error(JSON.stringify(error));
+      } catch (e) {
+        if (e instanceof Error) {
+          throw responseError();
+        }
+      }
     }
 
     const json = (await response.json()) as { token: string };

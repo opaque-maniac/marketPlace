@@ -2,7 +2,7 @@ import { useQuery } from "@tanstack/react-query";
 import Transition from "../../components/transition";
 import { ErrorResponse } from "../../utils/types";
 import errorHandler from "../../utils/errorHandler";
-import { useNavigate } from "react-router-dom";
+import { useLocation, useNavigate } from "react-router-dom";
 import { useContext, useEffect } from "react";
 import { explorePageStore } from "../../utils/pageStore";
 import { ErrorContext, ShowErrorContext } from "../../utils/errorContext";
@@ -17,18 +17,30 @@ const ExplorePage = () => {
   const page = explorePageStore((state) => state.page);
   const setPage = explorePageStore((state) => state.setPage);
   const [, setError] = useContext(ErrorContext);
+  const location = useLocation();
 
   const navigate = useNavigate();
   const [, setErr] = useContext(ShowErrorContext);
 
+  // When page mounts
+  useEffect(() => {
+    setPage(1);
+  }, [setPage]);
+
+  // When page state changes
   useEffect(() => {
     navigate(`/explore?page=${page}`, { replace: true });
-
-    return () => {
-      setPage(1);
-    };
-    // eslint-disable-next-line react-hooks/exhaustive-deps
+    window.scrollTo(0, 0);
   }, [page, navigate]);
+
+  // When page unmounts
+  useEffect(() => {
+    return () => {
+      if (location.pathname !== "/explore") {
+        setPage(1);
+      }
+    };
+  }, [location.pathname, setPage]);
 
   const query = useQuery({
     queryKey: ["products", page, 20],
@@ -96,7 +108,12 @@ const ExplorePage = () => {
           ) : (
             <div className="h-full w-full">
               {data && (
-                <ProductList products={data} color="black" overflow={false} />
+                <ProductList
+                  products={data}
+                  color="black"
+                  overflow={false}
+                  full={true}
+                />
               )}
             </div>
           )}

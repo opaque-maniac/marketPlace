@@ -18,3 +18,14 @@ export const refreshTokenError = () => {
   const error = new Error(errString);
   return error;
 };
+
+export const responseError = () => {
+  const errObj = {
+    message: "Server error",
+    errorCode: "S500",
+  };
+
+  const errString = JSON.stringify(errObj);
+  const error = new Error(errString);
+  return error;
+};

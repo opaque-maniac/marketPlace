@@ -1,5 +1,5 @@
 import { getAccessToken } from "../cookies";
-import { tokenError } from "../errors";
+import { responseError, tokenError } from "../errors";
 import { ErrorResponse, SuccessAddToCartResponse } from "../types";
 
 interface AddToCartProps {
@@ -27,8 +27,14 @@ export const addToCart = async ({ productID, quantity }: AddToCartProps) => {
     const response = await fetch(url, options);
 
     if (!response.ok) {
-      const json = (await response.json()) as ErrorResponse;
-      throw new Error(JSON.stringify(json));
+      try {
+        const error = (await response.json()) as ErrorResponse;
+        throw new Error(JSON.stringify(error));
+      } catch (e) {
+        if (e instanceof Error) {
+          throw responseError();
+        }
+      }
     }
 
     const data = (await response.json()) as SuccessAddToCartResponse;

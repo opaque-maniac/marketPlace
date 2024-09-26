@@ -4,7 +4,7 @@ import errorHandler from "../../utils/errorHandler";
 import { useNavigate } from "react-router-dom";
 import { useContext, useEffect } from "react";
 import { searchPageStore } from "../../utils/pageStore";
-import ErrorContext, { ShowErrorContext } from "../../utils/errorContext";
+import { ShowErrorContext, ErrorContext } from "../../utils/errorContext";
 import ArrowLeft from "../../components/icons/arrowleft";
 import ArrowRight from "../../components/icons/arrowright";
 import { Helmet } from "react-helmet";
@@ -77,7 +77,6 @@ const SearchPage = () => {
   };
 
   const data = query.data?.data;
-  console.log(data);
 
   return (
     <Transition>
@@ -104,7 +103,12 @@ const SearchPage = () => {
             </div>
           )}
           {query.isSuccess && data && (
-            <ProductList products={data} overflow={false} color="black" />
+            <ProductList
+              full={true}
+              products={data}
+              overflow={false}
+              color="black"
+            />
           )}
         </section>
         <section className="flex justify-center items-center gap-6 py-2">

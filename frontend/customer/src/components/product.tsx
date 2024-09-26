@@ -44,27 +44,6 @@ const ProductItem = ({ product, color }: Props) => {
             >
               <EyeOpen />
             </button>
-            {clicked && (
-              <Modal callback={() => setClicked(false)}>
-                <div className="h-screen md:w-600 w-350 mx-auto relative flex justify-center items-center">
-                  <button
-                    onClick={(e) => {
-                      e.preventDefault();
-                      setClicked(false);
-                    }}
-                    className="absolute md:-left-20 md:top-10 top-2 left-0 h-8 w-8 bg-white border border-black rounded-sm"
-                  >
-                    <CloseIcon />
-                  </button>
-                  <img
-                    src={`http://localhost:3020/${product.images[0].url}`}
-                    alt={product.name}
-                    loading="lazy"
-                    className="w-full h-500"
-                  />
-                </div>
-              </Modal>
-            )}
           </div>
         </div>
         <div>
@@ -90,6 +69,27 @@ const ProductItem = ({ product, color }: Props) => {
           />
         </div>
       </Link>
+      {clicked && (
+        <Modal callback={() => setClicked(false)}>
+          <div className="h-screen md:w-600 w-350 mx-auto relative flex justify-center items-center">
+            <button
+              onClick={(e) => {
+                e.preventDefault();
+                setClicked(false);
+              }}
+              className="absolute md:-left-20 md:top-10 top-2 left-0 h-8 w-8 bg-white border border-black rounded-sm"
+            >
+              <CloseIcon />
+            </button>
+            <img
+              src={`http://localhost:3020/${product.images[0].url}`}
+              alt={product.name}
+              loading="lazy"
+              className="w-full h-500"
+            />
+          </div>
+        </Modal>
+      )}
     </div>
   );
 };

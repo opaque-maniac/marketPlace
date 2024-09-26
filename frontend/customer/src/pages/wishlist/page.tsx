@@ -4,14 +4,15 @@ import Loader from "../../components/loader";
 import { ErrorResponse } from "../../utils/types";
 import errorHandler from "../../utils/errorHandler";
 import { useNavigate } from "react-router-dom";
-import { useContext, useEffect } from "react";
+import { useCallback, useContext, useEffect } from "react";
 import { cartPageStore } from "../../utils/pageStore";
 import { ErrorContext, ShowErrorContext } from "../../utils/errorContext";
 import ArrowLeft from "../../components/icons/arrowleft";
 import ArrowRight from "../../components/icons/arrowright";
 import { Helmet } from "react-helmet";
 import { fetchWishlist } from "../../utils/queries/wishlist";
-import ProductList from "../../components/productlist";
+import EmptyWishlist from "../../components/emptywishlist";
+import Wishlist from "../../components/wishlistlist";
 
 const WishlistPage = () => {
   const page = cartPageStore((state) => state.page);
@@ -78,7 +79,15 @@ const WishlistPage = () => {
   };
 
   const data = query.data;
-  const products = data?.wishlistItems?.map((item) => item.product) || [];
+  const wishlistItems = data?.wishlistItems || [];
+  const refetchWishlist = useCallback(() => {
+    // eslint-disable-next-line @typescript-eslint/no-floating-promises
+    query.refetch();
+  }, [query]);
+
+  useEffect(() => {
+    refetchWishlist();
+  }, [refetchWishlist]);
 
   return (
     <Transition>
@@ -93,6 +102,12 @@ const WishlistPage = () => {
         <meta name="google" content="nositelinkssearchbox" />
       </Helmet>
       <main role="main">
+        <div className="flex justify-end items-center pr-4 py-4">
+          <EmptyWishlist
+            refetch={refetchWishlist}
+            disable={wishlistItems.length === 0}
+          />
+        </div>
         <section
           className="px-2 py-2"
           style={{ minHeight: "calc(100vh - 1.4rem )" }}
@@ -105,7 +120,13 @@ const WishlistPage = () => {
             </div>
           ) : (
             <div className="h-full w-full">
-              <ProductList products={products} color="black" overflow={false} />
+              <Wishlist
+                wishlistItems={wishlistItems}
+                color="black"
+                overflow={false}
+                full={true}
+                refetch={refetchWishlist}
+              />
             </div>
           )}
         </section>

@@ -57,7 +57,6 @@ const LoginPage = () => {
         setUser(data.customer.id);
         setCart(data.cart);
         setWishlist(data.wishlist);
-        console.log(data);
         navigate("/");
       } else {
         setErr("Something unexpected happened");

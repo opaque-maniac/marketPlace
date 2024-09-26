@@ -18,7 +18,7 @@ export const fetchProductComments = async (
   try {
     const { id } = req.params;
     const page = req.query.page ? parseInt(req.query.page as string) : 1;
-    const limit = req.query.limit ? parseInt(req.query.limit as string) : 10;
+    const limit = req.query.limit ? parseInt(req.query.limit as string) : 5;
 
     const product = await prisma.product.findUnique({
       where: {
