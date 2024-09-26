@@ -19,7 +19,7 @@ const ProductList = ({ products, color, overflow, full, center }: Props) => {
   const overflowStyle = overflow
     ? "overflow-x-auto scroll-mod overflow-y-hidden pb-2"
     : "flex-wrap md:flex-row flex-col";
-  const align = center ? "items-center" : "items-start";
+  const align = center ? "items-center" : "md:items-start items-center";
 
   return (
     <div className="h-full w-full">

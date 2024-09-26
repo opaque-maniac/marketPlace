@@ -41,7 +41,7 @@ const Header = () => {
       </header>
       {err && (
         <Transition>
-          <div className="fixed top-16 right-2 w-80 h-16 rounded-md bg-red-400 p-2 flex justify-start gap-1">
+          <div className="fixed top-16 right-2 z-40 w-80 h-16 rounded-md bg-red-400 p-2 flex justify-start gap-1">
             <p className="w-11/12">{err}</p>
             <div>
               <button

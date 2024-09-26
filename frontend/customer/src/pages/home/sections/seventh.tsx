@@ -20,11 +20,11 @@ const SeventhSection = ({ products, isLoading }: Props) => {
           </div>
         </div>
       ) : (
-        <div style={{ height: "900px" }}>
+        <div style={{ minHeight: "900px" }}>
           <ProductList
             products={products}
             color="black"
-            overflow={true}
+            overflow={false}
             full={false}
           />
         </div>

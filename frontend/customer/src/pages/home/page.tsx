@@ -25,7 +25,7 @@ const HomePage = () => {
 
   const query = useQuery({
     queryFn: fetchProducts,
-    queryKey: ["products", 1, 38],
+    queryKey: ["products", 1, 36],
   });
 
   if (query.isError) {
@@ -94,7 +94,7 @@ const HomePage = () => {
         />
         <EighthSection />
         <NinethSection
-          products={data ? data.slice(28, 38) : []}
+          products={data ? data.slice(28, 36) : []}
           isLoading={query.isLoading}
         />
         <TenthSection />

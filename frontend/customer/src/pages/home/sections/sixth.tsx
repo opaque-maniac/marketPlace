@@ -11,7 +11,7 @@ const SixthSection = ({ products, isLoading }: Props) => {
   return (
     <section
       style={{ minHeight: "500px" }}
-      className="bg-black mb-32 px-2 lg:pb-0 pb-4"
+      className="bg-black mb-32 px-2 lg:py-0 py-4 "
     >
       {isLoading ? (
         <div
