@@ -11,7 +11,7 @@ const Wishlist = ({ wishlistItems, color, refetch }: Props) => {
   return (
     <div className="h-full w-full">
       {wishlistItems.length > 0 ? (
-        <ul className="flex h-full flex-wrap md:flex-row flex-col lg:gap-16 md:justify-start items-center justify-center">
+        <ul className="flex h-full flex-wrap md:flex-row flex-col lg:gap-16 md:gap-36 md:pl-10 lg:p-0 md:justify-start items-center justify-center">
           {wishlistItems.map((wishItem) => (
             <li key={wishItem.id}>
               <WishlistItemComponent item={wishItem} refetch={refetch} />

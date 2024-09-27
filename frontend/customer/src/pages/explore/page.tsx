@@ -118,7 +118,7 @@ const ExplorePage = () => {
             </div>
           )}
         </section>
-        <section className="flex justify-center items-center gap-6 py-2">
+        <section className="flex justify-center items-center gap-6 py-4">
           <div>
             <button
               disabled={!data || page == 1}

@@ -71,7 +71,7 @@ const AddToCart = ({ id, color, text }: Props) => {
       disabled={!user}
       onClick={clickHandler}
       title={user ? "Add product to cart" : "Log in to take this action"}
-      className={`rounded h-10 w-40 bg-${color} text-${text}`}
+      className={`rounded h-10 w-40 bg-${color} text-${text} py-1`}
     >
       {mutation.isPending ? (
         <div className="h-8 w-8 pt-1 mx-auto">
