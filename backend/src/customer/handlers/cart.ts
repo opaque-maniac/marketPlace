@@ -227,17 +227,18 @@ export const orderAllCartItems = async (
 
         let price: number = 0;
 
-        await txl.orderItem.createMany({
-          data: cartItems.map((item) => {
-            price += item.quantity * item.product.price;
-            return {
+        for (let i = 0; i < cartItems.length; i++) {
+          let item = cartItems[i];
+
+          await txl.orderItem.create({
+            data: {
               orderID: newOrder.id,
               productID: item.productID,
               quantity: item.quantity,
               ready: false,
-            };
-          }),
-        });
+            },
+          });
+        }
 
         const updatedOrder = await txl.order.update({
           where: {

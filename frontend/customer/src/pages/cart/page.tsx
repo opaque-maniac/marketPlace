@@ -13,6 +13,7 @@ import { Helmet } from "react-helmet";
 import { fetchCart } from "../../utils/queries/cart";
 import EmptyCart from "../../components/emptycart";
 import CartList from "../../components/cartlist";
+import OrderCart from "../../components/ordercart";
 
 const CartPage = () => {
   const page = cartPageStore((state) => state.page);
@@ -114,7 +115,11 @@ const CartPage = () => {
         <meta name="google" content="nositelinkssearchbox" />
       </Helmet>
       <main role="main">
-        <div className="flex justify-end item-center pr-4 pt-4">
+        <div className="flex justify-between item-center pr-4 pt-4">
+          <OrderCart
+            refetch={refetchCart}
+            disable={!data || data?.cartItems.length === 0}
+          />
           <EmptyCart
             refetch={refetchCart}
             disable={!data || data?.cartItems.length === 0}

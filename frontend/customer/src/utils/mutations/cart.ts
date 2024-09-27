@@ -3,6 +3,7 @@ import { responseError, tokenError } from "../errors";
 import {
   ErrorResponse,
   SuccessAddToCartResponse,
+  SuccessOrderAllCartResponse,
   SuccessRemoveFromCartResponse,
 } from "../types";
 
@@ -168,6 +169,47 @@ export const updateCartItem = async ({
     }
 
     const data = (await response.json()) as SuccessAddToCartResponse;
+    return data;
+  } catch (e) {
+    if (e instanceof Error) {
+      throw new Error(e.message);
+    }
+    throw e;
+  }
+};
+
+export const orderCart = async () => {
+  try {
+    const url = "http://localhost:3020/customers/cart";
+    const token = getAccessToken();
+
+    if (!token) {
+      throw tokenError();
+    }
+
+    const options = {
+      method: "PUT",
+      headers: {
+        Authorization: `Bearer ${token}`,
+        "Content-Type": "application/json",
+      },
+    };
+
+    const response = await fetch(url, options);
+
+    if (!response.ok) {
+      try {
+        const error = (await response.json()) as ErrorResponse;
+        throw new Error(JSON.stringify(error));
+      } catch (e) {
+        if (e instanceof Error) {
+          throw responseError();
+        }
+      }
+    }
+
+    const data = (await response.json()) as SuccessOrderAllCartResponse;
+
     return data;
   } catch (e) {
     if (e instanceof Error) {

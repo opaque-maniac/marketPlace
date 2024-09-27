@@ -176,7 +176,7 @@ export interface OrderItemWithOrder extends OrderItem {
 
 export interface SuccessOrdersResponse {
   message: string;
-  orders: OrderItemWithOrder[];
+  orders: Order[];
   hasNext: boolean;
 }
 
@@ -263,4 +263,9 @@ export interface SuccessRemoveFromWishlistResonse {
 export interface SuccessRemoveFromCartResponse {
   message: string;
   cartItem: CartItem;
+}
+
+export interface SuccessOrderAllCartResponse {
+  message: string;
+  order: Order;
 }
