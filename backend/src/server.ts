@@ -44,7 +44,7 @@ const slowDowner = slowDown({
 // Implimenting cors
 app.use(cors(corsOptions));
 app.use(allowIfActive);
-app.use(slowDowner);
+// app.use(slowDowner);
 app.use("/customers", customerRouter);
 app.use("/seller", sellerRouter);
 app.use("/staff", staffRouter);

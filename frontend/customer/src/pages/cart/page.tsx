@@ -3,14 +3,16 @@ import Transition from "../../components/transition";
 import Loader from "../../components/loader";
 import { ErrorResponse } from "../../utils/types";
 import errorHandler from "../../utils/errorHandler";
-import { useNavigate } from "react-router-dom";
-import { useContext, useEffect } from "react";
+import { useLocation, useNavigate } from "react-router-dom";
+import { useCallback, useContext, useEffect } from "react";
 import { cartPageStore } from "../../utils/pageStore";
 import { ErrorContext, ShowErrorContext } from "../../utils/errorContext";
 import ArrowLeft from "../../components/icons/arrowleft";
 import ArrowRight from "../../components/icons/arrowright";
 import { Helmet } from "react-helmet";
 import { fetchCart } from "../../utils/queries/cart";
+import EmptyCart from "../../components/emptycart";
+import CartList from "../../components/cartlist";
 
 const CartPage = () => {
   const page = cartPageStore((state) => state.page);
@@ -19,10 +21,27 @@ const CartPage = () => {
 
   const navigate = useNavigate();
   const [, setErr] = useContext(ShowErrorContext);
+  const location = useLocation();
 
+  // For pagination
+  useEffect(() => {
+    setPage(1);
+  }, [setPage]);
+
+  // When page state changes
   useEffect(() => {
     navigate(`/cart?page=${page}`, { replace: true });
+    window.scrollTo(0, 0);
   }, [page, navigate]);
+
+  // When page unmounts
+  useEffect(() => {
+    return () => {
+      if (location.pathname !== "/explore") {
+        setPage(1);
+      }
+    };
+  }, [location.pathname, setPage]);
 
   const query = useQuery({
     queryKey: ["cart", page, 10],
@@ -71,6 +90,15 @@ const CartPage = () => {
     }
   };
 
+  const refetchCart = useCallback(() => {
+    // eslint-disable-next-line @typescript-eslint/no-floating-promises
+    query.refetch();
+  }, [query]);
+
+  useEffect(() => {
+    refetchCart();
+  }, [refetchCart]);
+
   const data = query.data;
 
   return (
@@ -86,6 +114,12 @@ const CartPage = () => {
         <meta name="google" content="nositelinkssearchbox" />
       </Helmet>
       <main role="main">
+        <div className="flex justify-end item-center pr-4 pt-4">
+          <EmptyCart
+            refetch={refetchCart}
+            disable={!data || data?.cartItems.length === 0}
+          />
+        </div>
         <section
           className="px-2 py-2"
           style={{ minHeight: "calc(100vh - 1.4rem )" }}
@@ -98,9 +132,11 @@ const CartPage = () => {
             </div>
           ) : (
             <div className="h-full w-full">
-              <div>
-                <h2>Loaded cart</h2>
-              </div>
+              <CartList
+                cartItems={data ? data.cartItems : []}
+                color="black"
+                refetch={refetchCart}
+              />
             </div>
           )}
         </section>

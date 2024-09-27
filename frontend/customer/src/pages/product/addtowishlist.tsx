@@ -64,9 +64,15 @@ const AddToWishlist = ({ id }: Props) => {
       disabled={!user}
       onClick={clickHandler}
       title={user ? "Add product to wishlist" : "Log in to take this action"}
-      className="rounded h-10 w-40 bg-red-400 text-white py-1"
+      className="rounded h-10 w-40 bg-red-400 text-white"
     >
-      {mutation.isPending ? <Loader color="#ffffff" /> : "Add To Wishlist"}
+      {mutation.isPending ? (
+        <div className="h-10 w-10 py-1 mx-auto">
+          <Loader color="#ffffff" />
+        </div>
+      ) : (
+        "Add To Wishlist"
+      )}
     </button>
   );
 };

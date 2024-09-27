@@ -1,5 +1,4 @@
 import { useMutation } from "@tanstack/react-query";
-import { emptyWishlist } from "../utils/mutations/wishlist";
 import { MouseEventHandler, useContext, useState } from "react";
 import { ErrorContext, ShowErrorContext } from "../utils/errorContext";
 import { ErrorResponse } from "../utils/types";
@@ -8,21 +7,22 @@ import { useNavigate } from "react-router-dom";
 import SuccessComponent from "./success";
 import Loader from "./loader";
 import useUserStore from "../utils/store";
+import { emptyCart } from "../utils/mutations/cart";
 
 interface Props {
   refetch: () => void;
   disable: boolean;
 }
 
-const EmptyWishlist = ({ refetch, disable }: Props) => {
+const EmptyCart = ({ refetch, disable }: Props) => {
   const [, setErr] = useContext(ShowErrorContext);
   const [, setError] = useContext(ErrorContext);
   const navigate = useNavigate();
   const [success, setSuccess] = useState<boolean>(false);
-  const setWishlist = useUserStore((state) => state.setWishlist);
+  const setCart = useUserStore((state) => state.setCart);
 
   const mutation = useMutation({
-    mutationFn: emptyWishlist,
+    mutationFn: emptyCart,
     onError: (error) => {
       try {
         const errorObj = JSON.parse(error.message) as ErrorResponse;
@@ -48,12 +48,12 @@ const EmptyWishlist = ({ refetch, disable }: Props) => {
       }
     },
     onSuccess: () => {
+      refetch();
+      setCart(0);
       setSuccess(() => true);
-      setWishlist(0);
       setTimeout(() => {
         setSuccess(() => false);
       }, 3000);
-      refetch();
     },
   });
 
@@ -64,7 +64,7 @@ const EmptyWishlist = ({ refetch, disable }: Props) => {
 
   return (
     <>
-      {success && <SuccessComponent message="Wishlist emptied" />}
+      {success && <SuccessComponent message="Cart emptied" />}
       <button
         onClick={clickHandler}
         aria-label="Empty wishlist"
@@ -76,11 +76,11 @@ const EmptyWishlist = ({ refetch, disable }: Props) => {
             <Loader color="#fff" />
           </div>
         ) : (
-          "Empty Wishlist"
+          "Empty Cart"
         )}
       </button>
     </>
   );
 };
 
-export default EmptyWishlist;
+export default EmptyCart;

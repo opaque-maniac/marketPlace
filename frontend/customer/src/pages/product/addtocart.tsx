@@ -25,16 +25,12 @@ const AddToCart = ({ id, color, text }: Props) => {
   const mutation = useMutation({
     mutationFn: addToCart,
     onSuccess: (data) => {
-      if (data && data.cartItem) {
-        if (cart && data.new) {
-          setCart(cart + 1);
-        }
-        navigate("/cart");
-      } else {
-        setErr("An unexpected error occurred.");
+      if (data.new && cart !== null) {
+        setCart(cart + 1);
       }
+      navigate("/cart");
     },
-    onError: (error) => {
+    onError: (error: Error) => {
       try {
         const errorObj = JSON.parse(error.message) as ErrorResponse;
         const [show, url] = errorHandler(errorObj.errorCode);
@@ -71,10 +67,10 @@ const AddToCart = ({ id, color, text }: Props) => {
       disabled={!user}
       onClick={clickHandler}
       title={user ? "Add product to cart" : "Log in to take this action"}
-      className={`rounded h-10 w-40 bg-${color} text-${text} py-1`}
+      className={`rounded h-10 w-40 bg-${color} text-${text}`}
     >
       {mutation.isPending ? (
-        <div className="h-8 w-8 pt-1 mx-auto">
+        <div className="h-10 w-10 pt-1 mx-auto py-1">
           <Loader color={color === "white" ? "#000" : "#fff"} />
         </div>
       ) : (

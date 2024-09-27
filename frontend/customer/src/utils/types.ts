@@ -259,3 +259,8 @@ export interface SuccessRemoveFromWishlistResonse {
   message: string;
   wishlistItem: WishlistItem;
 }
+
+export interface SuccessRemoveFromCartResponse {
+  message: string;
+  cartItem: CartItem;
+}
