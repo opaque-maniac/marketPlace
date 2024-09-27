@@ -3,7 +3,7 @@ import Transition from "../../components/transition";
 import Loader from "../../components/loader";
 import { ErrorResponse } from "../../utils/types";
 import errorHandler from "../../utils/errorHandler";
-import { useNavigate } from "react-router-dom";
+import { useLocation, useNavigate } from "react-router-dom";
 import { useCallback, useContext, useEffect } from "react";
 import { cartPageStore } from "../../utils/pageStore";
 import { ErrorContext, ShowErrorContext } from "../../utils/errorContext";
@@ -18,18 +18,30 @@ const WishlistPage = () => {
   const page = cartPageStore((state) => state.page);
   const setPage = cartPageStore((state) => state.setPage);
   const [, setError] = useContext(ErrorContext);
+  const location = useLocation();
 
   const navigate = useNavigate();
   const [, setErr] = useContext(ShowErrorContext);
 
+  // For pagination
+  useEffect(() => {
+    setPage(1);
+  }, [setPage]);
+
+  // When page state changes
   useEffect(() => {
     navigate(`/wishlist?page=${page}`, { replace: true });
-
-    return () => {
-      setPage(1);
-    };
-    // eslint-disable-next-line react-hooks/exhaustive-deps
+    window.scrollTo(0, 0);
   }, [page, navigate]);
+
+  // When page unmounts
+  useEffect(() => {
+    return () => {
+      if (location.pathname !== "/explore") {
+        setPage(1);
+      }
+    };
+  }, [location.pathname, setPage]);
 
   const query = useQuery({
     queryKey: ["wishlist", page, 10],
@@ -123,8 +135,6 @@ const WishlistPage = () => {
               <Wishlist
                 wishlistItems={wishlistItems}
                 color="black"
-                overflow={false}
-                full={true}
                 refetch={refetchWishlist}
               />
             </div>

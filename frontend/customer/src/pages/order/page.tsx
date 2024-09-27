@@ -5,7 +5,7 @@ import { useContext, useEffect, useState } from "react";
 import errorHandler from "../../utils/errorHandler";
 import { ErrorResponse } from "../../utils/types";
 import Loader from "../../components/loader";
-import ErrorContext, { ShowErrorContext } from "../../utils/errorContext";
+import { ErrorContext, ShowErrorContext } from "../../utils/errorContext";
 import { Helmet } from "react-helmet";
 import { fetchOrder } from "../../utils/queries/orders";
 import OrderButton from "./orderbutton";

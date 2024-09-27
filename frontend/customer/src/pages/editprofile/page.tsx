@@ -4,7 +4,7 @@ import useUserStore from "../../utils/store";
 import { useNavigate } from "react-router-dom";
 import { useMutation, useQuery } from "@tanstack/react-query";
 import { fetchProfile } from "../../utils/queries/profile";
-import ErrorContext, { ShowErrorContext } from "../../utils/errorContext";
+import { ErrorContext, ShowErrorContext } from "../../utils/errorContext";
 import { ErrorResponse } from "../../utils/types";
 import errorHandler from "../../utils/errorHandler";
 import { Helmet } from "react-helmet";

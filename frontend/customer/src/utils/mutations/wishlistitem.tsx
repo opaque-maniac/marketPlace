@@ -27,7 +27,7 @@ const WishlistItemComponent = ({ item, refetch }: Props) => {
         </button>
         {clicked && <RemoveWishlistItem id={item.id} refetch={refetch} />}
       </div>
-      <ProductItem product={item.product} color={"white"} />
+      <ProductItem product={item.product} color={"black"} />
     </div>
   );
 };
