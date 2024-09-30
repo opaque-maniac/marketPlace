@@ -1,3 +1,4 @@
+// Server entry point
 import express from "express";
 import morgan from "morgan";
 import cors from "cors";
@@ -13,8 +14,21 @@ import { sendComplaints } from "./seller/handlers/complaints";
 import { stringConfig } from "./utils/globals";
 import { body } from "express-validator";
 import path from "path";
+import http from "http";
+import { Server } from "socket.io";
+import { onConnectSocket } from "./sockets/router";
+import { socketAuthMiddleware } from "./sockets/authmiddleware";
 
 const app = express();
+
+// Server
+const server = http.createServer(app);
+const io = new Server(server, {
+  cors: {
+    origin: "http://localhost:5173",
+    methods: ["GET", "POST"],
+  },
+});
 
 // Implimenting some middleware
 app.use(express.json());
@@ -66,4 +80,8 @@ app.post(
 
 app.use(errorHandler);
 
-export default app;
+// Websockets
+io.use(socketAuthMiddleware);
+io.on("connection", onConnectSocket);
+
+export default server;

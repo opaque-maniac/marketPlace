@@ -1,5 +1,6 @@
 import { ORDER_STATUS } from "@prisma/client";
 import { Request } from "express";
+import { Socket } from "socket.io";
 
 export interface RegisterSellerRequest extends Request {
   body: {
@@ -143,4 +144,14 @@ export interface SendComplantsRequest extends Request {
     phone: string;
     message: string;
   };
+}
+
+export interface SocketWithUser extends Socket {
+  user?: User;
+}
+
+export interface User {
+  id: string;
+  email: string;
+  role: string;
 }
