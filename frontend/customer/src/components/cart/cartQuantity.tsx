@@ -1,11 +1,11 @@
 import { useMutation } from "@tanstack/react-query";
 import { MouseEventHandler, useContext, useEffect, useState } from "react";
-import { updateCartItem } from "../utils/mutations/cart";
-import { ErrorContext, ShowErrorContext } from "../utils/errorContext";
-import { ErrorResponse } from "../utils/types";
-import errorHandler from "../utils/errorHandler";
+import { updateCartItem } from "../../utils/mutations/cart";
+import { ErrorContext, ShowErrorContext } from "../../utils/errorContext";
+import { ErrorResponse } from "../../utils/types";
+import errorHandler from "../../utils/errorHandler";
 import { useNavigate } from "react-router-dom";
-import Loader from "./loader";
+import Loader from "../loader";
 
 interface Props {
   quantity: number;

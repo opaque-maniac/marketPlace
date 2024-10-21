@@ -90,18 +90,6 @@ export const login = async (
       where: {
         email,
       },
-      include: {
-        cart: {
-          include: {
-            cartItems: true,
-          },
-        },
-        wishlist: {
-          include: {
-            wishlistItems: true,
-          },
-        },
-      },
     });
 
     console.log(
@@ -126,7 +114,6 @@ export const login = async (
 
     const isPasswordValid = await bcrypt.compare(password, customer.password);
 
-    console.log("Password check failed");
     if (!isPasswordValid) {
       return res.status(401).json({
         message: "Invalid email or password",
@@ -146,8 +133,6 @@ export const login = async (
       token,
       refreshToken,
       customer,
-      cart: customer.cart?.cartItems.length ?? 0,
-      wishlist: customer.wishlist?.wishlistItems.length ?? 0,
     });
   } catch (e) {
     return next(e as Error);

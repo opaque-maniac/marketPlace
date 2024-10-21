@@ -8,16 +8,12 @@ import PageLoader from "../../components/pageloader";
 
 const LogoutPage = () => {
   const removeUser = userStore((state) => state.removeUser);
-  const removeCart = userStore((state) => state.removeCart);
-  const removeWishlist = userStore((state) => state.removeWishlist);
   const navigate = useNavigate();
 
   useEffect(() => {
     removeAccessToken();
     removeRefreshToken();
     removeUser();
-    removeCart();
-    removeWishlist();
     navigate("/", { replace: true });
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []);

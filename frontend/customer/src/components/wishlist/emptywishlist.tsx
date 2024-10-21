@@ -1,28 +1,27 @@
 import { useMutation } from "@tanstack/react-query";
-import { removeFromCart } from "../utils/mutations/cart";
-import { ErrorResponse } from "../utils/types";
-import errorHandler from "../utils/errorHandler";
+import { emptyWishlist } from "../../utils/mutations/wishlist";
+import { MouseEventHandler, useContext, useState } from "react";
+import { ErrorContext, ShowErrorContext } from "../../utils/errorContext";
+import { ErrorResponse } from "../../utils/types";
+import errorHandler from "../../utils/errorHandler";
 import { useNavigate } from "react-router-dom";
-import { MouseEventHandler, useContext } from "react";
-import { ErrorContext, ShowErrorContext } from "../utils/errorContext";
-import Loader from "./loader";
+import SuccessComponent from "../success";
+import Loader from "../loader";
 
 interface Props {
-  id: string;
   refetch: () => void;
+  disable: boolean;
 }
 
-const RemoveFromCart = ({ id, refetch }: Props) => {
-  const navigate = useNavigate();
+const EmptyWishlist = ({ refetch, disable }: Props) => {
   const [, setErr] = useContext(ShowErrorContext);
   const [, setError] = useContext(ErrorContext);
+  const navigate = useNavigate();
+  const [success, setSuccess] = useState<boolean>(false);
 
   const mutation = useMutation({
-    mutationFn: removeFromCart,
-    onSuccess: () => {
-      refetch();
-    },
-    onError: (error: Error) => {
+    mutationFn: emptyWishlist,
+    onError: (error) => {
       try {
         const errorObj = JSON.parse(error.message) as ErrorResponse;
         const [show, url] = errorHandler(errorObj.errorCode);
@@ -46,30 +45,39 @@ const RemoveFromCart = ({ id, refetch }: Props) => {
         }
       }
     },
+    onSuccess: () => {
+      setSuccess(() => true);
+      setTimeout(() => {
+        setSuccess(() => false);
+      }, 3000);
+      refetch();
+    },
   });
 
   const clickHandler: MouseEventHandler<HTMLButtonElement> = (e) => {
     e.preventDefault();
-    mutation.mutate({ id });
+    mutation.mutate();
   };
 
   return (
-    <div>
+    <>
+      {success && <SuccessComponent message="Wishlist emptied" />}
       <button
         onClick={clickHandler}
-        disabled={mutation.isPending}
-        className="block h-10 w-20 bg-red-500 text-white rounded-lg"
+        aria-label="Empty wishlist"
+        disabled={disable}
+        className="block h-10 w-40 bg-red-400 text-white rounded-md"
       >
         {mutation.isPending ? (
-          <div className="h-10 w-10 p-1 mx-auto">
-            <Loader color="#000" />
+          <div className="h-10 w-10 py-1 mx-auto">
+            <Loader color="#fff" />
           </div>
         ) : (
-          "Remove"
+          "Empty Wishlist"
         )}
       </button>
-    </div>
+    </>
   );
 };
 
-export default RemoveFromCart;
+export default EmptyWishlist;

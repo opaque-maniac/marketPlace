@@ -24,6 +24,7 @@ import {
   addToCart,
   emptyCart,
   fetchCart,
+  fetchCartCount,
   fetchCartItem,
   orderAllCartItems,
   orderCartItem,
@@ -33,12 +34,14 @@ import {
   addToWishlist,
   emptyWishlist,
   fetchWishlist,
+  fetchWishlistCount,
   fetchWishlistItem,
   removeFromWishlist,
 } from "./handlers/wishlist";
 import {
   cancelOrder,
   fetchIndividualOrder,
+  fetchOrderItems,
   fetchOrders,
 } from "./handlers/orders";
 
@@ -146,6 +149,12 @@ customerRouter.delete(
   isCustomer,
   removeFromCart
 );
+customerRouter.get(
+  "/cartcount",
+  allowIfAuthenticated,
+  isCustomer,
+  fetchCartCount
+);
 
 // For wishlist management
 customerRouter.get(
@@ -178,6 +187,12 @@ customerRouter.delete(
   isCustomer,
   removeFromWishlist
 );
+customerRouter.get(
+  "/wishlistcount",
+  allowIfAuthenticated,
+  isCustomer,
+  fetchWishlistCount
+);
 
 // For order management
 customerRouter.get("/orders", allowIfAuthenticated, isCustomer, fetchOrders);
@@ -186,6 +201,12 @@ customerRouter.get(
   allowIfAuthenticated,
   isCustomer,
   fetchIndividualOrder
+);
+customerRouter.get(
+  "/orders/:id/items",
+  allowIfAuthenticated,
+  isCustomer,
+  fetchOrderItems
 );
 customerRouter.delete(
   "/orders/:id",

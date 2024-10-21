@@ -1,4 +1,4 @@
-import { CartItem } from "../utils/types";
+import { CartItem } from "../../utils/types";
 import CartItemComponent from "./cartItem";
 
 interface Props {

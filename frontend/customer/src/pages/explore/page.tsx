@@ -10,7 +10,7 @@ import ArrowLeft from "../../components/icons/arrowleft";
 import ArrowRight from "../../components/icons/arrowright";
 import { Helmet } from "react-helmet";
 import { fetchProducts } from "../../utils/queries/products";
-import ProductList from "../../components/productlist";
+import ProductList from "../../components/products/productlist";
 import PageLoader from "../../components/pageloader";
 
 const ExplorePage = () => {

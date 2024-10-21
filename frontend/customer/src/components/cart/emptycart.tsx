@@ -1,13 +1,12 @@
 import { useMutation } from "@tanstack/react-query";
 import { MouseEventHandler, useContext, useState } from "react";
-import { ErrorContext, ShowErrorContext } from "../utils/errorContext";
-import { ErrorResponse } from "../utils/types";
-import errorHandler from "../utils/errorHandler";
+import { ErrorContext, ShowErrorContext } from "../../utils/errorContext";
+import { ErrorResponse } from "../../utils/types";
+import errorHandler from "../../utils/errorHandler";
 import { useNavigate } from "react-router-dom";
-import SuccessComponent from "./success";
-import Loader from "./loader";
-import useUserStore from "../utils/store";
-import { emptyCart } from "../utils/mutations/cart";
+import SuccessComponent from "../success";
+import Loader from "../loader";
+import { emptyCart } from "../../utils/mutations/cart";
 
 interface Props {
   refetch: () => void;
@@ -19,7 +18,6 @@ const EmptyCart = ({ refetch, disable }: Props) => {
   const [, setError] = useContext(ErrorContext);
   const navigate = useNavigate();
   const [success, setSuccess] = useState<boolean>(false);
-  const setCart = useUserStore((state) => state.setCart);
 
   const mutation = useMutation({
     mutationFn: emptyCart,
@@ -49,7 +47,6 @@ const EmptyCart = ({ refetch, disable }: Props) => {
     },
     onSuccess: () => {
       refetch();
-      setCart(0);
       setSuccess(() => true);
       setTimeout(() => {
         setSuccess(() => false);

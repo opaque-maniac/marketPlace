@@ -185,10 +185,10 @@ enum ORDER_STATUS {
 
 model Order {
   id         String       @id @default(uuid())
-  totalAmout Float?
+  totalAmount Float?
   status     ORDER_STATUS
   customerID String
-  customer   Customer     @relation(fields: [customerID], references: [id])
+  customer   Customer     @relation(fields: [customerID], references: [id], onDelete: Cascade)
   orderItems OrderItem[]
   createdAt  DateTime     @default(now())
   updatedAt  DateTime     @updatedAt
@@ -200,8 +200,8 @@ model OrderItem {
   productID   String
   orderID     String
   ready       Boolean  @default(false)
-  product     Product  @relation(fields: [productID], references: [id])
-  order       Order    @relation(fields: [orderID], references: [id])
+  product     Product  @relation(fields: [productID], references: [id], onDelete: Cascade)
+  order       Order    @relation(fields: [orderID], references: [id], onDelete: Cascade)
   dateCreated DateTime @default(now())
   dateUpdated DateTime @updatedAt
 }
@@ -215,5 +215,5 @@ model Complaint {
   createdAt DateTime @default(now())
   resolved  Boolean  @default(false)
   staffID   String?
-  staff     Staff?   @relation(fields: [staffID], references: [id])
+  staff     Staff?   @relation(fields: [staffID], references: [id], onDelete: NoAction)
 }

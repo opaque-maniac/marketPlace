@@ -1,10 +1,10 @@
 import { Link } from "react-router-dom";
-import { Product } from "../utils/types";
-import AddToCart from "../pages/product/addtocart";
-import EyeOpen from "./icons/show";
+import { Product } from "../../utils/types";
+import AddToCart from "../../pages/product/addtocart";
+import EyeOpen from "../icons/show";
 import { useState } from "react";
-import Modal from "./modal";
-import CloseIcon from "./icons/closeIcon";
+import Modal from "../modal";
+import CloseIcon from "../icons/closeIcon";
 
 interface Props {
   product: Product;

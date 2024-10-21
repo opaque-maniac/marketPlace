@@ -1,29 +1,26 @@
 import { useMutation } from "@tanstack/react-query";
-import useUserStore from "../../utils/store";
-import { addToCart } from "../../utils/mutations/cart";
+import { useNavigate } from "react-router-dom";
 import { MouseEventHandler, useContext } from "react";
-import Loader from "../../components/loader";
+import { ErrorContext, ShowErrorContext } from "../../utils/errorContext";
+import { removeFromCart } from "../../utils/mutations/cart";
 import { ErrorResponse } from "../../utils/types";
 import errorHandler from "../../utils/errorHandler";
-import { ShowErrorContext, ErrorContext } from "../../utils/errorContext";
-import { useNavigate } from "react-router-dom";
+import Loader from "../loader";
 
 interface Props {
   id: string;
-  color: string;
-  text: string;
+  refetch: () => void;
 }
 
-const AddToCart = ({ id, color, text }: Props) => {
-  const user = useUserStore((state) => state.user);
+const RemoveFromCart = ({ id, refetch }: Props) => {
+  const navigate = useNavigate();
   const [, setErr] = useContext(ShowErrorContext);
   const [, setError] = useContext(ErrorContext);
-  const navigate = useNavigate();
 
   const mutation = useMutation({
-    mutationFn: addToCart,
+    mutationFn: removeFromCart,
     onSuccess: () => {
-      navigate("/cart");
+      refetch();
     },
     onError: (error: Error) => {
       try {
@@ -47,32 +44,32 @@ const AddToCart = ({ id, color, text }: Props) => {
         if (e instanceof Error) {
           setErr("Something unexpected happened");
         }
-        navigate("/", { replace: true });
       }
     },
   });
 
   const clickHandler: MouseEventHandler<HTMLButtonElement> = (e) => {
     e.preventDefault();
-    mutation.mutate({ productID: id, quantity: 1 });
+    mutation.mutate({ id });
   };
 
   return (
-    <button
-      disabled={!user}
-      onClick={clickHandler}
-      title={user ? "Add product to cart" : "Log in to take this action"}
-      className={`rounded h-10 w-40 bg-${color} text-${text}`}
-    >
-      {mutation.isPending ? (
-        <div className="h-10 w-10 pt-1 mx-auto py-1">
-          <Loader color={color === "white" ? "#000" : "#fff"} />
-        </div>
-      ) : (
-        "Add To Cart"
-      )}
-    </button>
+    <div>
+      <button
+        onClick={clickHandler}
+        disabled={mutation.isPending}
+        className="block h-10 w-20 bg-red-500 text-white rounded-lg"
+      >
+        {mutation.isPending ? (
+          <div className="h-10 w-10 p-1 mx-auto">
+            <Loader color="#000" />
+          </div>
+        ) : (
+          "Remove"
+        )}
+      </button>
+    </div>
   );
 };
 
-export default AddToCart;
+export default RemoveFromCart;

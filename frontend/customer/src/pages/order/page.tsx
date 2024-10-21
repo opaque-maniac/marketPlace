@@ -1,33 +1,37 @@
-import { useNavigate, useParams } from "react-router-dom";
-import Transition from "../../components/transition";
-import { useQuery } from "@tanstack/react-query";
-import { useContext, useEffect, useState } from "react";
-import errorHandler from "../../utils/errorHandler";
-import { ErrorResponse } from "../../utils/types";
-import Loader from "../../components/loader";
-import { ErrorContext, ShowErrorContext } from "../../utils/errorContext";
 import { Helmet } from "react-helmet";
-import { fetchOrder } from "../../utils/queries/orders";
-import OrderButton from "./orderbutton";
+import Transition from "../../components/transition";
+import { useNavigate, useParams } from "react-router-dom";
+import { useEffect, useContext } from "react";
+import { ErrorContext, ShowErrorContext } from "../../utils/errorContext";
+import { useQuery } from "@tanstack/react-query";
+import { fetchIndividualOrder } from "../../utils/queries/orders";
+import PageLoader from "../../components/pageloader";
+import { ErrorResponse } from "../../utils/types";
+import errorHandler from "../../utils/errorHandler";
+import OrderItems from "./items";
+import CardIcon from "../../components/icons/card";
+import CancelIcon from "../../components/icons/cancel";
 
-const OrderPage = () => {
+const IndividualOrderPage = () => {
   const { id } = useParams();
   const navigate = useNavigate();
-  const [, setErr] = useContext(ShowErrorContext);
   const [, setError] = useContext(ErrorContext);
-  const [, setUpdated] = useState<boolean>(false);
+  const [, setErr] = useContext(ShowErrorContext);
 
   useEffect(() => {
     if (!id) {
-      navigate("/404");
+      setError(true);
+      navigate("/500", { replace: true });
     }
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []);
 
   const query = useQuery({
+    queryFn: fetchIndividualOrder,
     queryKey: ["order", id as string],
-    queryFn: fetchOrder,
   });
+
+  const order = query.data?.order;
 
   if (query.isError) {
     const data = query.error;
@@ -42,6 +46,8 @@ const OrderPage = () => {
             setError(true);
           }
           navigate(url);
+        } else {
+          setErr("An unexpected error occurred.");
         }
       }
     } catch (e) {
@@ -51,68 +57,73 @@ const OrderPage = () => {
     }
   }
 
-  const onSuccess = () => {
-    setUpdated(() => true);
-  };
-
-  const { data } = query;
+  if (query.isSuccess && !order) {
+    setError(true);
+    navigate("/500", { replace: true });
+  }
 
   return (
     <Transition>
       <Helmet>
-        <title>Products</title>
-        <meta name="description" content="User's current products" />
+        <title>{`Order ${id ?? ""}`}</title>
+        <meta name="description" content={`Page for individual order ${id}`} />
         <meta name="robots" content="noindex, nofollow" />
         <meta name="googlebot" content="noindex, nofollow" />
         <meta name="google" content="nositelinkssearchbox" />
       </Helmet>
-      <main role="main">
-        {query.isLoading && (
-          <div
-            style={{ width: "screen", height: "calc(100vh - 10.8rem)" }}
-            className="flex justify-center items-center"
-          >
-            <div className="h-20 w-20">
-              <Loader color="#000000" />
-            </div>
-          </div>
-        )}
-        {query.isSuccess && (
-          <>
-            {data && data.order ? (
+      <main role="main" style={{ minHeight: "calc(100vh - 1.4rem )" }}>
+        {query.isLoading ? (
+          <PageLoader />
+        ) : (
+          <div>
+            {order ? (
               <>
-                <div>
-                  <div>
-                    <h1>Order Details</h1>
-                    <p>Order ID: {data.order.id}</p>
-                    <p>
-                      Customer Name: {data.order.order.customer.firstName}{" "}
-                      {data.order.order.customer.lastName}
-                    </p>
-                    <p>Order Date: {data.order.createdAt}</p>
-                    <p>Shipping Address: {data.order.order.customer.address}</p>
-                    <p>
-                      Total Amount:{" "}
-                      {(data.order.product.price * data.order.quantity).toFixed(
-                        2,
-                      )}
-                    </p>
-                  </div>
-                  <div className="flex justify-center items-center">
-                    <OrderButton
-                      onSuccess={onSuccess}
-                      id={data.order.id}
-                      ready={data.order.ready}
-                    />
-                  </div>
+                <div className="pt-10 pb-4 border-b border-black w-full">
+                  <section className="flex justify-start items-center gap-6 mx-auto md:w-600 w-300">
+                    <div className="flex flex-col justify-evenly items-start font-semibold">
+                      <p>ID</p>
+                      <p>STATUS</p>
+                      <p>TOTAL</p>
+                    </div>
+                    <div className="flex flex-col justify-evenly items-start">
+                      <p>: {order.id}</p>
+                      <p>: {order.status}</p>
+                      <p>: {`${order.totalAmount}`}</p>
+                    </div>
+                  </section>
+                  <section className="flex md:flex-row flex-col md:gap-0 gap-6 justify-evenly items-center pt-6">
+                    <div>
+                      <button
+                        aria-label="Pay for order"
+                        className="w-40 h-10 rounded-lg flex justify-center items-center gap-4 text-white bg-green-500"
+                      >
+                        <span className="font-semibold">Pay</span>
+                        <div className="h-8 w-8">
+                          <CardIcon />
+                        </div>
+                      </button>
+                    </div>
+                    <div>
+                      <button
+                        aria-label="Cancel order"
+                        className="w-40 h-10 rounded-lg flex justify-center items-center gap-4 text-white bg-red-500"
+                      >
+                        <span className="font-semibold">Cancel</span>
+                        <div className="h-8 w-8">
+                          <CancelIcon />
+                        </div>
+                      </button>
+                    </div>
+                  </section>
                 </div>
+                <OrderItems id={order.id} />
               </>
             ) : null}
-          </>
+          </div>
         )}
       </main>
     </Transition>
   );
 };
 
-export default OrderPage;
+export default IndividualOrderPage;

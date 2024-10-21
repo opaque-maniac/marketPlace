@@ -11,9 +11,9 @@ import ArrowLeft from "../../components/icons/arrowleft";
 import ArrowRight from "../../components/icons/arrowright";
 import { Helmet } from "react-helmet";
 import { fetchCart } from "../../utils/queries/cart";
-import EmptyCart from "../../components/emptycart";
-import CartList from "../../components/cartlist";
-import OrderCart from "../../components/ordercart";
+import EmptyCart from "../../components/cart/emptycart";
+import CartList from "../../components/cart/cartlist";
+import OrderCart from "../../components/cart/ordercart";
 
 const CartPage = () => {
   const page = cartPageStore((state) => state.page);

@@ -1,0 +1,243 @@
+[
+    {
+        "Id": "6af97eab5682fbf4ee6a7e9879dd38d90c2ccd8e3e3fa05a9ab1c770ad9e151e",
+        "Created": "2024-08-13T16:31:36.212741436Z",
+        "Path": "docker-entrypoint.sh",
+        "Args": [
+            "postgres"
+        ],
+        "State": {
+            "Status": "running",
+            "Running": true,
+            "Paused": false,
+            "Restarting": false,
+            "OOMKilled": false,
+            "Dead": false,
+            "Pid": 1319,
+            "ExitCode": 0,
+            "Error": "",
+            "StartedAt": "2024-10-18T09:37:25.114343788Z",
+            "FinishedAt": "2024-10-18T12:34:41.854205671+03:00"
+        },
+        "Image": "sha256:07a4ee949b9e7851d9ef860fd36f486aa821f23e1c17939244155fe825eaf79a",
+        "ResolvConfPath": "/var/lib/docker/containers/6af97eab5682fbf4ee6a7e9879dd38d90c2ccd8e3e3fa05a9ab1c770ad9e151e/resolv.conf",
+        "HostnamePath": "/var/lib/docker/containers/6af97eab5682fbf4ee6a7e9879dd38d90c2ccd8e3e3fa05a9ab1c770ad9e151e/hostname",
+        "HostsPath": "/var/lib/docker/containers/6af97eab5682fbf4ee6a7e9879dd38d90c2ccd8e3e3fa05a9ab1c770ad9e151e/hosts",
+        "LogPath": "/var/lib/docker/containers/6af97eab5682fbf4ee6a7e9879dd38d90c2ccd8e3e3fa05a9ab1c770ad9e151e/6af97eab5682fbf4ee6a7e9879dd38d90c2ccd8e3e3fa05a9ab1c770ad9e151e-json.log",
+        "Name": "/marketplace-postgres",
+        "RestartCount": 0,
+        "Driver": "overlay2",
+        "Platform": "linux",
+        "MountLabel": "",
+        "ProcessLabel": "",
+        "AppArmorProfile": "",
+        "ExecIDs": null,
+        "HostConfig": {
+            "Binds": [
+                "/home/mark/postgres-data:/var/lib/postgresql/data"
+            ],
+            "ContainerIDFile": "",
+            "LogConfig": {
+                "Type": "json-file",
+                "Config": {}
+            },
+            "NetworkMode": "default",
+            "PortBindings": {
+                "5432/tcp": [
+                    {
+                        "HostIp": "",
+                        "HostPort": "5432"
+                    }
+                ]
+            },
+            "RestartPolicy": {
+                "Name": "no",
+                "MaximumRetryCount": 0
+            },
+            "AutoRemove": false,
+            "VolumeDriver": "",
+            "VolumesFrom": null,
+            "CapAdd": null,
+            "CapDrop": null,
+            "CgroupnsMode": "host",
+            "Dns": [],
+            "DnsOptions": [],
+            "DnsSearch": [],
+            "ExtraHosts": null,
+            "GroupAdd": null,
+            "IpcMode": "private",
+            "Cgroup": "",
+            "Links": null,
+            "OomScoreAdj": 0,
+            "PidMode": "",
+            "Privileged": false,
+            "PublishAllPorts": false,
+            "ReadonlyRootfs": false,
+            "SecurityOpt": null,
+            "UTSMode": "",
+            "UsernsMode": "",
+            "ShmSize": 67108864,
+            "Runtime": "runc",
+            "ConsoleSize": [
+                0,
+                0
+            ],
+            "Isolation": "",
+            "CpuShares": 0,
+            "Memory": 0,
+            "NanoCpus": 0,
+            "CgroupParent": "",
+            "BlkioWeight": 0,
+            "BlkioWeightDevice": [],
+            "BlkioDeviceReadBps": null,
+            "BlkioDeviceWriteBps": null,
+            "BlkioDeviceReadIOps": null,
+            "BlkioDeviceWriteIOps": null,
+            "CpuPeriod": 0,
+            "CpuQuota": 0,
+            "CpuRealtimePeriod": 0,
+            "CpuRealtimeRuntime": 0,
+            "CpusetCpus": "",
+            "CpusetMems": "",
+            "Devices": [],
+            "DeviceCgroupRules": null,
+            "DeviceRequests": null,
+            "KernelMemory": 0,
+            "KernelMemoryTCP": 0,
+            "MemoryReservation": 0,
+            "MemorySwap": 0,
+            "MemorySwappiness": null,
+            "OomKillDisable": false,
+            "PidsLimit": null,
+            "Ulimits": null,
+            "CpuCount": 0,
+            "CpuPercent": 0,
+            "IOMaximumIOps": 0,
+            "IOMaximumBandwidth": 0,
+            "MaskedPaths": [
+                "/proc/asound",
+                "/proc/acpi",
+                "/proc/kcore",
+                "/proc/keys",
+                "/proc/latency_stats",
+                "/proc/timer_list",
+                "/proc/timer_stats",
+                "/proc/sched_debug",
+                "/proc/scsi",
+                "/sys/firmware"
+            ],
+            "ReadonlyPaths": [
+                "/proc/bus",
+                "/proc/fs",
+                "/proc/irq",
+                "/proc/sys",
+                "/proc/sysrq-trigger"
+            ]
+        },
+        "GraphDriver": {
+            "Data": {
+                "LowerDir": "/var/lib/docker/overlay2/495dd7a14e92b636cf13749a2c06272b24a8f706edae23fdcfa9761b759a32e5-init/diff:/var/lib/docker/overlay2/4da7b50c5a6b53cb482ace3b5f8249dbe274c063cdad9eea15e2aff1a9e5795b/diff:/var/lib/docker/overlay2/93a339604159789759be4a426226a636568ecab21599781a024fdf507aa350c4/diff:/var/lib/docker/overlay2/ecd49cd63d739286decf3dfdef38e61ca36d5a355ad2cfbc3403ea016f5e9d17/diff:/var/lib/docker/overlay2/3be2860a45bdbac9c21aaf4700a68cf24429c8a511a2b6ac8bfaed1c66d67b7c/diff:/var/lib/docker/overlay2/e664ea60f06c4d9c8a1cacc3d617a825fcbfc9862365feded8ee58af7f0fd359/diff:/var/lib/docker/overlay2/639de054631b34d306199efd6508dca7e73836858c17edaef4c7b10a207ac09d/diff:/var/lib/docker/overlay2/2134fe2af9557fb9958d815e5aec84740cbeb9181ebc5a81222ccb37082fba5c/diff:/var/lib/docker/overlay2/dfbd5452feabcf20762bdc9bf135585425b6b73554863b53b933ca8f6a68e2b9/diff:/var/lib/docker/overlay2/6d0a3294d3e0cd80c796e9a1f1105c3fcab85b8c3239d1312bf3c5bd2b7c3cc7/diff:/var/lib/docker/overlay2/30770e554ba258395de5dd38391b7abb32defae17fe39d15b384119d0ba05d47/diff:/var/lib/docker/overlay2/22ae52a411799ade3f551b38d4da67f0af26bba823bfea6e9b814e4b255535da/diff:/var/lib/docker/overlay2/ad52a57a4a3979319ada2f05369136fbc3d0dbd793197d6bdab28835de1469be/diff:/var/lib/docker/overlay2/5f9270905249c1042ce71a96cc3c695898cc41e65d6abc382f1225f16b7d072d/diff:/var/lib/docker/overlay2/d8613ffcedbfeec160dc4309ac05106268522835005a0d3c8b23ac432bb957d2/diff",
+                "MergedDir": "/var/lib/docker/overlay2/495dd7a14e92b636cf13749a2c06272b24a8f706edae23fdcfa9761b759a32e5/merged",
+                "UpperDir": "/var/lib/docker/overlay2/495dd7a14e92b636cf13749a2c06272b24a8f706edae23fdcfa9761b759a32e5/diff",
+                "WorkDir": "/var/lib/docker/overlay2/495dd7a14e92b636cf13749a2c06272b24a8f706edae23fdcfa9761b759a32e5/work"
+            },
+            "Name": "overlay2"
+        },
+        "Mounts": [
+            {
+                "Type": "bind",
+                "Source": "/home/mark/postgres-data",
+                "Destination": "/var/lib/postgresql/data",
+                "Mode": "",
+                "RW": true,
+                "Propagation": "rprivate"
+            }
+        ],
+        "Config": {
+            "Hostname": "6af97eab5682",
+            "Domainname": "",
+            "User": "",
+            "AttachStdin": false,
+            "AttachStdout": false,
+            "AttachStderr": false,
+            "ExposedPorts": {
+                "5432/tcp": {}
+            },
+            "Tty": false,
+            "OpenStdin": false,
+            "StdinOnce": false,
+            "Env": [
+                "POSTGRES_USER=myuser",
+                "POSTGRES_PASSWORD=strongpassword",
+                "POSTGRES_DB=marketplacedb",
+                "PATH=/usr/local/sbin:/usr/local/bin:/usr/sbin:/usr/bin:/sbin:/bin:/usr/lib/postgresql/16/bin",
+                "GOSU_VERSION=1.17",
+                "LANG=en_US.utf8",
+                "PG_MAJOR=16",
+                "PG_VERSION=16.3-1.pgdg120+1",
+                "PGDATA=/var/lib/postgresql/data"
+            ],
+            "Cmd": [
+                "postgres"
+            ],
+            "Image": "postgres:latest",
+            "Volumes": {
+                "/var/lib/postgresql/data": {}
+            },
+            "WorkingDir": "",
+            "Entrypoint": [
+                "docker-entrypoint.sh"
+            ],
+            "OnBuild": null,
+            "Labels": {},
+            "StopSignal": "SIGINT"
+        },
+        "NetworkSettings": {
+            "Bridge": "",
+            "SandboxID": "b8cf9888b12936150af22470bd364c29a6b19e0516a39bf7572370f483c2da94",
+            "HairpinMode": false,
+            "LinkLocalIPv6Address": "",
+            "LinkLocalIPv6PrefixLen": 0,
+            "Ports": {
+                "5432/tcp": [
+                    {
+                        "HostIp": "0.0.0.0",
+                        "HostPort": "5432"
+                    },
+                    {
+                        "HostIp": "::",
+                        "HostPort": "5432"
+                    }
+                ]
+            },
+            "SandboxKey": "/var/run/docker/netns/b8cf9888b129",
+            "SecondaryIPAddresses": null,
+            "SecondaryIPv6Addresses": null,
+            "EndpointID": "f03e9fe86e11961c597115c3f433d46a2f99a7e25a5e9973c22ef36daf11f7fd",
+            "Gateway": "172.17.0.1",
+            "GlobalIPv6Address": "",
+            "GlobalIPv6PrefixLen": 0,
+            "IPAddress": "172.17.0.2",
+            "IPPrefixLen": 16,
+            "IPv6Gateway": "",
+            "MacAddress": "02:42:ac:11:00:02",
+            "Networks": {
+                "bridge": {
+                    "IPAMConfig": null,
+                    "Links": null,
+                    "Aliases": null,
+                    "NetworkID": "35ef1a92067d8ac5221943db2ebf757a8625582aefaa67ea5e26873f663f809a",
+                    "EndpointID": "f03e9fe86e11961c597115c3f433d46a2f99a7e25a5e9973c22ef36daf11f7fd",
+                    "Gateway": "172.17.0.1",
+                    "IPAddress": "172.17.0.2",
+                    "IPPrefixLen": 16,
+                    "IPv6Gateway": "",
+                    "GlobalIPv6Address": "",
+                    "GlobalIPv6PrefixLen": 0,
+                    "MacAddress": "02:42:ac:11:00:02",
+                    "DriverOpts": null
+                }
+            }
+        }
+    }
+]

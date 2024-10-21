@@ -238,6 +238,8 @@ export const orderAllCartItems = async (
               ready: false,
             },
           });
+
+          price += item.product.price * item.quantity;
         }
 
         const updatedOrder = await txl.order.update({
@@ -245,7 +247,7 @@ export const orderAllCartItems = async (
             id: newOrder.id,
           },
           data: {
-            totalAmout: price,
+            totalAmount: price,
           },
         });
 
@@ -419,6 +421,42 @@ export const emptyCart = async (
 
     return res.status(203).json({
       message: "Cart emptied successfully",
+    });
+  } catch (e) {
+    return next(e as Error);
+  }
+};
+
+export const fetchCartCount = async (
+  req: AuthenticatedRequest,
+  res: Response,
+  next: NextFunction
+) => {
+  try {
+    const userId = req.user?.id;
+
+    if (!userId) {
+      throw new Error("User not found");
+    }
+
+    const cart = await prisma.cart.findUnique({
+      where: {
+        customerID: userId,
+      },
+    });
+
+    if (!cart) {
+      throw new Error("Cart not found");
+    }
+
+    const count = await prisma.cartItem.count({
+      where: {
+        cartID: cart.id,
+      },
+    });
+
+    return res.status(200).json({
+      count,
     });
   } catch (e) {
     return next(e as Error);

@@ -1,7 +1,7 @@
 import { Link } from "react-router-dom";
 import { Product } from "../../../utils/types";
 import Loader from "../../../components/loader";
-import ProductList from "../../../components/productlist";
+import ProductList from "../../../components/products/productlist";
 
 interface Props {
   products: Product[];

@@ -1,5 +1,5 @@
-import WishlistItemComponent from "../utils/mutations/wishlistitem";
-import { WishlistItem } from "../utils/types";
+import WishlistItemComponent from "../../utils/mutations/wishlistitem";
+import { WishlistItem } from "../../utils/types";
 
 interface Props {
   wishlistItems: WishlistItem[];

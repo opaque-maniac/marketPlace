@@ -11,8 +11,8 @@ import ArrowLeft from "../../components/icons/arrowleft";
 import ArrowRight from "../../components/icons/arrowright";
 import { Helmet } from "react-helmet";
 import { fetchWishlist } from "../../utils/queries/wishlist";
-import EmptyWishlist from "../../components/emptywishlist";
-import Wishlist from "../../components/wishlistlist";
+import EmptyWishlist from "../../components/wishlist/emptywishlist";
+import Wishlist from "../../components/wishlist/wishlistlist";
 
 const WishlistPage = () => {
   const page = cartPageStore((state) => state.page);

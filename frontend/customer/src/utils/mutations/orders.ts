@@ -1,11 +1,11 @@
-import { ErrorResponse } from "react-router-dom";
 import { getAccessToken } from "../cookies";
 import { responseError, tokenError } from "../errors";
-import { SuccessOrderResponse } from "../types";
+import { ErrorResponse, SuccessCancelOrderResponse } from "../types";
 
-export const updateOrder = async ({ id }: { id: string }) => {
+export const cancelOrder = async ({ id }: { id: string }) => {
   try {
-    const url = `http://localhost:3020/seller/orders/${id}`;
+    const url = `http://localhost:3020/customers/orders/${id}`;
+
     const token = getAccessToken();
 
     if (!token) {
@@ -13,9 +13,10 @@ export const updateOrder = async ({ id }: { id: string }) => {
     }
 
     const options = {
-      method: "PUT",
+      method: "GET",
       headers: {
         Authorization: `Bearer ${token}`,
+        "Content-Type": "application/json",
       },
     };
 
@@ -32,8 +33,8 @@ export const updateOrder = async ({ id }: { id: string }) => {
       }
     }
 
-    const json = (await response.json()) as SuccessOrderResponse;
-    return json;
+    const data = (await response.json()) as SuccessCancelOrderResponse;
+    return data;
   } catch (e) {
     if (e instanceof Error) {
       throw new Error(e.message);

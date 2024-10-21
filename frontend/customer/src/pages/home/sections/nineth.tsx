@@ -1,5 +1,5 @@
 import Loader from "../../../components/loader";
-import ProductList from "../../../components/productlist";
+import ProductList from "../../../components/products/productlist";
 import { Product } from "../../../utils/types";
 
 interface Props {

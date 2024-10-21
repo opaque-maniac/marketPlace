@@ -2,14 +2,8 @@ import { create } from "zustand";
 
 interface UserStore {
   user: string | null;
-  cart: number | null;
-  wishlit: number | null;
   setUser: (newUser: string | null) => void;
-  setCart: (cart: number) => void;
-  setWishlist: (wishlist: number) => void;
   removeUser: () => void;
-  removeCart: () => void;
-  removeWishlist: () => void;
 }
 
 const USER_KEY = "hazina-customer";
@@ -49,25 +43,9 @@ const useUserStore = create<UserStore>((set) => {
       }
       set({ user: newUser });
     },
-    setCart: (cart: number) => {
-      window.localStorage.setItem(CART_KEY, cart.toString());
-      set({ cart });
-    },
-    setWishlist: (wishlist: number) => {
-      window.localStorage.setItem(WISHLIST_KEY, wishlist.toString());
-      set({ wishlit: wishlist });
-    },
     removeUser: () => {
       window.localStorage.removeItem(USER_KEY);
       set({ user: null });
-    },
-    removeCart: () => {
-      window.localStorage.removeItem(CART_KEY);
-      set({ cart: null });
-    },
-    removeWishlist: () => {
-      window.localStorage.removeItem(WISHLIST_KEY);
-      set({ wishlit: null });
     },
   };
 });

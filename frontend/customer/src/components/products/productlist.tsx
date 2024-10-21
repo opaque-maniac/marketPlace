@@ -1,5 +1,5 @@
 import { useLocation } from "react-router-dom";
-import { Product } from "../utils/types";
+import { Product } from "../../utils/types";
 import ProductItem from "./product";
 
 interface Props {

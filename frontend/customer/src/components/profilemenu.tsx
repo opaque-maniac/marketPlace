@@ -14,7 +14,7 @@ const ProfileMenu = ({ callback }: Props) => {
   };
 
   return (
-    <Transition>
+    <Transition time={0.3}>
       <div
         style={{
           bottom: "-10.2rem",

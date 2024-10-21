@@ -44,6 +44,14 @@ const errorHandler = async (
     });
   }
 
+  // Cannot cancell order
+  if (error.message === "Order cannot be cancelled") {
+    return res.status(400).json({
+      message: "Order cannot be cancelled",
+      errorCode: "O402",
+    });
+  }
+
   if (error.message === "No items in cart") {
     return res.status(400).json({
       message: "No cart item found",

@@ -1,7 +1,7 @@
 import { useState } from "react";
 import EllipseIcon from "../../components/icons/ellipse";
-import ProductItem from "../../components/product";
-import RemoveWishlistItem from "../../components/removewishlititem";
+import ProductItem from "../../components/products/product";
+import RemoveWishlistItem from "../../components/wishlist/removewishlititem";
 import { WishlistItem } from "../types";
 
 interface Props {

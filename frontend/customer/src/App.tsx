@@ -32,6 +32,7 @@ const CartPage = lazy(() => import("./pages/cart/page"));
 const CategoriesPage = lazy(() => import("./pages/categories/page"));
 const RefreshTokenPage = lazy(() => import("./pages/refreshtoken/page"));
 const OrdersPage = lazy(() => import("./pages/orders/page"));
+const IndividualOrderPage = lazy(() => import("./pages/order/page"));
 
 const queryClient = new QueryClient({
   defaultOptions: {
@@ -91,6 +92,10 @@ const App = () => {
                       element={<DeleteProfilePage />}
                     />
                     <Route path="/orders" element={<OrdersPage />} />
+                    <Route
+                      path="/orders/:id"
+                      element={<IndividualOrderPage />}
+                    />
                     <Route path="/login" element={<LoginPage />} />
                     <Route path="/register" element={<RegisterPage />} />
                     <Route path="/logout" element={<LogoutPage />} />

@@ -2,7 +2,7 @@ import { useQuery } from "@tanstack/react-query";
 import { fetchRelatedProducts } from "../../utils/queries/products";
 import { ErrorResponse, Product } from "../../utils/types";
 import Loader from "../../components/loader";
-import ProductList from "../../components/productlist";
+import ProductList from "../../components/products/productlist";
 import errorHandler from "../../utils/errorHandler";
 import { useContext } from "react";
 import { ErrorContext, ShowErrorContext } from "../../utils/errorContext";

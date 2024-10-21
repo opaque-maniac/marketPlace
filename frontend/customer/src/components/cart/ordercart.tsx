@@ -1,28 +1,26 @@
 import { useMutation } from "@tanstack/react-query";
-import { emptyWishlist } from "../utils/mutations/wishlist";
 import { MouseEventHandler, useContext, useState } from "react";
-import { ErrorContext, ShowErrorContext } from "../utils/errorContext";
-import { ErrorResponse } from "../utils/types";
-import errorHandler from "../utils/errorHandler";
+import { ErrorContext, ShowErrorContext } from "../../utils/errorContext";
+import { ErrorResponse } from "../../utils/types";
+import errorHandler from "../../utils/errorHandler";
 import { useNavigate } from "react-router-dom";
-import SuccessComponent from "./success";
-import Loader from "./loader";
-import useUserStore from "../utils/store";
+import SuccessComponent from "../success";
+import Loader from "../loader";
+import { orderCart } from "../../utils/mutations/cart";
 
 interface Props {
   refetch: () => void;
   disable: boolean;
 }
 
-const EmptyWishlist = ({ refetch, disable }: Props) => {
+const OrderCart = ({ refetch, disable }: Props) => {
   const [, setErr] = useContext(ShowErrorContext);
   const [, setError] = useContext(ErrorContext);
   const navigate = useNavigate();
   const [success, setSuccess] = useState<boolean>(false);
-  const setWishlist = useUserStore((state) => state.setWishlist);
 
   const mutation = useMutation({
-    mutationFn: emptyWishlist,
+    mutationFn: orderCart,
     onError: (error) => {
       try {
         const errorObj = JSON.parse(error.message) as ErrorResponse;
@@ -48,12 +46,11 @@ const EmptyWishlist = ({ refetch, disable }: Props) => {
       }
     },
     onSuccess: () => {
+      refetch();
       setSuccess(() => true);
-      setWishlist(0);
       setTimeout(() => {
         setSuccess(() => false);
       }, 3000);
-      refetch();
     },
   });
 
@@ -64,23 +61,24 @@ const EmptyWishlist = ({ refetch, disable }: Props) => {
 
   return (
     <>
-      {success && <SuccessComponent message="Wishlist emptied" />}
       <button
         onClick={clickHandler}
-        aria-label="Empty wishlist"
+        aria-label="Order cart"
         disabled={disable}
-        className="block h-10 w-40 bg-red-400 text-white rounded-md"
+        className="block h-10 w-40 bg-green-400 text-white rounded-md"
       >
         {mutation.isPending ? (
           <div className="h-10 w-10 py-1 mx-auto">
             <Loader color="#fff" />
           </div>
         ) : (
-          "Empty Wishlist"
+          "Order Cart"
         )}
+        {success && <SuccessComponent message="Cart ordered" />}{" "}
+        {/** This is wierd but it worked, worry about it later */}
       </button>
     </>
   );
 };
 
-export default EmptyWishlist;
+export default OrderCart;

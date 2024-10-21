@@ -1,13 +1,13 @@
 import { useMutation } from "@tanstack/react-query";
-import { sendComment } from "../utils/mutations/comments";
+import { sendComment } from "../../utils/mutations/comments";
 import { FormEventHandler, useContext, useRef, useState } from "react";
-import { ErrorResponse } from "../utils/types";
-import errorHandler from "../utils/errorHandler";
-import { ErrorContext, ShowErrorContext } from "../utils/errorContext";
+import { ErrorResponse } from "../../utils/types";
+import errorHandler from "../../utils/errorHandler";
+import { ErrorContext, ShowErrorContext } from "../../utils/errorContext";
 import { useNavigate } from "react-router-dom";
-import SendIcon from "./icons/send";
-import Loader from "./loader";
-import SuccessComponent from "./success";
+import SendIcon from "../icons/send";
+import Loader from "../loader";
+import SuccessComponent from "../success";
 
 interface Props {
   id: string;

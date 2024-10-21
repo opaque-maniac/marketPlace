@@ -18,8 +18,6 @@ export interface SuccessLoginRespose {
   message: string;
   token: string;
   refreshToken: string;
-  cart: number;
-  wishlist: number;
   customer: Customer;
 }
 
@@ -152,7 +150,7 @@ export interface Order {
   status: OrderStatus;
   customerID: string;
   createdAt: string;
-  updatedAt: string | null;
+  updatedAt: string;
 }
 
 export interface OrderItem {
@@ -268,4 +266,20 @@ export interface SuccessRemoveFromCartResponse {
 export interface SuccessOrderAllCartResponse {
   message: string;
   order: Order;
+}
+
+export interface SuccessCancelOrderResponse {
+  message: string;
+  order: Order;
+}
+
+export interface SuccessIndividualOrderResponse {
+  message: string;
+  order: Order;
+}
+
+export interface SuccessOrderItemResponse {
+  message: string;
+  orderItems: OrderItem[];
+  hasNext: boolean;
 }

@@ -248,3 +248,31 @@ export const emptyWishlist = async (
     return next(e as Error);
   }
 };
+
+export const fetchWishlistCount = async (
+  req: AuthenticatedRequest,
+  res: Response,
+  next: NextFunction
+) => {
+  try {
+    const userId = req.user?.id;
+
+    if (!userId) {
+      throw new Error("User not found");
+    }
+
+    const count = await prisma.wishListItem.count({
+      where: {
+        wishlist: {
+          customerID: userId,
+        },
+      },
+    });
+
+    return res.status(200).json({
+      count,
+    });
+  } catch (e) {
+    return next(e as Error);
+  }
+};

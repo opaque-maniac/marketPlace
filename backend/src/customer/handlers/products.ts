@@ -7,7 +7,6 @@
 
 import { Response, NextFunction, Request } from "express";
 import prisma from "../../utils/db";
-import { ProductSearchRequest } from "../../types";
 import { CATEGORIES } from "@prisma/client";
 
 // Function to fetch products
@@ -95,23 +94,22 @@ export const searchProduct = async (
   next: NextFunction
 ) => {
   try {
-    let query = req.query.query ? (req.query.query as string) : "";
-    const page = req.query.page ? parseInt(req.query.page as string) : 1;
+    const query = req.query.query ? (req.query.query as string) : "";
     const limit = req.query.limit ? parseInt(req.query.limit as string) : 10;
-    const category = req.query.category
-      ? (req.query.category as CATEGORIES)
-      : undefined;
+    const page = req.query.page ? parseInt(req.query.page as string) : 1;
 
     const products = await prisma.product.findMany({
       where: {
         name: {
-          contains: query, // Search for names containing the query string
-          mode: "insensitive", // Case-insensitive search
-        },
-        category: {
-          equals: category,
+          contains: query,
+          mode: "insensitive",
         },
       },
+      include: {
+        images: true,
+      },
+      take: limit + 1,
+      skip: (page - 1) * limit,
     });
 
     const hasNext = products.length > limit;
@@ -121,8 +119,9 @@ export const searchProduct = async (
     }
 
     return res.status(200).json({
-      message: "Products fetched successfully",
-      data: products,
+      message: "Queried products",
+      products,
+      hasNext,
     });
   } catch (e) {
     return next(e as Error);

@@ -14,18 +14,13 @@ interface Props {
 
 const AddToWishlist = ({ id }: Props) => {
   const user = useUserStore((state) => state.user);
-  const setWishlist = useUserStore((state) => state.setWishlist);
-  const wishlist = useUserStore((state) => state.wishlit);
   const [, setErr] = useContext(ShowErrorContext);
   const [, setError] = useContext(ErrorContext);
   const navigate = useNavigate();
 
   const mutation = useMutation({
     mutationFn: addToWishlist,
-    onSuccess: (data) => {
-      if (data.new && wishlist !== null) {
-        setWishlist(wishlist + 1);
-      }
+    onSuccess: () => {
       navigate("/wishlist");
     },
     onError: (error) => {

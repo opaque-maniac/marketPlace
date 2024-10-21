@@ -1,7 +1,7 @@
 import { useQuery } from "@tanstack/react-query";
 import { useCallback, useContext, useState } from "react";
 import Loader from "../../components/loader";
-import CommentItem from "../../components/comment";
+import CommentItem from "../../components/comments/comment";
 import { fetchProductComments } from "../../utils/queries/products";
 import ArrowRight from "../../components/icons/arrowright";
 import ArrowLeft from "../../components/icons/arrowleft";
@@ -9,7 +9,7 @@ import { ErrorContext, ShowErrorContext } from "../../utils/errorContext";
 import { useNavigate } from "react-router-dom";
 import { ErrorResponse } from "../../utils/types";
 import errorHandler from "../../utils/errorHandler";
-import CommentForm from "../../components/commentform";
+import CommentForm from "../../components/comments/commentform";
 import useUserStore from "../../utils/store";
 
 interface Props {
