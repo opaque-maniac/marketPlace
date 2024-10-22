@@ -52,6 +52,13 @@ import {
   updateSeller,
 } from "./handlers/sellers";
 import { deleteProfile, fetchProfile, updateProfile } from "./handlers/profile";
+import {
+  deleteOrder,
+  fetchAllOrders,
+  fetchIndividualOrder,
+  makeOrderReady,
+  updateOrderStatus,
+} from "./handlers/orders";
 
 const staffRouter = Router();
 
@@ -280,6 +287,38 @@ staffRouter.post(
   isStaff,
   body("query").isString().isLength(stringConfig),
   searchSeller
+);
+
+// For orders
+staffRouter.get("/orders", allowIfAuthenticated, isStaff, fetchAllOrders);
+staffRouter.get(
+  "/orders/:id",
+  allowIfAuthenticated,
+  isStaff,
+  fetchIndividualOrder
+);
+staffRouter.put(
+  "/orders/:id",
+  allowIfAuthenticated,
+  isStaff,
+  body("status")
+    .isString()
+    .isIn([
+      "PENDING",
+      "PROCESSING",
+      "SHIPPED",
+      "READY",
+      "DELIVERED",
+      "CANCELLED",
+    ]),
+  updateOrderStatus
+);
+staffRouter.delete("/orders/:id", allowIfAuthenticated, isStaff, deleteOrder);
+staffRouter.put(
+  "/orders/:id/approve",
+  allowIfAuthenticated,
+  isStaff,
+  makeOrderReady
 );
 
 export default staffRouter;

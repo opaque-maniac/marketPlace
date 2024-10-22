@@ -26,7 +26,7 @@ import {
 import {
   fetchIndividualOrder,
   fetchOrders,
-  makeOrderReady,
+  makeOrderDelivered,
   searchOrder,
 } from "./handlers/orders";
 import {
@@ -171,7 +171,12 @@ sellerRouter.get(
   isSeller,
   fetchIndividualOrder
 );
-sellerRouter.put("/orders/:id", allowIfAuthenticated, isSeller, makeOrderReady);
+sellerRouter.put(
+  "/orders/:id",
+  allowIfAuthenticated,
+  isSeller,
+  makeOrderDelivered
+);
 sellerRouter.post(
   "/orders/search",
   allowIfAuthenticated,

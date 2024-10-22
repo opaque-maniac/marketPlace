@@ -184,14 +184,14 @@ enum ORDER_STATUS {
 }
 
 model Order {
-  id         String       @id @default(uuid())
+  id          String       @id @default(uuid())
   totalAmount Float?
-  status     ORDER_STATUS
-  customerID String
-  customer   Customer     @relation(fields: [customerID], references: [id], onDelete: Cascade)
-  orderItems OrderItem[]
-  createdAt  DateTime     @default(now())
-  updatedAt  DateTime     @updatedAt
+  status      ORDER_STATUS
+  customerID  String
+  customer    Customer     @relation(fields: [customerID], references: [id], onDelete: Cascade)
+  orderItems  OrderItem[]
+  createdAt   DateTime     @default(now())
+  updatedAt   DateTime     @updatedAt
 }
 
 model OrderItem {
@@ -200,6 +200,7 @@ model OrderItem {
   productID   String
   orderID     String
   ready       Boolean  @default(false)
+  delivered   Boolean  @default(false)
   product     Product  @relation(fields: [productID], references: [id], onDelete: Cascade)
   order       Order    @relation(fields: [orderID], references: [id], onDelete: Cascade)
   dateCreated DateTime @default(now())

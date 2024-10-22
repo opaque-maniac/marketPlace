@@ -18,7 +18,12 @@ export const fetchOrders = async (
   try {
     const page = req.query.page ? parseInt(req.query.page as string) : 1;
     const limit = req.query.limit ? parseInt(req.query.limit as string) : 10;
-    const ready = req.query.ready === "true" ? true : req.query.ready === "all" ? undefined : false;
+    const ready =
+      req.query.ready === "true"
+        ? true
+        : req.query.ready === "all"
+          ? undefined
+          : false;
     const { user } = req;
 
     if (!user) {
@@ -114,7 +119,7 @@ export const fetchIndividualOrder = async (
 };
 
 // Function to make order ready
-export const makeOrderReady = async (
+export const makeOrderDelivered = async (
   req: AuthenticatedRequest,
   res: Response,
   next: NextFunction
@@ -127,7 +132,7 @@ export const makeOrderReady = async (
       throw new Error("User not found");
     }
 
-    const updatedOrderItem = await prisma.orderItem.update({
+    const order = await prisma.orderItem.update({
       where: {
         id,
         product: {
@@ -135,69 +140,34 @@ export const makeOrderReady = async (
         },
       },
       data: {
-        ready: true,
+        delivered: true,
       },
     });
 
-    const order = await prisma.order.findUnique({
+    const updatedOrder = await prisma.orderItem.findUnique({
       where: {
-        id: updatedOrderItem.orderID,
+        id: order.id,
+        product: {
+          sellerID: user.id,
+        },
       },
       include: {
-        orderItems: true,
+        order: {
+          include: {
+            customer: true,
+          },
+        },
+        product: {
+          include: {
+            images: true,
+          },
+        },
       },
     });
 
-    if (!order) {
-      throw new Error("Order not found");
-    }
-
-    if (order.status === "CANCELLED") {
-      return res.status(400).json({
-        message: "Order has been cancelled",
-        errorCode: "O401",
-      });
-    }
-
-    if (order.status === "PENDING") {
-      const updatedOrder = await prisma.order.update({
-        where: {
-          id: order.id,
-        },
-        data: {
-          status: "PROCESSING",
-        },
-      });
-
-      return res.status(200).json({
-        message: "Order updated successfully",
-        order: updatedOrder,
-      });
-    }
-
-    const orderComplete = order.orderItems.every(
-      (orderItem) => orderItem.ready
-    );
-
-    if (orderComplete) {
-      const updatedOrder = await prisma.order.update({
-        where: {
-          id: order.id,
-        },
-        data: {
-          status: "READY",
-        },
-      });
-
-      return res.status(200).json({
-        message: "Order updated successfully",
-        order: updatedOrder,
-      });
-    }
-
     return res.status(200).json({
-      message: "Order updated successfully",
-      order: updatedOrderItem,
+      message: "Order marked as delivered",
+      order: updatedOrder,
     });
   } catch (e) {
     return next(e as Error);
