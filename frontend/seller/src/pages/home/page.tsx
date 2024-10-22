@@ -93,7 +93,11 @@ const HomePage = () => {
               </div>
             </div>
           )}
-          {query.isSuccess && <ProductsList products={query.data.products} />}
+          {query.isSuccess && (
+            <div className="pt-4">
+              <ProductsList products={query.data.products} />
+            </div>
+          )}
         </section>
         <section className="flex justify-center items-center gap-6 py-4">
           <div>

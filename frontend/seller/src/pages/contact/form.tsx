@@ -64,7 +64,7 @@ const ContactForm = () => {
       <form
         onSubmit={submitHandler}
         ref={ref}
-        className="md:w-auto w-80 md:mx-0 mx-auto"
+        className="md:w-auto w-80 md:mx-0 mx-auto md:pt-2 pt-1"
       >
         <div className="md:flex justify-between items-center mb-4">
           <div className="px-2 mb-4 md:mb-0">

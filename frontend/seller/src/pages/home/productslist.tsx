@@ -25,7 +25,7 @@ const ProductsList = ({ products }: Props): JSX.Element => {
           style={{
             minHeight: "calc(100vh - 10.8rem)",
           }}
-          className="flex md:justify-start justify-center items-center gap-6 flex-wrap h-full"
+          className="flex md:justify-evenly justify-center items-center gap-6 flex-wrap h-full"
         >
           {products.map((product) => (
             <li key={product.id}>

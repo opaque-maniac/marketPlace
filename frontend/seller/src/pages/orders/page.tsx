@@ -13,7 +13,7 @@ import { Helmet } from "react-helmet";
 import OrdersList from "./orderlist";
 import { fetchOrders } from "../../utils/queries/orders";
 
-const HomePage = () => {
+const OrdersPage = () => {
   const page = orderPageStore((state) => state.page);
   const setPage = orderPageStore((state) => state.setPage);
   const [, setError] = useContext(ErrorContext);
@@ -81,7 +81,7 @@ const HomePage = () => {
         <meta name="google" content="nositelinkssearchbox" />
       </Helmet>
       <main role="main">
-        <section className="h-full">
+        <section className="h-full pt-4">
           <div>
             <select
               name="ready"
@@ -139,4 +139,4 @@ const HomePage = () => {
   );
 };
 
-export default HomePage;
+export default OrdersPage;

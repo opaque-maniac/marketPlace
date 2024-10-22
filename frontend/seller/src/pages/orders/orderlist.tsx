@@ -1,3 +1,4 @@
+import { Link } from "react-router-dom";
 import Transition from "../../components/transition";
 import { OrderItem } from "../../utils/types";
 
@@ -14,28 +15,30 @@ const OrdersList = ({ orders }: Props) => {
         }}
       >
         {orders.length > 0 ? (
-          <div>
+          <div className="flex flex-col gap-4">
             {orders.map((order) => (
-              <div key={order.id} className="border-b border-gray-200 py-4">
-                <div className="flex justify-between items-center">
-                  <div>
-                    <h1 className="text-lg font-semibold">
-                      Order ID: {order.id}
-                    </h1>
-                    <p className="text-sm text-gray-500">
-                      Ordered on: {new Date(order.createdAt).toDateString()}
-                    </p>
-                  </div>
-                  <div>
-                    <h1 className="text-lg font-semibold">
-                      Total: ${order.product.price * order.quantity}
-                    </h1>
-                    <p className="text-sm text-gray-500">
-                      Status: {order.ready ? "Ready" : "Not Ready"}
-                    </p>
+              <Link to={`/orders/${order.id}`} key={order.id}>
+                <div key={order.id} className="border-b border-gray-200 py-4">
+                  <div className="flex justify-between items-center">
+                    <div>
+                      <h1 className="text-lg font-semibold">
+                        Order ID: {order.id}
+                      </h1>
+                      <p className="text-sm text-gray-500">
+                        Ordered on: {new Date(order.createdAt).toDateString()}
+                      </p>
+                    </div>
+                    <div>
+                      <h1 className="text-lg font-semibold">
+                        Total: ${order.product.price * order.quantity}
+                      </h1>
+                      <p className="text-sm text-gray-500">
+                        Status: {order.ready ? "Ready" : "Not Ready"}
+                      </p>
+                    </div>
                   </div>
                 </div>
-              </div>
+              </Link>
             ))}
           </div>
         ) : (
