@@ -6,8 +6,8 @@ import Cookies from "universal-cookie";
 
 const cookies = new Cookies();
 
-const accessLabel: string = "access-token";
-const refreshLabel: string = "refresh-token";
+const accessLabel: string = "azina-staff-access-token";
+const refreshLabel: string = "hazina-staff-refresh-token";
 
 export const setAccessToken = (token: string) => {
   cookies.set(accessLabel, token, {

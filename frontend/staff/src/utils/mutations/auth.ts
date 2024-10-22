@@ -1,5 +1,6 @@
 import { ErrorResponse } from "react-router-dom";
-import { SuccessLoginRespose, SuccessRegisterResponse } from "../types";
+import { ROLE, SuccessLoginRespose, SuccessRegisterResponse } from "../types";
+import { responseError } from "../errors";
 
 interface LoginData {
   email: string;
@@ -9,7 +10,7 @@ interface LoginData {
 // Mutation for login
 export const sendLogin = async (data: LoginData) => {
   try {
-    const url = "http://localhost:3020/seller/login";
+    const url = "http://localhost:3020/staff/login";
     const options = {
       method: "POST",
       headers: {
@@ -21,8 +22,14 @@ export const sendLogin = async (data: LoginData) => {
     const response = await fetch(url, options);
 
     if (!response.ok) {
-      const error = (await response.json()) as ErrorResponse;
-      throw new Error(JSON.stringify(error));
+      try {
+        const error = (await response.json()) as ErrorResponse;
+        throw new Error(JSON.stringify(error));
+      } catch (e) {
+        if (e instanceof Error) {
+          throw responseError();
+        }
+      }
     }
 
     const obj = (await response.json()) as SuccessLoginRespose;
@@ -36,14 +43,16 @@ export const sendLogin = async (data: LoginData) => {
 
 interface RegisterData {
   email: string;
-  name: string;
+  firstName: string;
+  lastName: string;
   password: string;
+  role: ROLE;
 }
 
 // Mutation for register
 export const sendRegister = async (data: RegisterData) => {
   try {
-    const url = "http://localhost:3020/seller/register";
+    const url = "http://localhost:3020/staff/register";
     const options = {
       method: "POST",
       headers: {
@@ -55,8 +64,14 @@ export const sendRegister = async (data: RegisterData) => {
     const response = await fetch(url, options);
 
     if (!response.ok) {
-      const error = (await response.json()) as ErrorResponse;
-      throw new Error(JSON.stringify(error));
+      try {
+        const error = (await response.json()) as ErrorResponse;
+        throw new Error(JSON.stringify(error));
+      } catch (e) {
+        if (e instanceof Error) {
+          throw responseError();
+        }
+      }
     }
 
     const obj = (await response.json()) as SuccessRegisterResponse;

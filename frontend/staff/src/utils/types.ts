@@ -10,19 +10,24 @@ export interface ErrorResponse {
   errorCode: string;
 }
 
-export interface SuccessComplaintResponse {
-  message: string;
+export interface Customer {
+  id: string;
+  firstName: string;
+  lastName: string;
+  password: string;
+  email: string;
+  active: boolean;
+  address: string | null;
+  phone: string | null;
+  createdAt: string;
+  updatedAt: string | null;
+  image: CustomerImage | null;
 }
 
-export interface SuccessLoginRespose {
-  message: string;
-  token: string;
-  refreshToken: string;
-  seller: Seller;
-}
-
-export interface SuccessRegisterResponse {
-  message: string;
+export interface CustomerImage {
+  id: string;
+  url: string;
+  createdAt: string;
 }
 
 export interface ProductImages {
@@ -57,38 +62,13 @@ export interface Product {
   sellerID: string;
 }
 
-export interface SuccessProductsResponse {
-  message: string;
-  products: Product[];
-  hasNext: boolean;
-}
-
-export interface SuccessProductResponse {
-  message: string;
-  product: Product;
-}
-
 export interface Comment {
   id: string;
   productID: string;
   customerID: string;
+  customer: Customer;
   message: string;
   createdAt: string;
-}
-
-export interface SuccessCommentsResponse {
-  message: string;
-  data: Comment[];
-  hasNext: boolean;
-}
-
-export interface SuccessNewProductResponse {
-  message: string;
-  product: Product;
-}
-
-export interface SuccessProductDelete {
-  message: string;
 }
 
 export interface SellerImage {
@@ -109,11 +89,6 @@ export interface Seller {
   image?: SellerImage;
 }
 
-export interface SuccessSellerResponse {
-  message: string;
-  seller: Seller;
-}
-
 export type OrderStatus =
   | "PENDING"
   | "PROCESSING"
@@ -128,7 +103,7 @@ export interface Order {
   status: OrderStatus;
   customerID: string;
   createdAt: string;
-  updatedAt: string | null;
+  updatedAt: string;
 }
 
 export interface OrderItem {
@@ -137,34 +112,87 @@ export interface OrderItem {
   productID: string;
   product: Product;
   ready: boolean;
+  delivered: boolean;
   orderID: string;
   createdAt: string;
   updatedAt: string | null;
 }
 
-export interface Customer {
+export interface CartItem {
+  id: string;
+  quantity: number;
+  cartID: string;
+  productID: string;
+  product: Product;
+}
+
+export interface Cart {
+  id: string;
+  customerID: string;
+  dateCreated: string;
+}
+
+export interface Wishlist {
+  id: string;
+  customerID: string;
+  createdAt: string;
+}
+
+export interface WishlistItem {
+  id: string;
+  productID: string;
+  wishlistID: string;
+  product: Product;
+  createdAt: string;
+}
+
+export type ROLE = "STAFF" | "ADMIN" | "MANAGER";
+
+export interface Staff {
   id: string;
   email: string;
-  firstName: string;
   lastName: string;
-  address: string;
+  firstName: string;
+  password: string;
+  active: boolean;
+  role: ROLE;
+  image?: StaffImage;
+  complaints: Complaint[];
+  createdAt: string;
+  updatedAt: string;
 }
 
-export interface OrderWithCustomer extends Order {
-  customer: Customer;
+export interface StaffImage {
+  id: string;
+  url: string;
+  createdAt: string;
+  staffID: string;
 }
 
-export interface OrderItemWithOrder extends OrderItem {
-  order: OrderWithCustomer;
-}
-
-export interface SuccessOrdersResponse {
+export interface Complaint {
+  id: string;
+  email: string;
+  name: string;
   message: string;
-  orders: OrderItemWithOrder[];
-  hasNext: boolean;
+  phone: string;
+  createdAt: string;
+  resolved: boolean;
+  staffID?: string;
+  staff?: Staff;
 }
 
-export interface SuccessOrderResponse {
+export interface SuccessComplaintResponse {
   message: string;
-  order: OrderItemWithOrder;
+}
+
+export interface SuccessLoginRespose {
+  message: string;
+  token: string;
+  refreshToken: string;
+  staff: Staff;
+}
+
+export interface SuccessRegisterResponse {
+  message: string;
+  staff: Staff;
 }

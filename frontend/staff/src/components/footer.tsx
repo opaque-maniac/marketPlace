@@ -64,14 +64,6 @@ const Footer = () => {
               <li>
                 <Link
                   className="lg:no-underline underline hover:underline"
-                  to={"/orders"}
-                >
-                  <p>My Orders</p>
-                </Link>
-              </li>
-              <li>
-                <Link
-                  className="lg:no-underline underline hover:underline"
                   to={"/logout"}
                 >
                   <p>Log Out</p>

@@ -65,8 +65,6 @@ const IndividualOrderPage = () => {
 
   const order = query.data?.order;
 
-  console.log(order);
-
   if (query.isSuccess && !order) {
     setError(true);
     navigate("/500", { replace: true });
@@ -108,7 +106,7 @@ const IndividualOrderPage = () => {
                       {order.product.name}
                     </h3>
                     <div
-                      style={{ height: "150px" }}
+                      style={{ height: "200px" }}
                       className="flex justify-start gap-6 items-center w-80"
                     >
                       <div className="h-full flex flex-col justify-between font-semibold">
@@ -117,8 +115,9 @@ const IndividualOrderPage = () => {
                         <p>TOTAL</p>
                         <p>DATE</p>
                         <p>READY</p>
+                        <p>DELIVERED</p>
                       </div>
-                      <div className="h-full flex flex-col justify-between">
+                      <div className="h-full flex flex-col justify-center gap-2">
                         <p>
                           :{"  "}
                           {`${order.order.customer.firstName} ${order.order.customer.lastName}`}
@@ -139,9 +138,13 @@ const IndividualOrderPage = () => {
                           :{"  "}
                           {order.ready ? "Yes" : "No"}
                         </p>
+                        <p>
+                          :{"  "}
+                          {order.delivered ? "Yes" : "No"}
+                        </p>
                       </div>
                     </div>
-                    <div className="py-4">
+                    <div className="py-4 flex justify-center items-center">
                       <Link
                         className="text-blue-400 underline"
                         to={`/products/${order.product.id}`}
@@ -149,7 +152,7 @@ const IndividualOrderPage = () => {
                         View Product
                       </Link>
                     </div>
-                    <div>
+                    <div className="flex justify-center items-center pb-4">
                       <DeliveredButton
                         ready={order.ready}
                         delivered={order.delivered}

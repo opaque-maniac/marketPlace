@@ -6,37 +6,45 @@ import {
   useContext,
   useState,
 } from "react";
-import ErrorContext from "../../utils/errorContext";
+import { ErrorContext, ShowErrorContext } from "../../utils/errorContext";
 import { useNavigate } from "react-router-dom";
 import { ErrorResponse } from "../../utils/types";
 import errorHandler from "../../utils/errorHandler";
 import Loader from "../../components/loader";
-import ShowError from "../../components/showErr";
+import SuccessComponent from "../../components/success";
 
 const ContactForm = () => {
   const [, setError] = useContext(ErrorContext);
-  const [err, setErr] = useState<string | null>(null);
+  const [, setErr] = useContext(ShowErrorContext);
+  const [success, setSuccess] = useState<boolean>(false);
   const ref: MutableRefObject<HTMLFormElement | null> = { current: null };
   const navigate = useNavigate();
 
   const mutation = useMutation({
     mutationFn: sendContact,
     onError: (error) => {
-      const errorObj = JSON.parse(error.message) as ErrorResponse;
-      const [show, url] = errorHandler(errorObj.errorCode);
+      try {
+        const errorObj = JSON.parse(error.message) as ErrorResponse;
+        const [show, url] = errorHandler(errorObj.errorCode);
 
-      if (show) {
-        setErr(errorObj.message);
-      } else {
-        if (url) {
-          if (url === "/500") {
-            setError(true);
-          }
-          navigate(url, { replace: true });
+        if (show) {
+          setErr(errorObj.message);
         } else {
-          setError(true);
-          navigate("/500", { replace: true });
+          if (url) {
+            if (url === "/500") {
+              setError(true);
+            }
+            navigate(url, { replace: true });
+          } else {
+            setError(true);
+            navigate("/500", { replace: true });
+          }
         }
+      } catch (e) {
+        if (e instanceof Error) {
+          setErr("Something unexpected happened");
+        }
+        navigate("/", { replace: true });
       }
     },
     onSuccess: (data) => {
@@ -45,6 +53,10 @@ const ContactForm = () => {
         navigate("/500");
       }
       ref.current?.reset();
+      setSuccess(true);
+      setTimeout(() => {
+        setSuccess(false);
+      }, 5000);
     },
   });
 
@@ -58,19 +70,13 @@ const ContactForm = () => {
     mutation.mutate({ email, name, phone, message });
   };
 
-  const callBack = () => {
-    setErr(() => null);
-  };
-
   return (
     <>
-      <div className="h-12">
-        {err && <ShowError error={err} callback={callBack} />}
-      </div>
+      {success && <SuccessComponent message="Successfully Sent Complaint" />}
       <form
         onSubmit={submitHandler}
         ref={ref}
-        className="md:w-auto w-80 md:mx-0 mx-auto"
+        className="md:w-auto w-80 md:mx-0 mx-auto pt-2"
       >
         <div className="md:flex justify-between items-center mb-4">
           <div className="px-2 mb-4 md:mb-0">
@@ -119,6 +125,8 @@ const ContactForm = () => {
             id="message"
             placeholder="Your Message"
             className="block w-full h-40 bg-gray-200 focus:outline-none pl-1 focus:border-b border-black"
+            maxLength={255}
+            minLength={10}
           ></textarea>
         </div>
         <div className="flex md:justify-end justify-center items-center h-24 md:pr-2">

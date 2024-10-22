@@ -54,13 +54,13 @@ const DeliveredButton = ({ id, ready, delivered, refetch }: Props) => {
     <button
       onClick={clickHandler}
       disabled={delivered || ready || mutation.isPending || mutation.isSuccess}
-      className="flex justify-center items-center gap-4 h-10 w-40 bg-green-400"
+      className="flex justify-center items-center gap-4 h-10 w-32 bg-green-400 px-1 rounded-md"
     >
-      <span className="text-lg font-semibold">
+      <span className="text-md text-white">
         {delivered ? "Delivered" : "Set Delived"}
       </span>
-      <div className="w-8 h-8">
-        {mutation.isPending ? <Loader color="#000000" /> : <TickIcon />}
+      <div className="w-6 h-6 text-white rounded-full border border-white">
+        {mutation.isPending ? <Loader color="#ffffff" /> : <TickIcon />}
       </div>
     </button>
   );

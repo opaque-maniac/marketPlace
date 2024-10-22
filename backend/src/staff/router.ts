@@ -15,7 +15,7 @@ import {
   isStaff,
 } from "../middleware/auth-middleware";
 import multer from "multer";
-import { login } from "./handlers/auth";
+import { login, registerStaff } from "./handlers/auth";
 import {
   deleteProduct,
   fetchIndividualProduct,
@@ -80,9 +80,19 @@ staffRouter.post(
   body("password").isStrongPassword(passwordConfig),
   login
 );
+staffRouter.post(
+  "/register",
+  body("email").isEmail(),
+  body("firstName").isString().isLength(stringConfig),
+  body("lastName").isString().isLength(stringConfig),
+  body("password").isStrongPassword(passwordConfig),
+  body("role").isString().isIn(["ADMIN", "STAFF", "MANAGER"]),
+  registerStaff
+);
+
 /**
- * Finish them later
- * Work on other endpoints
+ * Figure out auth later
+ * Not everyone can register
  */
 
 // For profile

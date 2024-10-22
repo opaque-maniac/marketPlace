@@ -2,7 +2,7 @@ const PhoneIcon = () => {
   return (
     <svg
       role="img"
-      aria-labelledby="title"
+      aria-label="Phone Icon"
       xmlns="http://www.w3.org/2000/svg"
       fill="none"
       viewBox="0 0 24 24"
@@ -10,7 +10,6 @@ const PhoneIcon = () => {
       stroke="#ffffff"
       className="w-full h-full"
     >
-      <title id="title">Phone Icon</title>
       <path
         strokeLinecap="round"
         strokeLinejoin="round"

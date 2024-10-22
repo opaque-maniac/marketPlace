@@ -2,7 +2,7 @@ const ArrowLeft = () => {
   return (
     <svg
       role="img"
-      aria-labelledby="title"
+      aria-label="Arrow Left Icon"
       xmlns="http://www.w3.org/2000/svg"
       fill="none"
       viewBox="0 0 24 24"
@@ -10,7 +10,6 @@ const ArrowLeft = () => {
       stroke="currentColor"
       className="h-full w-full"
     >
-      <title id="title">Arrow Left Icon</title>
       <path
         strokeLinecap="round"
         strokeLinejoin="round"

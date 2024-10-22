@@ -6,7 +6,7 @@ interface UserStore {
   removeUser: () => void;
 }
 
-const USER_KEY = "hazina-seller";
+const USER_KEY = "hazina-staff";
 
 const useUserStore = create<UserStore>((set) => {
   let initialUser: string | null = null;
@@ -14,6 +14,7 @@ const useUserStore = create<UserStore>((set) => {
   if (typeof window !== "undefined") {
     // Ensure this runs only in the browser
     const user = window.localStorage.getItem(USER_KEY);
+
     if (user) {
       initialUser = user;
     }

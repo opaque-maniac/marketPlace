@@ -11,3 +11,67 @@ svg,
 button {
   user-select: none;
 }
+
+.scroll-mod::-webkit-scrollbar {
+  height: 7px;
+}
+
+.scroll-mod-col::-webkit-scrollbar {
+  width: 0px;
+}
+
+/* Track */
+.scroll-mod::-webkit-scrollbar-track {
+  background: #f1f1f1;
+}
+
+/* Handle */
+.scroll-mod::-webkit-scrollbar-thumb {
+  border-radius: 5px;
+}
+
+.scroll-black::-webkit-scrollbar-track {
+  background: #000;
+}
+
+.scroll-black::-webkit-scrollbar-thumb {
+  background: #fff;
+}
+
+.scroll-wite::-webkit-scrollbar-track {
+  background-color: #fff;
+}
+
+.scroll-white::-webkit-scrollbar-thumb {
+  background-color: #000;
+}
+
+body::-webkit-scrollbar {
+  width: 10px;
+}
+
+/* Track */
+body::-webkit-scrollbar-track {
+  background: #f1f1f1;
+}
+
+/* Handle */
+body::-webkit-scrollbar-thumb {
+  background: #888;
+  border-radius: 5px;
+}
+
+/* Handle on hover */
+body::-webkit-scrollbar-thumb:hover {
+  background: #555;
+}
+
+select {
+  font-size: 16px;
+  color: #000;
+  padding: 10px;
+}
+
+select option[disabled] {
+  color: #555; /* Lighter color to mimic a placeholder */
+}

@@ -20,8 +20,8 @@ const PageLoader = () => {
             xmlnsXlink="http://www.w3.org/1999/xlink"
             viewBox="0 0 512 512"
             xmlSpace="preserve"
-            height={150}
-            width={150}
+            height={100}
+            width={100}
             className="animate-spin"
             aria-label="loading"
           >

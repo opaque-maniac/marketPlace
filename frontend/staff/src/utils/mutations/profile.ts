@@ -1,5 +1,5 @@
 import { getAccessToken } from "../cookies";
-import { tokenError } from "../errors";
+import { responseError, tokenError } from "../errors";
 import { ErrorResponse, SuccessSellerResponse } from "../types";
 
 export const sendUpdateProfile = async ({
@@ -29,8 +29,14 @@ export const sendUpdateProfile = async ({
     const response = await fetch(url, options);
 
     if (!response.ok) {
-      const json = (await response.json()) as ErrorResponse;
-      throw new Error(JSON.stringify(json));
+      try {
+        const error = (await response.json()) as ErrorResponse;
+        throw new Error(JSON.stringify(error));
+      } catch (e) {
+        if (e instanceof Error) {
+          throw responseError();
+        }
+      }
     }
 
     const json = (await response.json()) as SuccessSellerResponse;
@@ -63,8 +69,14 @@ export const sendDeleteProfile = async (id: string) => {
     const response = await fetch(url, options);
 
     if (!response.ok) {
-      const json = (await response.json()) as ErrorResponse;
-      throw new Error(JSON.stringify(json));
+      try {
+        const error = (await response.json()) as ErrorResponse;
+        throw new Error(JSON.stringify(error));
+      } catch (e) {
+        if (e instanceof Error) {
+          throw responseError();
+        }
+      }
     }
 
     const json = (await response.json()) as SuccessSellerResponse;

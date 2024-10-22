@@ -1,46 +1,56 @@
-import { Link, useNavigate } from "react-router-dom";
+import { useNavigate } from "react-router-dom";
 import Transition from "../../components/transition";
 import AuthLayout from "../login/layout";
 import { FormEventHandler, useContext, useState } from "react";
 import { useMutation } from "@tanstack/react-query";
 import { sendRegister } from "../../utils/mutations/auth";
-import { ErrorResponse } from "../../utils/types";
+import { ErrorResponse, ROLE } from "../../utils/types";
 import errorHandler from "../../utils/errorHandler";
-import ShowError from "../../components/showErr";
 import EyeClosed from "../../components/icons/hide";
 import EyeOpen from "../../components/icons/show";
 import Loader from "../../components/loader";
-import ErrorContext from "../../utils/errorContext";
+import { ShowErrorContext, ErrorContext } from "../../utils/errorContext";
 import { Helmet } from "react-helmet";
 
 const RegisterPage = () => {
   const navigate = useNavigate();
-  const [err, setErr] = useState<string | null>(null);
+  const [, setErr] = useContext(ShowErrorContext);
   const [show, setShow] = useState<boolean>(false);
   const [, setError] = useContext(ErrorContext);
 
   const mutation = useMutation({
     mutationFn: sendRegister,
     onError: (error) => {
-      const errorObj = JSON.parse(error.message) as ErrorResponse;
-      const [show, url] = errorHandler(errorObj.errorCode);
+      try {
+        const errorObj = JSON.parse(error.message) as ErrorResponse;
+        const [show, url] = errorHandler(errorObj.errorCode);
 
-      if (show) {
-        setErr(errorObj.message);
-      } else {
-        if (url) {
-          if (url === "/500") {
-            setError(true);
-          }
-          navigate(url, { replace: true });
+        if (show) {
+          setErr(errorObj.message);
         } else {
-          setError(true);
-          navigate("/500", { replace: true });
+          if (url) {
+            if (url === "/500") {
+              setError(true);
+            }
+            navigate(url, { replace: true });
+          } else {
+            setError(true);
+            navigate("/500", { replace: true });
+          }
         }
+      } catch (e) {
+        if (e instanceof Error) {
+          setErr("Something unexpected happened");
+        }
+        navigate("/", { replace: true });
       }
     },
-    onSuccess: () => {
-      navigate("/login");
+    onSuccess: (data) => {
+      if (data && data.staff) {
+        navigate("/login");
+      } else {
+        setErr("Something unexpected happened");
+      }
     },
   });
 
@@ -48,31 +58,26 @@ const RegisterPage = () => {
     e.preventDefault();
     const formData = new FormData(e.currentTarget);
     const email = formData.get("email") as string;
-    const name = formData.get("name") as string;
+    const firstName = formData.get("firstName") as string;
+    const lastName = formData.get("lastName") as string;
     const password = formData.get("password") as string;
-    mutation.mutate({ email, name, password });
-  };
-
-  const callback = () => {
-    setErr(() => null);
+    const role = formData.get("role") as ROLE;
+    mutation.mutate({ email, firstName, lastName, password, role });
   };
 
   return (
     <Transition>
       <Helmet>
         <title>Sign Up</title>
-        <meta name="description" content="Sign up to the Hazina seller app" />
-        <meta name="robots" content="nofollow" />
-        <meta name="googlebot" content="nofollow" />
+        <meta name="description" content="Sign up to the Hazina staff app" />
+        <meta name="robots" content="nofollow, noindex" />
+        <meta name="googlebot" content="nofollow, noindex" />
         <meta name="google" content="nositelinkssearchbox" />
       </Helmet>
       <AuthLayout page="Sign Up">
         <div className="mb-4">
-          <h3 className="text-4xl mb-4">Create an account</h3>
+          <h3 className="text-4xl mb-4">Create a staff account</h3>
           <p>Enter your details below</p>
-        </div>
-        <div className="h-12">
-          {err && <ShowError error={err} callback={callback} />}
         </div>
         <form
           onSubmit={submitHandler}
@@ -87,20 +92,53 @@ const RegisterPage = () => {
               id="email"
               name="email"
               placeholder="Email"
-              className="block w-80 h-14 px-2 text-lg auth-input focus:auth-input focus:outline-none bg-white"
+              required
+              className="block w-80 h-12 px-2 text-lg auth-input focus:auth-input focus:outline-none bg-white"
             />
           </div>
           <div>
-            <label htmlFor="name" className="sr-only">
-              Name
+            <label htmlFor="firstName" className="sr-only">
+              First Name
             </label>
             <input
               type="text"
-              id="name"
-              name="name"
-              placeholder="Name"
-              className="block w-80 h-14 px-2 text-lg auth-input focus:auth-input focus:outline-none bg-white"
+              id="firstName"
+              name="firstName"
+              placeholder="First Name"
+              required
+              className="block w-80 h-12 px-2 text-lg auth-input focus:auth-input focus:outline-none bg-white"
             />
+          </div>
+          <div>
+            <label htmlFor="lastName" className="sr-only">
+              Last Name
+            </label>
+            <input
+              type="text"
+              id="lastName"
+              name="lastName"
+              placeholder="Last Name"
+              required
+              className="block w-80 h-12 px-2 text-lg auth-input focus:auth-input focus:outline-none bg-white"
+            />
+          </div>
+          <div>
+            <label htmlFor="role" className="sr-only">
+              Role
+            </label>
+            <select
+              name="role"
+              id="role"
+              required
+              className="block w-80 h-12 px-2 text-lg auth-input focus:auth-input focus:outline-none bg-white"
+            >
+              <option value="" disabled selected>
+                Select Role
+              </option>
+              <option value="ADMIN">Admin</option>
+              <option value="STAFF">Staff</option>
+              <option value="MANAGER">Manager</option>
+            </select>
           </div>
           <div className="flex justify-start items-center gap-1 border-b border-b-black/20">
             <label htmlFor="password" className="sr-only">
@@ -112,7 +150,7 @@ const RegisterPage = () => {
               name="password"
               placeholder="Password"
               required
-              className="block w-72 h-14 px-2 text-lg focus:outline-none focus:border-none bg-white pr-1"
+              className="block w-72 h-12 px-2 text-lg focus:outline-none focus:border-none bg-white pr-1"
             />
             <button
               aria-label="Show Password"
@@ -135,11 +173,6 @@ const RegisterPage = () => {
             </button>
           </div>
         </form>
-        <div className="pt-4">
-          <Link to={"/login"} className="underline">
-            {"Have an account? Log in"}
-          </Link>
-        </div>
       </AuthLayout>
     </Transition>
   );

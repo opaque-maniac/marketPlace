@@ -1,11 +1,11 @@
-import { ErrorResponse } from "react-router-dom";
 import { getAccessToken } from "../cookies";
-import { tokenError } from "../errors";
-import { SuccessOrderResponse } from "../types";
+import { responseError, tokenError } from "../errors";
+import { ErrorResponse, SuccessCancelOrderResponse } from "../types";
 
-export const updateOrder = async ({ id }: { id: string }) => {
+export const cancelOrder = async ({ id }: { id: string }) => {
   try {
-    const url = `http://localhost:3020/seller/orders/${id}`;
+    const url = `http://localhost:3020/customers/orders/${id}/cancel`;
+
     const token = getAccessToken();
 
     if (!token) {
@@ -13,21 +13,28 @@ export const updateOrder = async ({ id }: { id: string }) => {
     }
 
     const options = {
-      method: "PUT",
+      method: "DELETE",
       headers: {
         Authorization: `Bearer ${token}`,
+        "Content-Type": "application/json",
       },
     };
 
     const response = await fetch(url, options);
 
     if (!response.ok) {
-      const json = (await response.json()) as ErrorResponse;
-      throw new Error(JSON.stringify(json));
+      try {
+        const error = (await response.json()) as ErrorResponse;
+        throw new Error(JSON.stringify(error));
+      } catch (e) {
+        if (e instanceof Error) {
+          throw responseError();
+        }
+      }
     }
 
-    const json = (await response.json()) as SuccessOrderResponse;
-    return json;
+    const data = (await response.json()) as SuccessCancelOrderResponse;
+    return data;
   } catch (e) {
     if (e instanceof Error) {
       throw new Error(e.message);

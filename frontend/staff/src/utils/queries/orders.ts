@@ -1,7 +1,11 @@
 import { QueryFunction } from "@tanstack/react-query";
-import { SuccessOrderResponse, SuccessOrdersResponse } from "../types";
+import {
+  SuccessIndividualOrderResponse,
+  SuccessOrderItemResponse,
+  SuccessOrdersResponse,
+} from "../types";
 import { getAccessToken } from "../cookies";
-import { tokenError } from "../errors";
+import { responseError, tokenError } from "../errors";
 import { ErrorResponse } from "react-router-dom";
 
 export const fetchOrders: QueryFunction<
@@ -9,8 +13,8 @@ export const fetchOrders: QueryFunction<
   ["orders", number, number, string]
 > = async ({ queryKey }) => {
   try {
-    const [, page, limit, ready] = queryKey;
-    const url = `http://localhost:3020/seller/orders?page=${page}&limit=${limit}&ready=${ready}`;
+    const [, page, limit, status] = queryKey;
+    const url = `http://localhost:3020/customers/orders?page=${page}&limit=${limit}&status=${status}`;
     const token = getAccessToken();
 
     if (!token) {
@@ -27,8 +31,14 @@ export const fetchOrders: QueryFunction<
     const response = await fetch(url, options);
 
     if (!response.ok) {
-      const json = (await response.json()) as ErrorResponse;
-      throw new Error(JSON.stringify(json));
+      try {
+        const error = (await response.json()) as ErrorResponse;
+        throw new Error(JSON.stringify(error));
+      } catch (e) {
+        if (e instanceof Error) {
+          throw responseError();
+        }
+      }
     }
 
     return response.json() as Promise<SuccessOrdersResponse>;
@@ -40,14 +50,59 @@ export const fetchOrders: QueryFunction<
   }
 };
 
-export const fetchOrder: QueryFunction<
-  SuccessOrderResponse,
+export const fetchIndividualOrder: QueryFunction<
+  SuccessIndividualOrderResponse,
   ["order", string]
 > = async ({ queryKey }) => {
   try {
     const [, id] = queryKey;
+    const url = `http://localhost:3020/customers/orders/${id}`;
 
-    const url = `http://localhost:3020/seller/orders/${id}`;
+    const token = getAccessToken();
+
+    if (!token) {
+      throw tokenError();
+    }
+
+    const options = {
+      method: "GET",
+      headers: {
+        Authorization: `Bearer ${token}`,
+        "Content-Type": "application/json",
+      },
+    };
+
+    const response = await fetch(url, options);
+
+    if (!response.ok) {
+      try {
+        const error = (await response.json()) as ErrorResponse;
+        throw new Error(JSON.stringify(error));
+      } catch (e) {
+        if (e instanceof Error) {
+          throw responseError();
+        }
+      }
+    }
+
+    return response.json() as Promise<SuccessIndividualOrderResponse>;
+  } catch (e) {
+    if (e instanceof Error) {
+      throw new Error(e.message);
+    }
+    throw e;
+  }
+};
+
+export const fetchOrderItems: QueryFunction<
+  SuccessOrderItemResponse,
+  ["orderItems", number, number, string]
+> = async ({ queryKey }) => {
+  try {
+    const [, page, limit, id] = queryKey;
+
+    const url = `http://localhost:3020/customers/orders/${id}/items?page=${page}&limit=${limit}`;
+
     const token = getAccessToken();
 
     if (!token) {
@@ -64,11 +119,17 @@ export const fetchOrder: QueryFunction<
     const response = await fetch(url, options);
 
     if (!response.ok) {
-      const json = (await response.json()) as ErrorResponse;
-      throw new Error(JSON.stringify(json));
+      try {
+        const error = (await response.json()) as ErrorResponse;
+        throw new Error(JSON.stringify(error));
+      } catch (e) {
+        if (e instanceof Error) {
+          throw responseError();
+        }
+      }
     }
 
-    return response.json() as Promise<SuccessOrderResponse>;
+    return response.json() as Promise<SuccessOrderItemResponse>;
   } catch (e) {
     if (e instanceof Error) {
       throw new Error(e.message);

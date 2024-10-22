@@ -8,7 +8,11 @@
 import { Response, NextFunction } from "express";
 import prisma from "../../utils/db";
 import bcrypt from "bcrypt";
-import { LoginRequest, RegisterCustomerRequest } from "../../types";
+import {
+  LoginRequest,
+  RegisterCustomerRequest,
+  RegisterStaffRequest,
+} from "../../types";
 import generateToken from "../../utils/token";
 
 // View for staff login
@@ -49,6 +53,37 @@ export const login = async (
       message: "Login successful",
       token,
       refreshToken,
+      staff,
+    });
+  } catch (e) {
+    return next(e as Error);
+  }
+};
+
+// Register staff
+export const registerStaff = async (
+  req: RegisterStaffRequest,
+  res: Response,
+  next: NextFunction
+) => {
+  try {
+    const { email, firstName, lastName, role, password } = req.body;
+
+    const salt = await bcrypt.genSalt(10);
+    const hashedPassword = await bcrypt.hash(password, salt);
+
+    const staff = await prisma.staff.create({
+      data: {
+        email,
+        firstName,
+        lastName,
+        role,
+        password: hashedPassword,
+      },
+    });
+
+    return res.status(201).json({
+      message: "Staff created successfully",
       staff,
     });
   } catch (e) {

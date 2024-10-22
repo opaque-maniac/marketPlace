@@ -1,4 +1,4 @@
-import { ORDER_STATUS } from "@prisma/client";
+import { ORDER_STATUS, STAFF_ROLE } from "@prisma/client";
 import { Request } from "express";
 
 export interface RegisterSellerRequest extends Request {
@@ -142,5 +142,15 @@ export interface SendComplantsRequest extends Request {
     email: string;
     phone: string;
     message: string;
+  };
+}
+
+export interface RegisterStaffRequest extends Request {
+  body: {
+    email: string;
+    firstName: string;
+    lastName: string;
+    role: STAFF_ROLE;
+    password: string;
   };
 }

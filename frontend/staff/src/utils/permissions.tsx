@@ -4,38 +4,44 @@ import { useLocation, useNavigate } from "react-router-dom";
 
 const CheckPermissions = () => {
   const noPermissionRequired = [
-    "/about",
-    "/contact",
-    "/terms",
-    "/faq",
-    "/privacy",
+    /^\/about$/,
+    /^\/contact$/,
+    /^\/terms$/,
+    /^\/faq$/,
+    /^\/privacy$/,
   ];
-  const noAuthRequired = [
-    "/login",
-    "/register",
-    "/forgot-password",
-    "/reset-password",
-  ];
+
+  const noAuthRequired = [/^\/login$/, /^\/forgot-password$/];
+
   const user = userStore((state) => state.user);
   const navigate = useNavigate();
-
   const path = useLocation().pathname;
 
   useEffect(() => {
-    if (noPermissionRequired.includes(path)) {
+    const isNoPermissionRequired = noPermissionRequired.some((regex) =>
+      regex.test(path),
+    );
+    const isNoAuthRequired = noAuthRequired.some((regex) => regex.test(path));
+
+    if (isNoPermissionRequired) {
+      // No permission check needed
       return;
-    } else if (noAuthRequired.includes(path)) {
+    }
+
+    if (isNoAuthRequired) {
+      // No authentication required, but user is logged in
       if (user) {
         navigate("/", { replace: true }); // Redirect to home or another appropriate page
       }
       return;
-    } else {
-      if (!user) {
-        navigate("/login", { replace: true });
-      }
+    }
+
+    // All other routes require authentication
+    if (!user) {
+      navigate("/login", { replace: true });
     }
     // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [path, user]);
+  }, [path, user, navigate]);
 
   return null;
 };
