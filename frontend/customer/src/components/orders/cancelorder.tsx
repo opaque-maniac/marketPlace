@@ -1,27 +1,27 @@
 import { useMutation } from "@tanstack/react-query";
-import { MouseEventHandler, useContext } from "react";
+import CancelIcon from "../icons/cancel";
 import { cancelOrder } from "../../utils/mutations/orders";
-import { ErrorResponse } from "../../utils/types";
-import errorHandler from "../../utils/errorHandler";
+import { MouseEventHandler, useContext } from "react";
 import { ErrorContext, ShowErrorContext } from "../../utils/errorContext";
+import { ErrorResponse, OrderStatus } from "../../utils/types";
+import errorHandler from "../../utils/errorHandler";
 import { useNavigate } from "react-router-dom";
 import Loader from "../loader";
 
 interface Props {
   id: string;
+  status: OrderStatus;
   refetch: () => void;
-  callback: () => void;
 }
 
-const CancelOrderButton = ({ id, refetch, callback }: Props) => {
-  const [, setErr] = useContext(ShowErrorContext);
+const CancelOrderButton = ({ id, refetch, status }: Props) => {
   const [, setError] = useContext(ErrorContext);
+  const [, setErr] = useContext(ShowErrorContext);
   const navigate = useNavigate();
 
   const mutation = useMutation({
     mutationFn: cancelOrder,
     onSuccess: () => {
-      callback();
       refetch();
     },
     onError: (error: Error) => {
@@ -56,12 +56,25 @@ const CancelOrderButton = ({ id, refetch, callback }: Props) => {
   };
 
   return (
-    <button
-      onClick={clickHandler}
-      className="flex justify-center items-center h-10 w-28 bg-white border border-black rounded-lg"
-    >
-      {mutation.isPending ? <Loader color="#000000" /> : `Cancel Order`}
-    </button>
+    <div>
+      <button
+        aria-label={
+          status === "CANCELLED" ? "Order is already cancelled" : "Cancel order"
+        }
+        onClick={clickHandler}
+        disabled={
+          mutation.isError || mutation.isPending || status === "CANCELLED"
+        }
+        className="w-40 h-10 rounded-md flex justify-center items-center gap-4 text-white bg-red-500"
+      >
+        <span className="font-semibold">
+          {status === "CANCELLED" ? "Cancelled" : "Cancel"}
+        </span>
+        <div className="h-8 w-8">
+          {mutation.isPending ? <Loader color="#ffffff" /> : <CancelIcon />}
+        </div>
+      </button>
+    </div>
   );
 };
 

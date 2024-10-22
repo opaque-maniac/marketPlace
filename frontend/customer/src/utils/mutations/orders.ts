@@ -4,7 +4,7 @@ import { ErrorResponse, SuccessCancelOrderResponse } from "../types";
 
 export const cancelOrder = async ({ id }: { id: string }) => {
   try {
-    const url = `http://localhost:3020/customers/orders/${id}`;
+    const url = `http://localhost:3020/customers/orders/${id}/cancel`;
 
     const token = getAccessToken();
 
@@ -13,7 +13,7 @@ export const cancelOrder = async ({ id }: { id: string }) => {
     }
 
     const options = {
-      method: "GET",
+      method: "DELETE",
       headers: {
         Authorization: `Bearer ${token}`,
         "Content-Type": "application/json",

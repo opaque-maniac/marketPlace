@@ -1,7 +1,7 @@
 import { Helmet } from "react-helmet";
 import Transition from "../../components/transition";
 import { useNavigate, useParams } from "react-router-dom";
-import { useEffect, useContext } from "react";
+import { useEffect, useContext, useCallback } from "react";
 import { ErrorContext, ShowErrorContext } from "../../utils/errorContext";
 import { useQuery } from "@tanstack/react-query";
 import { fetchIndividualOrder } from "../../utils/queries/orders";
@@ -9,8 +9,8 @@ import PageLoader from "../../components/pageloader";
 import { ErrorResponse } from "../../utils/types";
 import errorHandler from "../../utils/errorHandler";
 import OrderItems from "./items";
-import CardIcon from "../../components/icons/card";
-import CancelIcon from "../../components/icons/cancel";
+import CancelOrderButton from "../../components/orders/cancelorder";
+import PayOrderButton from "../../components/orders/payorder";
 
 const IndividualOrderPage = () => {
   const { id } = useParams();
@@ -62,6 +62,23 @@ const IndividualOrderPage = () => {
     navigate("/500", { replace: true });
   }
 
+  const formatDate = (isoString: string) => {
+    const date = new Date(isoString);
+
+    const options: Intl.DateTimeFormatOptions = {
+      year: "numeric",
+      month: "long",
+      day: "numeric",
+    };
+
+    return new Intl.DateTimeFormat("en-US", options).format(date);
+  };
+
+  const refetch = useCallback(() => {
+    // eslint-disable-next-line @typescript-eslint/no-floating-promises
+    query.refetch();
+  }, [query]);
+
   return (
     <Transition>
       <Helmet>
@@ -84,36 +101,22 @@ const IndividualOrderPage = () => {
                       <p>ID</p>
                       <p>STATUS</p>
                       <p>TOTAL</p>
+                      <p>DATE</p>
                     </div>
                     <div className="flex flex-col justify-evenly items-start">
                       <p>: {order.id}</p>
                       <p>: {order.status}</p>
-                      <p>: {`${order.totalAmount}`}</p>
+                      <p>: ${`${order.totalAmount}`}</p>
+                      <p>: {formatDate(order.createdAt)}</p>
                     </div>
                   </section>
                   <section className="flex md:flex-row flex-col md:gap-0 gap-6 justify-evenly items-center pt-6">
-                    <div>
-                      <button
-                        aria-label="Pay for order"
-                        className="w-40 h-10 rounded-lg flex justify-center items-center gap-4 text-white bg-green-500"
-                      >
-                        <span className="font-semibold">Pay</span>
-                        <div className="h-8 w-8">
-                          <CardIcon />
-                        </div>
-                      </button>
-                    </div>
-                    <div>
-                      <button
-                        aria-label="Cancel order"
-                        className="w-40 h-10 rounded-lg flex justify-center items-center gap-4 text-white bg-red-500"
-                      >
-                        <span className="font-semibold">Cancel</span>
-                        <div className="h-8 w-8">
-                          <CancelIcon />
-                        </div>
-                      </button>
-                    </div>
+                    <PayOrderButton status={order.status} />
+                    <CancelOrderButton
+                      id={order.id}
+                      refetch={refetch}
+                      status={order.status}
+                    />
                   </section>
                 </div>
                 <OrderItems id={order.id} />

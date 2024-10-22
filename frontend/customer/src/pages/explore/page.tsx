@@ -87,7 +87,7 @@ const ExplorePage = () => {
     }
   };
 
-  const data = query.data?.data;
+  const data = query.data?.data || [];
 
   return (
     <Transition>

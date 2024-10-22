@@ -209,7 +209,7 @@ customerRouter.get(
   fetchOrderItems
 );
 customerRouter.delete(
-  "/orders/:id",
+  "/orders/:id/cancel",
   allowIfAuthenticated,
   isCustomer,
   cancelOrder

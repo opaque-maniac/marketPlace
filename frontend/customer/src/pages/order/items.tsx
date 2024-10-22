@@ -43,7 +43,7 @@ const OrderItems = ({ id }: Props) => {
           </div>
         </section>
       ) : (
-        <div>
+        <div className="pt-6">
           {data && (
             <>
               <section>
