@@ -137,6 +137,7 @@ export interface OrderItem {
   productID: string;
   product: Product;
   ready: boolean;
+  delivered: boolean;
   orderID: string;
   dateCreated: string;
   dateUpdated: string | null;

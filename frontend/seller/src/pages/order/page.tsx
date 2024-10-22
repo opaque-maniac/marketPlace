@@ -3,11 +3,12 @@ import Transition from "../../components/transition";
 import { ErrorResponse } from "../../utils/types";
 import errorHandler from "../../utils/errorHandler";
 import { Link, useNavigate, useParams } from "react-router-dom";
-import { useContext, useEffect } from "react";
+import { useCallback, useContext, useEffect } from "react";
 import { ErrorContext, ShowErrorContext } from "../../utils/errorContext";
 import { Helmet } from "react-helmet";
 import { fetchOrder } from "../../utils/queries/orders";
 import PageLoader from "../../components/pageloader";
+import DeliveredButton from "./deliveredb";
 
 const IndividualOrderPage = () => {
   const [, setError] = useContext(ErrorContext);
@@ -70,6 +71,11 @@ const IndividualOrderPage = () => {
     setError(true);
     navigate("/500", { replace: true });
   }
+
+  const refetch = useCallback(() => {
+    // eslint-disable-next-line @typescript-eslint/no-floating-promises
+    query.refetch();
+  }, [query]);
 
   return (
     <Transition>
@@ -142,6 +148,14 @@ const IndividualOrderPage = () => {
                       >
                         View Product
                       </Link>
+                    </div>
+                    <div>
+                      <DeliveredButton
+                        ready={order.ready}
+                        delivered={order.delivered}
+                        id={order.id}
+                        refetch={refetch}
+                      />
                     </div>
                   </div>
                 </div>
