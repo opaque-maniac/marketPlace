@@ -1,7 +1,7 @@
 import { QueryFunction } from "@tanstack/react-query";
-import { SuccessSellerResponse } from "../types";
+import { ErrorResponse, SuccessSellerResponse } from "../types";
 import { getAccessToken } from "../cookies";
-import { tokenError } from "../errors";
+import { responseError, tokenError } from "../errors";
 
 export const fetchProfile: QueryFunction<
   SuccessSellerResponse,
@@ -27,7 +27,14 @@ export const fetchProfile: QueryFunction<
     const response = await fetch(url, options);
 
     if (!response.ok) {
-      throw new Error("An error occurred while fetching the profile");
+      try {
+        const error = (await response.json()) as ErrorResponse;
+        throw new Error(JSON.stringify(error));
+      } catch (e) {
+        if (e instanceof Error) {
+          throw responseError();
+        }
+      }
     }
 
     return response.json() as Promise<SuccessSellerResponse>;

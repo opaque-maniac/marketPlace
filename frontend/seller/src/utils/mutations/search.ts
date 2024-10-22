@@ -1,4 +1,3 @@
-import { QueryFunction } from "@tanstack/react-query";
 import {
   ErrorResponse,
   SuccessOrdersResponse,
@@ -6,7 +5,7 @@ import {
 } from "../types";
 import { getSearchRoute } from "../searchDetails";
 import { getAccessToken } from "../cookies";
-import { tokenError } from "../errors";
+import { responseError, tokenError } from "../errors";
 
 export const sendSearch = async ({ search }: { search: string }) => {
   try {
@@ -30,8 +29,14 @@ export const sendSearch = async ({ search }: { search: string }) => {
     const response = await fetch(url, options);
 
     if (!response.ok) {
-      const json = (await response.json()) as ErrorResponse;
-      throw new Error(JSON.stringify(json));
+      try {
+        const error = (await response.json()) as ErrorResponse;
+        throw new Error(JSON.stringify(error));
+      } catch (e) {
+        if (e instanceof Error) {
+          throw responseError();
+        }
+      }
     }
 
     const json = (await response.json()) as

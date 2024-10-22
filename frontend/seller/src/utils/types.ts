@@ -138,8 +138,8 @@ export interface OrderItem {
   product: Product;
   ready: boolean;
   orderID: string;
-  createdAt: string;
-  updatedAt: string | null;
+  dateCreated: string;
+  dateUpdated: string | null;
 }
 
 export interface Customer {

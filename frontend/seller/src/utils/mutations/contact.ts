@@ -1,3 +1,4 @@
+import { responseError } from "../errors";
 import {
   CompaintData,
   ErrorResponse,
@@ -18,8 +19,14 @@ export const sendContact = async (formData: CompaintData) => {
     const response = await fetch(url, options);
 
     if (!response.ok) {
-      const obj = (await response.json()) as ErrorResponse;
-      throw new Error(JSON.stringify(obj));
+      try {
+        const error = (await response.json()) as ErrorResponse;
+        throw new Error(JSON.stringify(error));
+      } catch (e) {
+        if (e instanceof Error) {
+          throw responseError();
+        }
+      }
     }
 
     const data = (await response.json()) as SuccessComplaintResponse;

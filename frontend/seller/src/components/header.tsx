@@ -6,7 +6,8 @@ import { Link } from "react-router-dom";
 import Modal from "./modal";
 import Navigation from "./navigation";
 import { ShowErrorContext } from "../utils/errorContext";
-import ShowError from "./showErr";
+import Transition from "./transition";
+import CloseIcon from "./icons/closeIcon";
 
 const Header = () => {
   const [isMenuOpen, setIsMenuOpen] = useState<boolean>(false);
@@ -20,6 +21,11 @@ const Header = () => {
 
   const closeCallback = () => {
     setIsMenuOpen(() => false);
+  };
+
+  const clickHandler: MouseEventHandler<HTMLButtonElement> = (e) => {
+    e.preventDefault();
+    setErr(null);
   };
 
   return (
@@ -45,8 +51,22 @@ const Header = () => {
             <Navigation callback={closeCallback} />
           </Modal>
         ) : null}
-        {err && <ShowError error={err} callback={() => setErr(null)} />}
       </header>
+      {err && (
+        <Transition>
+          <div className="fixed top-16 right-2 z-40 w-80 h-16 rounded-md bg-red-400 p-2 flex justify-start gap-1">
+            <p className="w-11/12">{err}</p>
+            <div>
+              <button
+                onClick={clickHandler}
+                className="w-8 h-8 border border-black rounded-full"
+              >
+                <CloseIcon />
+              </button>
+            </div>
+          </div>
+        </Transition>
+      )}
     </>
   );
 };

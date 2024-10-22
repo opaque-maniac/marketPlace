@@ -81,7 +81,7 @@ const HomePage = () => {
       </Helmet>
       <main role="main">
         <section className="h-full">
-          {query.isLoading && (
+          {query.isLoading ? (
             <div
               className="flex justify-center items-center"
               style={{
@@ -92,10 +92,9 @@ const HomePage = () => {
                 <Loader color="#000000" />
               </div>
             </div>
-          )}
-          {query.isSuccess && (
+          ) : (
             <div className="pt-4">
-              <ProductsList products={query.data.products} />
+              <ProductsList products={query.data?.products || []} />
             </div>
           )}
         </section>

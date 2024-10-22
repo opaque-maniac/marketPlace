@@ -1,5 +1,6 @@
-import { ErrorResponse } from "react-router-dom";
+import { ErrorResponse } from "../types";
 import { SuccessLoginRespose, SuccessRegisterResponse } from "../types";
+import { responseError } from "../errors";
 
 interface LoginData {
   email: string;
@@ -21,8 +22,14 @@ export const sendLogin = async (data: LoginData) => {
     const response = await fetch(url, options);
 
     if (!response.ok) {
-      const error = (await response.json()) as ErrorResponse;
-      throw new Error(JSON.stringify(error));
+      try {
+        const error = (await response.json()) as ErrorResponse;
+        throw new Error(JSON.stringify(error));
+      } catch (e) {
+        if (e instanceof Error) {
+          throw responseError();
+        }
+      }
     }
 
     const obj = (await response.json()) as SuccessLoginRespose;
@@ -55,8 +62,14 @@ export const sendRegister = async (data: RegisterData) => {
     const response = await fetch(url, options);
 
     if (!response.ok) {
-      const error = (await response.json()) as ErrorResponse;
-      throw new Error(JSON.stringify(error));
+      try {
+        const error = (await response.json()) as ErrorResponse;
+        throw new Error(JSON.stringify(error));
+      } catch (e) {
+        if (e instanceof Error) {
+          throw responseError();
+        }
+      }
     }
 
     const obj = (await response.json()) as SuccessRegisterResponse;

@@ -97,7 +97,7 @@ const OrdersPage = () => {
               <option value="false">Not Ready</option>
             </select>
           </div>
-          {query.isLoading && (
+          {query.isLoading ? (
             <div
               className="flex justify-center items-center"
               style={{
@@ -108,8 +108,9 @@ const OrdersPage = () => {
                 <Loader color="#000000" />
               </div>
             </div>
+          ) : (
+            <OrdersList orders={query.data?.orders || []} />
           )}
-          {query.isSuccess && <OrdersList orders={query.data.orders} />}
         </section>
         <section className="flex justify-center items-center gap-6 py-4">
           <div>

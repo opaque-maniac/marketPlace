@@ -1,22 +1,20 @@
-import { useNavigate, useParams } from "react-router-dom";
-import Transition from "../../components/transition";
 import { useQuery } from "@tanstack/react-query";
-import { useContext, useEffect, useState } from "react";
-import errorHandler from "../../utils/errorHandler";
+import Transition from "../../components/transition";
 import { ErrorResponse } from "../../utils/types";
-import ShowError from "../../components/showErr";
-import Loader from "../../components/loader";
-import ErrorContext from "../../utils/errorContext";
+import errorHandler from "../../utils/errorHandler";
+import { Link, useNavigate, useParams } from "react-router-dom";
+import { useContext, useEffect } from "react";
+import { ErrorContext, ShowErrorContext } from "../../utils/errorContext";
 import { Helmet } from "react-helmet";
 import { fetchOrder } from "../../utils/queries/orders";
-import OrderButton from "./orderbutton";
+import PageLoader from "../../components/pageloader";
 
-const OrderPage = () => {
-  const { id } = useParams();
-  const navigate = useNavigate();
-  const [err, setErr] = useState<string | null>(null);
+const IndividualOrderPage = () => {
   const [, setError] = useContext(ErrorContext);
-  const [, setUpdated] = useState<boolean>(false);
+  const [, setErr] = useContext(ShowErrorContext);
+  const { id } = useParams();
+
+  const navigate = useNavigate();
 
   useEffect(() => {
     if (!id) {
@@ -24,6 +22,18 @@ const OrderPage = () => {
     }
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []);
+
+  const formatDate = (isoString: string) => {
+    const date = new Date(isoString);
+
+    const options: Intl.DateTimeFormatOptions = {
+      year: "numeric",
+      month: "long",
+      day: "numeric",
+    };
+
+    return new Intl.DateTimeFormat("en-US", options).format(date);
+  };
 
   const query = useQuery({
     queryKey: ["order", id as string],
@@ -52,70 +62,91 @@ const OrderPage = () => {
     }
   }
 
-  const callback = () => {
-    setErr(() => null);
-  };
+  const order = query.data?.order;
 
-  const onSuccess = () => {
-    setUpdated(() => true);
-  };
+  console.log(order);
 
-  const { data } = query;
+  if (query.isSuccess && !order) {
+    setError(true);
+    navigate("/500", { replace: true });
+  }
 
   return (
     <Transition>
       <Helmet>
-        <title>Products</title>
-        <meta name="description" content="User's current products" />
+        <title>Orders</title>
+        <meta name="description" content="Orders page for Hazina seller app" />
         <meta name="robots" content="noindex, nofollow" />
         <meta name="googlebot" content="noindex, nofollow" />
         <meta name="google" content="nositelinkssearchbox" />
       </Helmet>
-      <main role="main">
-        <div className="h-12">
-          {err && <ShowError error={err} callback={callback} />}
-        </div>
-        {query.isLoading && (
-          <div
-            style={{ width: "screen", height: "calc(100vh - 10.8rem)" }}
-            className="flex justify-center items-center"
-          >
-            <div className="h-20 w-20">
-              <Loader color="#000000" />
-            </div>
-          </div>
-        )}
-        {query.isSuccess && (
+      <main role="main" className="pt-4">
+        {query.isLoading ? (
+          <PageLoader />
+        ) : (
           <>
-            {data && data.order ? (
+            {order && (
               <>
-                <div>
+                <div className="flex md:flex-row flex-col md:justify-evenly justify-center md:gap-0 gap-4">
                   <div>
-                    <h1>Order Details</h1>
-                    <p>Order ID: {data.order.id}</p>
-                    <p>
-                      Customer Name: {data.order.order.customer.firstName}{" "}
-                      {data.order.order.customer.lastName}
-                    </p>
-                    <p>Order Date: {data.order.createdAt}</p>
-                    <p>Shipping Address: {data.order.order.customer.address}</p>
-                    <p>
-                      Total Amount:{" "}
-                      {(data.order.product.price * data.order.quantity).toFixed(
-                        2,
-                      )}
-                    </p>
-                  </div>
-                  <div className="flex justify-center items-center">
-                    <OrderButton
-                      onSuccess={onSuccess}
-                      id={data.order.id}
-                      ready={data.order.ready}
+                    <img
+                      src={`http://localhost:3020/${order.product.images[0].url}`}
+                      alt={order.product.name}
+                      loading="lazy"
+                      style={{ height: "400px", width: "300px" }}
+                      className="md:mx-0 mx-auto"
                     />
+                  </div>
+                  <div className="md:mx-0 mx-auto">
+                    <h3 className="text-2xl font-semibold">
+                      {order.product.name}
+                    </h3>
+                    <div
+                      style={{ height: "150px" }}
+                      className="flex justify-start gap-6 items-center w-80"
+                    >
+                      <div className="h-full flex flex-col justify-between font-semibold">
+                        <p>CUSTOMER</p>
+                        <p>QUANTITY</p>
+                        <p>TOTAL</p>
+                        <p>DATE</p>
+                        <p>READY</p>
+                      </div>
+                      <div className="h-full flex flex-col justify-between">
+                        <p>
+                          :{"  "}
+                          {`${order.order.customer.firstName} ${order.order.customer.lastName}`}
+                        </p>
+                        <p>
+                          :{"  "}
+                          {order.quantity}
+                        </p>
+                        <p>
+                          :{"  "}$
+                          {(order.quantity * order.product.price).toFixed(2)}
+                        </p>
+                        <p>
+                          :{"  "}
+                          {formatDate(order.dateCreated)}
+                        </p>
+                        <p>
+                          :{"  "}
+                          {order.ready ? "Yes" : "No"}
+                        </p>
+                      </div>
+                    </div>
+                    <div className="py-4">
+                      <Link
+                        className="text-blue-400 underline"
+                        to={`/products/${order.product.id}`}
+                      >
+                        View Product
+                      </Link>
+                    </div>
                   </div>
                 </div>
               </>
-            ) : null}
+            )}
           </>
         )}
       </main>
@@ -123,4 +154,4 @@ const OrderPage = () => {
   );
 };
 
-export default OrderPage;
+export default IndividualOrderPage;

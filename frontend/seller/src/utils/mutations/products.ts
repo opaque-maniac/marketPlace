@@ -1,5 +1,5 @@
 import { getAccessToken } from "../cookies";
-import { tokenError } from "../errors";
+import { responseError, tokenError } from "../errors";
 import {
   ErrorResponse,
   SuccessNewProductResponse,
@@ -30,8 +30,14 @@ export const sendNewProduct = async ({ data }: NewProductProps) => {
     const response = await fetch(url, options);
 
     if (!response.ok) {
-      const json = (await response.json()) as ErrorResponse;
-      throw new Error(JSON.stringify(json));
+      try {
+        const error = (await response.json()) as ErrorResponse;
+        throw new Error(JSON.stringify(error));
+      } catch (e) {
+        if (e instanceof Error) {
+          throw responseError();
+        }
+      }
     }
 
     const json = (await response.json()) as SuccessNewProductResponse;
@@ -70,8 +76,14 @@ export const sendUpdateProduct = async ({ data, id }: UpdateProductProps) => {
     const response = await fetch(url, options);
 
     if (!response.ok) {
-      const json = (await response.json()) as ErrorResponse;
-      throw new Error(JSON.stringify(json));
+      try {
+        const error = (await response.json()) as ErrorResponse;
+        throw new Error(JSON.stringify(error));
+      } catch (e) {
+        if (e instanceof Error) {
+          throw responseError();
+        }
+      }
     }
 
     const json = (await response.json()) as SuccessNewProductResponse;
@@ -104,8 +116,14 @@ export const sendDeleteProduct = async (id: string) => {
     const response = await fetch(url, options);
 
     if (!response.ok) {
-      const json = (await response.json()) as ErrorResponse;
-      throw new Error(JSON.stringify(json));
+      try {
+        const error = (await response.json()) as ErrorResponse;
+        throw new Error(JSON.stringify(error));
+      } catch (e) {
+        if (e instanceof Error) {
+          throw responseError();
+        }
+      }
     }
 
     const json = (await response.json()) as SuccessProductDelete;

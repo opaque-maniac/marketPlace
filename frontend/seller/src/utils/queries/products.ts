@@ -1,6 +1,6 @@
 import { QueryFunction } from "@tanstack/react-query";
 import { getAccessToken } from "../cookies";
-import { tokenError } from "../errors";
+import { responseError, tokenError } from "../errors";
 import {
   ErrorResponse,
   SuccessCommentsResponse,
@@ -32,8 +32,14 @@ export const fetchProducts: QueryFunction<
     const response = await fetch(url, options);
 
     if (!response.ok) {
-      const data = (await response.json()) as ErrorResponse;
-      throw new Error(JSON.stringify(data));
+      try {
+        const error = (await response.json()) as ErrorResponse;
+        throw new Error(JSON.stringify(error));
+      } catch (e) {
+        if (e instanceof Error) {
+          throw responseError();
+        }
+      }
     }
 
     return response.json() as Promise<SuccessProductsResponse>;
@@ -68,8 +74,14 @@ export const fetchIndividualProduct: QueryFunction<
     const response = await fetch(url, options);
 
     if (!response.ok) {
-      const data = (await response.json()) as ErrorResponse;
-      throw new Error(JSON.stringify(data));
+      try {
+        const error = (await response.json()) as ErrorResponse;
+        throw new Error(JSON.stringify(error));
+      } catch (e) {
+        if (e instanceof Error) {
+          throw responseError();
+        }
+      }
     }
 
     return response.json() as Promise<SuccessProductResponse>;
@@ -104,8 +116,14 @@ export const fetchProductComments: QueryFunction<
     const response = await fetch(url, options);
 
     if (!response.ok) {
-      const data = (await response.json()) as ErrorResponse;
-      throw new Error(JSON.stringify(data));
+      try {
+        const error = (await response.json()) as ErrorResponse;
+        throw new Error(JSON.stringify(error));
+      } catch (e) {
+        if (e instanceof Error) {
+          throw responseError();
+        }
+      }
     }
 
     return response.json() as Promise<SuccessCommentsResponse>;

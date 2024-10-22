@@ -5,7 +5,6 @@ import { fetchIndividualProduct } from "../../utils/queries/products";
 import { useContext, useEffect, useState } from "react";
 import errorHandler from "../../utils/errorHandler";
 import { ErrorResponse } from "../../utils/types";
-import ShowError from "../../components/showErr";
 import Loader from "../../components/loader";
 import CommentList from "./comments";
 import { ErrorContext, ShowErrorContext } from "../../utils/errorContext";
@@ -14,7 +13,7 @@ import { Helmet } from "react-helmet";
 const ProductPage = () => {
   const { id } = useParams();
   const navigate = useNavigate();
-  const [err, setErr] = useContext(ShowErrorContext);
+  const [, setErr] = useContext(ShowErrorContext);
   const [, setError] = useContext(ErrorContext);
   const [show, setShow] = useState<boolean>(false);
 
@@ -52,10 +51,6 @@ const ProductPage = () => {
     }
   }
 
-  const callback = () => {
-    setErr(() => null);
-  };
-
   const calclulateOriginal = (price: number, discount: number) => {
     return price - (price * discount) / 100;
   };
@@ -72,9 +67,6 @@ const ProductPage = () => {
         <meta name="google" content="nositelinkssearchbox" />
       </Helmet>
       <main role="main">
-        <div className="h-12">
-          {err && <ShowError error={err} callback={callback} />}
-        </div>
         {query.isLoading && (
           <div
             style={{ width: "screen", height: "calc(100vh - 10.8rem)" }}

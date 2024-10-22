@@ -28,7 +28,9 @@ const PrivacyPage = lazy(() => import("./pages/privacy/page"));
 const FAQPage = lazy(() => import("./pages/faq/page"));
 const TermsPage = lazy(() => import("./pages/terms/page"));
 const DeleteProfilePage = lazy(() => import("./pages/deleteprofile/page"));
+const RefreshTokenPage = lazy(() => import("./pages/refreshtoken/page"));
 const OrdersPage = lazy(() => import("./pages/orders/page"));
+const IndividualOrderPage = lazy(() => import("./pages/order/page"));
 
 const queryClient = new QueryClient({
   defaultOptions: {
@@ -86,6 +88,14 @@ const App = () => {
                       element={<DeleteProfilePage />}
                     />
                     <Route path="/orders" element={<OrdersPage />} />
+                    <Route
+                      path="/orders/:id"
+                      element={<IndividualOrderPage />}
+                    />
+                    <Route
+                      path="/refresh-token"
+                      element={<RefreshTokenPage />}
+                    />
                     <Route path="/login" element={<LoginPage />} />
                     <Route path="/register" element={<RegisterPage />} />
                     <Route path="/logout" element={<LogoutPage />} />

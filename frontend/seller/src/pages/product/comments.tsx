@@ -59,7 +59,7 @@ const CommentList = ({ id }: Props) => {
         )}
         {query.isSuccess && query.data ? (
           <>
-            {query.data ? (
+            {query.data && query.data.data.length > 0 ? (
               <div>
                 {query.data.data.length > 0 ? (
                   <ul>
