@@ -24,6 +24,13 @@ export const fetchOrders = async (
         : req.query.ready === "all"
           ? undefined
           : false;
+    const delivered =
+      req.query.delivered === "true"
+        ? true
+        : req.query.delivered === "false"
+          ? false
+          : undefined;
+
     const { user } = req;
 
     if (!user) {
@@ -33,6 +40,7 @@ export const fetchOrders = async (
     const orderItems = await prisma.orderItem.findMany({
       where: {
         ready,
+        delivered,
         product: {
           sellerID: user.id,
         },

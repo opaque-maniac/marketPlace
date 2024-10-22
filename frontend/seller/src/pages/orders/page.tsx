@@ -21,13 +21,14 @@ const OrdersPage = () => {
 
   const navigate = useNavigate();
   const [ready, setReady] = useState<string>("all");
+  const [delivered, setDelivered] = useState<string>("all");
 
   useEffect(() => {
     navigate(`?page=${page}`, { replace: true });
   }, [page, navigate]);
 
   const query = useQuery({
-    queryKey: ["orders", page, 10, ready],
+    queryKey: ["orders", page, 10, ready, delivered],
     queryFn: fetchOrders,
   });
 
@@ -82,20 +83,43 @@ const OrdersPage = () => {
       </Helmet>
       <main role="main">
         <section className="h-full pt-4">
-          <div>
-            <select
-              name="ready"
-              id="ready"
-              aria-label="Filter for whether order is ready or not"
-              value={ready}
-              onChange={(e) => setReady(e.target.value)}
-              className="border border-black rounded-md p-2"
-              onBlur={(e) => setReady(e.target.value)}
-            >
-              <option value="all">All</option>
-              <option value="true">Ready</option>
-              <option value="false">Not Ready</option>
-            </select>
+          <div className="flex md:flex-row flex-col md:justify-evenly items-center md:gap-0 gap-4">
+            <div>
+              <label className="block" htmlFor="ready">
+                Ready
+              </label>
+              <select
+                name="ready"
+                id="ready"
+                aria-label="Filter for whether order is ready or not"
+                value={ready}
+                onChange={(e) => setReady(e.target.value)}
+                className="border border-black rounded-md p-2"
+                onBlur={(e) => setReady(e.target.value)}
+              >
+                <option value="all">All</option>
+                <option value="true">Ready</option>
+                <option value="false">Not Ready</option>
+              </select>
+            </div>
+            <div>
+              <label htmlFor="delivered" className="block">
+                Delivered
+              </label>
+              <select
+                name="delivered"
+                id="delivered"
+                aria-label="Filter for whether order is delivered or not"
+                value={delivered}
+                onChange={(e) => setDelivered(e.target.value)}
+                className="border border-black rounded-md p-2"
+                onBlur={(e) => setDelivered(e.target.value)}
+              >
+                <option value="all">All</option>
+                <option value="true">Ready</option>
+                <option value="false">Not Ready</option>
+              </select>
+            </div>
           </div>
           {query.isLoading ? (
             <div

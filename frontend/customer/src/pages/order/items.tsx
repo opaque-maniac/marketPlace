@@ -49,7 +49,7 @@ const OrderItems = ({ id }: Props) => {
               <section>
                 <OrderItemList items={data.orderItems || []} />
               </section>
-              <section className="flex justify-center items-center gap-6 pt-10">
+              <section className="flex justify-center items-center gap-6 pt-10 pb-4">
                 <div>
                   <button
                     disabled={!data || page == 1}

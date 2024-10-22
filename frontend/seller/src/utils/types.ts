@@ -139,8 +139,8 @@ export interface OrderItem {
   ready: boolean;
   delivered: boolean;
   orderID: string;
-  dateCreated: string;
-  dateUpdated: string | null;
+  createdAt: string;
+  updatedAt: string | null;
 }
 
 export interface Customer {

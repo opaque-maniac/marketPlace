@@ -24,6 +24,10 @@ const OrderItemComponent = ({ item }: Props) => {
           <span className="font-semibold">Ready: </span>
           {item.ready ? "Yes" : "No"}
         </p>
+        <p>
+          <span className="font-semibold">Delivered: </span>
+          {item.delivered ? "Yes" : "No"}
+        </p>
       </div>
     </div>
   );

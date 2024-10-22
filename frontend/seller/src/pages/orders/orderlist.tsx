@@ -15,7 +15,7 @@ const OrdersList = ({ orders }: Props) => {
         }}
       >
         {orders.length > 0 ? (
-          <div className="flex flex-col gap-4">
+          <div className="flex flex-col gap-4 md:pl-2 pl-1">
             {orders.map((order) => (
               <Link to={`/orders/${order.id}`} key={order.id}>
                 <div key={order.id} className="border-b border-gray-200 py-4">
