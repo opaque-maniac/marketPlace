@@ -2,7 +2,7 @@ import { useContext, useEffect, useState } from "react";
 import Transition from "../../components/transition";
 import useUserStore from "../../utils/store";
 import { useNavigate } from "react-router-dom";
-import ErrorContext from "../../utils/errorContext";
+import { ErrorContext } from "../../utils/errorContext";
 import { useQuery } from "@tanstack/react-query";
 import { fetchProfile } from "../../utils/queries/profile";
 import Loader from "../../components/loader";

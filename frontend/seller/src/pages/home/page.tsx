@@ -6,10 +6,9 @@ import ProductsList from "./productslist";
 import { ErrorResponse } from "../../utils/types";
 import errorHandler from "../../utils/errorHandler";
 import { useNavigate } from "react-router-dom";
-import { useContext, useEffect, useState } from "react";
-import ShowError from "../../components/showErr";
+import { useContext, useEffect } from "react";
 import { homePageStore } from "../../utils/pageStore";
-import ErrorContext from "../../utils/errorContext";
+import { ErrorContext, ShowErrorContext } from "../../utils/errorContext";
 import ArrowLeft from "../../components/icons/arrowleft";
 import ArrowRight from "../../components/icons/arrowright";
 import { Helmet } from "react-helmet";
@@ -18,9 +17,9 @@ const HomePage = () => {
   const page = homePageStore((state) => state.page);
   const setPage = homePageStore((state) => state.setPage);
   const [, setError] = useContext(ErrorContext);
+  const [, setErr] = useContext(ShowErrorContext);
 
   const navigate = useNavigate();
-  const [err, setErr] = useState<string | null>(null);
 
   useEffect(() => {
     navigate(`?page=${page}`, { replace: true });
@@ -53,10 +52,6 @@ const HomePage = () => {
     }
   }
 
-  const callback = () => {
-    setErr(() => null);
-  };
-
   const handlePrev = (e: React.MouseEvent) => {
     e.preventDefault();
     if (page > 1) {
@@ -86,9 +81,6 @@ const HomePage = () => {
       </Helmet>
       <main role="main">
         <section className="h-full">
-          <div className="h-12">
-            {err && <ShowError error={err} callback={callback} />}
-          </div>
           {query.isLoading && (
             <div
               className="flex justify-center items-center"

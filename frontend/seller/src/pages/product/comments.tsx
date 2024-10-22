@@ -1,8 +1,12 @@
 import { useQuery } from "@tanstack/react-query";
-import { useState } from "react";
+import { useContext, useState } from "react";
 import { fetchProductComments } from "../../utils/queries/products";
 import Loader from "../../components/loader";
 import CommentItem from "../../components/comment";
+import { ErrorResponse } from "../../utils/types";
+import errorHandler from "../../utils/errorHandler";
+import { ErrorContext, ShowErrorContext } from "../../utils/errorContext";
+import { useNavigate } from "react-router-dom";
 
 interface Props {
   id: string;
@@ -10,11 +14,36 @@ interface Props {
 
 const CommentList = ({ id }: Props) => {
   const [page, setPage] = useState<number>(1);
+  const [, setErr] = useContext(ShowErrorContext);
+  const [, setError] = useContext(ErrorContext);
+  const navigate = useNavigate();
 
   const query = useQuery({
     queryFn: fetchProductComments,
     queryKey: ["comments", id, page],
   });
+
+  if (query.isError) {
+    const data = query.error;
+    try {
+      const error = JSON.parse(data.message) as ErrorResponse;
+      const [show, url] = errorHandler(error.errorCode);
+      if (show) {
+        setErr(error.message);
+      } else {
+        if (url) {
+          if (url === "/500") {
+            setError(true);
+          }
+          navigate(url);
+        }
+      }
+    } catch (e) {
+      if (e instanceof Error) {
+        setErr("An unexpected error occurred.");
+      }
+    }
+  }
 
   return (
     <div

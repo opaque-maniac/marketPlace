@@ -8,13 +8,13 @@ import { ErrorResponse } from "../../utils/types";
 import ShowError from "../../components/showErr";
 import Loader from "../../components/loader";
 import CommentList from "./comments";
-import ErrorContext from "../../utils/errorContext";
+import { ErrorContext, ShowErrorContext } from "../../utils/errorContext";
 import { Helmet } from "react-helmet";
 
 const ProductPage = () => {
   const { id } = useParams();
   const navigate = useNavigate();
-  const [err, setErr] = useState<string | null>(null);
+  const [err, setErr] = useContext(ShowErrorContext);
   const [, setError] = useContext(ErrorContext);
   const [show, setShow] = useState<boolean>(false);
 

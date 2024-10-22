@@ -7,7 +7,7 @@ import { ErrorResponse } from "../../utils/types";
 import errorHandler from "../../utils/errorHandler";
 import { FormEventHandler, useContext, useState } from "react";
 import Loader from "../../components/loader";
-import ErrorContext from "../../utils/errorContext";
+import { ErrorContext } from "../../utils/errorContext";
 import { setAccessToken, setRefreshToken } from "../../utils/cookies";
 import userStore from "../../utils/store";
 import ShowError from "../../components/showErr";

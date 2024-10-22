@@ -6,37 +6,43 @@ import { useMutation } from "@tanstack/react-query";
 import { sendRegister } from "../../utils/mutations/auth";
 import { ErrorResponse } from "../../utils/types";
 import errorHandler from "../../utils/errorHandler";
-import ShowError from "../../components/showErr";
 import EyeClosed from "../../components/icons/hide";
 import EyeOpen from "../../components/icons/show";
 import Loader from "../../components/loader";
-import ErrorContext from "../../utils/errorContext";
+import { ErrorContext, ShowErrorContext } from "../../utils/errorContext";
 import { Helmet } from "react-helmet";
 
 const RegisterPage = () => {
   const navigate = useNavigate();
-  const [err, setErr] = useState<string | null>(null);
+  const [, setErr] = useContext(ShowErrorContext);
   const [show, setShow] = useState<boolean>(false);
   const [, setError] = useContext(ErrorContext);
 
   const mutation = useMutation({
     mutationFn: sendRegister,
     onError: (error) => {
-      const errorObj = JSON.parse(error.message) as ErrorResponse;
-      const [show, url] = errorHandler(errorObj.errorCode);
+      try {
+        const errorObj = JSON.parse(error.message) as ErrorResponse;
+        const [show, url] = errorHandler(errorObj.errorCode);
 
-      if (show) {
-        setErr(errorObj.message);
-      } else {
-        if (url) {
-          if (url === "/500") {
-            setError(true);
-          }
-          navigate(url, { replace: true });
+        if (show) {
+          setErr(errorObj.message);
         } else {
-          setError(true);
-          navigate("/500", { replace: true });
+          if (url) {
+            if (url === "/500") {
+              setError(true);
+            }
+            navigate(url, { replace: true });
+          } else {
+            setError(true);
+            navigate("/500", { replace: true });
+          }
         }
+      } catch (e) {
+        if (e instanceof Error) {
+          setErr("Something unexpected happened");
+        }
+        navigate("/", { replace: true });
       }
     },
     onSuccess: () => {
@@ -53,10 +59,6 @@ const RegisterPage = () => {
     mutation.mutate({ email, name, password });
   };
 
-  const callback = () => {
-    setErr(() => null);
-  };
-
   return (
     <Transition>
       <Helmet>
@@ -70,9 +72,6 @@ const RegisterPage = () => {
         <div className="mb-4">
           <h3 className="text-4xl mb-4">Create an account</h3>
           <p>Enter your details below</p>
-        </div>
-        <div className="h-12">
-          {err && <ShowError error={err} callback={callback} />}
         </div>
         <form
           onSubmit={submitHandler}

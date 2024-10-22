@@ -1,13 +1,12 @@
-import { FormEventHandler, useContext, useEffect, useState } from "react";
+import { FormEventHandler, useContext, useEffect } from "react";
 import Transition from "../../components/transition";
 import useUserStore from "../../utils/store";
 import { useNavigate } from "react-router-dom";
 import { useMutation, useQuery } from "@tanstack/react-query";
 import { fetchProfile } from "../../utils/queries/profile";
-import ErrorContext from "../../utils/errorContext";
+import { ErrorContext, ShowErrorContext } from "../../utils/errorContext";
 import { ErrorResponse } from "../../utils/types";
 import errorHandler from "../../utils/errorHandler";
-import ShowError from "../../components/showErr";
 import { Helmet } from "react-helmet";
 import Loader from "../../components/loader";
 import ProfileForm from "./form";
@@ -15,7 +14,7 @@ import { sendUpdateProfile } from "../../utils/mutations/profile";
 
 const UpdateProfilePage = () => {
   const user = useUserStore((state) => state.user);
-  const [err, setErr] = useState<string | null>(null);
+  const [, setErr] = useContext(ShowErrorContext);
   const [, setError] = useContext(ErrorContext);
   const navigate = useNavigate();
 
@@ -64,21 +63,28 @@ const UpdateProfilePage = () => {
       }
     },
     onError: (error) => {
-      const errorObj = JSON.parse(error.message) as ErrorResponse;
-      const [show, url] = errorHandler(errorObj.errorCode);
+      try {
+        const errorObj = JSON.parse(error.message) as ErrorResponse;
+        const [show, url] = errorHandler(errorObj.errorCode);
 
-      if (show) {
-        setErr(errorObj.message);
-      } else {
-        if (url) {
-          if (url === "/500") {
-            setError(true);
-          }
-          navigate(url, { replace: true });
+        if (show) {
+          setErr(errorObj.message);
         } else {
-          setError(true);
-          navigate("/500", { replace: true });
+          if (url) {
+            if (url === "/500") {
+              setError(true);
+            }
+            navigate(url, { replace: true });
+          } else {
+            setError(true);
+            navigate("/500", { replace: true });
+          }
         }
+      } catch (e) {
+        if (e instanceof Error) {
+          setErr("Something unexpected happened");
+        }
+        navigate("/", { replace: true });
       }
     },
   });
@@ -87,10 +93,6 @@ const UpdateProfilePage = () => {
     e.preventDefault();
     const formData = new FormData(e.currentTarget);
     mutation.mutate({ data: formData, id: user as string });
-  };
-
-  const callback = () => {
-    setErr(() => null);
   };
 
   return (
@@ -112,9 +114,6 @@ const UpdateProfilePage = () => {
         </p>
         <div className="pt-4">
           <h2 className="text-center text-3xl md:pb-0 pb-4">Update Profile</h2>
-        </div>
-        <div className="h-12">
-          {err && <ShowError error={err} callback={callback} />}
         </div>
         <section>
           {query.isLoading && (

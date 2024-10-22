@@ -1,7 +1,9 @@
 import { createContext, Dispatch, SetStateAction } from "react";
 
-const ErrorContext = createContext<
+export const ErrorContext = createContext<
   [boolean, Dispatch<SetStateAction<boolean>>]
 >([false, () => {}]);
 
-export default ErrorContext;
+export const ShowErrorContext = createContext<
+  [null | string, Dispatch<SetStateAction<null | string>>]
+>([null, () => {}]);

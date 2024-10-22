@@ -5,9 +5,8 @@ import { ErrorResponse } from "../../utils/types";
 import errorHandler from "../../utils/errorHandler";
 import { useNavigate } from "react-router-dom";
 import { useContext, useEffect, useState } from "react";
-import ShowError from "../../components/showErr";
 import { orderPageStore } from "../../utils/pageStore";
-import ErrorContext from "../../utils/errorContext";
+import { ErrorContext, ShowErrorContext } from "../../utils/errorContext";
 import ArrowLeft from "../../components/icons/arrowleft";
 import ArrowRight from "../../components/icons/arrowright";
 import { Helmet } from "react-helmet";
@@ -18,9 +17,9 @@ const HomePage = () => {
   const page = orderPageStore((state) => state.page);
   const setPage = orderPageStore((state) => state.setPage);
   const [, setError] = useContext(ErrorContext);
+  const [, setErr] = useContext(ShowErrorContext);
 
   const navigate = useNavigate();
-  const [err, setErr] = useState<string | null>(null);
   const [ready, setReady] = useState<string>("all");
 
   useEffect(() => {
@@ -54,10 +53,6 @@ const HomePage = () => {
     }
   }
 
-  const callback = () => {
-    setErr(() => null);
-  };
-
   const handlePrev = (e: React.MouseEvent) => {
     e.preventDefault();
     if (page > 1) {
@@ -87,9 +82,6 @@ const HomePage = () => {
       </Helmet>
       <main role="main">
         <section className="h-full">
-          <div className="h-12">
-            {err && <ShowError error={err} callback={callback} />}
-          </div>
           <div>
             <select
               name="ready"

@@ -1,42 +1,43 @@
 import { useMutation } from "@tanstack/react-query";
 import { sendContact } from "../../utils/mutations/contact";
-import {
-  FormEventHandler,
-  MutableRefObject,
-  useContext,
-  useState,
-} from "react";
-import ErrorContext from "../../utils/errorContext";
+import { FormEventHandler, MutableRefObject, useContext } from "react";
 import { useNavigate } from "react-router-dom";
 import { ErrorResponse } from "../../utils/types";
-import errorHandler from "../../utils/errorHandler";
 import Loader from "../../components/loader";
-import ShowError from "../../components/showErr";
+import { ErrorContext, ShowErrorContext } from "../../utils/errorContext";
+import errorHandler from "../../utils/errorHandler";
 
 const ContactForm = () => {
   const [, setError] = useContext(ErrorContext);
-  const [err, setErr] = useState<string | null>(null);
+  const [, setErr] = useContext(ShowErrorContext);
   const ref: MutableRefObject<HTMLFormElement | null> = { current: null };
   const navigate = useNavigate();
 
   const mutation = useMutation({
     mutationFn: sendContact,
     onError: (error) => {
-      const errorObj = JSON.parse(error.message) as ErrorResponse;
-      const [show, url] = errorHandler(errorObj.errorCode);
+      try {
+        const errorObj = JSON.parse(error.message) as ErrorResponse;
+        const [show, url] = errorHandler(errorObj.errorCode);
 
-      if (show) {
-        setErr(errorObj.message);
-      } else {
-        if (url) {
-          if (url === "/500") {
-            setError(true);
-          }
-          navigate(url, { replace: true });
+        if (show) {
+          setErr(errorObj.message);
         } else {
-          setError(true);
-          navigate("/500", { replace: true });
+          if (url) {
+            if (url === "/500") {
+              setError(true);
+            }
+            navigate(url, { replace: true });
+          } else {
+            setError(true);
+            navigate("/500", { replace: true });
+          }
         }
+      } catch (e) {
+        if (e instanceof Error) {
+          setErr("Something unexpected happened");
+        }
+        navigate("/", { replace: true });
       }
     },
     onSuccess: (data) => {
@@ -58,15 +59,8 @@ const ContactForm = () => {
     mutation.mutate({ email, name, phone, message });
   };
 
-  const callBack = () => {
-    setErr(() => null);
-  };
-
   return (
     <>
-      <div className="h-12">
-        {err && <ShowError error={err} callback={callBack} />}
-      </div>
       <form
         onSubmit={submitHandler}
         ref={ref}

@@ -10,7 +10,6 @@ export default function errorHandler(
     "I401",
     "I403",
     "I402",
-    "O402"
   ];
   const redirectToRefreshToken = ["J401"];
   const logoutErrors = ["J400", "J402", "J403", "J404", "J405", "R400"];

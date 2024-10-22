@@ -2,7 +2,7 @@ import { createRoot } from "react-dom/client";
 import { BrowserRouter, Route, Routes } from "react-router-dom";
 import { QueryClient, QueryClientProvider } from "@tanstack/react-query";
 import { lazy, Suspense, useState } from "react";
-import ErrorContext from "./utils/errorContext";
+import { ErrorContext, ShowErrorContext } from "./utils/errorContext";
 import Header from "./components/header";
 import Footer from "./components/footer";
 import CheckPermissions from "./utils/permissions";
@@ -40,60 +40,63 @@ const queryClient = new QueryClient({
 
 const App = () => {
   const error = useState<boolean>(false);
+  const showError = useState<null | string>(null);
 
   return (
     <div>
       <BrowserRouter>
         <ErrorContext.Provider value={error}>
-          <QueryClientProvider client={queryClient}>
-            <CheckPermissions />
-            <ScrollToTop />
-            <Header />
-            <div
-              className="pt-14 mx-auto lg:max-w-1300"
-              style={{
-                minHeight: "calc(100vh - 2.8rem)",
-              }}
-            >
-              <Suspense fallback={<PageLoader />}>
-                <Routes>
-                  <Route path="/" element={<HomePage />} />
-                  <Route path="/products/:id" element={<ProductPage />} />
-                  <Route
-                    path="/products/:id/delete"
-                    element={<DeleteProductPage />}
-                  />
-                  <Route
-                    path="/products/:id/edit"
-                    element={<EditProductPage />}
-                  />
-                  <Route path="/new" element={<NewProductPage />} />
-                  <Route path="/contact" element={<ContactPage />} />
-                  <Route path="/about" element={<AboutPage />} />
-                  <Route path="/fees" element={<FeePage />} />
-                  <Route path="/privacy" element={<PrivacyPage />} />
-                  <Route path="/faq" element={<FAQPage />} />
-                  <Route path="/terms" element={<TermsPage />} />
-                  <Route path="/profile" element={<ProfilePage />} />
-                  <Route
-                    path="/profile/update"
-                    element={<UpdateProfilePage />}
-                  />
-                  <Route
-                    path="/profile/delete"
-                    element={<DeleteProfilePage />}
-                  />
-                  <Route path="/orders" element={<OrdersPage />} />
-                  <Route path="/login" element={<LoginPage />} />
-                  <Route path="/register" element={<RegisterPage />} />
-                  <Route path="/logout" element={<LogoutPage />} />
-                  <Route path="/500" element={<Error500 />} />
-                  <Route path="*" element={<Error404 />} />
-                </Routes>
-              </Suspense>
-            </div>
-            <Footer />
-          </QueryClientProvider>
+          <ShowErrorContext.Provider value={showError}>
+            <QueryClientProvider client={queryClient}>
+              <CheckPermissions />
+              <ScrollToTop />
+              <Header />
+              <div
+                className="pt-14 mx-auto lg:max-w-1300"
+                style={{
+                  minHeight: "calc(100vh - 2.8rem)",
+                }}
+              >
+                <Suspense fallback={<PageLoader />}>
+                  <Routes>
+                    <Route path="/" element={<HomePage />} />
+                    <Route path="/products/:id" element={<ProductPage />} />
+                    <Route
+                      path="/products/:id/delete"
+                      element={<DeleteProductPage />}
+                    />
+                    <Route
+                      path="/products/:id/edit"
+                      element={<EditProductPage />}
+                    />
+                    <Route path="/new" element={<NewProductPage />} />
+                    <Route path="/contact" element={<ContactPage />} />
+                    <Route path="/about" element={<AboutPage />} />
+                    <Route path="/fees" element={<FeePage />} />
+                    <Route path="/privacy" element={<PrivacyPage />} />
+                    <Route path="/faq" element={<FAQPage />} />
+                    <Route path="/terms" element={<TermsPage />} />
+                    <Route path="/profile" element={<ProfilePage />} />
+                    <Route
+                      path="/profile/update"
+                      element={<UpdateProfilePage />}
+                    />
+                    <Route
+                      path="/profile/delete"
+                      element={<DeleteProfilePage />}
+                    />
+                    <Route path="/orders" element={<OrdersPage />} />
+                    <Route path="/login" element={<LoginPage />} />
+                    <Route path="/register" element={<RegisterPage />} />
+                    <Route path="/logout" element={<LogoutPage />} />
+                    <Route path="/500" element={<Error500 />} />
+                    <Route path="*" element={<Error404 />} />
+                  </Routes>
+                </Suspense>
+              </div>
+              <Footer />
+            </QueryClientProvider>
+          </ShowErrorContext.Provider>
         </ErrorContext.Provider>
       </BrowserRouter>
     </div>
