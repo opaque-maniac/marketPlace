@@ -8,6 +8,7 @@ import Footer from "./components/footer";
 import CheckPermissions from "./utils/permissions";
 import PageLoader from "./components/pageloader";
 import ScrollToTop from "./utils/scrolltotop";
+import ProductsSearchPage from "./pages/products_search/page";
 
 const HomePage = lazy(() => import("./pages/home/page"));
 const LoginPage = lazy(() => import("./pages/login/page"));
@@ -21,6 +22,10 @@ const FeePage = lazy(() => import("./pages/fee/page"));
 const PrivacyPage = lazy(() => import("./pages/privacy/page"));
 const FAQPage = lazy(() => import("./pages/faq/page"));
 const TermsPage = lazy(() => import("./pages/terms/page"));
+const ProductsPage = lazy(() => import("./pages/products/page"));
+const CustomersPage = lazy(() => import("./pages/customers/page"));
+const CustomersSearchPage = lazy(() => import("./pages/customer_search/page"));
+const IndividualProductPage = lazy(() => import("./pages/product/page"));
 
 const queryClient = new QueryClient({
   defaultOptions: {
@@ -60,6 +65,20 @@ const App = () => {
                     <Route path="/terms" element={<TermsPage />} />
                     <Route path="/login" element={<LoginPage />} />
                     <Route path="/register" element={<RegisterPage />} />
+                    <Route path="/products" element={<ProductsPage />} />
+                    <Route
+                      path="/products/:id"
+                      element={<IndividualProductPage />}
+                    />
+                    <Route
+                      path="/products/search/:_query"
+                      element={<ProductsSearchPage />}
+                    />
+                    <Route path="/customers" element={<CustomersPage />} />
+                    <Route
+                      path="/customers/search/:_query"
+                      element={<CustomersSearchPage />}
+                    />
                     <Route path="/logout" element={<LogoutPage />} />
                     <Route path="/500" element={<Error500 />} />
                     <Route path="*" element={<Error404 />} />

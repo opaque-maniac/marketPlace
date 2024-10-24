@@ -59,6 +59,13 @@ import {
   makeOrderReady,
   updateOrderStatus,
 } from "./handlers/orders";
+import {
+  deleteComment,
+  fetchComments,
+  fetchIndividualComment,
+  fetchProductComments,
+  updateComment,
+} from "./handlers/comments";
 
 const staffRouter = Router();
 
@@ -130,6 +137,12 @@ staffRouter.get(
   isStaff,
   fetchIndividualProduct
 );
+staffRouter.get(
+  "/products/:id/comments",
+  allowIfAuthenticated,
+  isStaff,
+  fetchProductComments
+);
 staffRouter.put(
   "/products/:id",
   allowIfAuthenticated,
@@ -152,7 +165,6 @@ staffRouter.post(
   "/products/search",
   allowIfAuthenticated,
   isStaff,
-  body("query").isString().isLength(stringConfig),
   searchProduct
 );
 
@@ -195,8 +207,8 @@ staffRouter.delete(
   isStaff,
   deleteCustomer
 );
-staffRouter.post(
-  "/customers/search",
+staffRouter.get(
+  "/customers/discover/search",
   allowIfAuthenticated,
   isStaff,
   searchCustomer
@@ -329,6 +341,28 @@ staffRouter.put(
   allowIfAuthenticated,
   isStaff,
   makeOrderReady
+);
+
+// Comments
+staffRouter.get("/comments", allowIfAuthenticated, isStaff, fetchComments);
+staffRouter.get(
+  "/comments/:id",
+  allowIfAuthenticated,
+  isStaff,
+  fetchIndividualComment
+);
+staffRouter.put(
+  "/comments/:id",
+  allowIfAuthenticated,
+  isStaff,
+  body("message").isString().isLength(stringConfig),
+  updateComment
+);
+staffRouter.delete(
+  "/comments/:id",
+  allowIfAuthenticated,
+  isStaff,
+  deleteComment
 );
 
 export default staffRouter;

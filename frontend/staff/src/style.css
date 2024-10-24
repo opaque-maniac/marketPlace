@@ -16,6 +16,10 @@ button {
   height: 7px;
 }
 
+.scroll-v-mod::-webkit-scrollbar {
+  width: 0px !important;
+}
+
 .scroll-mod-col::-webkit-scrollbar {
   width: 0px;
 }

@@ -1,44 +1,59 @@
 import { useQuery } from "@tanstack/react-query";
-import Transition from "../../components/transition";
+import { useContext, useEffect } from "react";
+import { Helmet } from "react-helmet";
+import { useLocation, useNavigate, useParams } from "react-router-dom";
+import { searchProducts } from "../../utils/queries/products";
+import { productsSearchPageStore } from "../../utils/pageStore";
+import { ErrorContext, ShowErrorContext } from "../../utils/errorContext";
 import { ErrorResponse } from "../../utils/types";
 import errorHandler from "../../utils/errorHandler";
-import { useNavigate, useParams } from "react-router-dom";
-import { useContext, useEffect } from "react";
-import { explorePageStore } from "../../utils/pageStore";
-import { ErrorContext, ShowErrorContext } from "../../utils/errorContext";
+import Transition from "../../components/transition";
 import ArrowLeft from "../../components/icons/arrowleft";
 import ArrowRight from "../../components/icons/arrowright";
-import { Helmet } from "react-helmet";
-import { fetchCategoryProducts } from "../../utils/queries/products";
-import ProductList from "../../components/products/productlist";
 import PageLoader from "../../components/pageloader";
+import ProductList from "../../components/products/productlist";
 
-const CategoriesPage = () => {
-  const { category } = useParams();
-  const page = explorePageStore((state) => state.page);
-  const setPage = explorePageStore((state) => state.setPage);
+const ProductSearchPage = () => {
+  const page = productsSearchPageStore((state) => state.page);
+  const setPage = productsSearchPageStore((state) => state.setPage);
   const [, setError] = useContext(ErrorContext);
+  const location = useLocation();
+  const { _query } = useParams();
 
   const navigate = useNavigate();
   const [, setErr] = useContext(ShowErrorContext);
 
-  if (!category) {
-    setError(true);
-    navigate("/500", { replace: true });
-  }
+  // When page mounts
+  useEffect(() => {
+    setPage(1);
+  }, [setPage]);
 
   useEffect(() => {
-    navigate(`/categories/${category}?page=${page}`, { replace: true });
+    if (!query) {
+      navigate("/products", { replace: true });
+    }
+  }, []);
 
+  // When page state changes
+  useEffect(() => {
+    navigate(`/products/search/${_query}?page=${page}`, {
+      replace: true,
+    });
+    window.scrollTo(0, 0);
+  }, [page, navigate, _query]);
+
+  // When page unmounts
+  useEffect(() => {
     return () => {
-      setPage(1);
+      if (location.pathname !== "/explore") {
+        setPage(1);
+      }
     };
-    // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [page, navigate]);
+  }, [location.pathname, setPage]);
 
   const query = useQuery({
-    queryKey: ["products", page, 20, category as string],
-    queryFn: fetchCategoryProducts,
+    queryKey: ["query", page, 20, _query as string],
+    queryFn: searchProducts,
   });
 
   if (query.isError) {
@@ -81,41 +96,28 @@ const CategoriesPage = () => {
     }
   };
 
-  const data = query.data?.data;
+  const data = query.data;
 
   return (
     <Transition>
       <Helmet>
-        <title>Explore</title>
-        <meta name="description" content="Orders page for Hazina seller app" />
+        <title>{`Search ${_query}`}</title>
+        <meta name="description" content={`Search ${_query}`} />
         <meta name="robots" content="noindex, nofollow" />
         <meta name="googlebot" content="noindex, nofollow" />
-        <meta name="google" content="nositelinkssearchbox" />
+        <meta name="google" content="nositelinksearchbox" />
       </Helmet>
       <main role="main">
-        <section
-          className="px-2 py-2"
-          style={{ minHeight: "calc(100vh - 1.4rem )" }}
-        >
+        <section>
           {query.isLoading ? (
             <PageLoader />
           ) : (
-            <div
-              style={{ minHeight: "calc(100vh - 1.4rem )" }}
-              className="h-full w-full"
-            >
-              {data && (
-                <ProductList
-                  full={true}
-                  products={data}
-                  color="black"
-                  overflow={false}
-                />
-              )}
+            <div>
+              <ProductList products={data?.products || []} />
             </div>
           )}
         </section>
-        <section className="flex justify-center items-center gap-6 py-2">
+        <section className="flex justify-center items-center gap-6 py-4">
           <div>
             <button
               disabled={!data || page == 1}
@@ -141,4 +143,4 @@ const CategoriesPage = () => {
   );
 };
 
-export default CategoriesPage;
+export default ProductSearchPage;

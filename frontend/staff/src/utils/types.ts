@@ -21,7 +21,7 @@ export interface Customer {
   phone: string | null;
   createdAt: string;
   updatedAt: string | null;
-  image: CustomerImage | null;
+  image?: CustomerImage;
 }
 
 export interface CustomerImage {
@@ -195,4 +195,44 @@ export interface SuccessLoginRespose {
 export interface SuccessRegisterResponse {
   message: string;
   staff: Staff;
+}
+
+export interface SuccessProductsResonse {
+  message: string;
+  products: Product[];
+  hasNext: boolean;
+}
+
+export interface SuccessProductsSearchResponse {
+  message: string;
+  products: Product[];
+  hasNext: boolean;
+}
+
+export interface SuccessProductResponse {
+  message: string;
+  product: Product;
+}
+
+export interface SuccessProductCommentsResponse {
+  message: string;
+  comments: Comment[];
+  hasNext: boolean;
+}
+
+export interface SuccessCustomersResponse {
+  message: string;
+  customers: Customer[];
+  hasNext: boolean;
+}
+
+export interface SuccesCustomersSearchResponse {
+  message: string;
+  customers: Customer[];
+  hasNext: boolean;
+}
+
+export interface SuccessUpdateProductRespnse {
+  message: string;
+  product: Product;
 }

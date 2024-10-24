@@ -3,20 +3,16 @@ import { Comment } from "../../utils/types";
 import ProfileIcon from "../icons/profileIcon";
 import Transition from "../transition";
 import EllipseIcon from "../icons/ellipse";
-import DeleteComment from "../../pages/product/deletecomment";
-import useUserStore from "../../utils/store";
+import DeleteComment from "./deletecomment";
 
 interface Props {
   comment: Comment;
-  productId: string;
   refetch: () => void;
 }
 
-const CommentItem = ({ comment, productId, refetch }: Props) => {
+const CommentItem = ({ comment, refetch }: Props) => {
   const [clicked, setClicked] = useState<boolean>(false);
   const [open, setOpen] = useState<boolean>(false);
-  const user = useUserStore((state) => state.user);
-  const hidden = user === comment.customerID ? "" : "hidden";
 
   const formatDate = (isoString: string) => {
     const date = new Date(isoString);
@@ -59,7 +55,7 @@ const CommentItem = ({ comment, productId, refetch }: Props) => {
                 </p>
               </div>
             </div>
-            <div className={`relative ${hidden}`}>
+            <div className="relative">
               <button
                 onClick={(e) => {
                   e.preventDefault();
@@ -71,11 +67,7 @@ const CommentItem = ({ comment, productId, refetch }: Props) => {
               </button>
               {open && (
                 <div className="absolute right-2 z-20 top-7">
-                  <DeleteComment
-                    refetch={refetch}
-                    id={comment.id}
-                    productId={productId}
-                  />
+                  <DeleteComment refetch={refetch} id={comment.id} />
                 </div>
               )}
             </div>

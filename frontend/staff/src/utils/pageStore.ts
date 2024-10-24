@@ -8,31 +8,25 @@ interface PageStore {
 
 const INITIAL_PAGE = 1;
 
-export const explorePageStore = create<PageStore>((set) => ({
+export const productsPageStore = create<PageStore>((set) => ({
   page: INITIAL_PAGE,
   setPage: (page) => set({ page }),
   resetPage: () => set({ page: INITIAL_PAGE }),
 }));
 
-export const searchPageStore = create<PageStore>((set) => ({
+export const productsSearchPageStore = create<PageStore>((set) => ({
   page: INITIAL_PAGE,
   setPage: (page) => set({ page }),
   resetPage: () => set({ page: INITIAL_PAGE }),
 }));
 
-export const cartPageStore = create<PageStore>((set) => ({
+export const customersPageStore = create<PageStore>((set) => ({
   page: INITIAL_PAGE,
   setPage: (page) => set({ page }),
   resetPage: () => set({ page: INITIAL_PAGE }),
 }));
 
-export const orderPageStore = create<PageStore>((set) => ({
-  page: INITIAL_PAGE,
-  setPage: (page) => set({ page }),
-  resetPage: () => set({ page: INITIAL_PAGE }),
-}));
-
-export const individualOrderPageStore = create<PageStore>((set) => ({
+export const customersSearchPageStore = create<PageStore>((set) => ({
   page: INITIAL_PAGE,
   setPage: (page) => set({ page }),
   resetPage: () => set({ page: INITIAL_PAGE }),

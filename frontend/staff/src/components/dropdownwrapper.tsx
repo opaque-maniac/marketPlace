@@ -1,12 +1,13 @@
 import { ReactNode } from "react";
 import { motion, AnimatePresence } from "framer-motion";
 
-interface DropdownWrapperProps {
-  isOpen: boolean; // Controls whether the dropdown is visible
-  children: ReactNode; // The content to display inside the dropdown
+interface Props {
+  isOpen: boolean;
+  children: ReactNode;
 }
 
-const DropdownWrapper = ({ isOpen, children }: DropdownWrapperProps) => {
+const DropdownWrapper = ({ isOpen, children }: Props) => {
+  // Dropdown animation variants
   const variants = {
     open: {
       opacity: 1,
@@ -32,6 +33,7 @@ const DropdownWrapper = ({ isOpen, children }: DropdownWrapperProps) => {
           style={{
             position: "absolute",
             zIndex: 1000,
+            // Adjust position as needed
           }}
         >
           <div className="dropdown-content">{children}</div>

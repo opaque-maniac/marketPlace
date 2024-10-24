@@ -1,22 +1,29 @@
 import { Helmet } from "react-helmet";
 import Transition from "../../components/transition";
-import { Link, useNavigate } from "react-router-dom";
+import { Link, useNavigate, useParams } from "react-router-dom";
 import { useMutation } from "@tanstack/react-query";
-import { sendNewProduct } from "../../utils/mutations/products";
-import { FormEventHandler, useContext, useState } from "react";
+import { updateProduct } from "../../utils/mutations/products";
+import { FormEventHandler, useContext, useEffect } from "react";
 import Loader from "../../components/loader";
-import {ErrorContext} from "../../utils/errorContext";
+import { ErrorContext, ShowErrorContext } from "../../utils/errorContext";
 import { ErrorResponse } from "../../utils/types";
 import errorHandler from "../../utils/errorHandler";
-import ShowError from "../../components/showErr";
 
 const NewProductPage = () => {
   const navigate = useNavigate();
   const [, setError] = useContext(ErrorContext);
-  const [err, setErr] = useState<string | null>(null);
+  const [, setErr] = useContext(ShowErrorContext);
+  const { id } = useParams();
+
+  useEffect(() => {
+    if (!id) {
+      navigate("/404", { replace: true });
+    }
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, []);
 
   const mutation = useMutation({
-    mutationFn: sendNewProduct,
+    mutationFn: updateProduct,
     onSuccess: (data) => {
       if (data) {
         navigate(`/products/${data.product.id}`, { replace: true });
@@ -48,18 +55,14 @@ const NewProductPage = () => {
   const submitHandler: FormEventHandler<HTMLFormElement> = (e) => {
     e.preventDefault();
     const formData = new FormData(e.currentTarget);
-    mutation.mutate({ data: formData });
-  };
-
-  const callback = () => {
-    setErr(() => null);
+    mutation.mutate({ id: id as string, formData });
   };
 
   return (
     <Transition>
       <Helmet>
-        <title>New Product</title>
-        <meta name="description" content="Add a new product" />
+        <title>Update Product {id}</title>
+        <meta name="description" content={`Update Product ${id}`} />
         <meta name="robots" content="noindex, nofollow" />
         <meta name="googlebot" content="noindex, nofollow" />
         <meta name="google" content="nositelinkssearchbox" />
@@ -68,13 +71,12 @@ const NewProductPage = () => {
       <main role="main" className="h-full pt-20 relative pb-6">
         <p className="absolute top-4 left-4">
           {" "}
-          Home / <span className="font-extrabold">New</span>
+          Home / <span className="font-extrabold">Update Product</span>
         </p>
         <div className="pt-4">
-          <h2 className="text-center text-3xl md:pb-0 pb-4">New Product</h2>
-        </div>
-        <div className="h-12">
-          {err && <ShowError error={err} callback={callback} />}
+          <h2 className="text-center text-3xl md:pb-0 pb-4">
+            Product {id ?? ""}
+          </h2>
         </div>
         <section
           className="md:flex justify-center items-center"

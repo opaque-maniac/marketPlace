@@ -154,3 +154,9 @@ export interface RegisterStaffRequest extends Request {
     password: string;
   };
 }
+
+export interface StaffUpdateCommentRequest extends AuthenticatedRequest {
+  body: {
+    message: string;
+  };
+}

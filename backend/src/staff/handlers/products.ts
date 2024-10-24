@@ -175,14 +175,14 @@ export const deleteProduct = async (
 
 // Function to search for products
 export const searchProduct = async (
-  req: ProductSearchRequest,
+  req: AuthenticatedRequest,
   res: Response,
   next: NextFunction
 ) => {
   try {
-    const { query } = req.body;
     const page = req.query.page ? parseInt(req.query.page as string) : 1;
     const limit = req.query.limit ? parseInt(req.query.limit as string) : 10;
+    const query = req.query.query ? (req.query.query as string) : "";
 
     const products = await prisma.product.findMany({
       where: {
@@ -194,12 +194,15 @@ export const searchProduct = async (
             },
           },
           {
-            description: {
+            id: {
               contains: query,
               mode: "insensitive",
             },
           },
         ],
+      },
+      include: {
+        images: true,
       },
       skip: (page - 1) * limit,
       take: limit + 1,
@@ -214,6 +217,7 @@ export const searchProduct = async (
     return res.status(200).json({
       message: "Fetched product query",
       products,
+      hasNext,
     });
   } catch (e) {
     return next(e as Error);

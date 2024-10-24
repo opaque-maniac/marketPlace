@@ -26,7 +26,7 @@ const Navigation = ({ callback }: Props) => {
         <nav role="navigation">
           {user ? (
             <div>
-              <AuthNavigation />
+              <AuthNavigation callback={callback} />
             </div>
           ) : (
             <div className="flex flex-col justify-center items-center gap-4 md:h-600 h-400 px-2">

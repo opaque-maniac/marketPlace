@@ -2,43 +2,49 @@ import { useQuery } from "@tanstack/react-query";
 import Transition from "../../components/transition";
 import { ErrorResponse } from "../../utils/types";
 import errorHandler from "../../utils/errorHandler";
-import { useNavigate, useParams } from "react-router-dom";
+import { useLocation, useNavigate } from "react-router-dom";
 import { useContext, useEffect } from "react";
-import { explorePageStore } from "../../utils/pageStore";
+import { customersPageStore } from "../../utils/pageStore";
 import { ErrorContext, ShowErrorContext } from "../../utils/errorContext";
 import ArrowLeft from "../../components/icons/arrowleft";
 import ArrowRight from "../../components/icons/arrowright";
 import { Helmet } from "react-helmet";
-import { fetchCategoryProducts } from "../../utils/queries/products";
-import ProductList from "../../components/products/productlist";
 import PageLoader from "../../components/pageloader";
+import { fetchCustomers } from "../../utils/queries/customers";
+import Customer from "../../components/customers/customer";
 
-const CategoriesPage = () => {
-  const { category } = useParams();
-  const page = explorePageStore((state) => state.page);
-  const setPage = explorePageStore((state) => state.setPage);
+const CustomersPage = () => {
+  const page = customersPageStore((state) => state.page);
+  const setPage = customersPageStore((state) => state.setPage);
   const [, setError] = useContext(ErrorContext);
+  const location = useLocation();
 
   const navigate = useNavigate();
   const [, setErr] = useContext(ShowErrorContext);
 
-  if (!category) {
-    setError(true);
-    navigate("/500", { replace: true });
-  }
-
+  // When page mounts
   useEffect(() => {
-    navigate(`/categories/${category}?page=${page}`, { replace: true });
+    setPage(1);
+  }, [setPage]);
 
-    return () => {
-      setPage(1);
-    };
-    // eslint-disable-next-line react-hooks/exhaustive-deps
+  // When page state changes
+  useEffect(() => {
+    navigate(`/customers?page=${page}`, { replace: true });
+    window.scrollTo(0, 0);
   }, [page, navigate]);
 
+  // When page unmounts
+  useEffect(() => {
+    return () => {
+      if (location.pathname.includes("/customers")) {
+        setPage(1);
+      }
+    };
+  }, [location.pathname, setPage]);
+
   const query = useQuery({
-    queryKey: ["products", page, 20, category as string],
-    queryFn: fetchCategoryProducts,
+    queryKey: ["products", page, 20],
+    queryFn: fetchCustomers,
   });
 
   if (query.isError) {
@@ -81,13 +87,17 @@ const CategoriesPage = () => {
     }
   };
 
-  const data = query.data?.data;
+  const data = query.data;
+  const customers = data?.customers || [];
 
   return (
     <Transition>
       <Helmet>
-        <title>Explore</title>
-        <meta name="description" content="Orders page for Hazina seller app" />
+        <title>Customers</title>
+        <meta
+          name="description"
+          content="Customers page for Hazina staff app"
+        />
         <meta name="robots" content="noindex, nofollow" />
         <meta name="googlebot" content="noindex, nofollow" />
         <meta name="google" content="nositelinkssearchbox" />
@@ -100,22 +110,34 @@ const CategoriesPage = () => {
           {query.isLoading ? (
             <PageLoader />
           ) : (
-            <div
-              style={{ minHeight: "calc(100vh - 1.4rem )" }}
-              className="h-full w-full"
-            >
-              {data && (
-                <ProductList
-                  full={true}
-                  products={data}
-                  color="black"
-                  overflow={false}
-                />
+            <div className="h-full w-full">
+              {customers.length === 0 ? (
+                <section
+                  style={{ minHeight: "calc(100vh - 1.4rem )" }}
+                  className="h-full flex justify-center items-center"
+                >
+                  <div>
+                    <p className="text-xl font-semibold">No Customers Found</p>
+                  </div>
+                </section>
+              ) : (
+                <section
+                  style={{ minHeight: "calc(100vh - 1.4rem )" }}
+                  className="h-full"
+                >
+                  <ul className="flex md:justify-evenly justify-center items-center md:flex-row flex-col md:gap-0 gap-4">
+                    {customers.map((customer) => (
+                      <li key={customer.id}>
+                        <Customer customer={customer} />
+                      </li>
+                    ))}
+                  </ul>
+                </section>
               )}
             </div>
           )}
         </section>
-        <section className="flex justify-center items-center gap-6 py-2">
+        <section className="flex justify-center items-center gap-6 py-4">
           <div>
             <button
               disabled={!data || page == 1}
@@ -141,4 +163,4 @@ const CategoriesPage = () => {
   );
 };
 
-export default CategoriesPage;
+export default CustomersPage;

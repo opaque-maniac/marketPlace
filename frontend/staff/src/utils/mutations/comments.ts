@@ -1,17 +1,10 @@
 import { getAccessToken } from "../cookies";
-import { tokenError } from "../errors";
-import { ErrorResponse, SuccessUpdateProductRespnse } from "../types";
+import { responseError, tokenError } from "../errors";
+import { ErrorResponse } from "../types";
 
-export const updateProduct = async ({
-  id,
-  formData,
-}: {
-  id: string;
-  formData: FormData;
-}) => {
+export const deleteComment = async ({ id }: { id: string }) => {
   try {
-    const url = `http://localhost:3020/staff/products/${id}`;
-
+    const url = `http://localhost:3020/staff/comments/${id}`;
     const token = getAccessToken();
 
     if (!token) {
@@ -19,12 +12,10 @@ export const updateProduct = async ({
     }
 
     const options = {
-      method: "PUT",
+      method: "DELETE",
       headers: {
-        "Content-Type": "application/json",
         Authorization: `Bearer ${token}`,
       },
-      body: formData,
     };
 
     const response = await fetch(url, options);
@@ -35,12 +26,12 @@ export const updateProduct = async ({
         throw new Error(JSON.stringify(error));
       } catch (e) {
         if (e instanceof Error) {
-          throw new Error(e.message);
+          throw responseError();
         }
       }
     }
 
-    const data = (await response.json()) as SuccessUpdateProductRespnse;
+    const data = (await response.json()) as { message: string };
     return data;
   } catch (e) {
     if (e instanceof Error) {

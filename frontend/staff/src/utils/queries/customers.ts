@@ -1,16 +1,20 @@
-import { getAccessToken } from "../cookies";
+import { QueryFunction } from "@tanstack/react-query";
+import {
+  ErrorResponse,
+  SuccesCustomersSearchResponse,
+  SuccessCustomersResponse,
+} from "../types";
 import { responseError, tokenError } from "../errors";
-import { ErrorResponse, SuccessCommentCreateResponse } from "../types";
+import { getAccessToken } from "../cookies";
 
-export const sendComment = async ({
-  message,
-  id,
-}: {
-  message: string;
-  id: string;
-}) => {
+export const fetchCustomers: QueryFunction<
+  SuccessCustomersResponse,
+  ["products", number, number]
+> = async ({ queryKey }) => {
   try {
-    const url = `http://localhost:3020/customers/products/${id}/comments`;
+    const [, page, limit] = queryKey;
+    const url = `http://localhost:3020/staff/customers?page=${page}&limit=${limit}`;
+
     const token = getAccessToken();
 
     if (!token) {
@@ -18,12 +22,11 @@ export const sendComment = async ({
     }
 
     const options = {
-      method: "POST",
+      method: "GET",
       headers: {
-        "Content-Type": "application/json",
         Authorization: `Bearer ${token}`,
+        "Content-Type": "application/json",
       },
-      body: JSON.stringify({ message }),
     };
 
     const response = await fetch(url, options);
@@ -39,8 +42,7 @@ export const sendComment = async ({
       }
     }
 
-    const data = (await response.json()) as SuccessCommentCreateResponse;
-    return data;
+    return response.json() as Promise<SuccessCustomersResponse>;
   } catch (e) {
     if (e instanceof Error) {
       throw new Error(e.message);
@@ -49,15 +51,15 @@ export const sendComment = async ({
   }
 };
 
-export const deleteComment = async ({
-  productId,
-  commentId,
-}: {
-  productId: string;
-  commentId: string;
-}) => {
+export const searchCustomers: QueryFunction<
+  SuccesCustomersSearchResponse,
+  ["query", number, number, string]
+> = async ({ queryKey }) => {
   try {
-    const url = `http://localhost:3020/customers/products/${productId}/comments/${commentId}`;
+    const [, page, limit, query] = queryKey;
+
+    const url = `http://localhost:3020/staff/customers/discover/search?page=${page}&limit=${limit}&query=${query}`;
+
     const token = getAccessToken();
 
     if (!token) {
@@ -65,9 +67,10 @@ export const deleteComment = async ({
     }
 
     const options = {
-      method: "DELETE",
+      method: "GET",
       headers: {
         Authorization: `Bearer ${token}`,
+        "Content-Type": "application/json",
       },
     };
 
@@ -84,8 +87,7 @@ export const deleteComment = async ({
       }
     }
 
-    const data = (await response.json()) as { message: string };
-    return data;
+    return response.json() as Promise<SuccesCustomersSearchResponse>;
   } catch (e) {
     if (e instanceof Error) {
       throw new Error(e.message);

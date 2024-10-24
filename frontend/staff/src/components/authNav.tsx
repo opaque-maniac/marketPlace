@@ -1,60 +1,90 @@
-import ProductsDropMenu from "./dropmenus/products";
-import CustomersDropMenu from "./dropmenus/customers";
-import SellerDropMenu from "./dropmenus/seller";
-import StaffDropMenu from "./dropmenus/staff";
-import CartDropMenu from "./dropmenus/cart";
-import CartItemsDropMenu from "./dropmenus/cartitems";
-import WishlistDropMenu from "./dropmenus/wishlist";
-import WishlistItemsDropMenu from "./dropmenus/wishlistitems";
-import OrdersDropMenu from "./dropmenus/orders";
-import OrderItemsDropMenu from "./dropmenus/orderitems";
-import ComplaintsDropMenu from "./dropmenus/complaints";
-import CommentDropMenu from "./dropmenus/comments";
+import NavItem from "./navitem";
 
-const AuthNavigation = () => {
+type Data = {
+  placeholder: string;
+  label: string;
+  url: string;
+};
+
+const data: Data[] = [
+  {
+    placeholder: "Find Product",
+    label: "Products",
+    url: "/products",
+  },
+  {
+    placeholder: "Find Customer",
+    label: "Customers",
+    url: "/customers",
+  },
+  {
+    placeholder: "Find Seller",
+    label: "Seller",
+    url: "/sellers",
+  },
+  {
+    placeholder: "Find Staff",
+    label: "Staff",
+    url: "/staff",
+  },
+  {
+    placeholder: "Cart ID or email",
+    label: "Cart",
+    url: "/carts",
+  },
+  {
+    placeholder: "Cart Item ID",
+    label: "Cart Items",
+    url: "/cartitems",
+  },
+  {
+    placeholder: "Wishlist ID or email",
+    label: "Wishlists",
+    url: "/wishlists",
+  },
+  {
+    placeholder: "Wishlist Item ID",
+    label: "Wishliste Items",
+    url: "/wishlistitems",
+  },
+  {
+    placeholder: "Order ID",
+    label: "Order",
+    url: "/orders",
+  },
+  {
+    placeholder: "Order Item ID",
+    label: "Order Items",
+    url: "/orderitems",
+  },
+  {
+    placeholder: "Find Complaint",
+    label: "Complaints",
+    url: "/complaints",
+  },
+];
+
+interface Props {
+  callback: () => void;
+}
+
+const AuthNavigaton = ({ callback }: Props) => {
   return (
-    <ul
-      style={{ overflowY: "scroll" }}
-      className="h-screen scroll-mod-col pt-4"
-    >
-      <li className="border bg-gray-200 h-14 mb-4 flex justify-between items-center px-2">
-        <ProductsDropMenu />
-      </li>
-      <li className="border bg-gray-200 h-14 mb-4 flex justify-between items-center px-2">
-        <CustomersDropMenu />
-      </li>
-      <li className="border bg-gray-200 h-14 mb-4 flex justify-between items-center px-2">
-        <SellerDropMenu />
-      </li>
-      <li className="border bg-gray-200 h-14 mb-4 flex justify-between items-center px-2">
-        <StaffDropMenu />
-      </li>
-      <li className="border bg-gray-200 h-14 mb-4 flex justify-between items-center px-2">
-        <CartDropMenu />
-      </li>
-      <li className="border bg-gray-200 h-14 mb-4 flex justify-between items-center px-2">
-        <CartItemsDropMenu />
-      </li>
-      <li className="border bg-gray-200 h-14 mb-4 flex justify-between items-center px-2">
-        <WishlistDropMenu />
-      </li>
-      <li className="border bg-gray-200 h-14 mb-4 flex justify-between items-center px-2">
-        <WishlistItemsDropMenu />
-      </li>
-      <li className="border bg-gray-200 h-14 mb-4 flex justify-between items-center px-2">
-        <OrdersDropMenu />
-      </li>
-      <li className="border bg-gray-200 h-14 mb-4 flex justify-between items-center px-2">
-        <OrderItemsDropMenu />
-      </li>
-      <li className="border bg-gray-200 h-14 mb-4 flex justify-between items-center px-2">
-        <CommentDropMenu />
-      </li>
-      <li className="border bg-gray-200 h-14 mb-4 flex justify-between items-center px-2">
-        <ComplaintsDropMenu />
-      </li>
-    </ul>
+    <nav className="h-screen overflow-y-scroll scroll-v-mod">
+      <ul>
+        {data.map((item) => (
+          <li key={item.label} className="mb-4">
+            <NavItem
+              placeholder={item.placeholder}
+              url={item.url}
+              label={item.label}
+              callback={callback}
+            />
+          </li>
+        ))}
+      </ul>
+    </nav>
   );
 };
 
-export default AuthNavigation;
+export default AuthNavigaton;
