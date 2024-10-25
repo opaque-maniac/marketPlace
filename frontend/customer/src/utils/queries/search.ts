@@ -4,19 +4,16 @@ import { responseError } from "../errors";
 
 export const searchProducts: QueryFunction<
   SuccessSearchResponse,
-  ["search", string | null, string | null, number, number]
+  ["search", string | null, number, number]
 > = async ({ queryKey }) => {
   try {
-    const [, query, category, page, limit] = queryKey;
+    const [, query, page, limit] = queryKey;
     let url = `http://localhost:3020/customers/products?page=${page}&limit=${limit}`;
 
     if (query && query.trim() !== "") {
       url += `&query=${query}`;
     }
 
-    if (category && category.trim() !== "") {
-      url += `&category=${category}`;
-    }
     const options = {
       method: "GET",
       headers: {

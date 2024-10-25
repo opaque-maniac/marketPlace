@@ -166,7 +166,6 @@ export const deleteProduct = async (
 
     return res.status(203).json({
       message: "Product deleted successfully",
-      product,
     });
   } catch (e) {
     return next(e as Error);

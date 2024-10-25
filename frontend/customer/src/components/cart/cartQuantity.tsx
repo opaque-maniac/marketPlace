@@ -71,7 +71,6 @@ const CartQuantity = ({ quantity, id }: Props) => {
 
   const handlePlus: MouseEventHandler<HTMLButtonElement> = (e) => {
     e.preventDefault();
-    setAdded(() => true);
     setAmmount(() => ammount + 1);
   };
 
@@ -79,7 +78,7 @@ const CartQuantity = ({ quantity, id }: Props) => {
     <div className="flex justify-center items-center">
       <div>
         <button
-          disabled={quantity === 1 || mutation.isPending}
+          disabled={ammount === 1 || mutation.isPending}
           onClick={handleMinus}
           className="h-10 w-10 rounded-tl-lg rounded-bl-lg flex justify-center items-center border border-black/25"
         >

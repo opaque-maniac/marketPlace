@@ -24,6 +24,7 @@ const OrderItems = ({ id }: Props) => {
     e.preventDefault();
     if (page > 1) {
       setPage(page - 1);
+      window.scrollTo(0, 0);
     }
   };
 
@@ -31,6 +32,7 @@ const OrderItems = ({ id }: Props) => {
     e.preventDefault();
     if (query.data?.hasNext) {
       setPage(page + 1);
+      window.scrollTo(0, 0);
     }
   };
 

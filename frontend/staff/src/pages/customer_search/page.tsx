@@ -2,7 +2,7 @@ import { useQuery } from "@tanstack/react-query";
 import Transition from "../../components/transition";
 import { ErrorResponse } from "../../utils/types";
 import errorHandler from "../../utils/errorHandler";
-import { useLocation, useNavigate, useParams } from "react-router-dom";
+import { useNavigate, useParams } from "react-router-dom";
 import { useContext, useEffect } from "react";
 import { customersSearchPageStore } from "../../utils/pageStore";
 import { ErrorContext, ShowErrorContext } from "../../utils/errorContext";
@@ -17,7 +17,6 @@ const CustomersSearchPage = () => {
   const page = customersSearchPageStore((state) => state.page);
   const setPage = customersSearchPageStore((state) => state.setPage);
   const [, setError] = useContext(ErrorContext);
-  const location = useLocation();
 
   const navigate = useNavigate();
   const [, setErr] = useContext(ShowErrorContext);
@@ -26,25 +25,14 @@ const CustomersSearchPage = () => {
   // When page mounts
   useEffect(() => {
     if (!_query) {
-      navigate("/404", { replace: true });
+      navigate("/customers", { replace: true });
     }
     setPage(1);
-  }, [setPage, navigate, _query]);
 
-  // When page state changes
-  useEffect(() => {
-    navigate(`/customers/search/${_query}?page=${page}`, { replace: true });
-    window.scrollTo(0, 0);
-  }, [page, navigate, _query]);
-
-  // When page unmounts
-  useEffect(() => {
     return () => {
-      if (location.pathname !== "/customers") {
-        setPage(1);
-      }
+      setPage(1);
     };
-  }, [location.pathname, setPage]);
+  }, [setPage, navigate, _query]);
 
   const query = useQuery({
     queryKey: ["query", page, 20, _query as string],

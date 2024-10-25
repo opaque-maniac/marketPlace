@@ -26,26 +26,16 @@ const ProductSearchPage = () => {
   // When page mounts
   useEffect(() => {
     setPage(1);
+
+    return () => {
+      setPage(1);
+    };
   }, [setPage]);
-
-  useEffect(() => {
-    if (!query) {
-      navigate("/products", { replace: true });
-    }
-  }, []);
-
-  // When page state changes
-  useEffect(() => {
-    navigate(`/products/search/${_query}?page=${page}`, {
-      replace: true,
-    });
-    window.scrollTo(0, 0);
-  }, [page, navigate, _query]);
 
   // When page unmounts
   useEffect(() => {
     return () => {
-      if (location.pathname !== "/explore") {
+      if (location.pathname.includes("/products")) {
         setPage(1);
       }
     };
@@ -83,7 +73,7 @@ const ProductSearchPage = () => {
     if (page > 1) {
       const newPage = page - 1;
       setPage(newPage);
-      // navigate(`?page=${newPage}`);
+      window.scrollTo(0, 0);
     }
   };
 
@@ -92,7 +82,7 @@ const ProductSearchPage = () => {
     if (query.data?.hasNext) {
       const newPage = page + 1;
       setPage(newPage);
-      // navigate(`?page=${newPage}`);
+      window.scrollTo(0, 0);
     }
   };
 

@@ -3,9 +3,8 @@ import Transition from "../../components/transition";
 import Loader from "../../components/loader";
 import { ErrorResponse } from "../../utils/types";
 import errorHandler from "../../utils/errorHandler";
-import { useLocation, useNavigate } from "react-router-dom";
+import { useNavigate } from "react-router-dom";
 import { useCallback, useContext, useEffect } from "react";
-import { cartPageStore } from "../../utils/pageStore";
 import { ErrorContext, ShowErrorContext } from "../../utils/errorContext";
 import ArrowLeft from "../../components/icons/arrowleft";
 import ArrowRight from "../../components/icons/arrowright";
@@ -16,33 +15,21 @@ import CartList from "../../components/cart/cartlist";
 import OrderCart from "../../components/cart/ordercart";
 
 const CartPage = () => {
-  const page = cartPageStore((state) => state.page);
-  const setPage = cartPageStore((state) => state.setPage);
   const [, setError] = useContext(ErrorContext);
 
   const navigate = useNavigate();
   const [, setErr] = useContext(ShowErrorContext);
-  const location = useLocation();
-
-  // For pagination
-  useEffect(() => {
-    setPage(1);
-  }, [setPage]);
+  const urlParams = new URLSearchParams(window.location.search);
 
   // When page state changes
   useEffect(() => {
-    navigate(`/cart?page=${page}`, { replace: true });
-    window.scrollTo(0, 0);
-  }, [page, navigate]);
+    if (!urlParams.get("page")) {
+      navigate("/cart?page=1");
+    }
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, []);
 
-  // When page unmounts
-  useEffect(() => {
-    return () => {
-      if (location.pathname !== "/explore") {
-        setPage(1);
-      }
-    };
-  }, [location.pathname, setPage]);
+  const page = Number(urlParams.get("page")) || 1;
 
   const query = useQuery({
     queryKey: ["cart", page, 10],
@@ -77,8 +64,8 @@ const CartPage = () => {
     e.preventDefault();
     if (page > 1) {
       const newPage = page - 1;
-      setPage(newPage);
-      // navigate(`?page=${newPage}`);
+      navigate(`/cart?page=${newPage}`);
+      window.scrollTo(0, 0);
     }
   };
 
@@ -86,8 +73,8 @@ const CartPage = () => {
     e.preventDefault();
     if (query.data?.hasNext) {
       const newPage = page + 1;
-      setPage(newPage);
-      // navigate(`?page=${newPage}`);
+      navigate(`/cart?page=${newPage}`);
+      window.scrollTo(0, 0);
     }
   };
 

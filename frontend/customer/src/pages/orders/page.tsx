@@ -2,9 +2,8 @@ import { useQuery } from "@tanstack/react-query";
 import Transition from "../../components/transition";
 import { ErrorResponse } from "../../utils/types";
 import errorHandler from "../../utils/errorHandler";
-import { useLocation, useNavigate } from "react-router-dom";
+import { useNavigate } from "react-router-dom";
 import { useContext, useEffect, useState } from "react";
-import { explorePageStore } from "../../utils/pageStore";
 import { ErrorContext, ShowErrorContext } from "../../utils/errorContext";
 import ArrowLeft from "../../components/icons/arrowleft";
 import ArrowRight from "../../components/icons/arrowright";
@@ -15,37 +14,23 @@ import OrderItem from "../../components/orders/orderitem";
 
 const OrdersPage = () => {
   const [status, setStatus] = useState<string>("");
-
-  const page = explorePageStore((state) => state.page);
-  const setPage = explorePageStore((state) => state.setPage);
   const [, setError] = useContext(ErrorContext);
-  const location = useLocation();
 
   const navigate = useNavigate();
   const [, setErr] = useContext(ShowErrorContext);
+  const page = new URLSearchParams(window.location.search).get("page");
 
-  // When page mounts
   useEffect(() => {
-    setPage(1);
-  }, [setPage]);
+    if (!page) {
+      navigate("/orders?page=1", { replace: true });
+    }
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, []);
 
-  // When page state changes
-  useEffect(() => {
-    navigate(`/orders?page=${page}`, { replace: true });
-    window.scrollTo(0, 0);
-  }, [page, navigate]);
-
-  // When page unmounts
-  useEffect(() => {
-    return () => {
-      if (location.pathname !== "/explore") {
-        setPage(1);
-      }
-    };
-  }, [location.pathname, setPage]);
+  const _page = Number(page) || 1;
 
   const query = useQuery({
-    queryKey: ["orders", page, 20, status],
+    queryKey: ["orders", _page, 20, status],
     queryFn: fetchOrders,
   });
 
@@ -73,19 +58,19 @@ const OrdersPage = () => {
 
   const handlePrev = (e: React.MouseEvent) => {
     e.preventDefault();
-    if (page > 1) {
-      const newPage = page - 1;
-      setPage(newPage);
-      // navigate(`?page=${newPage}`);
+    if (_page > 1) {
+      const newPage = _page - 1;
+      navigate(`/orders?page=${newPage}`);
+      window.scrollTo(0, 0);
     }
   };
 
   const handleNext = (e: React.MouseEvent) => {
     e.preventDefault();
     if (query.data?.hasNext) {
-      const newPage = page + 1;
-      setPage(newPage);
-      // navigate(`?page=${newPage}`);
+      const newPage = _page + 1;
+      navigate(`/orders?page=${newPage}`);
+      window.scrollTo(0, 0);
     }
   };
 
@@ -159,7 +144,7 @@ const OrdersPage = () => {
         <section className="flex justify-center items-center gap-6 py-4">
           <div>
             <button
-              disabled={!data || page == 1}
+              disabled={!data || _page == 1}
               className="w-8 h-8 p-1 rounded-full border border-black"
               onClick={handlePrev}
             >

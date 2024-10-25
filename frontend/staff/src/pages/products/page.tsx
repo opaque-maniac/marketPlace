@@ -2,7 +2,7 @@ import { useQuery } from "@tanstack/react-query";
 import Transition from "../../components/transition";
 import { ErrorResponse } from "../../utils/types";
 import errorHandler from "../../utils/errorHandler";
-import { useLocation, useNavigate } from "react-router-dom";
+import { useNavigate } from "react-router-dom";
 import { useContext, useEffect } from "react";
 import { productsPageStore } from "../../utils/pageStore";
 import { ErrorContext, ShowErrorContext } from "../../utils/errorContext";
@@ -17,7 +17,6 @@ const ProductsPage = () => {
   const page = productsPageStore((state) => state.page);
   const setPage = productsPageStore((state) => state.setPage);
   const [, setError] = useContext(ErrorContext);
-  const location = useLocation();
 
   const navigate = useNavigate();
   const [, setErr] = useContext(ShowErrorContext);
@@ -25,22 +24,11 @@ const ProductsPage = () => {
   // When page mounts
   useEffect(() => {
     setPage(1);
-  }, [setPage]);
 
-  // When page state changes
-  useEffect(() => {
-    navigate(`/products?page=${page}`, { replace: true });
-    window.scrollTo(0, 0);
-  }, [page, navigate]);
-
-  // When page unmounts
-  useEffect(() => {
     return () => {
-      if (location.pathname !== "/explore") {
-        setPage(1);
-      }
+      setPage(1);
     };
-  }, [location.pathname, setPage]);
+  }, [setPage]);
 
   const query = useQuery({
     queryKey: ["products", page, 20],
@@ -74,7 +62,7 @@ const ProductsPage = () => {
     if (page > 1) {
       const newPage = page - 1;
       setPage(newPage);
-      // navigate(`?page=${newPage}`);
+      window.scrollTo(0, 0);
     }
   };
 
@@ -83,7 +71,7 @@ const ProductsPage = () => {
     if (query.data?.hasNext) {
       const newPage = page + 1;
       setPage(newPage);
-      // navigate(`?page=${newPage}`);
+      window.scrollTo(0, 0);
     }
   };
 

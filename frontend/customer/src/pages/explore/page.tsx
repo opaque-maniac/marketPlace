@@ -2,9 +2,8 @@ import { useQuery } from "@tanstack/react-query";
 import Transition from "../../components/transition";
 import { ErrorResponse } from "../../utils/types";
 import errorHandler from "../../utils/errorHandler";
-import { useLocation, useNavigate } from "react-router-dom";
+import { useNavigate } from "react-router-dom";
 import { useContext, useEffect } from "react";
-import { explorePageStore } from "../../utils/pageStore";
 import { ErrorContext, ShowErrorContext } from "../../utils/errorContext";
 import ArrowLeft from "../../components/icons/arrowleft";
 import ArrowRight from "../../components/icons/arrowright";
@@ -14,33 +13,22 @@ import ProductList from "../../components/products/productlist";
 import PageLoader from "../../components/pageloader";
 
 const ExplorePage = () => {
-  const page = explorePageStore((state) => state.page);
-  const setPage = explorePageStore((state) => state.setPage);
   const [, setError] = useContext(ErrorContext);
-  const location = useLocation();
 
   const navigate = useNavigate();
   const [, setErr] = useContext(ShowErrorContext);
 
-  // When page mounts
-  useEffect(() => {
-    setPage(1);
-  }, [setPage]);
+  const urlParams = new URLSearchParams(window.location.search);
 
   // When page state changes
   useEffect(() => {
-    navigate(`/explore?page=${page}`, { replace: true });
-    window.scrollTo(0, 0);
-  }, [page, navigate]);
+    if (!urlParams.get("page")) {
+      navigate("/explore?page=1");
+    }
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, []);
 
-  // When page unmounts
-  useEffect(() => {
-    return () => {
-      if (location.pathname !== "/explore") {
-        setPage(1);
-      }
-    };
-  }, [location.pathname, setPage]);
+  const page = Number(urlParams.get("page")) || 1;
 
   const query = useQuery({
     queryKey: ["products", page, 20],
@@ -73,8 +61,8 @@ const ExplorePage = () => {
     e.preventDefault();
     if (page > 1) {
       const newPage = page - 1;
-      setPage(newPage);
-      // navigate(`?page=${newPage}`);
+      navigate(`/explore?page=${newPage}`);
+      window.scrollTo(0, 0);
     }
   };
 
@@ -82,8 +70,8 @@ const ExplorePage = () => {
     e.preventDefault();
     if (query.data?.hasNext) {
       const newPage = page + 1;
-      setPage(newPage);
-      // navigate(`?page=${newPage}`);
+      navigate(`/explore?page=${newPage}`);
+      window.scrollTo(0, 0);
     }
   };
 

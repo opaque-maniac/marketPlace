@@ -3,7 +3,6 @@ import { ErrorResponse } from "../../utils/types";
 import errorHandler from "../../utils/errorHandler";
 import { useNavigate } from "react-router-dom";
 import { useContext, useEffect } from "react";
-import { searchPageStore } from "../../utils/pageStore";
 import { ShowErrorContext, ErrorContext } from "../../utils/errorContext";
 import ArrowLeft from "../../components/icons/arrowleft";
 import ArrowRight from "../../components/icons/arrowright";
@@ -11,29 +10,35 @@ import { Helmet } from "react-helmet";
 import { useQuery } from "@tanstack/react-query";
 import { searchProducts } from "../../utils/queries/search";
 import Loader from "../../components/loader";
-import ProductList from "../../components/productlist";
+import ProductList from "../../components/products/productlist";
 
 const SearchPage = () => {
-  const page = searchPageStore((state) => state.page);
-  const setPage = searchPageStore((state) => state.setPage);
   const [, setError] = useContext(ErrorContext);
   const search = new URLSearchParams(location.search).get("query");
-  const category = new URLSearchParams(location.search).get("category");
 
   const navigate = useNavigate();
   const [, setErr] = useContext(ShowErrorContext);
 
+  const page = new URLSearchParams(window.location.search).get("page");
+
   useEffect(() => {
-    navigate(`/search?page=${page}`, { replace: true });
-    return () => {
-      setPage(1);
-    };
-    // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [page, navigate]);
+    if (!page || !search) {
+      const params = new URLSearchParams(window.location.search);
+      if (!page) {
+        params.set("page", "1");
+      }
+      if (!search) {
+        params.set("query", "");
+      }
+      navigate(`/search?${params.toString()}`, { replace: true });
+    }
+  });
+
+  const _page = Number(page) || 1;
 
   const query = useQuery({
     queryFn: searchProducts,
-    queryKey: ["search", search, category, page, 20],
+    queryKey: ["search", search, _page, 20],
   });
 
   if (query.isError) {
@@ -60,19 +65,19 @@ const SearchPage = () => {
 
   const handlePrev = (e: React.MouseEvent) => {
     e.preventDefault();
-    if (page > 1) {
-      const newPage = page - 1;
-      setPage(newPage);
-      // navigate(`?page=${newPage}`);
+    if (_page > 1) {
+      const newPage = _page - 1;
+      navigate(`/search?query=${search || ""}&page=${newPage}`);
+      window.scrollTo(0, 0);
     }
   };
 
   const handleNext = (e: React.MouseEvent) => {
     e.preventDefault();
     if (query.data?.hasNext) {
-      const newPage = page + 1;
-      setPage(newPage);
-      // navigate(`?page=${newPage}`);
+      const newPage = _page + 1;
+      navigate(`/search?query=${search || ""}&page=${newPage}`);
+      window.scrollTo(0, 0);
     }
   };
 
@@ -114,7 +119,7 @@ const SearchPage = () => {
         <section className="flex justify-center items-center gap-6 py-2">
           <div>
             <button
-              disabled={!data || page == 1}
+              disabled={!data || _page == 1}
               className="w-8 h-8 p-1 rounded-full border border-black"
               onClick={handlePrev}
             >

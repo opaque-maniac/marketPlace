@@ -3,9 +3,8 @@ import Transition from "../../components/transition";
 import Loader from "../../components/loader";
 import { ErrorResponse } from "../../utils/types";
 import errorHandler from "../../utils/errorHandler";
-import { useLocation, useNavigate } from "react-router-dom";
+import { useNavigate } from "react-router-dom";
 import { useCallback, useContext, useEffect } from "react";
-import { cartPageStore } from "../../utils/pageStore";
 import { ErrorContext, ShowErrorContext } from "../../utils/errorContext";
 import ArrowLeft from "../../components/icons/arrowleft";
 import ArrowRight from "../../components/icons/arrowright";
@@ -15,33 +14,20 @@ import EmptyWishlist from "../../components/wishlist/emptywishlist";
 import Wishlist from "../../components/wishlist/wishlistlist";
 
 const WishlistPage = () => {
-  const page = cartPageStore((state) => state.page);
-  const setPage = cartPageStore((state) => state.setPage);
   const [, setError] = useContext(ErrorContext);
-  const location = useLocation();
 
   const navigate = useNavigate();
   const [, setErr] = useContext(ShowErrorContext);
+  const _page = new URLSearchParams(window.location.search).get("page");
 
-  // For pagination
   useEffect(() => {
-    setPage(1);
-  }, [setPage]);
+    if (!_page) {
+      navigate("/wishlist?page=1");
+    }
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, []);
 
-  // When page state changes
-  useEffect(() => {
-    navigate(`/wishlist?page=${page}`, { replace: true });
-    window.scrollTo(0, 0);
-  }, [page, navigate]);
-
-  // When page unmounts
-  useEffect(() => {
-    return () => {
-      if (location.pathname !== "/explore") {
-        setPage(1);
-      }
-    };
-  }, [location.pathname, setPage]);
+  const page = Number(_page) || 1;
 
   const query = useQuery({
     queryKey: ["wishlist", page, 10],
@@ -76,8 +62,7 @@ const WishlistPage = () => {
     e.preventDefault();
     if (page > 1) {
       const newPage = page - 1;
-      setPage(newPage);
-      // navigate(`?page=${newPage}`);
+      navigate(`/wishlist?page=${newPage}`);
     }
   };
 
@@ -85,8 +70,7 @@ const WishlistPage = () => {
     e.preventDefault();
     if (query.data?.hasNext) {
       const newPage = page + 1;
-      setPage(newPage);
-      // navigate(`?page=${newPage}`);
+      navigate(`/wishlist?page=${newPage}`);
     }
   };
 
