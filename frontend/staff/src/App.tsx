@@ -81,12 +81,12 @@ const App = () => {
                       element={<DeleteProductPage />}
                     />
                     <Route
-                      path="/products/search/:_query"
+                      path="/products/search"
                       element={<ProductsSearchPage />}
                     />
                     <Route path="/customers" element={<CustomersPage />} />
                     <Route
-                      path="/customers/search/:_query"
+                      path="/customers/search "
                       element={<CustomersSearchPage />}
                     />
                     <Route path="/logout" element={<LogoutPage />} />

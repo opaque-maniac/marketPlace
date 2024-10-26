@@ -1,9 +1,8 @@
 import { useQuery } from "@tanstack/react-query";
 import { useContext, useEffect } from "react";
 import { Helmet } from "react-helmet";
-import { useLocation, useNavigate, useParams } from "react-router-dom";
+import { useNavigate } from "react-router-dom";
 import { searchProducts } from "../../utils/queries/products";
-import { productsSearchPageStore } from "../../utils/pageStore";
 import { ErrorContext, ShowErrorContext } from "../../utils/errorContext";
 import { ErrorResponse } from "../../utils/types";
 import errorHandler from "../../utils/errorHandler";
@@ -14,35 +13,25 @@ import PageLoader from "../../components/pageloader";
 import ProductList from "../../components/products/productlist";
 
 const ProductSearchPage = () => {
-  const page = productsSearchPageStore((state) => state.page);
-  const setPage = productsSearchPageStore((state) => state.setPage);
   const [, setError] = useContext(ErrorContext);
-  const location = useLocation();
-  const { _query } = useParams();
 
   const navigate = useNavigate();
   const [, setErr] = useContext(ShowErrorContext);
+  const urlParams = new URLSearchParams(window.location.search);
+  const _page = urlParams.get("page");
+  const _query = urlParams.get("query");
 
-  // When page mounts
   useEffect(() => {
-    setPage(1);
+    if (!_query || !_page) {
+      navigate(`?query=${_query || ""}&page=${Number(_page) || 1}`);
+    }
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, []);
 
-    return () => {
-      setPage(1);
-    };
-  }, [setPage]);
-
-  // When page unmounts
-  useEffect(() => {
-    return () => {
-      if (location.pathname.includes("/products")) {
-        setPage(1);
-      }
-    };
-  }, [location.pathname, setPage]);
+  const page = Number(_page) || 1;
 
   const query = useQuery({
-    queryKey: ["query", page, 20, _query as string],
+    queryKey: ["query", page, 20, _query || ""],
     queryFn: searchProducts,
   });
 
@@ -72,7 +61,7 @@ const ProductSearchPage = () => {
     e.preventDefault();
     if (page > 1) {
       const newPage = page - 1;
-      setPage(newPage);
+      navigate(`?query=${_query}&page=${newPage}`);
       window.scrollTo(0, 0);
     }
   };
@@ -81,7 +70,7 @@ const ProductSearchPage = () => {
     e.preventDefault();
     if (query.data?.hasNext) {
       const newPage = page + 1;
-      setPage(newPage);
+      navigate(`?query=${_query}&page=${newPage}`);
       window.scrollTo(0, 0);
     }
   };

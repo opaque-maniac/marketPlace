@@ -4,7 +4,6 @@ import { ErrorResponse } from "../../utils/types";
 import errorHandler from "../../utils/errorHandler";
 import { useNavigate } from "react-router-dom";
 import { useContext, useEffect } from "react";
-import { customersPageStore } from "../../utils/pageStore";
 import { ErrorContext, ShowErrorContext } from "../../utils/errorContext";
 import ArrowLeft from "../../components/icons/arrowleft";
 import ArrowRight from "../../components/icons/arrowright";
@@ -14,21 +13,19 @@ import { fetchCustomers } from "../../utils/queries/customers";
 import Customer from "../../components/customers/customer";
 
 const CustomersPage = () => {
-  const page = customersPageStore((state) => state.page);
-  const setPage = customersPageStore((state) => state.setPage);
   const [, setError] = useContext(ErrorContext);
-
   const navigate = useNavigate();
   const [, setErr] = useContext(ShowErrorContext);
+  const _page = new URLSearchParams(window.location.search).get("page");
 
-  // When page mounts
   useEffect(() => {
-    setPage(1);
+    if (!_page) {
+      navigate(`?page=${Number(_page) || 1}`);
+    }
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, []);
 
-    return () => {
-      setPage(1);
-    };
-  }, [setPage]);
+  const page = Number(_page) || 1;
 
   const query = useQuery({
     queryKey: ["products", page, 20],
@@ -61,7 +58,7 @@ const CustomersPage = () => {
     e.preventDefault();
     if (page > 1) {
       const newPage = page - 1;
-      setPage(newPage);
+      navigate(`?page=${newPage}`);
       window.scrollTo(0, 0);
     }
   };
@@ -70,7 +67,7 @@ const CustomersPage = () => {
     e.preventDefault();
     if (query.data?.hasNext) {
       const newPage = page + 1;
-      setPage(newPage);
+      navigate(`?page=${newPage}`);
       window.scrollTo(0, 0);
     }
   };

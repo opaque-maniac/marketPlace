@@ -40,10 +40,11 @@ const NavItem = ({ placeholder, url, label, callback }: Props) => {
       callback();
     }, 200);
     if (query) {
-      navigate(`${url}/search/${query}`);
+      navigate(`${url}/search/?query=${query}`);
     } else {
       navigate(`${url}`);
     }
+    window.scrollTo(0, 0);
   };
 
   return (
@@ -57,7 +58,7 @@ const NavItem = ({ placeholder, url, label, callback }: Props) => {
         <div>
           <button
             onClick={buttonClickHandler}
-            className="block text-gray-300 hover:text-black w-5 h-5 rounded-full border border-black/25 hover:border-black"
+            className="block text-gray-300 hover:text-black w-7 h-7 rounded-full border border-black/25 hover:border-black"
           >
             {clicked ? <ChevronUp /> : <ChevronDown />}
           </button>
@@ -79,7 +80,7 @@ const NavItem = ({ placeholder, url, label, callback }: Props) => {
                   name="query"
                   id="query"
                   placeholder={placeholder}
-                  className="block w-full"
+                  className="block w-full bg-transparent ocus:border-none focus:outline-none pl-1"
                 />
               </div>
               <div>

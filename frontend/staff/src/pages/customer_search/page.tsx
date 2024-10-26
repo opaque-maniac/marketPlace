@@ -2,9 +2,8 @@ import { useQuery } from "@tanstack/react-query";
 import Transition from "../../components/transition";
 import { ErrorResponse } from "../../utils/types";
 import errorHandler from "../../utils/errorHandler";
-import { useNavigate, useParams } from "react-router-dom";
+import { useNavigate } from "react-router-dom";
 import { useContext, useEffect } from "react";
-import { customersSearchPageStore } from "../../utils/pageStore";
 import { ErrorContext, ShowErrorContext } from "../../utils/errorContext";
 import ArrowLeft from "../../components/icons/arrowleft";
 import ArrowRight from "../../components/icons/arrowright";
@@ -14,28 +13,31 @@ import { searchCustomers } from "../../utils/queries/customers";
 import Customer from "../../components/customers/customer";
 
 const CustomersSearchPage = () => {
-  const page = customersSearchPageStore((state) => state.page);
-  const setPage = customersSearchPageStore((state) => state.setPage);
   const [, setError] = useContext(ErrorContext);
-
   const navigate = useNavigate();
   const [, setErr] = useContext(ShowErrorContext);
-  const { _query } = useParams();
+  const urlParams = new URLSearchParams(window.location.search);
+  const _query = urlParams.get("query");
+  const _page = urlParams.get("page");
 
-  // When page mounts
   useEffect(() => {
-    if (!_query) {
-      navigate("/customers", { replace: true });
+    let url = "/customers/search";
+    if (!_query && !_page) {
+      url += `?query=&page=1`;
+    } else if (!_query) {
+      url += `?query=&page=${_page}`;
+    } else if (!_page) {
+      url += `?query=${_query}&page=1`;
     }
-    setPage(1);
 
-    return () => {
-      setPage(1);
-    };
-  }, [setPage, navigate, _query]);
+    navigate(url, { replace: true });
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, []);
+
+  const page = Number(_page) || 1;
 
   const query = useQuery({
-    queryKey: ["query", page, 20, _query as string],
+    queryKey: ["query", page, 20, _query || ""],
     queryFn: searchCustomers,
   });
 
@@ -65,8 +67,7 @@ const CustomersSearchPage = () => {
     e.preventDefault();
     if (page > 1) {
       const newPage = page - 1;
-      setPage(newPage);
-      // navigate(`?page=${newPage}`);
+      navigate(`?query=${_query}&page=${newPage}`);
     }
   };
 
@@ -74,8 +75,7 @@ const CustomersSearchPage = () => {
     e.preventDefault();
     if (query.data?.hasNext) {
       const newPage = page + 1;
-      setPage(newPage);
-      // navigate(`?page=${newPage}`);
+      navigate(`?query=${_query}&page=${newPage}`);
     }
   };
 

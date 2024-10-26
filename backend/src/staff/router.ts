@@ -56,7 +56,7 @@ import {
   deleteOrder,
   fetchAllOrders,
   fetchIndividualOrder,
-  makeOrderReady,
+  searchOrder,
   updateOrderStatus,
 } from "./handlers/orders";
 import {
@@ -66,6 +66,28 @@ import {
   fetchProductComments,
   updateComment,
 } from "./handlers/comments";
+import {
+  deleteOrderItem,
+  fetchIndividualOrderItem,
+  fetchIndividualOrderItems,
+  fetchOrderItems,
+  makeOrderItemReady,
+  searchOrderItem,
+} from "./handlers/orderitems";
+import {
+  emptyCart,
+  fetchCartItem,
+  fetchUserCart,
+  orderCart,
+  updateCartItem,
+} from "./handlers/cart";
+import {
+  deleteWishlistItem,
+  emptyWishlist,
+  fetchUserWishlist,
+  fetchWishlistItem,
+  fetchWishlistItems,
+} from "./handlers/wishlist";
 
 const staffRouter = Router();
 
@@ -162,7 +184,7 @@ staffRouter.delete(
   deleteProduct
 );
 staffRouter.post(
-  "/products/search",
+  "/products/discover/search",
   allowIfAuthenticated,
   isStaff,
   searchProduct
@@ -206,6 +228,18 @@ staffRouter.delete(
   allowIfAuthenticated,
   isStaff,
   deleteCustomer
+);
+staffRouter.get(
+  "/customers/:id/cart",
+  allowIfAuthenticated,
+  isStaff,
+  fetchUserCart
+);
+staffRouter.get(
+  "/customers/:id/wishlist",
+  allowIfAuthenticated,
+  isStaff,
+  fetchUserWishlist
 );
 staffRouter.get(
   "/customers/discover/search",
@@ -255,10 +289,9 @@ staffRouter.delete(
   deleteStaff
 );
 staffRouter.post(
-  "/staff/:id/search",
+  "/staff/discover/search",
   allowIfAuthenticated,
   isStaff,
-  body("query").isString().isLength(stringConfig),
   searchStaff
 );
 
@@ -304,10 +337,9 @@ staffRouter.post(
 );
 staffRouter.delete("/sellers/:id", allowIfAuthenticated, isStaff, deleteSeller);
 staffRouter.post(
-  "/sellers/search",
+  "/sellers/discover/search",
   allowIfAuthenticated,
   isStaff,
-  body("query").isString().isLength(stringConfig),
   searchSeller
 );
 
@@ -318,6 +350,12 @@ staffRouter.get(
   allowIfAuthenticated,
   isStaff,
   fetchIndividualOrder
+);
+staffRouter.get(
+  "/orders/:id/items",
+  allowIfAuthenticated,
+  isStaff,
+  fetchIndividualOrderItems
 );
 staffRouter.put(
   "/orders/:id",
@@ -336,11 +374,85 @@ staffRouter.put(
   updateOrderStatus
 );
 staffRouter.delete("/orders/:id", allowIfAuthenticated, isStaff, deleteOrder);
-staffRouter.put(
-  "/orders/:id/approve",
+staffRouter.get(
+  "/orders/discover/search",
   allowIfAuthenticated,
   isStaff,
-  makeOrderReady
+  searchOrder
+);
+
+// Order items
+staffRouter.get("/orderitems", allowIfAuthenticated, isStaff, fetchOrderItems);
+staffRouter.get(
+  "/orderitems/:id",
+  allowIfAuthenticated,
+  isStaff,
+  fetchIndividualOrderItem
+);
+staffRouter.put(
+  "/orderitems/:id",
+  allowIfAuthenticated,
+  isStaff,
+  makeOrderItemReady
+);
+staffRouter.delete(
+  "/orderitems/:id",
+  allowIfAuthenticated,
+  isStaff,
+  deleteOrderItem
+);
+staffRouter.get(
+  "/orderitems/discover/search",
+  allowIfAuthenticated,
+  isStaff,
+  searchOrderItem
+);
+
+// cart
+staffRouter.put("/cart/:id", allowIfAuthenticated, isStaff, orderCart);
+staffRouter.delete("/cart/:id", allowIfAuthenticated, isStaff, emptyCart);
+
+// cart items
+staffRouter.get("/cartitems/:id", allowIfAuthenticated, isStaff, fetchCartItem);
+staffRouter.put(
+  "/cartitems/:id",
+  allowIfAuthenticated,
+  isStaff,
+  updateCartItem
+);
+staffRouter.delete(
+  "/cartitems/:id",
+  allowIfAuthenticated,
+  isStaff,
+  deleteOrderItem
+);
+
+// wishlist
+staffRouter.delete(
+  "/wishlist/:id",
+  allowIfAuthenticated,
+  isStaff,
+  emptyWishlist
+);
+
+// wishlist items
+staffRouter.get(
+  "/wishlistitems",
+  allowIfAuthenticated,
+  isStaff,
+  fetchWishlistItems
+);
+staffRouter.get(
+  "/wishlistitems/:id",
+  allowIfAuthenticated,
+  isStaff,
+  fetchWishlistItem
+);
+staffRouter.delete(
+  "/wishlistitems/:id",
+  allowIfAuthenticated,
+  isStaff,
+  deleteWishlistItem
 );
 
 // Comments

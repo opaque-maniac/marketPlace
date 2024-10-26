@@ -212,12 +212,12 @@ export const deleteStaff = async (
 
 // Function to search for staff
 export const searchStaff = async (
-  req: StaffSearchRequest,
+  req: AuthenticatedRequest,
   res: Response,
   next: NextFunction
 ) => {
   try {
-    const { query } = req.body;
+    const query = req.query.query ? (req.query.query as string) : "";
     const page = req.query.page ? parseInt(req.query.page as string) : 1;
     const limit = req.query.limit ? parseInt(req.query.limit as string) : 10;
 

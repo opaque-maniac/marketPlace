@@ -67,7 +67,7 @@ const SearchPage = () => {
     e.preventDefault();
     if (_page > 1) {
       const newPage = _page - 1;
-      navigate(`/search?query=${search || ""}&page=${newPage}`);
+      navigate(`?query=${search || ""}&page=${newPage}`);
       window.scrollTo(0, 0);
     }
   };
@@ -76,7 +76,7 @@ const SearchPage = () => {
     e.preventDefault();
     if (query.data?.hasNext) {
       const newPage = _page + 1;
-      navigate(`/search?query=${search || ""}&page=${newPage}`);
+      navigate(`?query=${search || ""}&page=${newPage}`);
       window.scrollTo(0, 0);
     }
   };

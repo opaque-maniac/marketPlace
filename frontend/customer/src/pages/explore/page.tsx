@@ -61,7 +61,7 @@ const ExplorePage = () => {
     e.preventDefault();
     if (page > 1) {
       const newPage = page - 1;
-      navigate(`/explore?page=${newPage}`);
+      navigate(`?page=${newPage}`);
       window.scrollTo(0, 0);
     }
   };
@@ -70,7 +70,7 @@ const ExplorePage = () => {
     e.preventDefault();
     if (query.data?.hasNext) {
       const newPage = page + 1;
-      navigate(`/explore?page=${newPage}`);
+      navigate(`?page=${newPage}`);
       window.scrollTo(0, 0);
     }
   };

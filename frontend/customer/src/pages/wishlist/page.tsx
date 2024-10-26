@@ -62,7 +62,7 @@ const WishlistPage = () => {
     e.preventDefault();
     if (page > 1) {
       const newPage = page - 1;
-      navigate(`/wishlist?page=${newPage}`);
+      navigate(`?page=${newPage}`);
     }
   };
 
@@ -70,7 +70,7 @@ const WishlistPage = () => {
     e.preventDefault();
     if (query.data?.hasNext) {
       const newPage = page + 1;
-      navigate(`/wishlist?page=${newPage}`);
+      navigate(`?page=${newPage}`);
     }
   };
 

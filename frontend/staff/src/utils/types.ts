@@ -236,3 +236,9 @@ export interface SuccessUpdateProductRespnse {
   message: string;
   product: Product;
 }
+
+export interface SuccessStaffResponse {
+  message: string;
+  staff: Staff[];
+  hasNext: boolean;
+}
