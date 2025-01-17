@@ -4,38 +4,35 @@ import { ErrorResponse } from "../../utils/types";
 import errorHandler from "../../utils/errorHandler";
 import { useNavigate, useParams } from "react-router-dom";
 import { useContext, useEffect } from "react";
-import { explorePageStore } from "../../utils/pageStore";
 import { ErrorContext, ShowErrorContext } from "../../utils/errorContext";
 import ArrowLeft from "../../components/icons/arrowleft";
 import ArrowRight from "../../components/icons/arrowright";
 import { Helmet } from "react-helmet";
-import { fetchCategoryProducts } from "../../utils/queries/products";
+import { fetchCategoryProducts } from "../../utils/queries/products/fetchcategoryproducts";
 import ProductList from "../../components/products/productlist";
 import PageLoader from "../../components/pageloader";
 
 const CategoriesPage = () => {
   const { category } = useParams();
-  const page = explorePageStore((state) => state.page);
-  const setPage = explorePageStore((state) => state.setPage);
   const [, setError] = useContext(ErrorContext);
-
   const navigate = useNavigate();
   const [, setErr] = useContext(ShowErrorContext);
-
-  if (!category) {
-    setError(true);
-    navigate("/500", { replace: true });
-  }
+  const urlParams = new URLSearchParams(window.location.search);
 
   useEffect(() => {
-    navigate(`/categories/${category}?page=${page}`, { replace: true });
+    if (!category) {
+      navigate("/404", { replace: true });
+      return;
+    }
 
-    return () => {
-      setPage(1);
-    };
+    if (!urlParams.get("page")) {
+      navigate(`?page=1`, { replace: true });
+    }
+
     // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [page, navigate]);
+  }, []);
 
+  const page = Number(urlParams.get("page")) || 1;
   const query = useQuery({
     queryKey: ["products", page, 20, category as string],
     queryFn: fetchCategoryProducts,
@@ -67,8 +64,7 @@ const CategoriesPage = () => {
     e.preventDefault();
     if (page > 1) {
       const newPage = page - 1;
-      setPage(newPage);
-      // navigate(`?page=${newPage}`);
+      navigate(`?page=${newPage}`);
     }
   };
 
@@ -76,8 +72,7 @@ const CategoriesPage = () => {
     e.preventDefault();
     if (query.data?.hasNext) {
       const newPage = page + 1;
-      setPage(newPage);
-      // navigate(`?page=${newPage}`);
+      navigate(`?page=${newPage}`);
     }
   };
 

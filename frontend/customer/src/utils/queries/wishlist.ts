@@ -2,6 +2,7 @@ import { QueryFunction } from "@tanstack/react-query";
 import { ErrorResponse, SuccessWishlistQueryResponse } from "../types";
 import { getAccessToken } from "../cookies";
 import { responseError, tokenError } from "../errors";
+import { apiHost, apiProtocol } from "../generics";
 
 export const fetchWishlist: QueryFunction<
   SuccessWishlistQueryResponse,
@@ -10,7 +11,7 @@ export const fetchWishlist: QueryFunction<
   try {
     const [, page, limit] = queryKey;
 
-    const url = `http://localhost:3020/customers/wishlist?page=${page}&limit=${limit}`;
+    const url = `${apiProtocol}://${apiHost}/customers/wishlist?page=${page}&limit=${limit}`;
     const token = getAccessToken();
 
     if (!token) {

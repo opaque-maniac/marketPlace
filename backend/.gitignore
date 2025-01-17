@@ -1,3 +1,13 @@
 node_modules
-# Keep environment variables out of version control
-.env
+dist
+
+uploads/customer/*
+uploads/products/*
+uploads/seller/*
+uploads/staff/*
+
+# Allow README.txt in both directories
+!uploads/products/readme.txt
+!uploads/seller/readme.txt
+!uploads/staff/readme.txt
+!uploads/customer/readme.txt

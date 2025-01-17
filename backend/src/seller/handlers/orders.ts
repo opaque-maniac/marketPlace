@@ -7,29 +7,25 @@
 
 import { Response, NextFunction } from "express";
 import prisma from "../../utils/db";
-import { AuthenticatedRequest, OrderSearchRequest } from "../../types";
+import {
+  AuthenticatedRequest,
+  OrderSearchRequest,
+  SellerUpdateOrderRequest,
+} from "../../types";
+import { ORDER_STATUS } from "@prisma/client";
 
 // Function to fetch orders
 export const fetchOrders = async (
   req: AuthenticatedRequest,
   res: Response,
-  next: NextFunction
+  next: NextFunction,
 ) => {
   try {
     const page = req.query.page ? parseInt(req.query.page as string) : 1;
     const limit = req.query.limit ? parseInt(req.query.limit as string) : 10;
-    const ready =
-      req.query.ready === "true"
-        ? true
-        : req.query.ready === "all"
-          ? undefined
-          : false;
-    const delivered =
-      req.query.delivered === "true"
-        ? true
-        : req.query.delivered === "false"
-          ? false
-          : undefined;
+    const status = req.query.status
+      ? (req.query.status as ORDER_STATUS)
+      : undefined;
 
     const { user } = req;
 
@@ -37,10 +33,9 @@ export const fetchOrders = async (
       throw new Error("User not found");
     }
 
-    const orderItems = await prisma.orderItem.findMany({
+    const orderItems = await prisma.order.findMany({
       where: {
-        ready,
-        delivered,
+        status,
         product: {
           sellerID: user.id,
         },
@@ -75,7 +70,7 @@ export const fetchOrders = async (
 export const fetchIndividualOrder = async (
   req: AuthenticatedRequest,
   res: Response,
-  next: NextFunction
+  next: NextFunction,
 ) => {
   try {
     const { id } = req.params;
@@ -85,9 +80,12 @@ export const fetchIndividualOrder = async (
       throw new Error("User not found");
     }
 
-    const orderItem = await prisma.orderItem.findUnique({
+    const order = await prisma.order.findUnique({
       where: {
         id,
+        product: {
+          sellerID: user.id,
+        },
       },
       include: {
         product: {
@@ -95,76 +93,48 @@ export const fetchIndividualOrder = async (
             images: true,
           },
         },
-        order: {
-          include: {
-            customer: true,
-          },
-        },
       },
     });
 
-    if (!orderItem) {
+    if (!order) {
       return res.status(404).json({
         message: "Order not found",
         errorCode: "O400",
       });
     }
 
-    if (orderItem.product.sellerID !== user.id) {
-      return res.status(403).json({
-        message: "Unauthorized",
-        errorCode: "J406",
-      });
-    }
-
     return res.status(200).json({
       message: "Order fetched successfully",
-      order: orderItem,
+      order: order,
     });
   } catch (e) {
     return next(e as Error);
   }
 };
 
-// Function to make order ready
-export const makeOrderDelivered = async (
-  req: AuthenticatedRequest,
+// Function to update order status
+export const updateOrder = async (
+  req: SellerUpdateOrderRequest,
   res: Response,
-  next: NextFunction
+  next: NextFunction,
 ) => {
   try {
     const { id } = req.params;
     const { user } = req;
+    const { status } = req.body;
 
     if (!user) {
       throw new Error("User not found");
     }
 
-    const order = await prisma.orderItem.update({
+    const order = await prisma.order.findUnique({
       where: {
         id,
         product: {
           sellerID: user.id,
         },
       },
-      data: {
-        delivered: true,
-      },
-    });
-
-    const updatedOrder = await prisma.orderItem.findUnique({
-      where: {
-        id: order.id,
-        product: {
-          sellerID: user.id,
-        },
-      },
       include: {
-        order: {
-          include: {
-            customer: true,
-          },
-        },
         product: {
           include: {
             images: true,
@@ -173,9 +143,60 @@ export const makeOrderDelivered = async (
       },
     });
 
+    if (!order) {
+      res.status(404).json({
+        message: "Order not found",
+        errorCode: "O400",
+      });
+      return;
+    }
+
+    if (status === "CANCELLED") {
+      if (order.status === "DELIVERED" || order.status === "SHIPPED") {
+        throw new Error("Order cannot be cancelled");
+      }
+
+      await prisma.$transaction(
+        async (txl) => {
+          await txl.order.update({
+            where: {
+              id: order.id,
+            },
+            data: {
+              status: status,
+            },
+          });
+
+          await txl.product.update({
+            where: {
+              id: order.productID,
+            },
+            data: {
+              inventory: {
+                increment: order.quantity,
+              },
+            },
+          });
+        },
+        {
+          maxWait: 5000,
+          timeout: 10000,
+        },
+      );
+    } else {
+      await prisma.order.update({
+        where: {
+          id: order.id,
+        },
+        data: {
+          status: status,
+        },
+      });
+    }
+
     return res.status(200).json({
       message: "Order marked as delivered",
-      order: updatedOrder,
+      order,
     });
   } catch (e) {
     return next(e as Error);
@@ -186,14 +207,14 @@ export const makeOrderDelivered = async (
 export const searchOrder = async (
   req: OrderSearchRequest,
   res: Response,
-  next: NextFunction
+  next: NextFunction,
 ) => {
   try {
     const query = req.query.query as string;
     const page = req.query.page ? parseInt(req.query.page as string) : 1;
     const limit = req.query.limit ? parseInt(req.query.limit as string) : 10;
 
-    const products = await prisma.orderItem.findMany({
+    const products = await prisma.order.findMany({
       where: {
         product: {
           name: {

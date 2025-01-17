@@ -7,24 +7,39 @@
 
 import { Response, NextFunction } from "express";
 import prisma from "../../utils/db";
-import {
-  AuthenticatedRequest,
-  ProductCreateUpdateRequest,
-  ProductSearchRequest,
-} from "../../types";
+import { AuthenticatedRequest, ProductCreateUpdateRequest } from "../../types";
 import { CATEGORIES } from "@prisma/client";
 
 // Function to fetch products
 export const fetchProducts = async (
   req: AuthenticatedRequest,
   res: Response,
-  next: NextFunction
+  next: NextFunction,
 ) => {
   try {
     const page = req.query.page ? parseInt(req.query.page as string) : 1;
     const limit = req.query.limit ? parseInt(req.query.limit as string) : 10;
+    const query = req.query.query ? (req.query.query as string) : "";
 
     const products = await prisma.product.findMany({
+      where: query
+        ? {
+            OR: [
+              {
+                name: {
+                  contains: query,
+                  mode: "insensitive",
+                },
+              },
+              {
+                id: {
+                  contains: query,
+                  mode: "insensitive",
+                },
+              },
+            ],
+          }
+        : {},
       include: {
         images: true,
       },
@@ -52,7 +67,7 @@ export const fetchProducts = async (
 export const fetchIndividualProduct = async (
   req: AuthenticatedRequest,
   res: Response,
-  next: NextFunction
+  next: NextFunction,
 ) => {
   try {
     const { id } = req.params;
@@ -91,7 +106,7 @@ export const fetchIndividualProduct = async (
 export const updateProduct = async (
   req: ProductCreateUpdateRequest,
   res: Response,
-  next: NextFunction
+  next: NextFunction,
 ) => {
   try {
     const { id } = req.params;
@@ -137,7 +152,7 @@ export const updateProduct = async (
       {
         maxWait: 5000,
         timeout: 10000,
-      }
+      },
     );
 
     return res.status(200).json({
@@ -153,7 +168,7 @@ export const updateProduct = async (
 export const deleteProduct = async (
   req: AuthenticatedRequest,
   res: Response,
-  next: NextFunction
+  next: NextFunction,
 ) => {
   try {
     const { id } = req.params;
@@ -166,57 +181,6 @@ export const deleteProduct = async (
 
     return res.status(203).json({
       message: "Product deleted successfully",
-    });
-  } catch (e) {
-    return next(e as Error);
-  }
-};
-
-// Function to search for products
-export const searchProduct = async (
-  req: AuthenticatedRequest,
-  res: Response,
-  next: NextFunction
-) => {
-  try {
-    const page = req.query.page ? parseInt(req.query.page as string) : 1;
-    const limit = req.query.limit ? parseInt(req.query.limit as string) : 10;
-    const query = req.query.query ? (req.query.query as string) : "";
-
-    const products = await prisma.product.findMany({
-      where: {
-        OR: [
-          {
-            name: {
-              contains: query,
-              mode: "insensitive",
-            },
-          },
-          {
-            id: {
-              contains: query,
-              mode: "insensitive",
-            },
-          },
-        ],
-      },
-      include: {
-        images: true,
-      },
-      skip: (page - 1) * limit,
-      take: limit + 1,
-    });
-
-    const hasNext = products.length > limit;
-
-    if (hasNext) {
-      products.pop();
-    }
-
-    return res.status(200).json({
-      message: "Fetched product query",
-      products,
-      hasNext,
     });
   } catch (e) {
     return next(e as Error);

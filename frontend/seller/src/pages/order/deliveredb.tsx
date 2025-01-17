@@ -1,6 +1,6 @@
 import { useMutation } from "@tanstack/react-query";
 import TickIcon from "../../components/icons/tick";
-import { makeOrderDelivered } from "../../utils/mutations/orders";
+import { makeOrderDelivered } from "../../utils/mutations/orders/makeorderdelivered";
 import { ErrorResponse } from "../../utils/types";
 import errorHandler from "../../utils/errorHandler";
 import { MouseEventHandler, useContext } from "react";

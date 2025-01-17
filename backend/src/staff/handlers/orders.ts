@@ -14,7 +14,7 @@ import { ORDER_STATUS } from "@prisma/client";
 export const fetchAllOrders = async (
   req: AuthenticatedRequest,
   res: Response,
-  next: NextFunction
+  next: NextFunction,
 ) => {
   try {
     const page = req.query.page ? parseInt(req.query.page as string) : 1;
@@ -22,14 +22,42 @@ export const fetchAllOrders = async (
     const status = req.query.status
       ? (req.query.status as ORDER_STATUS)
       : undefined;
+    const query = req.query.query ? (req.query.query as string) : "";
 
     const order = await prisma.order.findMany({
-      where: {
-        status,
-      },
+      where: query
+        ? {
+            OR: [
+              {
+                id: query,
+              },
+              {
+                product: {
+                  name: {
+                    contains: query,
+                    mode: "insensitive",
+                  },
+                },
+              },
+              {
+                customer: {
+                  firstName: query,
+                },
+              },
+              {
+                customer: {
+                  lastName: query,
+                },
+              },
+            ],
+            status,
+          }
+        : {
+            status,
+          },
       include: {
         customer: true,
-        orderItems: true,
+        product: true,
       },
       skip: (page - 1) * limit,
       take: limit + 1,
@@ -55,7 +83,7 @@ export const fetchAllOrders = async (
 export const fetchIndividualOrder = async (
   req: AuthenticatedRequest,
   res: Response,
-  next: NextFunction
+  next: NextFunction,
 ) => {
   try {
     const { id } = req.params;
@@ -84,20 +112,61 @@ export const fetchIndividualOrder = async (
 export const updateOrderStatus = async (
   req: UpdateOrderStatusRequest,
   res: Response,
-  next: NextFunction
+  next: NextFunction,
 ) => {
   try {
     const { id } = req.params;
     const { status } = req.body;
 
-    const order = await prisma.order.update({
-      where: {
-        id,
-      },
-      data: {
-        status: status,
-      },
+    const order = await prisma.order.findUnique({
+      where: { id },
     });
+
+    if (!order) {
+      return res.status(404).json({
+        message: "Order not found",
+        errorCode: "O400",
+      });
+    }
+
+    if (status === "CANCELLED") {
+      await prisma.$transaction(
+        async (txl) => {
+          await txl.order.update({
+            where: {
+              id,
+            },
+            data: {
+              status: status,
+            },
+          });
+
+          await txl.product.update({
+            where: {
+              id: order.productID,
+            },
+            data: {
+              inventory: {
+                increment: order.quantity,
+              },
+            },
+          });
+        },
+        {
+          maxWait: 5000,
+          timeout: 10000,
+        },
+      );
+    } else {
+      await prisma.order.update({
+        where: {
+          id,
+        },
+        data: {
+          status: status,
+        },
+      });
+    }
 
     return res.status(200).json({
       message: "Order status updated successfully",
@@ -112,47 +181,58 @@ export const updateOrderStatus = async (
 export const deleteOrder = async (
   req: AuthenticatedRequest,
   res: Response,
-  next: NextFunction
+  next: NextFunction,
 ) => {
   try {
     const { id } = req.params;
 
-    const order = await prisma.order.delete({
-      where: {
-        id,
-      },
+    const order = await prisma.order.findUnique({
+      where: { id },
     });
+
+    if (!order) {
+      return res.status(404).json({
+        message: "Order not found",
+        errorCode: "O400",
+      });
+    }
+
+    if (order.status === "CANCELLED") {
+      await prisma.$transaction(
+        async (txl) => {
+          await txl.order.delete({
+            where: {
+              id,
+            },
+          });
+
+          await txl.product.update({
+            where: {
+              id: order.productID,
+            },
+            data: {
+              inventory: {
+                increment: order.quantity,
+              },
+            },
+          });
+        },
+        {
+          maxWait: 5000,
+          timeout: 10000,
+        },
+      );
+    } else {
+      await prisma.order.delete({
+        where: {
+          id,
+        },
+      });
+    }
 
     return res.status(203).json({
       message: "Order deleted successfully",
       order,
-    });
-  } catch (e) {
-    return next(e as Error);
-  }
-};
-
-export const searchOrder = async (
-  req: AuthenticatedRequest,
-  res: Response,
-  next: NextFunction
-) => {
-  try {
-    const query = req.query.query ? (req.query.query as string) : "";
-    const page = req.query.page ? parseInt(req.query.page as string) : 1;
-    const limit = req.query.limit ? parseInt(req.query.limit as string) : 10;
-
-    const orders = await prisma.order.findMany({
-      where: {
-        id: {
-          contains: query,
-        },
-      },
-    });
-
-    return res.status(200).json({
-      message: "Orders fetched successfully",
-      orders,
     });
   } catch (e) {
     return next(e as Error);

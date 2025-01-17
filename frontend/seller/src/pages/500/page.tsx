@@ -1,8 +1,8 @@
 import { useContext, useLayoutEffect } from "react";
-import ErrorContext from "../../utils/errorContext";
 import { Link, useNavigate } from "react-router-dom";
 import Transition from "../../components/transition";
 import { Helmet } from "react-helmet";
+import { ErrorContext } from "../../utils/errorContext";
 
 const Error500 = () => {
   const [error, setError] = useContext(ErrorContext);

@@ -2,10 +2,10 @@ import { Helmet } from "react-helmet";
 import Transition from "../../components/transition";
 import { Link, useNavigate } from "react-router-dom";
 import { useMutation } from "@tanstack/react-query";
-import { sendNewProduct } from "../../utils/mutations/products";
+import { sendNewProduct } from "../../utils/mutations/products/newproduct";
 import { FormEventHandler, useContext, useState } from "react";
 import Loader from "../../components/loader";
-import {ErrorContext} from "../../utils/errorContext";
+import { ErrorContext } from "../../utils/errorContext";
 import { ErrorResponse } from "../../utils/types";
 import errorHandler from "../../utils/errorHandler";
 import ShowError from "../../components/showErr";
@@ -193,17 +193,15 @@ const NewProductPage = () => {
             <div className="w-full py-2 flex md:justify-end justify-center px-4">
               <button
                 aria-label="Submit Product"
-                className="bg-red-400 tex-white text-lg text-center w-40 h-10 rounded-lg"
+                className="bg-red-400 w-40 h-10 rounded-lg flex justify-center items-center"
                 type="submit"
               >
                 {mutation.isPending ? (
-                  <div className="h-full w-full flex justify-center items-center">
-                    <div className="h-10 w-10">
-                      <Loader color="#000000" />
-                    </div>
+                  <div className="h-10 w-10">
+                    <Loader color="#000000" />
                   </div>
                 ) : (
-                  "Submit"
+                  <span className="tex-white text-lg">Submit</span>
                 )}
               </button>
             </div>

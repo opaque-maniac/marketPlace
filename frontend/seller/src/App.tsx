@@ -53,12 +53,7 @@ const App = () => {
               <CheckPermissions />
               <ScrollToTop />
               <Header />
-              <div
-                className="pt-14 mx-auto lg:max-w-1300"
-                style={{
-                  minHeight: "calc(100vh - 2.8rem)",
-                }}
-              >
+              <div className="pt-14 mx-auto lg:max-w-1300 min-h-screen">
                 <Suspense fallback={<PageLoader />}>
                   <Routes>
                     <Route path="/" element={<HomePage />} />

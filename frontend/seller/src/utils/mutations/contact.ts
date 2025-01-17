@@ -1,4 +1,5 @@
 import { responseError } from "../errors";
+import { apiHost, apiProtocol } from "../generics";
 import {
   CompaintData,
   ErrorResponse,
@@ -7,7 +8,7 @@ import {
 
 export const sendContact = async (formData: CompaintData) => {
   try {
-    const url = "http://localhost:3020/complaints";
+    const url = `${apiProtocol}://${apiHost}/complaints`;
     const options = {
       method: "POST",
       headers: {

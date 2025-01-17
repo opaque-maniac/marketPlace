@@ -13,17 +13,25 @@ import { CATEGORIES } from "@prisma/client";
 export const fetchProducts = async (
   req: Request,
   res: Response,
-  next: NextFunction
+  next: NextFunction,
 ) => {
   try {
     const page = req.query.page ? parseInt(req.query.page as string) : 1;
     const limit = req.query.limit ? parseInt(req.query.limit as string) : 10;
     const category = req.query.category as CATEGORIES | undefined;
+    const query = req.query.query ? (req.query.query as string) : "";
 
     const products = await prisma.product.findMany({
-      where: {
-        category,
-      },
+      where: query
+        ? {
+            name: {
+              contains: query,
+              mode: "insensitive",
+            },
+          }
+        : {
+            category,
+          },
       include: {
         seller: true,
         images: true,
@@ -52,7 +60,7 @@ export const fetchProducts = async (
 export const fetchIndividualProduct = async (
   req: Request,
   res: Response,
-  next: NextFunction
+  next: NextFunction,
 ) => {
   try {
     const { id } = req.params;
@@ -91,7 +99,7 @@ export const fetchIndividualProduct = async (
 export const searchProduct = async (
   req: Request,
   res: Response,
-  next: NextFunction
+  next: NextFunction,
 ) => {
   try {
     const query = req.query.query ? (req.query.query as string) : "";

@@ -1,6 +1,6 @@
 import { useMutation } from "@tanstack/react-query";
 import useUserStore from "../../utils/store";
-import { addToCart } from "../../utils/mutations/cart";
+import { addToCart } from "../../utils/mutations/cart/addtocart";
 import { MouseEventHandler, useContext } from "react";
 import Loader from "../../components/loader";
 import { ErrorResponse } from "../../utils/types";

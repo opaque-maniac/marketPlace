@@ -20,7 +20,6 @@ import {
   deleteProduct,
   fetchIndividualProduct,
   fetchProducts,
-  searchProduct,
   updateProduct,
 } from "./handlers/products";
 import {
@@ -29,7 +28,6 @@ import {
   enableCustomer,
   fetchCustomers,
   fetchIndividualCustomer,
-  searchCustomer,
   updateCustomer,
 } from "./handlers/customers";
 import {
@@ -38,7 +36,6 @@ import {
   enableStaff,
   fetchIndividualStaff,
   fetchStaff,
-  searchStaff,
   updateStaff,
 } from "./handlers/staff";
 import {
@@ -56,7 +53,6 @@ import {
   deleteOrder,
   fetchAllOrders,
   fetchIndividualOrder,
-  searchOrder,
   updateOrderStatus,
 } from "./handlers/orders";
 import {
@@ -67,18 +63,9 @@ import {
   updateComment,
 } from "./handlers/comments";
 import {
-  deleteOrderItem,
-  fetchIndividualOrderItem,
-  fetchIndividualOrderItems,
-  fetchOrderItems,
-  makeOrderItemReady,
-  searchOrderItem,
-} from "./handlers/orderitems";
-import {
   emptyCart,
   fetchCartItem,
   fetchUserCart,
-  orderCart,
   updateCartItem,
 } from "./handlers/cart";
 import {
@@ -94,12 +81,10 @@ const staffRouter = Router();
 // File upload
 const staffStorage = createStorage("uploads/staff");
 const productStorage = createStorage("uploads/products");
-const customerStorage = createStorage("uploads/customers");
 const sellerStorage = createStorage("uploads/sellers");
 
 const staffUpload = multer({ storage: staffStorage });
 const productUpload = multer({ storage: productStorage });
-const customerUpload = multer({ storage: customerStorage });
 const sellerUpload = multer({ storage: sellerStorage });
 
 // For authentication
@@ -107,7 +92,7 @@ staffRouter.post(
   "/login",
   body("email").isEmail(),
   body("password").isStrongPassword(passwordConfig),
-  login
+  login,
 );
 staffRouter.post(
   "/register",
@@ -116,7 +101,7 @@ staffRouter.post(
   body("lastName").isString().isLength(stringConfig),
   body("password").isStrongPassword(passwordConfig),
   body("role").isString().isIn(["ADMIN", "STAFF", "MANAGER"]),
-  registerStaff
+  registerStaff,
 );
 
 /**
@@ -130,7 +115,7 @@ staffRouter.get(
   allowIfAuthenticated,
   isStaff,
   isProfileOwner,
-  fetchProfile
+  fetchProfile,
 );
 staffRouter.put(
   "/profile/:id",
@@ -141,14 +126,14 @@ staffRouter.put(
   body("firstName").isString().isLength(stringConfig),
   body("lastName").isString().isLength(stringConfig),
   staffUpload.single("image"),
-  updateProfile
+  updateProfile,
 );
 staffRouter.delete(
   "/profile/:id",
   allowIfAuthenticated,
   isStaff,
   isProfileOwner,
-  deleteProfile
+  deleteProfile,
 );
 
 // For products
@@ -157,13 +142,13 @@ staffRouter.get(
   "/products/:id",
   allowIfAuthenticated,
   isStaff,
-  fetchIndividualProduct
+  fetchIndividualProduct,
 );
 staffRouter.get(
   "/products/:id/comments",
   allowIfAuthenticated,
   isStaff,
-  fetchProductComments
+  fetchProductComments,
 );
 staffRouter.put(
   "/products/:id",
@@ -175,19 +160,13 @@ staffRouter.put(
   body("inventory").isNumeric(),
   body("price").isNumeric(),
   productUpload.array("images"),
-  updateProduct
+  updateProduct,
 );
 staffRouter.delete(
   "/products/:id",
   allowIfAuthenticated,
   isStaff,
-  deleteProduct
-);
-staffRouter.post(
-  "/products/discover/search",
-  allowIfAuthenticated,
-  isStaff,
-  searchProduct
+  deleteProduct,
 );
 
 // For customers
@@ -196,7 +175,7 @@ staffRouter.get(
   "/customers/:id",
   allowIfAuthenticated,
   isStaff,
-  fetchIndividualCustomer
+  fetchIndividualCustomer,
 );
 staffRouter.put(
   "/customers/:id",
@@ -209,43 +188,37 @@ staffRouter.put(
     .matches(/^\d{11}$/)
     .optional(),
   body("address").isString().isLength(stringConfig).optional(),
-  updateCustomer
+  updateCustomer,
 );
 staffRouter.post(
   "/customers/:id/disable",
   allowIfAuthenticated,
   isStaff,
-  disableCustomer
+  disableCustomer,
 );
 staffRouter.post(
   "/customers/:id/enable",
   allowIfAuthenticated,
   isStaff,
-  enableCustomer
+  enableCustomer,
 );
 staffRouter.delete(
   "/customers/:id",
   allowIfAuthenticated,
   isStaff,
-  deleteCustomer
+  deleteCustomer,
 );
 staffRouter.get(
   "/customers/:id/cart",
   allowIfAuthenticated,
   isStaff,
-  fetchUserCart
+  fetchUserCart,
 );
 staffRouter.get(
   "/customers/:id/wishlist",
   allowIfAuthenticated,
   isStaff,
-  fetchUserWishlist
-);
-staffRouter.get(
-  "/customers/discover/search",
-  allowIfAuthenticated,
-  isStaff,
-  searchCustomer
+  fetchUserWishlist,
 );
 
 // For managing staff
@@ -254,7 +227,7 @@ staffRouter.get(
   "/staff/:id",
   allowIfAuthenticated,
   isStaff,
-  fetchIndividualStaff
+  fetchIndividualStaff,
 );
 staffRouter.put(
   "/staff/:id",
@@ -265,34 +238,28 @@ staffRouter.put(
   body("lastName").isString().isLength(stringConfig),
   body("email").isEmail(),
   staffUpload.single("image"),
-  updateStaff
+  updateStaff,
 );
 staffRouter.post(
   "/staff/:id/enable",
   allowIfAuthenticated,
   isStaff,
   isAdmin,
-  enableStaff
+  enableStaff,
 );
 staffRouter.post(
   "/staff/:id/disable",
   allowIfAuthenticated,
   isStaff,
   isAdmin,
-  disableStaff
+  disableStaff,
 );
 staffRouter.delete(
   "/staff/:id",
   allowIfAuthenticated,
   isStaff,
   isAdminOrProfileOwner,
-  deleteStaff
-);
-staffRouter.post(
-  "/staff/discover/search",
-  allowIfAuthenticated,
-  isStaff,
-  searchStaff
+  deleteStaff,
 );
 
 // For sellers
@@ -301,13 +268,13 @@ staffRouter.get(
   "/sellers/:id",
   allowIfAuthenticated,
   isStaff,
-  fetchIndividualSeller
+  fetchIndividualSeller,
 );
 staffRouter.get(
   "/sellers/:id/produts",
   allowIfAuthenticated,
   isStaff,
-  fetchSellerProducts
+  fetchSellerProducts,
 );
 staffRouter.put(
   "/sellers/:id",
@@ -321,26 +288,26 @@ staffRouter.put(
     .optional(),
   body("address").isString().isLength(stringConfig).optional(),
   sellerUpload.single("image"),
-  updateSeller
+  updateSeller,
 );
 staffRouter.post(
   "/sellers/:id/enable",
   allowIfAuthenticated,
   isStaff,
-  enableSeller
+  enableSeller,
 );
 staffRouter.post(
   "/sellers/:id/disable",
   allowIfAuthenticated,
   isSeller,
-  disableSeller
+  disableSeller,
 );
 staffRouter.delete("/sellers/:id", allowIfAuthenticated, isStaff, deleteSeller);
 staffRouter.post(
   "/sellers/discover/search",
   allowIfAuthenticated,
   isStaff,
-  searchSeller
+  searchSeller,
 );
 
 // For orders
@@ -349,13 +316,7 @@ staffRouter.get(
   "/orders/:id",
   allowIfAuthenticated,
   isStaff,
-  fetchIndividualOrder
-);
-staffRouter.get(
-  "/orders/:id/items",
-  allowIfAuthenticated,
-  isStaff,
-  fetchIndividualOrderItems
+  fetchIndividualOrder,
 );
 staffRouter.put(
   "/orders/:id",
@@ -371,45 +332,11 @@ staffRouter.put(
       "DELIVERED",
       "CANCELLED",
     ]),
-  updateOrderStatus
+  updateOrderStatus,
 );
 staffRouter.delete("/orders/:id", allowIfAuthenticated, isStaff, deleteOrder);
-staffRouter.get(
-  "/orders/discover/search",
-  allowIfAuthenticated,
-  isStaff,
-  searchOrder
-);
-
-// Order items
-staffRouter.get("/orderitems", allowIfAuthenticated, isStaff, fetchOrderItems);
-staffRouter.get(
-  "/orderitems/:id",
-  allowIfAuthenticated,
-  isStaff,
-  fetchIndividualOrderItem
-);
-staffRouter.put(
-  "/orderitems/:id",
-  allowIfAuthenticated,
-  isStaff,
-  makeOrderItemReady
-);
-staffRouter.delete(
-  "/orderitems/:id",
-  allowIfAuthenticated,
-  isStaff,
-  deleteOrderItem
-);
-staffRouter.get(
-  "/orderitems/discover/search",
-  allowIfAuthenticated,
-  isStaff,
-  searchOrderItem
-);
 
 // cart
-staffRouter.put("/cart/:id", allowIfAuthenticated, isStaff, orderCart);
 staffRouter.delete("/cart/:id", allowIfAuthenticated, isStaff, emptyCart);
 
 // cart items
@@ -418,13 +345,7 @@ staffRouter.put(
   "/cartitems/:id",
   allowIfAuthenticated,
   isStaff,
-  updateCartItem
-);
-staffRouter.delete(
-  "/cartitems/:id",
-  allowIfAuthenticated,
-  isStaff,
-  deleteOrderItem
+  updateCartItem,
 );
 
 // wishlist
@@ -432,7 +353,7 @@ staffRouter.delete(
   "/wishlist/:id",
   allowIfAuthenticated,
   isStaff,
-  emptyWishlist
+  emptyWishlist,
 );
 
 // wishlist items
@@ -440,19 +361,19 @@ staffRouter.get(
   "/wishlistitems",
   allowIfAuthenticated,
   isStaff,
-  fetchWishlistItems
+  fetchWishlistItems,
 );
 staffRouter.get(
   "/wishlistitems/:id",
   allowIfAuthenticated,
   isStaff,
-  fetchWishlistItem
+  fetchWishlistItem,
 );
 staffRouter.delete(
   "/wishlistitems/:id",
   allowIfAuthenticated,
   isStaff,
-  deleteWishlistItem
+  deleteWishlistItem,
 );
 
 // Comments
@@ -461,20 +382,20 @@ staffRouter.get(
   "/comments/:id",
   allowIfAuthenticated,
   isStaff,
-  fetchIndividualComment
+  fetchIndividualComment,
 );
 staffRouter.put(
   "/comments/:id",
   allowIfAuthenticated,
   isStaff,
   body("message").isString().isLength(stringConfig),
-  updateComment
+  updateComment,
 );
 staffRouter.delete(
   "/comments/:id",
   allowIfAuthenticated,
   isStaff,
-  deleteComment
+  deleteComment,
 );
 
 export default staffRouter;

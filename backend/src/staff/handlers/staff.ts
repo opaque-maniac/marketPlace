@@ -7,23 +7,41 @@
 
 import { Response, NextFunction } from "express";
 import prisma from "../../utils/db";
-import {
-  AuthenticatedRequest,
-  StaffSearchRequest,
-  StaffUpdateRequest,
-} from "../../types";
+import { AuthenticatedRequest, StaffUpdateRequest } from "../../types";
 
 // Function for fetching all staff
 export const fetchStaff = async (
   req: AuthenticatedRequest,
   res: Response,
-  next: NextFunction
+  next: NextFunction,
 ) => {
   try {
     const page = req.query.page ? parseInt(req.query.page as string) : 1;
     const limit = req.query.limit ? parseInt(req.query.limit as string) : 10;
+    const query = req.query.query ? (req.query.query as string) : "";
 
     const staff = await prisma.staff.findMany({
+      where: query
+        ? {
+            OR: [
+              {
+                firstName: {
+                  contains: query,
+                  mode: "insensitive",
+                },
+              },
+              {
+                lastName: {
+                  contains: query,
+                  mode: "insensitive",
+                },
+              },
+              {
+                email: query,
+              },
+            ],
+          }
+        : {},
       include: {
         image: true,
       },
@@ -51,7 +69,7 @@ export const fetchStaff = async (
 export const fetchIndividualStaff = async (
   req: AuthenticatedRequest,
   res: Response,
-  next: NextFunction
+  next: NextFunction,
 ) => {
   try {
     const { id } = req.params;
@@ -78,7 +96,7 @@ export const fetchIndividualStaff = async (
 export const updateStaff = async (
   req: StaffUpdateRequest,
   res: Response,
-  next: NextFunction
+  next: NextFunction,
 ) => {
   try {
     const { id } = req.params;
@@ -126,7 +144,7 @@ export const updateStaff = async (
       {
         maxWait: 5000,
         timeout: 10000,
-      }
+      },
     );
 
     return res.status(200).json({
@@ -142,7 +160,7 @@ export const updateStaff = async (
 export const enableStaff = async (
   req: AuthenticatedRequest,
   res: Response,
-  next: NextFunction
+  next: NextFunction,
 ) => {
   try {
     const { id } = req.params;
@@ -167,7 +185,7 @@ export const enableStaff = async (
 export const disableStaff = async (
   req: AuthenticatedRequest,
   res: Response,
-  next: NextFunction
+  next: NextFunction,
 ) => {
   try {
     const { id } = req.params;
@@ -192,7 +210,7 @@ export const disableStaff = async (
 export const deleteStaff = async (
   req: AuthenticatedRequest,
   res: Response,
-  next: NextFunction
+  next: NextFunction,
 ) => {
   try {
     const { id } = req.params;
@@ -204,60 +222,6 @@ export const deleteStaff = async (
     return res.status(203).json({
       message: "Staff deleted successfully",
       staff,
-    });
-  } catch (e) {
-    return next(e as Error);
-  }
-};
-
-// Function to search for staff
-export const searchStaff = async (
-  req: AuthenticatedRequest,
-  res: Response,
-  next: NextFunction
-) => {
-  try {
-    const query = req.query.query ? (req.query.query as string) : "";
-    const page = req.query.page ? parseInt(req.query.page as string) : 1;
-    const limit = req.query.limit ? parseInt(req.query.limit as string) : 10;
-
-    const staff = await prisma.staff.findMany({
-      where: {
-        OR: [
-          {
-            firstName: {
-              contains: query,
-              mode: "insensitive",
-            },
-          },
-          {
-            lastName: {
-              contains: query,
-              mode: "insensitive",
-            },
-          },
-          {
-            email: {
-              contains: query,
-              mode: "insensitive",
-            },
-          },
-        ],
-      },
-      skip: (page - 1) * limit,
-      take: limit + 1,
-    });
-
-    const hasNext = staff.length > limit;
-
-    if (hasNext) {
-      staff.pop();
-    }
-
-    return res.status(200).json({
-      message: "Staff fetched successfully",
-      staff,
-      hasNext,
     });
   } catch (e) {
     return next(e as Error);

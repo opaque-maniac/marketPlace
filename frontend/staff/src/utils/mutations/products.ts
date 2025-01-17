@@ -1,5 +1,6 @@
 import { getAccessToken } from "../cookies";
 import { tokenError } from "../errors";
+import { apiHost, apiProtocol } from "../generics";
 import { ErrorResponse, SuccessUpdateProductRespnse } from "../types";
 
 export const updateProduct = async ({
@@ -10,7 +11,7 @@ export const updateProduct = async ({
   formData: FormData;
 }) => {
   try {
-    const url = `http://localhost:3020/staff/products/${id}`;
+    const url = `${apiProtocol}://${apiHost}/staff/products/${id}`;
 
     const token = getAccessToken();
 

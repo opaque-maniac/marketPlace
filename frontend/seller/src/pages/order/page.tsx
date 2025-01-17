@@ -6,7 +6,7 @@ import { Link, useNavigate, useParams } from "react-router-dom";
 import { useCallback, useContext, useEffect } from "react";
 import { ErrorContext, ShowErrorContext } from "../../utils/errorContext";
 import { Helmet } from "react-helmet";
-import { fetchOrder } from "../../utils/queries/orders";
+import { fetchOrder } from "../../utils/queries/orders/fetchindividualorder";
 import PageLoader from "../../components/pageloader";
 import DeliveredButton from "./deliveredb";
 

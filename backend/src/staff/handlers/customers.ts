@@ -7,23 +7,41 @@
 
 import { Response, NextFunction } from "express";
 import prisma from "../../utils/db";
-import {
-  AuthenticatedRequest,
-  CustomerSearchRequest,
-  CustomerUpdateRequest,
-} from "../../types";
+import { AuthenticatedRequest, CustomerUpdateRequest } from "../../types";
 
 // Function to fetch customers
 export const fetchCustomers = async (
   req: AuthenticatedRequest,
   res: Response,
-  next: NextFunction
+  next: NextFunction,
 ) => {
   try {
     const page = req.query.page ? parseInt(req.query.page as string) : 1;
     const limit = req.query.limit ? parseInt(req.query.limit as string) : 10;
+    const query = req.query.query ? (req.query.query as string) : "";
 
     const customers = await prisma.customer.findMany({
+      where: query
+        ? {
+            OR: [
+              {
+                firstName: {
+                  contains: query,
+                  mode: "insensitive",
+                },
+              },
+              {
+                lastName: {
+                  contains: query,
+                  mode: "insensitive",
+                },
+              },
+              {
+                email: query,
+              },
+            ],
+          }
+        : {},
       include: {
         image: true,
       },
@@ -51,7 +69,7 @@ export const fetchCustomers = async (
 export const fetchIndividualCustomer = async (
   req: AuthenticatedRequest,
   res: Response,
-  next: NextFunction
+  next: NextFunction,
 ) => {
   try {
     const { id } = req.params;
@@ -85,7 +103,7 @@ export const fetchIndividualCustomer = async (
 export const updateCustomer = async (
   req: CustomerUpdateRequest,
   res: Response,
-  next: NextFunction
+  next: NextFunction,
 ) => {
   try {
     const { id } = req.params;
@@ -134,7 +152,7 @@ export const updateCustomer = async (
       {
         maxWait: 5000,
         timeout: 10000,
-      }
+      },
     );
 
     return res.status(200).json({
@@ -150,7 +168,7 @@ export const updateCustomer = async (
 export const disableCustomer = async (
   req: AuthenticatedRequest,
   res: Response,
-  next: NextFunction
+  next: NextFunction,
 ) => {
   try {
     const { id } = req.params;
@@ -175,7 +193,7 @@ export const disableCustomer = async (
 export const enableCustomer = async (
   req: AuthenticatedRequest,
   res: Response,
-  next: NextFunction
+  next: NextFunction,
 ) => {
   try {
     const { id } = req.params;
@@ -200,7 +218,7 @@ export const enableCustomer = async (
 export const deleteCustomer = async (
   req: AuthenticatedRequest,
   res: Response,
-  next: NextFunction
+  next: NextFunction,
 ) => {
   try {
     const { id } = req.params;
@@ -214,63 +232,6 @@ export const deleteCustomer = async (
     return res.status(200).json({
       message: "Customer deleted successfully",
       customer,
-    });
-  } catch (e) {
-    return next(e as Error);
-  }
-};
-
-// Function to search for customers
-export const searchCustomer = async (
-  req: AuthenticatedRequest,
-  res: Response,
-  next: NextFunction
-) => {
-  try {
-    const query = req.query.query ? req.query.query as string : "";
-    const page = req.query.page ? parseInt(req.query.page as string) : 1;
-    const limit = req.query.limit ? parseInt(req.query.limit as string) : 10;
-
-    const customers = await prisma.customer.findMany({
-      where: {
-        OR: [
-          {
-            firstName: {
-              contains: query,
-              mode: "insensitive",
-            },
-          },
-          {
-            lastName: {
-              contains: query,
-              mode: "insensitive",
-            },
-          },
-          {
-            email: {
-              contains: query,
-              mode: "insensitive",
-            },
-          },
-        ],
-      },
-      include: {
-          image: true
-      },
-      skip: (page - 1) * limit,
-      take: limit + 1,
-    });
-
-    const hasNext = customers.length > limit;
-
-    if (hasNext) {
-      customers.pop();
-    }
-
-    return res.status(200).json({
-      message: "Customers fetched successfully",
-      customers,
-      hasNext,
     });
   } catch (e) {
     return next(e as Error);

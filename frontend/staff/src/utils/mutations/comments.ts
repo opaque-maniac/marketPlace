@@ -1,10 +1,11 @@
 import { getAccessToken } from "../cookies";
 import { responseError, tokenError } from "../errors";
+import { apiHost, apiProtocol } from "../generics";
 import { ErrorResponse } from "../types";
 
 export const deleteComment = async ({ id }: { id: string }) => {
   try {
-    const url = `http://localhost:3020/staff/comments/${id}`;
+    const url = `${apiProtocol}://${apiHost}/staff/comments/${id}`;
     const token = getAccessToken();
 
     if (!token) {

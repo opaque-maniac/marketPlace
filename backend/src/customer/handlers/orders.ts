@@ -5,7 +5,7 @@
  * @param {NextFunction} next - Next function
  */
 
-import { Response, NextFunction, Request } from "express";
+import { Response, NextFunction } from "express";
 import prisma from "../../utils/db";
 import { AuthenticatedRequest } from "../../types";
 import { ORDER_STATUS } from "@prisma/client";
@@ -14,7 +14,7 @@ import { ORDER_STATUS } from "@prisma/client";
 export const fetchOrders = async (
   req: AuthenticatedRequest,
   res: Response,
-  next: NextFunction
+  next: NextFunction,
 ) => {
   try {
     const { user } = req;
@@ -32,6 +32,13 @@ export const fetchOrders = async (
       where: {
         customerID: user.id,
         status,
+      },
+      include: {
+        product: {
+          include: {
+            images: true,
+          },
+        },
       },
       skip: (page - 1) * limit,
       take: limit + 1,
@@ -57,7 +64,7 @@ export const fetchOrders = async (
 export const fetchIndividualOrder = async (
   req: AuthenticatedRequest,
   res: Response,
-  next: NextFunction
+  next: NextFunction,
 ) => {
   try {
     const { id } = req.params;
@@ -71,6 +78,14 @@ export const fetchIndividualOrder = async (
       where: {
         id,
         customerID: user.id,
+      },
+      include: {
+        product: {
+          include: {
+            images: true,
+            seller: true,
+          },
+        },
       },
     });
 
@@ -87,68 +102,11 @@ export const fetchIndividualOrder = async (
   }
 };
 
-// Fetch order items
-export const fetchOrderItems = async (
-  req: AuthenticatedRequest,
-  res: Response,
-  next: NextFunction
-) => {
-  try {
-    const { user } = req;
-    const { id } = req.params;
-    const page = req.query.page ? parseInt(req.query.page as string) : 1;
-    const limit = req.query.limit ? parseInt(req.query.limit as string) : 10;
-
-    if (!user) {
-      throw new Error("User not found");
-    }
-
-    const order = await prisma.order.findUnique({
-      where: {
-        id,
-      },
-    });
-
-    if (!order) {
-      throw new Error("Order not found");
-    }
-
-    const orderItems = await prisma.orderItem.findMany({
-      where: {
-        orderID: order.id,
-      },
-      include: {
-        product: {
-          include: {
-            images: true,
-          },
-        },
-      },
-      take: limit + 1,
-      skip: (page - 1) * limit,
-    });
-
-    const hasNext = orderItems.length > limit;
-
-    if (hasNext) {
-      orderItems.pop();
-    }
-
-    return res.status(200).json({
-      message: "Fetched order items",
-      orderItems,
-      hasNext,
-    });
-  } catch (e) {
-    return next(e as Error);
-  }
-};
-
 // Function to cancel order
 export const cancelOrder = async (
   req: AuthenticatedRequest,
   res: Response,
-  next: NextFunction
+  next: NextFunction,
 ) => {
   try {
     const { id } = req.params;
@@ -168,22 +126,39 @@ export const cancelOrder = async (
       throw new Error("Order not found");
     }
 
-    if (
-      order.status == "READY" ||
-      order.status == "DELIVERED" ||
-      order.status == "SHIPPED"
-    ) {
+    if (order.status == "DELIVERED" || order.status == "SHIPPED") {
       throw new Error("Order cannot be cancelled");
     }
 
-    const updatedOrder = await prisma.order.update({
-      where: {
-        id: order.id,
+    const updatedOrder = await prisma.$transaction(
+      async (txl) => {
+        const uOrder = await txl.order.update({
+          where: {
+            id: order.id,
+          },
+          data: {
+            status: "CANCELLED",
+          },
+        });
+
+        await txl.product.update({
+          where: {
+            id: uOrder.productID,
+          },
+          data: {
+            inventory: {
+              increment: uOrder.quantity,
+            },
+          },
+        });
+
+        return uOrder;
       },
-      data: {
-        status: "CANCELLED",
+      {
+        maxWait: 5000,
+        timeout: 10000,
       },
-    });
+    );
 
     return res.status(200).json({
       message: "Cancelled order",

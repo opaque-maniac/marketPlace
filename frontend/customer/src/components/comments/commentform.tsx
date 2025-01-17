@@ -1,5 +1,5 @@
 import { useMutation } from "@tanstack/react-query";
-import { sendComment } from "../../utils/mutations/comments";
+import { sendComment } from "../../utils/mutations/comments/sendcomment";
 import { FormEventHandler, useContext, useRef, useState } from "react";
 import { ErrorResponse } from "../../utils/types";
 import errorHandler from "../../utils/errorHandler";

@@ -3,7 +3,6 @@ import Transition from "../../components/transition";
 import AuthLayout from "../login/layout";
 import { FormEventHandler, useContext, useState } from "react";
 import { useMutation } from "@tanstack/react-query";
-import { sendRegister } from "../../utils/mutations/auth";
 import { ErrorResponse } from "../../utils/types";
 import errorHandler from "../../utils/errorHandler";
 import EyeClosed from "../../components/icons/hide";
@@ -11,6 +10,7 @@ import EyeOpen from "../../components/icons/show";
 import Loader from "../../components/loader";
 import { ShowErrorContext, ErrorContext } from "../../utils/errorContext";
 import { Helmet } from "react-helmet";
+import { sendRegister } from "../../utils/mutations/auth/register";
 
 const RegisterPage = () => {
   const navigate = useNavigate();
@@ -147,7 +147,7 @@ const RegisterPage = () => {
           <div className="pt-4 flex justify-center gap-4 items-center">
             <button
               aria-label="Send Login Details"
-              className="block bg-red-400 rounded-lg w-40 h-10"
+              className="block bg-red-400 rounded-lg w-40 h-10 py-2 text-white"
               type="submit"
             >
               {mutation.isIdle ? "Sign Up" : <Loader color="#ffffff" />}

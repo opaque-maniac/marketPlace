@@ -160,3 +160,9 @@ export interface StaffUpdateCommentRequest extends AuthenticatedRequest {
     message: string;
   };
 }
+
+export interface SellerUpdateOrderRequest extends AuthenticatedRequest {
+  body: {
+    status: ORDER_STATUS;
+  };
+}

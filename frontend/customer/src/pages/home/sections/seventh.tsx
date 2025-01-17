@@ -26,6 +26,7 @@ const SeventhSection = ({ products, isLoading }: Props) => {
             color="black"
             overflow={false}
             full={false}
+            zeroHeight="900px"
           />
         </div>
       )}

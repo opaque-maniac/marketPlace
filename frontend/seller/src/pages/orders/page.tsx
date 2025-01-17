@@ -11,7 +11,7 @@ import ArrowLeft from "../../components/icons/arrowleft";
 import ArrowRight from "../../components/icons/arrowright";
 import { Helmet } from "react-helmet";
 import OrdersList from "./orderlist";
-import { fetchOrders } from "../../utils/queries/orders";
+import { fetchOrders } from "../../utils/queries/orders/fetchorders";
 
 const OrdersPage = () => {
   const page = orderPageStore((state) => state.page);

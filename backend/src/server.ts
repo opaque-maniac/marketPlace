@@ -13,8 +13,15 @@ import { sendComplaints } from "./seller/handlers/complaints";
 import { stringConfig } from "./utils/globals";
 import { body } from "express-validator";
 import path from "path";
+import dotenv from "dotenv";
+import { initializeSocketServer } from "./websockets/sockets";
+import http from "node:http";
 
 const app = express();
+const server = http.createServer(app);
+
+dotenv.config();
+initializeSocketServer(server);
 
 // Implimenting some middleware
 app.use(express.json());
@@ -61,9 +68,9 @@ app.post(
     .matches(/^[0-9]+$/)
     .isLength({ min: 10, max: 10 }),
   body("message").isString().isLength(stringConfig),
-  sendComplaints
+  sendComplaints,
 );
 
 app.use(errorHandler);
 
-export default app;
+export default server;

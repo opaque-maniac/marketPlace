@@ -1,5 +1,5 @@
 import { useQuery } from "@tanstack/react-query";
-import { fetchRelatedProducts } from "../../utils/queries/products";
+import { fetchRelatedProducts } from "../../utils/queries/products/fetchrelatedproducts";
 import { ErrorResponse, Product } from "../../utils/types";
 import Loader from "../../components/loader";
 import ProductList from "../../components/products/productlist";

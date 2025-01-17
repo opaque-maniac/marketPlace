@@ -1,6 +1,6 @@
 import { useQuery } from "@tanstack/react-query";
 import Transition from "../../components/transition";
-import { fetchProduct } from "../../utils/queries/products";
+import { fetchProduct } from "../../utils/queries/products/fetchindividualproduct";
 import { useNavigate, useParams } from "react-router-dom";
 import { useContext, useEffect, useState } from "react";
 import { ErrorContext, ShowErrorContext } from "../../utils/errorContext";

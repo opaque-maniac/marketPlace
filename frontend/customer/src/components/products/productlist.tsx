@@ -8,9 +8,17 @@ interface Props {
   overflow: boolean;
   full: boolean;
   center?: boolean;
+  zeroHeight?: string;
 }
 
-const ProductList = ({ products, color, overflow, full, center }: Props) => {
+const ProductList = ({
+  products,
+  color,
+  overflow,
+  full,
+  center,
+  zeroHeight = "auto",
+}: Props) => {
   const { pathname } = useLocation();
 
   const justify =
@@ -36,7 +44,7 @@ const ProductList = ({ products, color, overflow, full, center }: Props) => {
       ) : (
         <div
           className="flex justify-center h-full w-full items-center"
-          style={{ minHeight: full ? "calc(100vh - 1.4rem )" : "auto" }}
+          style={{ minHeight: full ? "calc(100vh - 1.4rem )" : zeroHeight }}
         >
           <p
             className={`text-2xl font-semibold text-wrap text-center text-${color}`}

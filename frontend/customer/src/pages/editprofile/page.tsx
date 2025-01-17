@@ -10,7 +10,7 @@ import errorHandler from "../../utils/errorHandler";
 import { Helmet } from "react-helmet";
 import Loader from "../../components/loader";
 import ProfileForm from "./form";
-import { sendUpdateProfile } from "../../utils/mutations/profile";
+import { sendUpdateProfile } from "../../utils/mutations/profile/updateprofile";
 
 const UpdateProfilePage = () => {
   const user = useUserStore((state) => state.user);

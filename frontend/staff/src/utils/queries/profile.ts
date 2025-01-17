@@ -1,15 +1,16 @@
 import { QueryFunction } from "@tanstack/react-query";
-import { ErrorResponse, SuccessCustomerResponse } from "../types";
+import { ErrorResponse, SuccessStaffProfileResponse } from "../types";
 import { getAccessToken } from "../cookies";
 import { responseError, tokenError } from "../errors";
+import { apiHost, apiProtocol } from "../generics";
 
 export const fetchProfile: QueryFunction<
-  SuccessCustomerResponse,
+  SuccessStaffProfileResponse,
   ["profile", string]
 > = async ({ queryKey }) => {
   try {
     const [, id] = queryKey;
-    const url = `http://localhost:3020/customers/profile/${id}`;
+    const url = `${apiProtocol}://${apiHost}/staff/profile/${id}`;
 
     const token = getAccessToken();
 
@@ -37,7 +38,7 @@ export const fetchProfile: QueryFunction<
       }
     }
 
-    return response.json() as Promise<SuccessCustomerResponse>;
+    return response.json() as Promise<SuccessStaffProfileResponse>;
   } catch (e) {
     if (e instanceof Error) {
       throw new Error(e.message);

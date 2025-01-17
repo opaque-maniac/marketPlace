@@ -1,4 +1,4 @@
-import { searchTypeStore } from "../pages/search/typeStore";
+import { apiHost, apiProtocol } from "./generics";
 
 const err = JSON.stringify({
   message: "Internal server error",
@@ -6,15 +6,10 @@ const err = JSON.stringify({
 });
 
 export const getSearchRoute = () => {
-  const type = searchTypeStore.getState().type;
+  const pathname = window.location.pathname;
+  const base = `${apiProtocol}://${apiHost}/seller`;
 
-  if (!type) {
-    throw new Error(err);
-  }
-
-  const base = `http://localhost:3020/seller`;
-
-  if (type === "orders") {
+  if (pathname.includes("orders")) {
     return `${base}/orders/search`;
   }
 
@@ -23,13 +18,9 @@ export const getSearchRoute = () => {
 
 // If null is returned, go to 500
 export const getSearchRender = () => {
-  const type = searchTypeStore.getState().type;
+  const pathname = window.location.pathname;
 
-  if (!type) {
-    return null;
-  }
-
-  if (type === "orders") {
+  if (pathname.includes("orders")) {
     return "orders";
   }
   return "products";

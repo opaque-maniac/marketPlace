@@ -1,7 +1,7 @@
 import { useNavigate, useParams } from "react-router-dom";
 import Transition from "../../components/transition";
 import { useQuery } from "@tanstack/react-query";
-import { fetchIndividualProduct } from "../../utils/queries/products";
+import { fetchIndividualProduct } from "../../utils/queries/products/fetchindividualproduct";
 import { useContext, useEffect, useState } from "react";
 import errorHandler from "../../utils/errorHandler";
 import { ErrorResponse } from "../../utils/types";

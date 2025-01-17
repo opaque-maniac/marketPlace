@@ -7,7 +7,7 @@ import errorHandler from "../../utils/errorHandler";
 import Transition from "../transition";
 import Loader from "../loader";
 import TrashIcon from "../icons/trash";
-import { removeFromWishlist } from "../../utils/mutations/wishlist";
+import { removeFromWishlist } from "../../utils/mutations/wishlist/removefromwishlist";
 
 interface Props {
   id: string;

@@ -1,4 +1,5 @@
 /**
+ *
  * Handlers for managing products for staff
  * @param {Request} req - Request object
  * @param {Response} res - Response object
@@ -7,17 +8,13 @@
 
 import { Response, NextFunction } from "express";
 import prisma from "../../utils/db";
-import {
-  AuthenticatedRequest,
-  SellerSearchRequest,
-  SellerUpdateStaffRequest,
-} from "../../types";
+import { AuthenticatedRequest, SellerUpdateStaffRequest } from "../../types";
 
 // Function to fetch sellers
 export const fetchSellers = async (
   req: AuthenticatedRequest,
   res: Response,
-  next: NextFunction
+  next: NextFunction,
 ) => {
   try {
     const page = req.query.page ? parseInt(req.query.page as string) : 1;
@@ -51,7 +48,7 @@ export const fetchSellers = async (
 export const fetchIndividualSeller = async (
   req: AuthenticatedRequest,
   res: Response,
-  next: NextFunction
+  next: NextFunction,
 ) => {
   try {
     const { id } = req.params;
@@ -85,7 +82,7 @@ export const fetchIndividualSeller = async (
 export const fetchSellerProducts = async (
   req: AuthenticatedRequest,
   res: Response,
-  next: NextFunction
+  next: NextFunction,
 ) => {
   try {
     const { id } = req.params;
@@ -136,7 +133,7 @@ export const fetchSellerProducts = async (
 export const updateSeller = async (
   req: SellerUpdateStaffRequest,
   res: Response,
-  next: NextFunction
+  next: NextFunction,
 ) => {
   try {
     const { id } = req.params;
@@ -185,7 +182,7 @@ export const updateSeller = async (
       {
         maxWait: 5000,
         timeout: 10000,
-      }
+      },
     );
 
     return res.status(200).json({
@@ -201,7 +198,7 @@ export const updateSeller = async (
 export const enableSeller = async (
   req: AuthenticatedRequest,
   res: Response,
-  next: NextFunction
+  next: NextFunction,
 ) => {
   try {
     const { id } = req.params;
@@ -226,7 +223,7 @@ export const enableSeller = async (
 export const disableSeller = async (
   req: AuthenticatedRequest,
   res: Response,
-  next: NextFunction
+  next: NextFunction,
 ) => {
   try {
     const { id } = req.params;
@@ -251,7 +248,7 @@ export const disableSeller = async (
 export const deleteSeller = async (
   req: AuthenticatedRequest,
   res: Response,
-  next: NextFunction
+  next: NextFunction,
 ) => {
   try {
     const { id } = req.params;
@@ -275,7 +272,7 @@ export const deleteSeller = async (
 export const searchSeller = async (
   req: AuthenticatedRequest,
   res: Response,
-  next: NextFunction
+  next: NextFunction,
 ) => {
   try {
     const query = req.query.query ? (req.query.query as string) : "";

@@ -242,3 +242,35 @@ export interface SuccessStaffResponse {
   staff: Staff[];
   hasNext: boolean;
 }
+
+export interface SuccessCartsResponse {
+  message: string;
+  carts: Cart[];
+  hasNext: boolean;
+}
+
+export interface SuccessIndividualOrderResponse {
+  message: string;
+  order: Order;
+}
+
+export interface SuccessOrdersResponse {
+  message: string;
+  orders: Order[];
+  hasNext: boolean;
+}
+
+export interface SuccessOrderItemResponse {
+  message: string;
+  items: OrderItem[];
+  hasNext: boolean;
+}
+
+export interface SuccessStaffProfileResponse {
+  message: string;
+  data: Staff;
+}
+
+export interface SuccessWishlistQueryResponse {
+  message: string;
+}

@@ -3,7 +3,7 @@ import Transition from "../../components/transition";
 import AuthLayout from "../login/layout";
 import { FormEventHandler, useContext, useState } from "react";
 import { useMutation } from "@tanstack/react-query";
-import { sendRegister } from "../../utils/mutations/auth";
+import { sendRegister } from "../../utils/mutations/auth/register";
 import { ErrorResponse } from "../../utils/types";
 import errorHandler from "../../utils/errorHandler";
 import EyeClosed from "../../components/icons/hide";

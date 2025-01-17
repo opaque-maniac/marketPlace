@@ -12,7 +12,7 @@ import prisma from "../../utils/db";
 export const fetchUserCart = async (
   req: AuthenticatedRequest,
   res: Response,
-  next: NextFunction
+  next: NextFunction,
 ) => {
   try {
     const { id } = req.params;
@@ -64,7 +64,7 @@ export const fetchUserCart = async (
 export const emptyCart = async (
   req: AuthenticatedRequest,
   res: Response,
-  next: NextFunction
+  next: NextFunction,
 ) => {
   try {
     const { id } = req.params;
@@ -93,99 +93,10 @@ export const emptyCart = async (
   }
 };
 
-export const orderCart = async (
-  req: AuthenticatedRequest,
-  res: Response,
-  next: NextFunction
-) => {
-  try {
-    const { id } = req.params;
-
-    const cart = await prisma.cart.findUnique({
-      where: {
-        customerID: id,
-      },
-    });
-
-    if (!cart) {
-      throw new Error("Cart not found");
-    }
-
-    const cartItems = await prisma.cartItem.findMany({
-      where: {
-        cartID: cart.id,
-      },
-      include: {
-        product: true,
-      },
-    });
-
-    if (cartItems.length === 0) {
-      throw new Error("No items in cart");
-    }
-
-    const order = await prisma.$transaction(
-      async (txl) => {
-        const newOrder = await txl.order.create({
-          data: {
-            customerID: cart.customerID,
-            status: "PENDING",
-          },
-        });
-
-        let price: number = 0;
-
-        for (let i = 0; i < cartItems.length; i++) {
-          let item = cartItems[i];
-
-          await txl.orderItem.create({
-            data: {
-              orderID: newOrder.id,
-              productID: item.productID,
-              quantity: item.quantity,
-              ready: false,
-            },
-          });
-
-          price += item.product.price * item.quantity;
-        }
-
-        const updatedOrder = await txl.order.update({
-          where: {
-            id: newOrder.id,
-          },
-          data: {
-            totalAmount: price,
-          },
-        });
-
-        await txl.cartItem.deleteMany({
-          where: {
-            cartID: cart.id,
-          },
-        });
-
-        return updatedOrder;
-      },
-      {
-        maxWait: 5000,
-        timeout: 10000,
-      }
-    );
-
-    return res.status(201).json({
-      message: "Order created successfully",
-      order,
-    });
-  } catch (e) {
-    return next(e as Error);
-  }
-};
-
 export const fetchCartItem = async (
   req: AuthenticatedRequest,
   res: Response,
-  next: NextFunction
+  next: NextFunction,
 ) => {
   try {
     const { id } = req.params;
@@ -219,7 +130,7 @@ export const fetchCartItem = async (
 export const updateCartItem = async (
   req: AuthenticatedRequest,
   res: Response,
-  next: NextFunction
+  next: NextFunction,
 ) => {
   try {
     const { id } = req.params;
@@ -258,7 +169,7 @@ export const updateCartItem = async (
 export const deleteCartItem = async (
   req: AuthenticatedRequest,
   res: Response,
-  next: NextFunction
+  next: NextFunction,
 ) => {
   try {
     const { id } = req.params;

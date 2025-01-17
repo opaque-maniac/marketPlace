@@ -4,7 +4,7 @@ import { useNavigate, useParams } from "react-router-dom";
 import { useEffect, useContext, useCallback } from "react";
 import { ErrorContext, ShowErrorContext } from "../../utils/errorContext";
 import { useQuery } from "@tanstack/react-query";
-import { fetchIndividualOrder } from "../../utils/queries/orders";
+import { fetchIndividualOrder } from "../../utils/queries/orders/fetchindividualorder";
 import PageLoader from "../../components/pageloader";
 import { ErrorResponse } from "../../utils/types";
 import errorHandler from "../../utils/errorHandler";

@@ -41,7 +41,6 @@ import {
 import {
   cancelOrder,
   fetchIndividualOrder,
-  fetchOrderItems,
   fetchOrders,
 } from "./handlers/orders";
 
@@ -59,13 +58,13 @@ customerRouter.post(
   body("firstName").isString().isLength(stringConfig),
   body("lastName").isString().isLength(stringConfig),
   body("password").isStrongPassword(passwordConfig),
-  register
+  register,
 );
 customerRouter.post(
   "/login",
   body("email").isEmail(),
   body("password").isStrongPassword(passwordConfig),
-  login
+  login,
 );
 
 // For profile managemnt
@@ -74,7 +73,7 @@ customerRouter.get(
   allowIfAuthenticated,
   isCustomer,
   isProfileOwner,
-  fetchProfile
+  fetchProfile,
 );
 customerRouter.put(
   "/profile/:id",
@@ -89,14 +88,14 @@ customerRouter.put(
     .optional(),
   body("address").isString().isLength(stringConfig).optional(),
   upload.single("image"),
-  updateProfile
+  updateProfile,
 );
 customerRouter.delete(
   "/profile/:id",
   allowIfAuthenticated,
   isCustomer,
   isProfileOwner,
-  deleteProfile
+  deleteProfile,
 );
 
 // For product management
@@ -111,14 +110,14 @@ customerRouter.post(
   allowIfAuthenticated,
   isCustomer,
   body("message").isString().isLength(stringConfig),
-  createProductComment
+  createProductComment,
 );
 customerRouter.get("/products/:id/comments/:commentId", fetchIndividualComment);
 customerRouter.delete(
   "/products/:id/comments/:commentId",
   allowIfAuthenticated,
   isCustomer,
-  deleteProductComment
+  deleteProductComment,
 );
 
 // For cart management
@@ -127,7 +126,7 @@ customerRouter.put(
   "/cart",
   allowIfAuthenticated,
   isCustomer,
-  orderAllCartItems
+  orderAllCartItems,
 );
 customerRouter.delete("/cart", allowIfAuthenticated, isCustomer, emptyCart);
 customerRouter.post("/cart/:id", allowIfAuthenticated, isCustomer, addToCart);
@@ -135,25 +134,25 @@ customerRouter.get(
   "/cart/:id",
   allowIfAuthenticated,
   isCustomer,
-  fetchCartItem
+  fetchCartItem,
 );
 customerRouter.put(
   "/cart/:id",
   allowIfAuthenticated,
   isCustomer,
-  orderCartItem
+  orderCartItem,
 );
 customerRouter.delete(
   "/cart/:id",
   allowIfAuthenticated,
   isCustomer,
-  removeFromCart
+  removeFromCart,
 );
 customerRouter.get(
   "/cartcount",
   allowIfAuthenticated,
   isCustomer,
-  fetchCartCount
+  fetchCartCount,
 );
 
 // For wishlist management
@@ -161,37 +160,37 @@ customerRouter.get(
   "/wishlist",
   allowIfAuthenticated,
   isCustomer,
-  fetchWishlist
+  fetchWishlist,
 );
 customerRouter.delete(
   "/wishlist",
   allowIfAuthenticated,
   isCustomer,
-  emptyWishlist
+  emptyWishlist,
 );
 customerRouter.post(
   "/wishlist/:id",
   allowIfAuthenticated,
   isCustomer,
-  addToWishlist
+  addToWishlist,
 );
 customerRouter.get(
   "/wishlist/:id",
   allowIfAuthenticated,
   isCustomer,
-  fetchWishlistItem
+  fetchWishlistItem,
 );
 customerRouter.delete(
   "/wishlist/:id",
   allowIfAuthenticated,
   isCustomer,
-  removeFromWishlist
+  removeFromWishlist,
 );
 customerRouter.get(
   "/wishlistcount",
   allowIfAuthenticated,
   isCustomer,
-  fetchWishlistCount
+  fetchWishlistCount,
 );
 
 // For order management
@@ -200,19 +199,13 @@ customerRouter.get(
   "/orders/:id",
   allowIfAuthenticated,
   isCustomer,
-  fetchIndividualOrder
-);
-customerRouter.get(
-  "/orders/:id/items",
-  allowIfAuthenticated,
-  isCustomer,
-  fetchOrderItems
+  fetchIndividualOrder,
 );
 customerRouter.delete(
   "/orders/:id/cancel",
   allowIfAuthenticated,
   isCustomer,
-  cancelOrder
+  cancelOrder,
 );
 
 // Add endpoints for creating orders after figuring out how to handle

@@ -3,7 +3,7 @@ import useUserStore from "../../utils/store";
 import { ErrorContext, ShowErrorContext } from "../../utils/errorContext";
 import { useNavigate } from "react-router-dom";
 import { useMutation } from "@tanstack/react-query";
-import { addToWishlist } from "../../utils/mutations/wishlist";
+import { addToWishlist } from "../../utils/mutations/wishlist/addtowishlist";
 import { ErrorResponse } from "../../utils/types";
 import errorHandler from "../../utils/errorHandler";
 import Loader from "../../components/loader";

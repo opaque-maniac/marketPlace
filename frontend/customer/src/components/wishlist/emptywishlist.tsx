@@ -1,5 +1,5 @@
 import { useMutation } from "@tanstack/react-query";
-import { emptyWishlist } from "../../utils/mutations/wishlist";
+import { emptyWishlist } from "../../utils/mutations/wishlist/emptywishlist";
 import { MouseEventHandler, useContext, useState } from "react";
 import { ErrorContext, ShowErrorContext } from "../../utils/errorContext";
 import { ErrorResponse } from "../../utils/types";

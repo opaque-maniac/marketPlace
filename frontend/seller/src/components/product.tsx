@@ -25,19 +25,21 @@ const ProductItem = ({ product }: Props) => {
               className="w-full mx-auto h-full"
             />
           </div>
-          <div className="flex justify-start items-center py-1 pl-4">
-            <p className="text-xl">{product.name}</p>
+          <div>
+            <p className="text-xl text-center">{product.name}</p>
           </div>
-          <div className="w-full flex justify-start items-center gap-20 pl-4">
+          <div className="w-full flex justify-evenly items-center">
             <span className="text-red-400">${`${product.price}`}</span>
             <span className="text-gray-400 line-through">
               $
-              {product.price -
-                (product.price * product.discountPercentage) / 100}
+              {(
+                product.price -
+                (product.price * product.discountPercentage) / 100
+              ).toFixed(2)}
             </span>
           </div>
-          <div className="flex justify-start pl-4 items-center">
-            <p className="font-bold">{product.category}</p>
+          <div>
+            <p className="font-bold text-center">{product.category}</p>
           </div>
         </div>
       </Link>

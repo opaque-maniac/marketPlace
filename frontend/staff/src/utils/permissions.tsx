@@ -11,7 +11,7 @@ const CheckPermissions = () => {
     /^\/privacy$/,
   ];
 
-  const noAuthRequired = [/^\/login$/, /^\/forgot-password$/];
+  const noAuthRequired = [/^\/login$/, /^\/forgot-password$/, /^\/register$/];
 
   const user = userStore((state) => state.user);
   const navigate = useNavigate();

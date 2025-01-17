@@ -1,6 +1,6 @@
 import { useMutation } from "@tanstack/react-query";
 import CancelIcon from "../icons/cancel";
-import { cancelOrder } from "../../utils/mutations/orders";
+import { cancelOrder } from "../../utils/mutations/orders/cancelorder";
 import { MouseEventHandler, useContext } from "react";
 import { ErrorContext, ShowErrorContext } from "../../utils/errorContext";
 import { ErrorResponse, OrderStatus } from "../../utils/types";

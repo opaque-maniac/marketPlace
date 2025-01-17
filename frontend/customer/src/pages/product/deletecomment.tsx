@@ -1,7 +1,7 @@
 import { useMutation } from "@tanstack/react-query";
 import TrashIcon from "../../components/icons/trash";
 import Transition from "../../components/transition";
-import { deleteComment } from "../../utils/mutations/comments";
+import { deleteComment } from "../../utils/mutations/comments/deletecomment";
 import { MouseEventHandler, useContext } from "react";
 import Loader from "../../components/loader";
 import { useNavigate } from "react-router-dom";

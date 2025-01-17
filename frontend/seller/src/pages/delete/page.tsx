@@ -3,10 +3,10 @@ import Transition from "../../components/transition";
 import { Helmet } from "react-helmet";
 import { MouseEventHandler, useContext, useEffect } from "react";
 import { useMutation } from "@tanstack/react-query";
-import { sendDeleteProduct } from "../../utils/mutations/products";
 import { ErrorResponse } from "../../utils/types";
 import errorHandler from "../../utils/errorHandler";
 import { ErrorContext, ShowErrorContext } from "../../utils/errorContext";
+import { sendDeleteProduct } from "../../utils/mutations/products/deleteproduct";
 
 const DeleteProductPage = () => {
   const { id } = useParams();

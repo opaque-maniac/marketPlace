@@ -95,7 +95,7 @@ const Navigation = ({ callback }: Props) => {
                     to={"/new"}
                     className={path === "/new" ? "underline" : ""}
                   >
-                    New Products
+                    New Product
                   </Link>
                 </li>
                 <li>

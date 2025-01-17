@@ -112,8 +112,8 @@ model Product {
   images             ProductImage[]
   cartItems          CartItem[]
   wishlistItems      WishListItem[]
-  orderItems         OrderItem[]
   comments           Comment[]
+  orders             Order[]
   discountPercentage Float
   createdAt          DateTime       @default(now())
   updatedAt          DateTime       @updatedAt
@@ -185,26 +185,15 @@ enum ORDER_STATUS {
 
 model Order {
   id          String       @id @default(uuid())
-  totalAmount Float?
-  status      ORDER_STATUS
-  customerID  String
-  customer    Customer     @relation(fields: [customerID], references: [id], onDelete: Cascade)
-  orderItems  OrderItem[]
-  createdAt   DateTime     @default(now())
-  updatedAt   DateTime     @updatedAt
-}
-
-model OrderItem {
-  id          String   @id @default(uuid())
+  totalAmount Float
+  status      ORDER_STATUS @default(PENDING)
   quantity    Int
   productID   String
-  orderID     String
-  ready       Boolean  @default(false)
-  delivered   Boolean  @default(false)
-  product     Product  @relation(fields: [productID], references: [id], onDelete: Cascade)
-  order       Order    @relation(fields: [orderID], references: [id], onDelete: Cascade)
-  dateCreated DateTime @default(now())
-  dateUpdated DateTime @updatedAt
+  product     Product      @relation(fields: [productID], references: [id], onDelete: Cascade)
+  customerID  String
+  customer    Customer     @relation(fields: [customerID], references: [id], onDelete: Cascade)
+  createdAt   DateTime     @default(now())
+  updatedAt   DateTime     @updatedAt
 }
 
 model Complaint {

@@ -2,6 +2,7 @@ import { QueryFunction } from "@tanstack/react-query";
 import { ErrorResponse, SuccessCustomerResponse } from "../types";
 import { getAccessToken } from "../cookies";
 import { responseError, tokenError } from "../errors";
+import { apiHost, apiProtocol } from "../generics";
 
 export const fetchProfile: QueryFunction<
   SuccessCustomerResponse,
@@ -9,7 +10,7 @@ export const fetchProfile: QueryFunction<
 > = async ({ queryKey }) => {
   try {
     const [, id] = queryKey;
-    const url = `http://localhost:3020/customers/profile/${id}`;
+    const url = `${apiProtocol}://${apiHost}/customers/profile/${id}`;
 
     const token = getAccessToken();
 

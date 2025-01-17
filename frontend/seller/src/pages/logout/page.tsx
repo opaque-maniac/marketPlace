@@ -28,8 +28,8 @@ const LogoutPage = () => {
         <meta name="google" content="nositelinkssearchbox" />
       </Helmet>
       <main role="main">
-        <section className="h-full w-full flex justify-center items-center">
-          <div className="h-40 w-40">
+        <section className="min-h-screen w-full flex justify-center items-center">
+          <div className="h-10 w-10">
             <Loader color="#000000" />
           </div>
         </section>

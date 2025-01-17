@@ -2,7 +2,7 @@ import { Link, useNavigate } from "react-router-dom";
 import Transition from "../../components/transition";
 import AuthLayout from "./layout";
 import { useMutation } from "@tanstack/react-query";
-import { sendLogin } from "../../utils/mutations/auth";
+import { sendLogin } from "../../utils/mutations/auth/login";
 import { ErrorResponse } from "../../utils/types";
 import errorHandler from "../../utils/errorHandler";
 import { FormEventHandler, useContext, useState } from "react";

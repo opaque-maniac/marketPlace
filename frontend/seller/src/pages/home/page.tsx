@@ -1,6 +1,6 @@
 import { useQuery } from "@tanstack/react-query";
 import Transition from "../../components/transition";
-import { fetchProducts } from "../../utils/queries/products";
+import { fetchProducts } from "../../utils/queries/products/fetchproducts";
 import Loader from "../../components/loader";
 import ProductsList from "./productslist";
 import { ErrorResponse } from "../../utils/types";
@@ -88,7 +88,7 @@ const HomePage = () => {
                 minHeight: "calc(100vh - 10.8rem)",
               }}
             >
-              <div className="h-20 w-20">
+              <div className="h-10 w-10">
                 <Loader color="#000000" />
               </div>
             </div>

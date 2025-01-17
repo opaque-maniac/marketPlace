@@ -1,5 +1,6 @@
 import { getRefreshToken } from "../cookies";
 import { refreshTokenError, responseError } from "../errors";
+import { apiHost, apiProtocol } from "../generics";
 import { ErrorResponse } from "../types";
 
 export const sendRefreshToken = async () => {
@@ -10,7 +11,7 @@ export const sendRefreshToken = async () => {
       throw refreshTokenError();
     }
 
-    const url = "http://localhost:3020/api/tokenrefresh";
+    const url = `${apiProtocol}://${apiHost}/api/tokenrefresh`;
     const options = {
       method: "POST",
       headers: {

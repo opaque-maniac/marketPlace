@@ -8,12 +8,13 @@
 import { Response, NextFunction, Request } from "express";
 import prisma from "../../utils/db";
 import { AuthenticatedRequest } from "../../types";
+import { newCartItemSocket } from "../../websockets/sockets";
 
 // Function to fetch cart
 export const fetchCart = async (
   req: AuthenticatedRequest,
   res: Response,
-  next: NextFunction
+  next: NextFunction,
 ) => {
   try {
     const { user } = req;
@@ -70,7 +71,7 @@ export const fetchCart = async (
 export const fetchCartItem = async (
   req: AuthenticatedRequest,
   res: Response,
-  next: NextFunction
+  next: NextFunction,
 ) => {
   try {
     const { id } = req.params;
@@ -116,7 +117,7 @@ export const fetchCartItem = async (
 export const orderCartItem = async (
   req: AuthenticatedRequest,
   res: Response,
-  next: NextFunction
+  next: NextFunction,
 ) => {
   try {
     const { id } = req.params;
@@ -133,6 +134,9 @@ export const orderCartItem = async (
           customerID: user.id,
         },
       },
+      include: {
+        product: true,
+      },
     });
 
     if (!cartItem) {
@@ -144,16 +148,20 @@ export const orderCartItem = async (
         const newOrder = await txl.order.create({
           data: {
             customerID: user.id,
-            status: "PENDING",
+            productID: cartItem.productID,
+            quantity: cartItem.quantity,
+            totalAmount: cartItem.product.price * cartItem.quantity,
           },
         });
 
-        await txl.orderItem.create({
+        await txl.product.update({
+          where: {
+            id: newOrder.productID,
+          },
           data: {
-            orderID: newOrder.id,
-            productID: cartItem.productID,
-            quantity: cartItem.quantity,
-            ready: false,
+            inventory: {
+              decrement: newOrder.quantity,
+            },
           },
         });
 
@@ -168,7 +176,7 @@ export const orderCartItem = async (
       {
         maxWait: 5000,
         timeout: 10000,
-      }
+      },
     );
 
     return res.status(201).json({
@@ -184,7 +192,7 @@ export const orderCartItem = async (
 export const orderAllCartItems = async (
   req: AuthenticatedRequest,
   res: Response,
-  next: NextFunction
+  next: NextFunction,
 ) => {
   try {
     const { user } = req;
@@ -216,58 +224,44 @@ export const orderAllCartItems = async (
       throw new Error("No items in cart");
     }
 
-    const order = await prisma.$transaction(
+    await prisma.$transaction(
       async (txl) => {
-        const newOrder = await txl.order.create({
-          data: {
-            customerID: user.id,
-            status: "PENDING",
-          },
-        });
-
-        let price: number = 0;
-
-        for (let i = 0; i < cartItems.length; i++) {
-          let item = cartItems[i];
-
-          await txl.orderItem.create({
+        for (const item of cartItems) {
+          await txl.order.create({
             data: {
-              orderID: newOrder.id,
+              customerID: user.id,
               productID: item.productID,
               quantity: item.quantity,
-              ready: false,
+              totalAmount: item.product.price * item.quantity,
             },
           });
 
-          price += item.product.price * item.quantity;
+          await txl.product.update({
+            where: {
+              id: item.productID,
+            },
+            data: {
+              inventory: {
+                decrement: item.quantity,
+              },
+            },
+          });
         }
-
-        const updatedOrder = await txl.order.update({
-          where: {
-            id: newOrder.id,
-          },
-          data: {
-            totalAmount: price,
-          },
-        });
 
         await txl.cartItem.deleteMany({
           where: {
             cartID: cart.id,
           },
         });
-
-        return updatedOrder;
       },
       {
         maxWait: 5000,
         timeout: 10000,
-      }
+      },
     );
 
     return res.status(201).json({
       message: "Order created successfully",
-      order,
     });
   } catch (e) {
     return next(e as Error);
@@ -278,7 +272,7 @@ export const orderAllCartItems = async (
 export const removeFromCart = async (
   req: AuthenticatedRequest,
   res: Response,
-  next: NextFunction
+  next: NextFunction,
 ) => {
   try {
     const { id } = req.params;
@@ -311,7 +305,7 @@ export const removeFromCart = async (
 export const addToCart = async (
   req: AuthenticatedRequest,
   res: Response,
-  next: NextFunction
+  next: NextFunction,
 ) => {
   try {
     const { id } = req.params;
@@ -352,7 +346,7 @@ export const addToCart = async (
     }
 
     const existingCartItem = cart.cartItems.find(
-      (item) => item.productID === product.id
+      (item) => item.productID === product.id,
     );
 
     if (existingCartItem) {
@@ -379,6 +373,8 @@ export const addToCart = async (
         },
       });
 
+      await newCartItemSocket(user.id);
+
       return res.status(201).json({
         message: "Item added to cart",
         cartItem: newCartItem,
@@ -394,7 +390,7 @@ export const addToCart = async (
 export const emptyCart = async (
   req: AuthenticatedRequest,
   res: Response,
-  next: NextFunction
+  next: NextFunction,
 ) => {
   try {
     const { user } = req;
@@ -430,7 +426,7 @@ export const emptyCart = async (
 export const fetchCartCount = async (
   req: AuthenticatedRequest,
   res: Response,
-  next: NextFunction
+  next: NextFunction,
 ) => {
   try {
     const userId = req.user?.id;

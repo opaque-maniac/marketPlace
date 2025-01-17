@@ -26,8 +26,8 @@ import {
 import {
   fetchIndividualOrder,
   fetchOrders,
-  makeOrderDelivered,
   searchOrder,
+  updateOrder,
 } from "./handlers/orders";
 import {
   fetchIndividualComment,
@@ -57,13 +57,13 @@ sellerRouter.post(
   body("email").isEmail(),
   body("name").isString().isLength(stringConfig),
   body("password").isStrongPassword(passwordConfig),
-  register
+  register,
 );
 sellerRouter.post(
   "/login",
   body("email").isEmail(),
   body("password").isStrongPassword(passwordConfig),
-  login
+  login,
 );
 
 // Profile management
@@ -72,7 +72,7 @@ sellerRouter.get(
   allowIfAuthenticated,
   isSeller,
   isProfileOwner,
-  fetchProfile
+  fetchProfile,
 );
 sellerRouter.put(
   "/profile/:id",
@@ -87,14 +87,14 @@ sellerRouter.put(
     .optional(),
   body("address").isString().isLength(stringConfig).optional(),
   sellerUpload.single("image"),
-  updateProfie
+  updateProfie,
 );
 sellerRouter.delete(
   "/profile/:id",
   allowIfAuthenticated,
   isSeller,
   isProfileOwner,
-  deleteProfile
+  deleteProfile,
 );
 
 // Product management
@@ -110,14 +110,14 @@ sellerRouter.post(
   body("discount").isNumeric().optional(),
   body("category").isIn(productCategories),
   productUpload.array("images", 5),
-  createProduct
+  createProduct,
 );
 sellerRouter.get(
   "/products/:id",
   allowIfAuthenticated,
   isSeller,
   isProductOwner,
-  fetchIndividualProduct
+  fetchIndividualProduct,
 );
 sellerRouter.put(
   "/products/:id",
@@ -131,20 +131,20 @@ sellerRouter.put(
   body("discount").isNumeric().optional(),
   body("category").isIn(productCategories),
   productUpload.array("images", 5),
-  updateIndividualProduct
+  updateIndividualProduct,
 );
 sellerRouter.delete(
   "/products/:id",
   allowIfAuthenticated,
   isSeller,
   isProductOwner,
-  deleteIndividualProduct
+  deleteIndividualProduct,
 );
 sellerRouter.post(
   "/products/search",
   allowIfAuthenticated,
   isSeller,
-  searchProducts
+  searchProducts,
 );
 
 // Comment management
@@ -153,14 +153,14 @@ sellerRouter.get(
   allowIfAuthenticated,
   isSeller,
   isProductOwner,
-  fetchProductComments
+  fetchProductComments,
 );
 sellerRouter.get(
   "/poducts/:id/comments/commentId",
   allowIfAuthenticated,
   isSeller,
   isProductOwner,
-  fetchIndividualComment
+  fetchIndividualComment,
 );
 
 // For order management
@@ -169,19 +169,29 @@ sellerRouter.get(
   "/orders/:id",
   allowIfAuthenticated,
   isSeller,
-  fetchIndividualOrder
+  fetchIndividualOrder,
 );
 sellerRouter.put(
   "/orders/:id",
   allowIfAuthenticated,
   isSeller,
-  makeOrderDelivered
+  body("status")
+    .isString()
+    .isIn([
+      "PENDING",
+      "PROCESSING",
+      "SHIPPED",
+      "READY",
+      "DELIVERED",
+      "CANCELLED",
+    ]),
+  updateOrder,
 );
 sellerRouter.post(
   "/orders/search",
   allowIfAuthenticated,
   isSeller,
-  searchOrder
+  searchOrder,
 );
 
 // For complaints
@@ -191,7 +201,7 @@ sellerRouter.post(
   body("email").isEmail(),
   body("name").isString().isLength(stringConfig),
   body("message").isString().isLength(stringConfig),
-  sendComplaints
+  sendComplaints,
 );
 
 export default sellerRouter;

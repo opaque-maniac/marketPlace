@@ -2,7 +2,7 @@ import { useQuery } from "@tanstack/react-query";
 import { useCallback, useContext, useState } from "react";
 import Loader from "../../components/loader";
 import CommentItem from "../../components/comments/comment";
-import { fetchProductComments } from "../../utils/queries/products";
+import { fetchProductComments } from "../../utils/queries/products/fetchproductcomments";
 import ArrowRight from "../../components/icons/arrowright";
 import ArrowLeft from "../../components/icons/arrowleft";
 import { ErrorContext, ShowErrorContext } from "../../utils/errorContext";

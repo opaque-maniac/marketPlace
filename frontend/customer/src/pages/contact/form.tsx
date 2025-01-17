@@ -1,5 +1,5 @@
 import { useMutation } from "@tanstack/react-query";
-import { sendContact } from "../../utils/mutations/contact";
+import { sendContact } from "../../utils/mutations/contact/contact";
 import {
   FormEventHandler,
   MutableRefObject,

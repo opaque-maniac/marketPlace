@@ -5,15 +5,16 @@
  * @param {NextFunction} next - Next function
  */
 
-import { Response, NextFunction, Request } from "express";
+import { Response, NextFunction } from "express";
 import prisma from "../../utils/db";
 import { AuthenticatedRequest } from "../../types";
+import { newWishlistItemSocket } from "../../websockets/sockets";
 
 // Function to fetch wishlist
 export const fetchWishlist = async (
   req: AuthenticatedRequest,
   res: Response,
-  next: NextFunction
+  next: NextFunction,
 ) => {
   try {
     const { user } = req;
@@ -70,7 +71,7 @@ export const fetchWishlist = async (
 export const addToWishlist = async (
   req: AuthenticatedRequest,
   res: Response,
-  next: NextFunction
+  next: NextFunction,
 ) => {
   try {
     const { id } = req.params;
@@ -107,7 +108,7 @@ export const addToWishlist = async (
     }
 
     const existingItem = wishlist.wishlistItems.find(
-      (item) => item.productID === product.id
+      (item) => item.productID === product.id,
     );
 
     if (existingItem) {
@@ -124,6 +125,8 @@ export const addToWishlist = async (
         },
       });
 
+      await newWishlistItemSocket(user.id);
+
       return res.status(201).json({
         message: "Item added to wishlist",
         wishlistItem,
@@ -139,7 +142,7 @@ export const addToWishlist = async (
 export const fetchWishlistItem = async (
   req: AuthenticatedRequest,
   res: Response,
-  next: NextFunction
+  next: NextFunction,
 ) => {
   try {
     const { user } = req;
@@ -184,7 +187,7 @@ export const fetchWishlistItem = async (
 export const removeFromWishlist = async (
   req: AuthenticatedRequest,
   res: Response,
-  next: NextFunction
+  next: NextFunction,
 ) => {
   try {
     const { id } = req.params;
@@ -216,7 +219,7 @@ export const removeFromWishlist = async (
 export const emptyWishlist = async (
   req: AuthenticatedRequest,
   res: Response,
-  next: NextFunction
+  next: NextFunction,
 ) => {
   try {
     const { user } = req;
@@ -252,7 +255,7 @@ export const emptyWishlist = async (
 export const fetchWishlistCount = async (
   req: AuthenticatedRequest,
   res: Response,
-  next: NextFunction
+  next: NextFunction,
 ) => {
   try {
     const userId = req.user?.id;

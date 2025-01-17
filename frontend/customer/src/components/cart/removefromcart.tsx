@@ -2,7 +2,7 @@ import { useMutation } from "@tanstack/react-query";
 import { useNavigate } from "react-router-dom";
 import { MouseEventHandler, useContext } from "react";
 import { ErrorContext, ShowErrorContext } from "../../utils/errorContext";
-import { removeFromCart } from "../../utils/mutations/cart";
+import { removeFromCart } from "../../utils/mutations/cart/removefromcart";
 import { ErrorResponse } from "../../utils/types";
 import errorHandler from "../../utils/errorHandler";
 import Loader from "../loader";

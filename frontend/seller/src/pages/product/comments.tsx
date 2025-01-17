@@ -1,6 +1,6 @@
 import { useQuery } from "@tanstack/react-query";
 import { useContext, useState } from "react";
-import { fetchProductComments } from "../../utils/queries/products";
+import { fetchProductComments } from "../../utils/queries/products/fetchproductcomments";
 import Loader from "../../components/loader";
 import CommentItem from "../../components/comment";
 import { ErrorResponse } from "../../utils/types";

@@ -9,7 +9,7 @@ import ArrowLeft from "../../components/icons/arrowleft";
 import ArrowRight from "../../components/icons/arrowright";
 import { Helmet } from "react-helmet";
 import PageLoader from "../../components/pageloader";
-import { fetchOrders } from "../../utils/queries/orders";
+import { fetchOrders } from "../../utils/queries/orders/fetchorders";
 import OrderItem from "../../components/orders/orderitem";
 
 const OrdersPage = () => {

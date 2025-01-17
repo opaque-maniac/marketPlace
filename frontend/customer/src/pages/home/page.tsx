@@ -2,7 +2,7 @@ import { Helmet } from "react-helmet";
 import Transition from "../../components/transition";
 import { useNavigate } from "react-router-dom";
 import { useQuery } from "@tanstack/react-query";
-import { fetchProducts } from "../../utils/queries/products";
+import { fetchProducts } from "../../utils/queries/products/fetchproducts";
 import errorHandler from "../../utils/errorHandler";
 import { ErrorResponse } from "../../utils/types";
 import { useContext } from "react";
@@ -25,7 +25,7 @@ const HomePage = () => {
 
   const query = useQuery({
     queryFn: fetchProducts,
-    queryKey: ["products", 1, 36],
+    queryKey: ["products", 1, 36, ""],
   });
 
   if (query.isError) {

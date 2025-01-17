@@ -12,10 +12,10 @@ const NinethSection = ({ products, isLoading }: Props) => {
     <section style={{ minHeight: "768px" }}>
       <div className="flex justify-start items-center gap-4">
         <div className="bg-red-400 rounded-lg animate-bounce w-5 h-10"></div>
-        <p className="text-red-400 text-xl font-bold">Featured</p>
+        <p className="text-red-400 text-lg font-bold">Featured</p>
       </div>
       <div className="flex justify-start items-center py-2">
-        <h2 className="text-3xl font-semibold">Other Suggestions</h2>
+        <h2 className="text-3lg font-semibold">Other Suggestions</h2>
       </div>
       <div className="md:flex justify-center gap-4 items-center">
         <div
@@ -35,7 +35,7 @@ const NinethSection = ({ products, isLoading }: Props) => {
             <div style={{ minHeight: "720px" }}>
               {products.slice(0, 4).length > 0 ? (
                 <>
-                  <div className="pb-10 xl:flex justify-center items-center">
+                  <div className="pb-10 lg:flex justify-center items-center">
                     <div className="md:hidden block">
                       <ProductList
                         products={products.slice(0, 2)}
@@ -50,10 +50,11 @@ const NinethSection = ({ products, isLoading }: Props) => {
                         color="white"
                         overflow={true}
                         full={false}
+                        zeroHeight="720px"
                       />
                     </div>
                   </div>
-                  <div className="xl:flex justify-center items-center">
+                  <div className="lg:flex justify-center items-center">
                     <div className="md:hidden block">
                       <ProductList
                         products={products.slice(2, 4)}
@@ -100,13 +101,14 @@ const NinethSection = ({ products, isLoading }: Props) => {
                 </div>
               </div>
             ) : (
-              <div className="h-full w-full xl:flex justify-center items-center">
+              <div className="h-full w-full lg:flex justify-center items-center">
                 <div className="md:block hidden">
                   <ProductList
                     products={products.slice(4, 6)}
                     color="white"
                     overflow={true}
                     full={false}
+                    zeroHeight="370px"
                   />
                 </div>
                 <div className="md:hidden block">
@@ -115,6 +117,7 @@ const NinethSection = ({ products, isLoading }: Props) => {
                     color="white"
                     overflow={false}
                     full={false}
+                    zeroHeight="370px"
                   />
                 </div>
               </div>
@@ -134,7 +137,7 @@ const NinethSection = ({ products, isLoading }: Props) => {
               ) : (
                 <div
                   style={{ minHeight: "350px" }}
-                  className="xl:flex justify-center items-center"
+                  className="lg:flex justify-center items-center"
                 >
                   <div className="md:block hidden">
                     <ProductList
@@ -150,6 +153,7 @@ const NinethSection = ({ products, isLoading }: Props) => {
                       color="white"
                       overflow={false}
                       full={false}
+                      zeroHeight="370px"
                     />
                   </div>
                 </div>

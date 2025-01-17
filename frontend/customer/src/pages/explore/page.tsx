@@ -8,7 +8,7 @@ import { ErrorContext, ShowErrorContext } from "../../utils/errorContext";
 import ArrowLeft from "../../components/icons/arrowleft";
 import ArrowRight from "../../components/icons/arrowright";
 import { Helmet } from "react-helmet";
-import { fetchProducts } from "../../utils/queries/products";
+import { fetchProducts } from "../../utils/queries/products/fetchproducts";
 import ProductList from "../../components/products/productlist";
 import PageLoader from "../../components/pageloader";
 
@@ -22,16 +22,24 @@ const ExplorePage = () => {
 
   // When page state changes
   useEffect(() => {
-    if (!urlParams.get("page")) {
-      navigate("/explore?page=1");
+    const p = urlParams.get("page");
+    const q = urlParams.get("query");
+
+    if (!p && !q) {
+      navigate("/explore?page=1&query=", { replace: true });
+    } else if (!p) {
+      navigate(`/explore?page=1&query=${q}`, { replace: true });
+    } else if (!q) {
+      navigate(`/explore?page=${p}&query=`, { replace: true });
     }
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []);
 
   const page = Number(urlParams.get("page")) || 1;
+  const queryStr = urlParams.get("query") || "";
 
   const query = useQuery({
-    queryKey: ["products", page, 20],
+    queryKey: ["products", page, 20, queryStr],
     queryFn: fetchProducts,
   });
 
@@ -61,7 +69,7 @@ const ExplorePage = () => {
     e.preventDefault();
     if (page > 1) {
       const newPage = page - 1;
-      navigate(`?page=${newPage}`);
+      navigate(`?page=${newPage}&query=${queryStr}`);
       window.scrollTo(0, 0);
     }
   };
@@ -70,7 +78,7 @@ const ExplorePage = () => {
     e.preventDefault();
     if (query.data?.hasNext) {
       const newPage = page + 1;
-      navigate(`?page=${newPage}`);
+      navigate(`?page=${newPage}&query=${queryStr}`);
       window.scrollTo(0, 0);
     }
   };

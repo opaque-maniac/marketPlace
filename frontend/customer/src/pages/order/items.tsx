@@ -1,6 +1,6 @@
 import { useQuery } from "@tanstack/react-query";
 import Loader from "../../components/loader";
-import { fetchOrderItems } from "../../utils/queries/orders";
+import { fetchOrderItems } from "../../utils/queries/orders/fetchorderproducts";
 import { MouseEventHandler, useState } from "react";
 import ArrowLeft from "../../components/icons/arrowleft";
 import ArrowRight from "../../components/icons/arrowright";

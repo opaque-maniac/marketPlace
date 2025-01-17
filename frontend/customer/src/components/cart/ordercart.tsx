@@ -6,7 +6,7 @@ import errorHandler from "../../utils/errorHandler";
 import { useNavigate } from "react-router-dom";
 import SuccessComponent from "../success";
 import Loader from "../loader";
-import { orderCart } from "../../utils/mutations/cart";
+import { orderCart } from "../../utils/mutations/cart/ordercart";
 
 interface Props {
   refetch: () => void;

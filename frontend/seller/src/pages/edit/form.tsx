@@ -1,5 +1,4 @@
 import Transition from "../../components/transition";
-import { Link } from "react-router-dom";
 import { Product } from "../../utils/types";
 import useProductForm from "./useProductForm";
 import { FormEventHandler } from "react";
