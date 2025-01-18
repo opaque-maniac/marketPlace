@@ -22,7 +22,7 @@ const OrdersPage = () => {
 
   useEffect(() => {
     if (!page) {
-      navigate("/orders?page=1", { replace: true });
+      navigate("?page=1", { replace: true });
     }
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []);

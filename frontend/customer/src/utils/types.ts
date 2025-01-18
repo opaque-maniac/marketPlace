@@ -147,30 +147,20 @@ export type OrderStatus =
 export interface Order {
   id: string;
   totalAmount: number;
+  quantity: number;
   status: OrderStatus;
   customerID: string;
+  customer: Customer;
+  productID: string;
+  product: Product;
+  sellerID: string;
+  seller: Seller;
   createdAt: string;
   updatedAt: string;
 }
 
-export interface OrderItem {
-  id: string;
-  quantity: number;
-  productID: string;
-  product: Product;
-  ready: boolean;
-  delivered: boolean;
-  orderID: string;
-  createdAt: string;
-  updatedAt: string | null;
-}
-
 export interface OrderWithCustomer extends Order {
   customer: Customer;
-}
-
-export interface OrderItemWithOrder extends OrderItem {
-  order: OrderWithCustomer;
 }
 
 export interface SuccessOrdersResponse {
@@ -181,7 +171,7 @@ export interface SuccessOrdersResponse {
 
 export interface SuccessOrderResponse {
   message: string;
-  order: OrderItemWithOrder;
+  order: Order;
 }
 
 export interface CartItem {
@@ -277,10 +267,4 @@ export interface SuccessCancelOrderResponse {
 export interface SuccessIndividualOrderResponse {
   message: string;
   order: Order;
-}
-
-export interface SuccessOrderItemResponse {
-  message: string;
-  orderItems: OrderItem[];
-  hasNext: boolean;
 }

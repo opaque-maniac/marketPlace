@@ -1,4 +1,5 @@
 import { create } from "zustand";
+import { getUserID, removeUserID, setUserID } from "./cookies";
 
 interface UserStore {
   user: string | null;
@@ -6,14 +7,12 @@ interface UserStore {
   removeUser: () => void;
 }
 
-const USER_KEY = "hazina-seller";
-
 const useUserStore = create<UserStore>((set) => {
   let initialUser: string | null = null;
 
   if (typeof window !== "undefined") {
     // Ensure this runs only in the browser
-    const user = window.localStorage.getItem(USER_KEY);
+    const user = getUserID();
     if (user) {
       initialUser = user;
     }
@@ -23,14 +22,14 @@ const useUserStore = create<UserStore>((set) => {
     user: initialUser,
     setUser: (newUser: string | null) => {
       if (newUser !== null) {
-        window.localStorage.setItem(USER_KEY, newUser);
+        setUserID(newUser);
       } else {
-        window.localStorage.removeItem(USER_KEY);
+        removeUserID();
       }
       set({ user: newUser });
     },
     removeUser: () => {
-      window.localStorage.removeItem(USER_KEY);
+      removeUserID();
       set({ user: null });
     },
   };

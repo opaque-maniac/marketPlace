@@ -9,13 +9,14 @@ import { Response, NextFunction } from "express";
 import prisma from "../../utils/db";
 import { AuthenticatedRequest } from "../../types";
 import { newWishlistItemSocket } from "../../websockets/sockets";
+import { serverError } from "../../utils/globals";
 
 // Function to fetch wishlist
 export const fetchWishlist = async (
   req: AuthenticatedRequest,
   res: Response,
   next: NextFunction,
-) => {
+): Promise<void> => {
   try {
     const { user } = req;
     const page = req.query.page ? parseInt(req.query.page as string) : 1;
@@ -56,14 +57,18 @@ export const fetchWishlist = async (
       wishlistItems.pop();
     }
 
-    return res.status(200).json({
+    res.status(200).json({
       success: true,
       wishlist,
       wishlistItems,
       hasNext,
     });
   } catch (e) {
-    return next(e as Error);
+    if (e instanceof Error) {
+      next(e);
+      return;
+    }
+    next(serverError);
   }
 };
 
@@ -72,7 +77,7 @@ export const addToWishlist = async (
   req: AuthenticatedRequest,
   res: Response,
   next: NextFunction,
-) => {
+): Promise<void> => {
   try {
     const { id } = req.params;
 
@@ -88,10 +93,11 @@ export const addToWishlist = async (
     });
 
     if (!product) {
-      return res.status(404).json({
+      res.status(404).json({
         message: "Product not found",
         errorCode: "P404",
       });
+      return;
     }
 
     const wishlist = await prisma.wishList.findUnique({
@@ -112,7 +118,7 @@ export const addToWishlist = async (
     );
 
     if (existingItem) {
-      return res.status(200).json({
+      res.status(200).json({
         message: "Item already in wishlist",
         wishlistItem: existingItem,
         new: false,
@@ -127,14 +133,18 @@ export const addToWishlist = async (
 
       await newWishlistItemSocket(user.id);
 
-      return res.status(201).json({
+      res.status(201).json({
         message: "Item added to wishlist",
         wishlistItem,
         new: true,
       });
     }
   } catch (e) {
-    return next(e as Error);
+    if (e instanceof Error) {
+      next(e);
+      return;
+    }
+    next(serverError);
   }
 };
 
@@ -143,7 +153,7 @@ export const fetchWishlistItem = async (
   req: AuthenticatedRequest,
   res: Response,
   next: NextFunction,
-) => {
+): Promise<void> => {
   try {
     const { user } = req;
     const wishlistItemID = req.params.id;
@@ -172,14 +182,18 @@ export const fetchWishlistItem = async (
       throw new Error("Wishlist not found");
     }
 
-    return res.status(200).json({
+    res.status(200).json({
       success: true,
       data: {
         wishlistItem,
       },
     });
   } catch (e) {
-    return next(e as Error);
+    if (e instanceof Error) {
+      next(e);
+      return;
+    }
+    next(serverError);
   }
 };
 
@@ -188,7 +202,7 @@ export const removeFromWishlist = async (
   req: AuthenticatedRequest,
   res: Response,
   next: NextFunction,
-) => {
+): Promise<void> => {
   try {
     const { id } = req.params;
     const { user } = req;
@@ -206,12 +220,16 @@ export const removeFromWishlist = async (
       },
     });
 
-    return res.status(203).json({
+    res.status(203).json({
       message: "Item removed from wishlist",
       wishlistItem,
     });
   } catch (e) {
-    return next(e as Error);
+    if (e instanceof Error) {
+      next(e);
+      return;
+    }
+    next(serverError);
   }
 };
 
@@ -220,7 +238,7 @@ export const emptyWishlist = async (
   req: AuthenticatedRequest,
   res: Response,
   next: NextFunction,
-) => {
+): Promise<void> => {
   try {
     const { user } = req;
 
@@ -244,11 +262,15 @@ export const emptyWishlist = async (
       },
     });
 
-    return res.status(203).json({
+    res.status(203).json({
       message: "Wishlist emptied successfully",
     });
   } catch (e) {
-    return next(e as Error);
+    if (e instanceof Error) {
+      next(e);
+      return;
+    }
+    next(serverError);
   }
 };
 
@@ -256,7 +278,7 @@ export const fetchWishlistCount = async (
   req: AuthenticatedRequest,
   res: Response,
   next: NextFunction,
-) => {
+): Promise<void> => {
   try {
     const userId = req.user?.id;
 
@@ -272,10 +294,14 @@ export const fetchWishlistCount = async (
       },
     });
 
-    return res.status(200).json({
+    res.status(200).json({
       count,
     });
   } catch (e) {
-    return next(e as Error);
+    if (e instanceof Error) {
+      next(e);
+      return;
+    }
+    next(serverError);
   }
 };

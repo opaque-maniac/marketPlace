@@ -9,13 +9,14 @@
 import { Response, NextFunction } from "express";
 import prisma from "../../utils/db";
 import { AuthenticatedRequest, SellerUpdateStaffRequest } from "../../types";
+import { serverError } from "../../utils/globals";
 
 // Function to fetch sellers
 export const fetchSellers = async (
   req: AuthenticatedRequest,
   res: Response,
   next: NextFunction,
-) => {
+): Promise<void> => {
   try {
     const page = req.query.page ? parseInt(req.query.page as string) : 1;
     const limit = req.query.limit ? parseInt(req.query.limit as string) : 10;
@@ -34,13 +35,17 @@ export const fetchSellers = async (
       sellers.pop();
     }
 
-    return res.status(200).json({
+    res.status(200).json({
       message: "Sellers fetched successfully",
       sellers,
       hasNext,
     });
   } catch (e) {
-    return next(e as Error);
+    if (e instanceof Error) {
+      next(e);
+      return;
+    }
+    next(serverError);
   }
 };
 
@@ -49,7 +54,7 @@ export const fetchIndividualSeller = async (
   req: AuthenticatedRequest,
   res: Response,
   next: NextFunction,
-) => {
+): Promise<void> => {
   try {
     const { id } = req.params;
 
@@ -63,18 +68,23 @@ export const fetchIndividualSeller = async (
     });
 
     if (!seller) {
-      return res.status(404).json({
+      res.status(404).json({
         message: "Seller not found",
         errorCode: "I401",
       });
+      return;
     }
 
-    return res.status(200).json({
+    res.status(200).json({
       message: "Seller fetched successfully",
       seller,
     });
   } catch (e) {
-    return next(e as Error);
+    if (e instanceof Error) {
+      next(e);
+      return;
+    }
+    next(serverError);
   }
 };
 
@@ -83,7 +93,7 @@ export const fetchSellerProducts = async (
   req: AuthenticatedRequest,
   res: Response,
   next: NextFunction,
-) => {
+): Promise<void> => {
   try {
     const { id } = req.params;
     const page = req.query.page ? parseInt(req.query.page as string) : 1;
@@ -96,10 +106,11 @@ export const fetchSellerProducts = async (
     });
 
     if (!seller) {
-      return res.status(404).json({
+      res.status(404).json({
         message: "Seller not found",
         errorCode: "I401",
       });
+      return;
     }
 
     const products = await prisma.product.findMany({
@@ -119,13 +130,17 @@ export const fetchSellerProducts = async (
       products.pop();
     }
 
-    return res.status(200).json({
+    res.status(200).json({
       message: "Products fetched successfully",
       products,
       hasNext,
     });
   } catch (e) {
-    return next(e as Error);
+    if (e instanceof Error) {
+      next(e);
+      return;
+    }
+    next(serverError);
   }
 };
 
@@ -134,7 +149,7 @@ export const updateSeller = async (
   req: SellerUpdateStaffRequest,
   res: Response,
   next: NextFunction,
-) => {
+): Promise<void> => {
   try {
     const { id } = req.params;
     const { email, name, phone, address } = req.body;
@@ -185,12 +200,16 @@ export const updateSeller = async (
       },
     );
 
-    return res.status(200).json({
+    res.status(200).json({
       message: "Updated seller",
       seller,
     });
   } catch (e) {
-    return next(e as Error);
+    if (e instanceof Error) {
+      next(e);
+      return;
+    }
+    next(serverError);
   }
 };
 
@@ -199,7 +218,7 @@ export const enableSeller = async (
   req: AuthenticatedRequest,
   res: Response,
   next: NextFunction,
-) => {
+): Promise<void> => {
   try {
     const { id } = req.params;
 
@@ -210,12 +229,16 @@ export const enableSeller = async (
       },
     });
 
-    return res.status(200).json({
+    res.status(200).json({
       message: "Seller enabled successfully",
       seller,
     });
   } catch (e) {
-    return next(e as Error);
+    if (e instanceof Error) {
+      next(e);
+      return;
+    }
+    next(serverError);
   }
 };
 
@@ -224,7 +247,7 @@ export const disableSeller = async (
   req: AuthenticatedRequest,
   res: Response,
   next: NextFunction,
-) => {
+): Promise<void> => {
   try {
     const { id } = req.params;
 
@@ -235,12 +258,16 @@ export const disableSeller = async (
       },
     });
 
-    return res.status(200).json({
+    res.status(200).json({
       message: "Seller disabled successfully",
       seller,
     });
   } catch (e) {
-    return next(e as Error);
+    if (e instanceof Error) {
+      next(e);
+      return;
+    }
+    next(serverError);
   }
 };
 
@@ -249,7 +276,7 @@ export const deleteSeller = async (
   req: AuthenticatedRequest,
   res: Response,
   next: NextFunction,
-) => {
+): Promise<void> => {
   try {
     const { id } = req.params;
 
@@ -259,12 +286,16 @@ export const deleteSeller = async (
       },
     });
 
-    return res.status(203).json({
+    res.status(203).json({
       message: "Seller deleted successfully",
       seller,
     });
   } catch (e) {
-    return next(e as Error);
+    if (e instanceof Error) {
+      next(e);
+      return;
+    }
+    next(serverError);
   }
 };
 
@@ -273,7 +304,7 @@ export const searchSeller = async (
   req: AuthenticatedRequest,
   res: Response,
   next: NextFunction,
-) => {
+): Promise<void> => {
   try {
     const query = req.query.query ? (req.query.query as string) : "";
     const page = req.query.page ? parseInt(req.query.page as string) : 1;
@@ -296,12 +327,16 @@ export const searchSeller = async (
       sellers.pop();
     }
 
-    return res.status(200).json({
+    res.status(200).json({
       message: "Sellers fetched successfully",
       sellers,
       hasNext,
     });
   } catch (e) {
-    return next(e as Error);
+    if (e instanceof Error) {
+      next(e);
+      return;
+    }
+    next(serverError);
   }
 };

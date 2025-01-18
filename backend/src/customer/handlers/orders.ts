@@ -9,13 +9,14 @@ import { Response, NextFunction } from "express";
 import prisma from "../../utils/db";
 import { AuthenticatedRequest } from "../../types";
 import { ORDER_STATUS } from "@prisma/client";
+import { serverError } from "../../utils/globals";
 
 // Function to fetch orders
 export const fetchOrders = async (
   req: AuthenticatedRequest,
   res: Response,
   next: NextFunction,
-) => {
+): Promise<void> => {
   try {
     const { user } = req;
     const page = req.query.page ? parseInt(req.query.page as string) : 1;
@@ -50,13 +51,17 @@ export const fetchOrders = async (
       orders.pop();
     }
 
-    return res.status(200).json({
+    res.status(200).json({
       message: "Fetched orders",
       orders,
       hasNext,
     });
   } catch (e) {
-    return next(e as Error);
+    if (e instanceof Error) {
+      next(e);
+      return;
+    }
+    next(serverError);
   }
 };
 
@@ -65,7 +70,7 @@ export const fetchIndividualOrder = async (
   req: AuthenticatedRequest,
   res: Response,
   next: NextFunction,
-) => {
+): Promise<void> => {
   try {
     const { id } = req.params;
     const { user } = req;
@@ -93,12 +98,16 @@ export const fetchIndividualOrder = async (
       throw new Error("Order not found");
     }
 
-    return res.status(200).json({
+    res.status(200).json({
       message: "Fetched order",
       order,
     });
   } catch (e) {
-    return next(e as Error);
+    if (e instanceof Error) {
+      next(e);
+      return;
+    }
+    next(serverError);
   }
 };
 
@@ -107,7 +116,7 @@ export const cancelOrder = async (
   req: AuthenticatedRequest,
   res: Response,
   next: NextFunction,
-) => {
+): Promise<void> => {
   try {
     const { id } = req.params;
     const userId = req.user?.id;
@@ -160,11 +169,15 @@ export const cancelOrder = async (
       },
     );
 
-    return res.status(200).json({
+    res.status(200).json({
       message: "Cancelled order",
       id: updatedOrder.id,
     });
   } catch (e) {
-    return next(e as Error);
+    if (e instanceof Error) {
+      next(e);
+      return;
+    }
+    next(serverError);
   }
 };

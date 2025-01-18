@@ -29,7 +29,7 @@ const ProductsList = ({ products }: Props): JSX.Element => {
           className="flex justify-center items-center"
         >
           <div>
-            <h2 className="text-3xl text-wrap text-center">{`You haven't posted any products yet!`}</h2>
+            <h2 className="text-2xl text-wrap text-center">{`You haven't posted any products yet!`}</h2>
           </div>
         </div>
       ) : (

@@ -5,6 +5,7 @@ import { useEffect, useContext, useCallback } from "react";
 import { ErrorContext, ShowErrorContext } from "../../utils/errorContext";
 import { useQuery } from "@tanstack/react-query";
 import { fetchIndividualOrder } from "../../utils/queries/orders/fetchindividualorder";
+import { formatDate } from "../../utils/date";
 import PageLoader from "../../components/pageloader";
 import { ErrorResponse } from "../../utils/types";
 import errorHandler from "../../utils/errorHandler";
@@ -61,18 +62,6 @@ const IndividualOrderPage = () => {
     setError(true);
     navigate("/500", { replace: true });
   }
-
-  const formatDate = (isoString: string) => {
-    const date = new Date(isoString);
-
-    const options: Intl.DateTimeFormatOptions = {
-      year: "numeric",
-      month: "long",
-      day: "numeric",
-    };
-
-    return new Intl.DateTimeFormat("en-US", options).format(date);
-  };
 
   const refetch = useCallback(() => {
     // eslint-disable-next-line @typescript-eslint/no-floating-promises

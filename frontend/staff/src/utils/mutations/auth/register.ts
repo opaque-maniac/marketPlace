@@ -14,7 +14,7 @@ interface RegisterData {
 // Mutation for register
 export const sendRegister = async (data: RegisterData) => {
   try {
-    const url = `${apiProtocol}://${apiHost}/staff/register`;
+    const url = `${apiProtocol}://${apiHost}/staff/auth/register`;
     const options = {
       method: "POST",
       headers: {

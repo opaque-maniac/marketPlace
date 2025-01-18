@@ -10,13 +10,14 @@ import prisma from "../../utils/db";
 import bcrypt from "bcrypt";
 import { LoginRequest, RegisterCustomerRequest } from "../../types";
 import generateToken, { generateRefreshToken } from "../../utils/token";
+import { serverError } from "../../utils/globals";
 
 // Function to authenticate customer
 export const register = async (
   req: RegisterCustomerRequest,
   res: Response,
-  next: NextFunction
-) => {
+  next: NextFunction,
+): Promise<void> => {
   try {
     const { email, firstName, lastName, password } = req.body;
 
@@ -28,10 +29,11 @@ export const register = async (
     });
 
     if (alreadyExists) {
-      return res.status(400).json({
+      res.status(400).json({
         message: "User already exists",
         errorCode: "I400",
       });
+      return;
     }
 
     const salt = await bcrypt.genSalt(10);
@@ -65,15 +67,19 @@ export const register = async (
       {
         maxWait: 5000,
         timeout: 10000,
-      }
+      },
     );
 
-    return res.status(201).json({
+    res.status(201).json({
       message: "Customer registered successfully",
       customer,
     });
   } catch (e) {
-    return next(e as Error);
+    if (e instanceof Error) {
+      next(e);
+      return;
+    }
+    next(serverError);
   }
 };
 
@@ -81,8 +87,8 @@ export const register = async (
 export const login = async (
   req: LoginRequest,
   res: Response,
-  next: NextFunction
-) => {
+  next: NextFunction,
+): Promise<void> => {
   try {
     const { email, password } = req.body;
 
@@ -92,49 +98,50 @@ export const login = async (
       },
     });
 
-    console.log(
-      `Email: ${email}\nPassword: ${password}\nCustomer:\n${customer}`
-    );
-
     if (!customer) {
-      console.log("Here is the last point");
-      return res.status(401).json({
+      res.status(401).json({
         message: "Invalid email or password",
         errorCode: "I401",
       });
+      return;
     }
 
-    console.log("Here above active check");
     if (!customer.active) {
-      return res.status(401).json({
+      res.status(401).json({
         message: "Account is not active",
         errorCode: "I402",
       });
+      return;
     }
 
     const isPasswordValid = await bcrypt.compare(password, customer.password);
 
     if (!isPasswordValid) {
-      return res.status(401).json({
+      res.status(401).json({
         message: "Invalid email or password",
         errorCode: "I403",
       });
+      return;
     }
 
     const token = generateToken(customer.id, customer.email, "customer");
     const refreshToken = generateRefreshToken(
       customer.id,
       customer.email,
-      "customer"
+      "customer",
     );
 
-    return res.status(200).json({
+    res.status(200).json({
       message: "Login successful",
       token,
       refreshToken,
       customer,
     });
   } catch (e) {
-    return next(e as Error);
+    if (e instanceof Error) {
+      next(e);
+      return;
+    }
+    next(serverError);
   }
 };

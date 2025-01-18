@@ -8,19 +8,16 @@
 import { Response, NextFunction } from "express";
 import prisma from "../../utils/db";
 import bcrypt from "bcrypt";
-import {
-  LoginRequest,
-  RegisterCustomerRequest,
-  RegisterStaffRequest,
-} from "../../types";
+import { LoginRequest, RegisterStaffRequest } from "../../types";
 import generateToken from "../../utils/token";
+import { serverError } from "../../utils/globals";
 
 // View for staff login
 export const login = async (
   req: LoginRequest,
   res: Response,
-  next: NextFunction
-) => {
+  next: NextFunction,
+): Promise<void> => {
   try {
     const { email, password } = req.body;
 
@@ -31,32 +28,38 @@ export const login = async (
     });
 
     if (!staff) {
-      return res.status(401).json({
+      res.status(401).json({
         message: "Invalid email or password",
         errorCode: "I403",
       });
+      return;
     }
 
     const match = await bcrypt.compare(password, staff.password);
 
     if (!match) {
-      return res.status(401).json({
+      res.status(401).json({
         message: "Invalid email or password",
         errorCode: "I403",
       });
+      return;
     }
 
     const token = generateToken(staff.id, staff.email, "staff");
     const refreshToken = generateToken(staff.id, staff.email, "staff");
 
-    return res.status(200).json({
+    res.status(200).json({
       message: "Login successful",
       token,
       refreshToken,
       staff,
     });
   } catch (e) {
-    return next(e as Error);
+    if (e instanceof Error) {
+      next(e);
+      return;
+    }
+    next(serverError);
   }
 };
 
@@ -64,8 +67,8 @@ export const login = async (
 export const registerStaff = async (
   req: RegisterStaffRequest,
   res: Response,
-  next: NextFunction
-) => {
+  next: NextFunction,
+): Promise<void> => {
   try {
     const { email, firstName, lastName, role, password } = req.body;
 
@@ -82,11 +85,15 @@ export const registerStaff = async (
       },
     });
 
-    return res.status(201).json({
+    res.status(201).json({
       message: "Staff created successfully",
       staff,
     });
   } catch (e) {
-    return next(e as Error);
+    if (e instanceof Error) {
+      next(e);
+      return;
+    }
+    next(serverError);
   }
 };

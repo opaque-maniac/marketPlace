@@ -8,12 +8,13 @@
 import { NextFunction, Response } from "express";
 import { AuthenticatedRequest } from "../../types";
 import prisma from "../../utils/db";
+import { serverError } from "../../utils/globals";
 
 export const fetchUserCart = async (
   req: AuthenticatedRequest,
   res: Response,
   next: NextFunction,
-) => {
+): Promise<void> => {
   try {
     const { id } = req.params;
     const page = req.query.page ? parseInt(req.query.page as string) : 1;
@@ -26,10 +27,11 @@ export const fetchUserCart = async (
     });
 
     if (!customer) {
-      return res.status(404).json({
+      res.status(404).json({
         errorCode: "P400",
         message: "User not found",
       });
+      return;
     }
 
     const cartItems = await prisma.cartItem.findMany({
@@ -51,13 +53,17 @@ export const fetchUserCart = async (
       cartItems.pop();
     }
 
-    return res.status(200).json({
+    res.status(200).json({
       message: "User cart fetched successfully",
       cartItems,
       hasNext,
     });
   } catch (e) {
-    return next(e as Error);
+    if (e instanceof Error) {
+      next(e);
+      return;
+    }
+    next(serverError);
   }
 };
 
@@ -65,7 +71,7 @@ export const emptyCart = async (
   req: AuthenticatedRequest,
   res: Response,
   next: NextFunction,
-) => {
+): Promise<void> => {
   try {
     const { id } = req.params;
 
@@ -85,11 +91,15 @@ export const emptyCart = async (
       },
     });
 
-    return res.status(203).json({
+    res.status(203).json({
       message: "Empty cart successfully",
     });
   } catch (e) {
-    return next(e as Error);
+    if (e instanceof Error) {
+      next(e);
+      return;
+    }
+    next(serverError);
   }
 };
 
@@ -97,7 +107,7 @@ export const fetchCartItem = async (
   req: AuthenticatedRequest,
   res: Response,
   next: NextFunction,
-) => {
+): Promise<void> => {
   try {
     const { id } = req.params;
 
@@ -118,12 +128,16 @@ export const fetchCartItem = async (
       throw new Error("Cart item not found");
     }
 
-    return res.status(200).json({
+    res.status(200).json({
       message: "Cart item fetched successfully",
       cartItem,
     });
   } catch (e) {
-    return next(e as Error);
+    if (e instanceof Error) {
+      next(e);
+      return;
+    }
+    next(serverError);
   }
 };
 
@@ -131,7 +145,7 @@ export const updateCartItem = async (
   req: AuthenticatedRequest,
   res: Response,
   next: NextFunction,
-) => {
+): Promise<void> => {
   try {
     const { id } = req.params;
     const quatity = req.query.quatity
@@ -157,12 +171,16 @@ export const updateCartItem = async (
       },
     });
 
-    return res.status(200).json({
+    res.status(200).json({
       message: "Cart item updated successfully",
       cartItem: updatedCartItem,
     });
   } catch (e) {
-    return next(e as Error);
+    if (e instanceof Error) {
+      next(e);
+      return;
+    }
+    next(serverError);
   }
 };
 
@@ -170,7 +188,7 @@ export const deleteCartItem = async (
   req: AuthenticatedRequest,
   res: Response,
   next: NextFunction,
-) => {
+): Promise<void> => {
   try {
     const { id } = req.params;
 
@@ -178,10 +196,14 @@ export const deleteCartItem = async (
       where: { id },
     });
 
-    return res.status(203).json({
+    res.status(203).json({
       message: "Cart item deleted successfully",
     });
   } catch (e) {
-    return next(e as Error);
+    if (e instanceof Error) {
+      next(e);
+      return;
+    }
+    next(serverError);
   }
 };

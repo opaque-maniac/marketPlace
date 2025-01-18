@@ -5,7 +5,6 @@ import { ErrorResponse } from "../../utils/types";
 import errorHandler from "../../utils/errorHandler";
 import { useNavigate } from "react-router-dom";
 import { useContext, useEffect, useState } from "react";
-import { orderPageStore } from "../../utils/pageStore";
 import { ErrorContext, ShowErrorContext } from "../../utils/errorContext";
 import ArrowLeft from "../../components/icons/arrowleft";
 import ArrowRight from "../../components/icons/arrowright";
@@ -14,18 +13,21 @@ import OrdersList from "./orderlist";
 import { fetchOrders } from "../../utils/queries/orders/fetchorders";
 
 const OrdersPage = () => {
-  const page = orderPageStore((state) => state.page);
-  const setPage = orderPageStore((state) => state.setPage);
   const [, setError] = useContext(ErrorContext);
   const [, setErr] = useContext(ShowErrorContext);
-
   const navigate = useNavigate();
   const [ready, setReady] = useState<string>("all");
   const [delivered, setDelivered] = useState<string>("all");
+  const urlParams = new URLSearchParams(window.location.search);
 
   useEffect(() => {
-    navigate(`?page=${page}`, { replace: true });
-  }, [page, navigate]);
+    if (!urlParams.get("page")) {
+      navigate(`?page=1`, { replace: true });
+    }
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, []);
+
+  const page = Number(urlParams.get("page")) || 1;
 
   const query = useQuery({
     queryKey: ["orders", page, 10, ready, delivered],
@@ -58,8 +60,8 @@ const OrdersPage = () => {
     e.preventDefault();
     if (page > 1) {
       const newPage = page - 1;
-      setPage(newPage);
-      // navigate(`?page=${newPage}`);
+      navigate(`?page=${newPage}`);
+      window.scrollTo(0, 0);
     }
   };
 
@@ -67,8 +69,8 @@ const OrdersPage = () => {
     e.preventDefault();
     if (query.data?.hasNext) {
       const newPage = page + 1;
-      setPage(newPage);
-      // navigate(`?page=${newPage}`);
+      navigate(`?page=${newPage}`);
+      window.scrollTo(0, 0);
     }
   };
 

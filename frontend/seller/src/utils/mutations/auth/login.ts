@@ -11,7 +11,7 @@ interface LoginData {
 // Mutation for login
 export const sendLogin = async (data: LoginData) => {
   try {
-    const url = `${apiProtocol}://${apiHost}/seller/login`;
+    const url = `${apiProtocol}://${apiHost}/seller/auth/login`;
     const options = {
       method: "POST",
       headers: {

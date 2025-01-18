@@ -8,12 +8,13 @@
 import { NextFunction, Response } from "express";
 import { AuthenticatedRequest } from "../../types";
 import prisma from "../../utils/db";
+import { serverError } from "../../utils/globals";
 
 export const fetchUserWishlist = async (
   req: AuthenticatedRequest,
   res: Response,
-  next: NextFunction
-) => {
+  next: NextFunction,
+): Promise<void> => {
   try {
     const { id } = req.params;
     const page = req.query.page ? parseInt(req.query.page as string) : 1;
@@ -26,10 +27,11 @@ export const fetchUserWishlist = async (
     });
 
     if (!customer) {
-      return res.status(404).json({
+      res.status(404).json({
         errorCode: "P400",
         message: "User not found",
       });
+      return;
     }
 
     const wishlistItems = await prisma.wishListItem.findMany({
@@ -51,21 +53,25 @@ export const fetchUserWishlist = async (
       wishlistItems.pop();
     }
 
-    return res.status(200).json({
+    res.status(200).json({
       message: "User cart fetched successfully",
       wishlistItems,
       hasNext,
     });
   } catch (e) {
-    return next(e as Error);
+    if (e instanceof Error) {
+      next(e);
+      return;
+    }
+    next(serverError);
   }
 };
 
 export const emptyWishlist = async (
   req: AuthenticatedRequest,
   res: Response,
-  next: NextFunction
-) => {
+  next: NextFunction,
+): Promise<void> => {
   try {
     const { id } = req.params;
 
@@ -83,19 +89,23 @@ export const emptyWishlist = async (
       },
     });
 
-    return res.status(200).json({
+    res.status(200).json({
       message: "Wishlist emptied successfully",
     });
   } catch (e) {
-    return next(e as Error);
+    if (e instanceof Error) {
+      next(e);
+      return;
+    }
+    next(serverError);
   }
 };
 
 export const fetchWishlistItems = async (
   req: AuthenticatedRequest,
   res: Response,
-  next: NextFunction
-) => {
+  next: NextFunction,
+): Promise<void> => {
   try {
     const page = req.query.page ? parseInt(req.query.page as string) : 1;
     const limit = req.query.limit ? parseInt(req.query.limit as string) : 10;
@@ -114,21 +124,25 @@ export const fetchWishlistItems = async (
       wishlistItems.pop();
     }
 
-    return res.status(200).json({
+    res.status(200).json({
       message: "Wishlist items fetched successfully",
       wishlistItems,
       hasNext,
     });
   } catch (e) {
-    return next(e as Error);
+    if (e instanceof Error) {
+      next(e);
+      return;
+    }
+    next(serverError);
   }
 };
 
 export const fetchWishlistItem = async (
   req: AuthenticatedRequest,
   res: Response,
-  next: NextFunction
-) => {
+  next: NextFunction,
+): Promise<void> => {
   try {
     const { id } = req.params;
 
@@ -145,20 +159,24 @@ export const fetchWishlistItem = async (
       throw new Error("Wishlist not found");
     }
 
-    return res.status(200).json({
+    res.status(200).json({
       message: "Wishlist item fetched successfully",
       wishlistItem,
     });
   } catch (e) {
-    return next(e as Error);
+    if (e instanceof Error) {
+      next(e);
+      return;
+    }
+    next(serverError);
   }
 };
 
 export const deleteWishlistItem = async (
   req: AuthenticatedRequest,
   res: Response,
-  next: NextFunction
-) => {
+  next: NextFunction,
+): Promise<void> => {
   try {
     const { id } = req.params;
 
@@ -178,10 +196,14 @@ export const deleteWishlistItem = async (
       },
     });
 
-    return res.status(200).json({
+    res.status(200).json({
       message: "Wishlist item deleted successfully",
     });
   } catch (e) {
-    return next(e as Error);
+    if (e instanceof Error) {
+      next(e);
+      return;
+    }
+    next(serverError);
   }
 };

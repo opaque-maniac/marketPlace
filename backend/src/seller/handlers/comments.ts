@@ -8,13 +8,14 @@
 import { Response, NextFunction } from "express";
 import prisma from "../../utils/db";
 import { AuthenticatedRequest } from "../../types";
+import { serverError } from "../../utils/globals";
 
 // Function to fetch product comments
 export const fetchProductComments = async (
   req: AuthenticatedRequest,
   res: Response,
-  next: NextFunction
-) => {
+  next: NextFunction,
+): Promise<void> => {
   try {
     const { id } = req.params;
     const page = req.query.page ? parseInt(req.query.page as string) : 1;
@@ -27,10 +28,11 @@ export const fetchProductComments = async (
     });
 
     if (!product) {
-      return res.status(404).json({
+      res.status(404).json({
         message: "Product not found",
         errorCode: "P400",
       });
+      return;
     }
 
     const comments = await prisma.comment.findMany({
@@ -54,13 +56,17 @@ export const fetchProductComments = async (
       comments.pop();
     }
 
-    return res.status(200).json({
+    res.status(200).json({
       message: "Comments fetched successfully",
       hasNext,
       data: comments,
     });
   } catch (e) {
-    return next(e as Error);
+    if (e instanceof Error) {
+      next(e);
+      return;
+    }
+    next(serverError);
   }
 };
 
@@ -68,8 +74,8 @@ export const fetchProductComments = async (
 export const fetchIndividualComment = async (
   req: AuthenticatedRequest,
   res: Response,
-  next: NextFunction
-) => {
+  next: NextFunction,
+): Promise<void> => {
   try {
     const { id, commentId } = req.params;
 
@@ -88,17 +94,22 @@ export const fetchIndividualComment = async (
     });
 
     if (!comment) {
-      return res.status(404).json({
+      res.status(404).json({
         message: "Comment not found",
         errorCode: "C400",
       });
+      return;
     }
 
-    return res.status(200).json({
+    res.status(200).json({
       message: "Comment fetched successfully",
       data: comment,
     });
   } catch (e) {
-    return next(e as Error);
+    if (e instanceof Error) {
+      next(e);
+      return;
+    }
+    next(serverError);
   }
 };

@@ -35,3 +35,5 @@ export const productCategories = [
   "TOYS",
   "OTHER",
 ];
+
+export const serverError = new Error("Internal server error");

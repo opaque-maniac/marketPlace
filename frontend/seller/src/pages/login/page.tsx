@@ -128,18 +128,23 @@ const LoginPage = () => {
           <div className="pt-4 flex justify-center gap-4 items-center">
             <button
               aria-label="Send Register Details"
-              className="block bg-red-400 rounded-lg w-40 h-10 py-2"
+              className="bg-red-400 rounded-lg w-40 h-10 py-3 flex justify-center items-center text-white"
+              disabled={mutation.isPending}
               type="submit"
             >
-              {mutation.isIdle ? "Log In" : <Loader color="#ffffff" />}
+              {mutation.isIdle ? (
+                <span>Log In</span>
+              ) : (
+                <Loader color="#ffffff" />
+              )}
             </button>
             <Link to={"/forgot-password"} className="text-red-400">
               Forgot Password
             </Link>
           </div>
         </form>
-        <div className="pt-4">
-          <Link to={"/register"} className="underline">
+        <div className="pt-4 lg:pb-0 md:pb-4 pb-0">
+          <Link to={"/register"} className="underline block">
             {"Don't have an account? Register"}
           </Link>
         </div>

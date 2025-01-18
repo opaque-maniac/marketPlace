@@ -7,24 +7,26 @@ import { ErrorResponse } from "../../utils/types";
 import errorHandler from "../../utils/errorHandler";
 import { useNavigate } from "react-router-dom";
 import { useContext, useEffect } from "react";
-import { homePageStore } from "../../utils/pageStore";
 import { ErrorContext, ShowErrorContext } from "../../utils/errorContext";
 import ArrowLeft from "../../components/icons/arrowleft";
 import ArrowRight from "../../components/icons/arrowright";
 import { Helmet } from "react-helmet";
 
 const HomePage = () => {
-  const page = homePageStore((state) => state.page);
-  const setPage = homePageStore((state) => state.setPage);
   const [, setError] = useContext(ErrorContext);
   const [, setErr] = useContext(ShowErrorContext);
-
   const navigate = useNavigate();
+  const urlParams = new URLSearchParams(window.location.search);
 
   useEffect(() => {
-    navigate(`?page=${page}`, { replace: true });
-  }, [page, navigate]);
+    if (!urlParams.get("page")) {
+      navigate(`?page=1`, { replace: true });
+    }
 
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, []);
+
+  const page = Number(urlParams.get("page")) || 1;
   const query = useQuery({
     queryKey: ["products", page, 10],
     queryFn: fetchProducts,
@@ -56,8 +58,8 @@ const HomePage = () => {
     e.preventDefault();
     if (page > 1) {
       const newPage = page - 1;
-      setPage(newPage);
-      // navigate(`?page=${newPage}`);
+      navigate(`?page=${newPage}`);
+      window.scrollTo(0, 0);
     }
   };
 
@@ -65,8 +67,8 @@ const HomePage = () => {
     e.preventDefault();
     if (query.data?.hasNext) {
       const newPage = page + 1;
-      setPage(newPage);
-      // navigate(`?page=${newPage}`);
+      navigate(`?page=${newPage}`);
+      window.scrollTo(0, 0);
     }
   };
 
@@ -80,12 +82,16 @@ const HomePage = () => {
         <meta name="google" content="nositelinkssearchbox" />
       </Helmet>
       <main role="main">
-        <section className="h-full">
+        <section
+          style={{
+            minHeight: "calc(100vh - 5.4rem)",
+          }}
+        >
           {query.isLoading ? (
             <div
               className="flex justify-center items-center"
               style={{
-                minHeight: "calc(100vh - 10.8rem)",
+                minHeight: "calc(100vh - 5.4rem)",
               }}
             >
               <div className="h-10 w-10">

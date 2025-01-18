@@ -8,13 +8,14 @@
 import { Response, NextFunction } from "express";
 import prisma from "../../utils/db";
 import { AuthenticatedRequest, StaffUpdateRequest } from "../../types";
+import { serverError } from "../../utils/globals";
 
 // Function for fetching all staff
 export const fetchStaff = async (
   req: AuthenticatedRequest,
   res: Response,
   next: NextFunction,
-) => {
+): Promise<void> => {
   try {
     const page = req.query.page ? parseInt(req.query.page as string) : 1;
     const limit = req.query.limit ? parseInt(req.query.limit as string) : 10;
@@ -55,13 +56,17 @@ export const fetchStaff = async (
       staff.pop();
     }
 
-    return res.status(200).json({
+    res.status(200).json({
       message: "Staff fetched successfully",
       staff,
       hasNext,
     });
   } catch (e) {
-    return next(e as Error);
+    if (e instanceof Error) {
+      next(e);
+      return;
+    }
+    next(serverError);
   }
 };
 
@@ -70,7 +75,7 @@ export const fetchIndividualStaff = async (
   req: AuthenticatedRequest,
   res: Response,
   next: NextFunction,
-) => {
+): Promise<void> => {
   try {
     const { id } = req.params;
 
@@ -83,12 +88,16 @@ export const fetchIndividualStaff = async (
       },
     });
 
-    return res.status(200).json({
+    res.status(200).json({
       message: "Staff fetched successfully",
       staff,
     });
   } catch (e) {
-    return next(e as Error);
+    if (e instanceof Error) {
+      next(e);
+      return;
+    }
+    next(serverError);
   }
 };
 
@@ -97,7 +106,7 @@ export const updateStaff = async (
   req: StaffUpdateRequest,
   res: Response,
   next: NextFunction,
-) => {
+): Promise<void> => {
   try {
     const { id } = req.params;
     const { firstName, lastName, email } = req.body;
@@ -147,12 +156,16 @@ export const updateStaff = async (
       },
     );
 
-    return res.status(200).json({
+    res.status(200).json({
       message: "Staff updated successfully",
       staff,
     });
   } catch (e) {
-    return next(e as Error);
+    if (e instanceof Error) {
+      next(e);
+      return;
+    }
+    next(serverError);
   }
 };
 
@@ -161,7 +174,7 @@ export const enableStaff = async (
   req: AuthenticatedRequest,
   res: Response,
   next: NextFunction,
-) => {
+): Promise<void> => {
   try {
     const { id } = req.params;
 
@@ -172,12 +185,16 @@ export const enableStaff = async (
       },
     });
 
-    return res.status(200).json({
+    res.status(200).json({
       message: "Staff enabled successfully",
       staff,
     });
   } catch (e) {
-    return next(e as Error);
+    if (e instanceof Error) {
+      next(e);
+      return;
+    }
+    next(serverError);
   }
 };
 
@@ -186,7 +203,7 @@ export const disableStaff = async (
   req: AuthenticatedRequest,
   res: Response,
   next: NextFunction,
-) => {
+): Promise<void> => {
   try {
     const { id } = req.params;
 
@@ -197,12 +214,16 @@ export const disableStaff = async (
       },
     });
 
-    return res.status(200).json({
+    res.status(200).json({
       message: "Staff disabled successfully",
       staff,
     });
   } catch (e) {
-    return next(e as Error);
+    if (e instanceof Error) {
+      next(e);
+      return;
+    }
+    next(serverError);
   }
 };
 
@@ -211,7 +232,7 @@ export const deleteStaff = async (
   req: AuthenticatedRequest,
   res: Response,
   next: NextFunction,
-) => {
+): Promise<void> => {
   try {
     const { id } = req.params;
 
@@ -219,11 +240,15 @@ export const deleteStaff = async (
       where: { id },
     });
 
-    return res.status(203).json({
+    res.status(203).json({
       message: "Staff deleted successfully",
       staff,
     });
   } catch (e) {
-    return next(e as Error);
+    if (e instanceof Error) {
+      next(e);
+      return;
+    }
+    next(serverError);
   }
 };

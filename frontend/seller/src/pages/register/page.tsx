@@ -127,15 +127,18 @@ const RegisterPage = () => {
           <div className="pt-4 flex justify-center gap-4 items-center">
             <button
               aria-label="Send Login Details"
-              className="block bg-red-400 rounded-lg w-40 h-10"
+              className="flex py-3 justify-center items-center text-white bg-red-400 rounded-lg w-40 h-10"
               type="submit"
             >
-              {mutation.isIdle ? "Sign Up" : <Loader color="#ffffff" />}
+              {mutation.isIdle ? <span>Sign Up</span> : <Loader color="#000" />}
             </button>
           </div>
         </form>
-        <div className="pt-4">
-          <Link to={"/login"} className="underline">
+        <div className="pt-4 md:pb-4 lg:pb-0 pb-0">
+          <Link
+            to={"/login"}
+            className="underline block lg:pb-0 md:pb-4 pb-0 text-center"
+          >
             {"Have an account? Log in"}
           </Link>
         </div>

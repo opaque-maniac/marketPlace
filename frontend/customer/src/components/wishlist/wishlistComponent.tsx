@@ -31,7 +31,7 @@ const WishlistComponent = () => {
     async function fetchCart() {
       try {
         const count = await fetchData<WishlistResponse>(
-          `${apiProtocol}://${apiHost}/customers/wishlist/count`,
+          `${apiProtocol}://${apiHost}/customers/wishlist/wishlistcount`,
           token as string,
         );
         setWishlist(count.count);

@@ -13,13 +13,14 @@ import {
   ProductSearchRequest,
 } from "../../types";
 import { CATEGORIES } from "@prisma/client";
+import { serverError } from "../../utils/globals";
 
 // Function to fetch products
 export const fetchProducts = async (
   req: AuthenticatedRequest,
   res: Response,
-  next: NextFunction
-) => {
+  next: NextFunction,
+): Promise<void> => {
   try {
     const { user } = req;
     const page = req.query.page ? parseInt(req.query.page as string) : 1;
@@ -46,13 +47,17 @@ export const fetchProducts = async (
       products.pop();
     }
 
-    return res.status(200).json({
+    res.status(200).json({
       message: "Products fetched successfully",
       hasNext,
       products,
     });
   } catch (e) {
-    return next(e as Error);
+    if (e instanceof Error) {
+      next(e);
+      return;
+    }
+    next(serverError);
   }
 };
 
@@ -60,8 +65,8 @@ export const fetchProducts = async (
 export const createProduct = async (
   req: ProductCreateUpdateRequest,
   res: Response,
-  next: NextFunction
-) => {
+  next: NextFunction,
+): Promise<void> => {
   try {
     const { name, description, price, category, inventory, discount } =
       req.body;
@@ -83,10 +88,11 @@ export const createProduct = async (
     });
 
     if (!seller) {
-      return res.status(404).json({
+      res.status(404).json({
         message: "Seller not found",
         errorCode: "J406",
       });
+      return;
     }
 
     const product = await prisma.$transaction(async (txl) => {
@@ -116,12 +122,16 @@ export const createProduct = async (
       return newProduct;
     });
 
-    return res.status(201).json({
+    res.status(201).json({
       message: "Product created successfully",
       product,
     });
   } catch (e) {
-    return next(e as Error);
+    if (e instanceof Error) {
+      next(e);
+      return;
+    }
+    next(serverError);
   }
 };
 
@@ -129,8 +139,8 @@ export const createProduct = async (
 export const fetchIndividualProduct = async (
   req: AuthenticatedRequest,
   res: Response,
-  next: NextFunction
-) => {
+  next: NextFunction,
+): Promise<void> => {
   try {
     const { id } = req.params;
 
@@ -143,12 +153,16 @@ export const fetchIndividualProduct = async (
       },
     });
 
-    return res.status(200).json({
+    res.status(200).json({
       message: "Product fetched successfully",
       product,
     });
   } catch (e) {
-    return next(e as Error);
+    if (e instanceof Error) {
+      next(e);
+      return;
+    }
+    next(serverError);
   }
 };
 
@@ -156,8 +170,8 @@ export const fetchIndividualProduct = async (
 export const updateIndividualProduct = async (
   req: ProductCreateUpdateRequest,
   res: Response,
-  next: NextFunction
-) => {
+  next: NextFunction,
+): Promise<void> => {
   try {
     const { id } = req.params;
     const { name, description, price, category, inventory, discount } =
@@ -203,12 +217,16 @@ export const updateIndividualProduct = async (
       return updatedProduct;
     });
 
-    return res.status(200).json({
+    res.status(200).json({
       message: "Product updated successfully",
       product,
     });
   } catch (e) {
-    return next(e as Error);
+    if (e instanceof Error) {
+      next(e);
+      return;
+    }
+    next(serverError);
   }
 };
 
@@ -216,8 +234,8 @@ export const updateIndividualProduct = async (
 export const deleteIndividualProduct = async (
   req: AuthenticatedRequest,
   res: Response,
-  next: NextFunction
-) => {
+  next: NextFunction,
+): Promise<void> => {
   try {
     const { id } = req.params;
 
@@ -227,12 +245,16 @@ export const deleteIndividualProduct = async (
       },
     });
 
-    return res.status(203).json({
+    res.status(203).json({
       message: "Product deleted successfully",
       product,
     });
   } catch (e) {
-    return next(e as Error);
+    if (e instanceof Error) {
+      next(e);
+      return;
+    }
+    next(serverError);
   }
 };
 
@@ -240,8 +262,8 @@ export const deleteIndividualProduct = async (
 export const searchProducts = async (
   req: ProductSearchRequest,
   res: Response,
-  next: NextFunction
-) => {
+  next: NextFunction,
+): Promise<void> => {
   try {
     const { query } = req.body;
     const page = req.query.page ? parseInt(req.query.page as string) : 1;
@@ -278,12 +300,16 @@ export const searchProducts = async (
       products.pop();
     }
 
-    return res.status(200).json({
+    res.status(200).json({
       message: "Products fetched successfully",
       hasNext,
       products,
     });
   } catch (e) {
-    return next(e as Error);
+    if (e instanceof Error) {
+      next(e);
+      return;
+    }
+    next(serverError);
   }
 };

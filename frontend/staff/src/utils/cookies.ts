@@ -6,8 +6,9 @@ import Cookies from "universal-cookie";
 
 const cookies = new Cookies();
 
-const accessLabel: string = "azina-staff-access-token";
+const accessLabel: string = "hazina-staff-access-token";
 const refreshLabel: string = "hazina-staff-refresh-token";
+const userIDLabel: string = "hazina-staff-user-id";
 
 export const setAccessToken = (token: string) => {
   cookies.set(accessLabel, token, {
@@ -23,6 +24,13 @@ export const setRefreshToken = (token: string) => {
   });
 };
 
+export const setUserID = (id: string) => {
+  cookies.set(userIDLabel, id, {
+    sameSite: "strict",
+    expires: new Date(new Date().getTime() + 60 * 60 * 1000 * 24 * 30),
+  });
+};
+
 export const getAccessToken = () => {
   return cookies.get(accessLabel) as string | undefined;
 };
@@ -31,10 +39,18 @@ export const getRefreshToken = () => {
   return cookies.get(refreshLabel) as string | undefined;
 };
 
+export const getUserID = () => {
+  return cookies.get(userIDLabel) as string | undefined;
+};
+
 export const removeAccessToken = () => {
   cookies.remove(accessLabel);
 };
 
 export const removeRefreshToken = () => {
   cookies.remove(refreshLabel);
+};
+
+export const removeUserID = () => {
+  cookies.remove(userIDLabel);
 };

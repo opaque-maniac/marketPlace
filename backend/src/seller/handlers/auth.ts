@@ -10,13 +10,14 @@ import prisma from "../../utils/db";
 import bcrypt from "bcrypt";
 import { LoginRequest, RegisterSellerRequest } from "../../types";
 import generateToken, { generateRefreshToken } from "../../utils/token";
+import { serverError } from "../../utils/globals";
 
 // Endpoint to register seller
 export const register = async (
   req: RegisterSellerRequest,
   res: Response,
-  next: NextFunction
-) => {
+  next: NextFunction,
+): Promise<void> => {
   try {
     const { email, name, password } = req.body;
 
@@ -31,12 +32,16 @@ export const register = async (
       },
     });
 
-    return res.status(201).json({
+    res.status(201).json({
       message: "Seller registered successfully",
       seller,
     });
   } catch (e) {
-    return next(e as Error);
+    if (e instanceof Error) {
+      next(e);
+      return;
+    }
+    next(serverError);
   }
 };
 
@@ -44,8 +49,8 @@ export const register = async (
 export const login = async (
   req: LoginRequest,
   res: Response,
-  next: NextFunction
-) => {
+  next: NextFunction,
+): Promise<void> => {
   try {
     const { email, password } = req.body;
 
@@ -56,42 +61,49 @@ export const login = async (
     });
 
     if (!seller) {
-      return res.status(401).json({
+      res.status(401).json({
         message: "Invalid email or password",
         errorCode: "I403",
       });
+      return;
     }
 
     if (!seller.active) {
-      return res.status(401).json({
+      res.status(401).json({
         message: "Account is not active",
         errorCode: "I402",
       });
+      return;
     }
 
     const isPasswordValid = await bcrypt.compare(password, seller.password);
 
     if (!isPasswordValid) {
-      return res.status(401).json({
+      res.status(401).json({
         message: "Invalid email or password",
         errorCode: "I403",
       });
+      return;
     }
 
     const token = generateToken(seller.id, seller.email, "seller");
     const refreshToken = generateRefreshToken(
       seller.id,
       seller.email,
-      "seller"
+      "seller",
     );
 
-    return res.status(200).json({
+    res.status(200).json({
       message: "Login successful",
       token,
       refreshToken,
       seller,
     });
   } catch (e) {
-    return next(e as Error);
+    if (e instanceof Error) {
+      next(e);
+      return;
+    }
+    next(serverError);
   }
 };

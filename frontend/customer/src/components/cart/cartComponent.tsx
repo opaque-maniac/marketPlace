@@ -29,7 +29,7 @@ const CartComponent = () => {
     async function fetchCart() {
       try {
         const count = await fetchData<CartResponse>(
-          `${apiProtocol}://${apiHost}/customers/cart/count`,
+          `${apiProtocol}://${apiHost}/customers/cart/cartcount`,
           token as string,
         );
         setCart(count.count);

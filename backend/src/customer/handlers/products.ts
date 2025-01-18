@@ -8,13 +8,14 @@
 import { Response, NextFunction, Request } from "express";
 import prisma from "../../utils/db";
 import { CATEGORIES } from "@prisma/client";
+import { serverError } from "../../utils/globals";
 
 // Function to fetch products
 export const fetchProducts = async (
   req: Request,
   res: Response,
   next: NextFunction,
-) => {
+): Promise<void> => {
   try {
     const page = req.query.page ? parseInt(req.query.page as string) : 1;
     const limit = req.query.limit ? parseInt(req.query.limit as string) : 10;
@@ -46,13 +47,17 @@ export const fetchProducts = async (
       products.pop();
     }
 
-    return res.status(200).json({
+    res.status(200).json({
       message: "Products fetched successfully",
       data: products,
       hasNext,
     });
   } catch (e) {
-    return next(e as Error);
+    if (e instanceof Error) {
+      next(e);
+      return;
+    }
+    next(serverError);
   }
 };
 
@@ -61,7 +66,7 @@ export const fetchIndividualProduct = async (
   req: Request,
   res: Response,
   next: NextFunction,
-) => {
+): Promise<void> => {
   try {
     const { id } = req.params;
 
@@ -80,18 +85,23 @@ export const fetchIndividualProduct = async (
     });
 
     if (!product) {
-      return res.status(404).json({
+      res.status(404).json({
         message: "Product not found",
         errorCode: "P400",
       });
+      return;
     }
 
-    return res.status(200).json({
+    res.status(200).json({
       message: "Product fetched successfully",
       data: product,
     });
   } catch (e) {
-    return next(e as Error);
+    if (e instanceof Error) {
+      next(e);
+      return;
+    }
+    next(serverError);
   }
 };
 
@@ -100,7 +110,7 @@ export const searchProduct = async (
   req: Request,
   res: Response,
   next: NextFunction,
-) => {
+): Promise<void> => {
   try {
     const query = req.query.query ? (req.query.query as string) : "";
     const limit = req.query.limit ? parseInt(req.query.limit as string) : 10;
@@ -126,12 +136,16 @@ export const searchProduct = async (
       products.pop();
     }
 
-    return res.status(200).json({
+    res.status(200).json({
       message: "Queried products",
       products,
       hasNext,
     });
   } catch (e) {
-    return next(e as Error);
+    if (e instanceof Error) {
+      next(e);
+      return;
+    }
+    next(serverError);
   }
 };

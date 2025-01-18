@@ -8,13 +8,14 @@
 import { Response, NextFunction } from "express";
 import prisma from "../../utils/db";
 import { AuthenticatedRequest, SellerUpdateRequest } from "../../types";
+import { serverError } from "../../utils/globals";
 
 // Function to fetch profile
 export const fetchProfile = async (
   req: AuthenticatedRequest,
   res: Response,
-  next: NextFunction
-) => {
+  next: NextFunction,
+): Promise<void> => {
   try {
     const { id } = req.params;
     console.log(id);
@@ -29,26 +30,31 @@ export const fetchProfile = async (
     });
 
     if (!seller) {
-      return res.status(404).json({
+      res.status(404).json({
         message: "Seller not found",
         errorCode: "I403",
       });
+      return;
     }
 
-    return res.status(200).json({
+    res.status(200).json({
       message: "Seller profile fetched successfully",
       seller,
     });
   } catch (e) {
-    return next(e as Error);
+    if (e instanceof Error) {
+      next(e);
+      return;
+    }
+    next(serverError);
   }
 };
 
 export const updateProfie = async (
   req: SellerUpdateRequest,
   res: Response,
-  next: NextFunction
-) => {
+  next: NextFunction,
+): Promise<void> => {
   try {
     const { id } = req.params;
     const { name, email, phone, address } = req.body;
@@ -96,23 +102,27 @@ export const updateProfie = async (
       {
         maxWait: 5000,
         timeout: 10000,
-      }
+      },
     );
 
-    return res.status(200).json({
+    res.status(200).json({
       message: "Seller profile updated successfully",
       seller,
     });
   } catch (e) {
-    return next(e as Error);
+    if (e instanceof Error) {
+      next(e);
+      return;
+    }
+    next(serverError);
   }
 };
 
 export const deleteProfile = async (
   req: AuthenticatedRequest,
   res: Response,
-  next: NextFunction
-) => {
+  next: NextFunction,
+): Promise<void> => {
   try {
     const { id } = req.params;
 
@@ -122,10 +132,14 @@ export const deleteProfile = async (
       },
     });
 
-    return res.status(200).json({
+    res.status(200).json({
       message: "Seller profile deleted successfully",
     });
   } catch (e) {
-    return next(e);
+    if (e instanceof Error) {
+      next(e);
+      return;
+    }
+    next(serverError);
   }
 };

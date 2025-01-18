@@ -13,13 +13,14 @@ import {
   SellerUpdateOrderRequest,
 } from "../../types";
 import { ORDER_STATUS } from "@prisma/client";
+import { serverError } from "../../utils/globals";
 
 // Function to fetch orders
 export const fetchOrders = async (
   req: AuthenticatedRequest,
   res: Response,
   next: NextFunction,
-) => {
+): Promise<void> => {
   try {
     const page = req.query.page ? parseInt(req.query.page as string) : 1;
     const limit = req.query.limit ? parseInt(req.query.limit as string) : 10;
@@ -36,9 +37,7 @@ export const fetchOrders = async (
     const orderItems = await prisma.order.findMany({
       where: {
         status,
-        product: {
-          sellerID: user.id,
-        },
+        sellerID: user.id,
       },
       include: {
         product: {
@@ -57,13 +56,17 @@ export const fetchOrders = async (
       orderItems.pop();
     }
 
-    return res.status(200).json({
+    res.status(200).json({
       message: "Orders fetched successfully",
       hasNext,
       orders: orderItems,
     });
   } catch (e) {
-    return next(e as Error);
+    if (e instanceof Error) {
+      next(e);
+      return;
+    }
+    next(serverError);
   }
 };
 
@@ -71,7 +74,7 @@ export const fetchIndividualOrder = async (
   req: AuthenticatedRequest,
   res: Response,
   next: NextFunction,
-) => {
+): Promise<void> => {
   try {
     const { id } = req.params;
     const { user } = req;
@@ -83,9 +86,7 @@ export const fetchIndividualOrder = async (
     const order = await prisma.order.findUnique({
       where: {
         id,
-        product: {
-          sellerID: user.id,
-        },
+        sellerID: user.id,
       },
       include: {
         product: {
@@ -97,18 +98,23 @@ export const fetchIndividualOrder = async (
     });
 
     if (!order) {
-      return res.status(404).json({
+      res.status(404).json({
         message: "Order not found",
         errorCode: "O400",
       });
+      return;
     }
 
-    return res.status(200).json({
+    res.status(200).json({
       message: "Order fetched successfully",
       order: order,
     });
   } catch (e) {
-    return next(e as Error);
+    if (e instanceof Error) {
+      next(e);
+      return;
+    }
+    next(serverError);
   }
 };
 
@@ -117,7 +123,7 @@ export const updateOrder = async (
   req: SellerUpdateOrderRequest,
   res: Response,
   next: NextFunction,
-) => {
+): Promise<void> => {
   try {
     const { id } = req.params;
     const { user } = req;
@@ -130,9 +136,7 @@ export const updateOrder = async (
     const order = await prisma.order.findUnique({
       where: {
         id,
-        product: {
-          sellerID: user.id,
-        },
+        sellerID: user.id,
       },
       include: {
         product: {
@@ -194,12 +198,16 @@ export const updateOrder = async (
       });
     }
 
-    return res.status(200).json({
+    res.status(200).json({
       message: "Order marked as delivered",
       order,
     });
   } catch (e) {
-    return next(e as Error);
+    if (e instanceof Error) {
+      next(e);
+      return;
+    }
+    next(serverError);
   }
 };
 
@@ -208,7 +216,7 @@ export const searchOrder = async (
   req: OrderSearchRequest,
   res: Response,
   next: NextFunction,
-) => {
+): Promise<void> => {
   try {
     const query = req.query.query as string;
     const page = req.query.page ? parseInt(req.query.page as string) : 1;
@@ -240,12 +248,16 @@ export const searchOrder = async (
       products.pop();
     }
 
-    return res.status(200).json({
+    res.status(200).json({
       message: "Orders fetched successfully",
       hasNext,
       orders: products,
     });
   } catch (e) {
-    return next(e as Error);
+    if (e instanceof Error) {
+      next(e);
+      return;
+    }
+    next(serverError);
   }
 };

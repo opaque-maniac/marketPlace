@@ -9,13 +9,14 @@ import { Response, NextFunction } from "express";
 import prisma from "../../utils/db";
 import { AuthenticatedRequest, UpdateOrderStatusRequest } from "../../types";
 import { ORDER_STATUS } from "@prisma/client";
+import { serverError } from "../../utils/globals";
 
 // Function to fetch all orders
 export const fetchAllOrders = async (
   req: AuthenticatedRequest,
   res: Response,
   next: NextFunction,
-) => {
+): Promise<void> => {
   try {
     const page = req.query.page ? parseInt(req.query.page as string) : 1;
     const limit = req.query.limit ? parseInt(req.query.limit as string) : 10;
@@ -69,13 +70,17 @@ export const fetchAllOrders = async (
       order.pop();
     }
 
-    return res.status(200).json({
+    res.status(200).json({
       message: "Orders fetched successfully",
       order,
       hasNext,
     });
   } catch (e) {
-    return next(e as Error);
+    if (e instanceof Error) {
+      next(e);
+      return;
+    }
+    next(serverError);
   }
 };
 
@@ -84,7 +89,7 @@ export const fetchIndividualOrder = async (
   req: AuthenticatedRequest,
   res: Response,
   next: NextFunction,
-) => {
+): Promise<void> => {
   try {
     const { id } = req.params;
 
@@ -93,18 +98,23 @@ export const fetchIndividualOrder = async (
     });
 
     if (!order) {
-      return res.status(404).json({
+      res.status(404).json({
         message: "Order not found",
         errorCode: "O400",
       });
+      return;
     }
 
-    return res.status(200).json({
+    res.status(200).json({
       message: "Order fetched successfully",
       order,
     });
   } catch (e) {
-    return next(e as Error);
+    if (e instanceof Error) {
+      next(e);
+      return;
+    }
+    next(serverError);
   }
 };
 
@@ -113,7 +123,7 @@ export const updateOrderStatus = async (
   req: UpdateOrderStatusRequest,
   res: Response,
   next: NextFunction,
-) => {
+): Promise<void> => {
   try {
     const { id } = req.params;
     const { status } = req.body;
@@ -123,10 +133,11 @@ export const updateOrderStatus = async (
     });
 
     if (!order) {
-      return res.status(404).json({
+      res.status(404).json({
         message: "Order not found",
         errorCode: "O400",
       });
+      return;
     }
 
     if (status === "CANCELLED") {
@@ -168,12 +179,16 @@ export const updateOrderStatus = async (
       });
     }
 
-    return res.status(200).json({
+    res.status(200).json({
       message: "Order status updated successfully",
       order,
     });
   } catch (e) {
-    return next(e as Error);
+    if (e instanceof Error) {
+      next(e);
+      return;
+    }
+    next(serverError);
   }
 };
 
@@ -182,7 +197,7 @@ export const deleteOrder = async (
   req: AuthenticatedRequest,
   res: Response,
   next: NextFunction,
-) => {
+): Promise<void> => {
   try {
     const { id } = req.params;
 
@@ -191,10 +206,11 @@ export const deleteOrder = async (
     });
 
     if (!order) {
-      return res.status(404).json({
+      res.status(404).json({
         message: "Order not found",
         errorCode: "O400",
       });
+      return;
     }
 
     if (order.status === "CANCELLED") {
@@ -230,11 +246,15 @@ export const deleteOrder = async (
       });
     }
 
-    return res.status(203).json({
+    res.status(203).json({
       message: "Order deleted successfully",
       order,
     });
   } catch (e) {
-    return next(e as Error);
+    if (e instanceof Error) {
+      next(e);
+      return;
+    }
+    next(serverError);
   }
 };

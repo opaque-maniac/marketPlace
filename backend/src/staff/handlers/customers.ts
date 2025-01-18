@@ -8,13 +8,14 @@
 import { Response, NextFunction } from "express";
 import prisma from "../../utils/db";
 import { AuthenticatedRequest, CustomerUpdateRequest } from "../../types";
+import { serverError } from "../../utils/globals";
 
 // Function to fetch customers
 export const fetchCustomers = async (
   req: AuthenticatedRequest,
   res: Response,
   next: NextFunction,
-) => {
+): Promise<void> => {
   try {
     const page = req.query.page ? parseInt(req.query.page as string) : 1;
     const limit = req.query.limit ? parseInt(req.query.limit as string) : 10;
@@ -55,13 +56,17 @@ export const fetchCustomers = async (
       customers.pop();
     }
 
-    return res.status(200).json({
+    res.status(200).json({
       message: "Customers fetched successfully",
       customers,
       hasNext,
     });
   } catch (e) {
-    return next(e as Error);
+    if (e instanceof Error) {
+      next(e);
+      return;
+    }
+    next(serverError);
   }
 };
 
@@ -70,7 +75,7 @@ export const fetchIndividualCustomer = async (
   req: AuthenticatedRequest,
   res: Response,
   next: NextFunction,
-) => {
+): Promise<void> => {
   try {
     const { id } = req.params;
 
@@ -84,18 +89,23 @@ export const fetchIndividualCustomer = async (
     });
 
     if (!customer) {
-      return res.status(404).json({
+      res.status(404).json({
         message: "Customer not found",
         errorCode: "I401",
       });
+      return;
     }
 
-    return res.status(200).json({
+    res.status(200).json({
       message: "Customer fetched successfully",
       customer,
     });
   } catch (e) {
-    return next(e as Error);
+    if (e instanceof Error) {
+      next(e);
+      return;
+    }
+    next(serverError);
   }
 };
 
@@ -104,7 +114,7 @@ export const updateCustomer = async (
   req: CustomerUpdateRequest,
   res: Response,
   next: NextFunction,
-) => {
+): Promise<void> => {
   try {
     const { id } = req.params;
     const { firstName, lastName, phone, address } = req.body;
@@ -155,12 +165,16 @@ export const updateCustomer = async (
       },
     );
 
-    return res.status(200).json({
+    res.status(200).json({
       message: "Customer updated successfully",
       customer,
     });
   } catch (e) {
-    return next(e as Error);
+    if (e instanceof Error) {
+      next(e);
+      return;
+    }
+    next(serverError);
   }
 };
 
@@ -169,7 +183,7 @@ export const disableCustomer = async (
   req: AuthenticatedRequest,
   res: Response,
   next: NextFunction,
-) => {
+): Promise<void> => {
   try {
     const { id } = req.params;
 
@@ -180,12 +194,16 @@ export const disableCustomer = async (
       },
     });
 
-    return res.status(200).json({
+    res.status(200).json({
       message: "Customer disabled successfully",
       customer,
     });
   } catch (e) {
-    return next(e as Error);
+    if (e instanceof Error) {
+      next(e);
+      return;
+    }
+    next(serverError);
   }
 };
 
@@ -194,7 +212,7 @@ export const enableCustomer = async (
   req: AuthenticatedRequest,
   res: Response,
   next: NextFunction,
-) => {
+): Promise<void> => {
   try {
     const { id } = req.params;
 
@@ -205,12 +223,16 @@ export const enableCustomer = async (
       },
     });
 
-    return res.status(200).json({
+    res.status(200).json({
       message: "Customer enabled successfully",
       customer,
     });
   } catch (e) {
-    return next(e as Error);
+    if (e instanceof Error) {
+      next(e);
+      return;
+    }
+    next(serverError);
   }
 };
 
@@ -219,7 +241,7 @@ export const deleteCustomer = async (
   req: AuthenticatedRequest,
   res: Response,
   next: NextFunction,
-) => {
+): Promise<void> => {
   try {
     const { id } = req.params;
 
@@ -229,11 +251,15 @@ export const deleteCustomer = async (
       },
     });
 
-    return res.status(200).json({
+    res.status(200).json({
       message: "Customer deleted successfully",
       customer,
     });
   } catch (e) {
-    return next(e as Error);
+    if (e instanceof Error) {
+      next(e);
+      return;
+    }
+    next(serverError);
   }
 };

@@ -12,7 +12,7 @@ interface RegisterData {
 // Mutation for register
 export const sendRegister = async (data: RegisterData) => {
   try {
-    const url = `${apiProtocol}://${apiHost}/seller/register`;
+    const url = `${apiProtocol}://${apiHost}/seller/auth/register`;
     const options = {
       method: "POST",
       headers: {

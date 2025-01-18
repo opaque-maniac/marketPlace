@@ -9,7 +9,7 @@ import rateLimit from "express-rate-limit";
 import { slowDown } from "express-slow-down";
 import staffRouter from "./staff/router";
 import errorHandler from "./utils/errorHandler";
-import { sendComplaints } from "./seller/handlers/complaints";
+import { sendComplaint } from "./handler";
 import { stringConfig } from "./utils/globals";
 import { body } from "express-validator";
 import path from "path";
@@ -66,9 +66,9 @@ app.post(
   body("phone")
     .isString()
     .matches(/^[0-9]+$/)
-    .isLength({ min: 10, max: 10 }),
+    .isLength({ min: 10, max: 14 }),
   body("message").isString().isLength(stringConfig),
-  sendComplaints,
+  sendComplaint,
 );
 
 app.use(errorHandler);

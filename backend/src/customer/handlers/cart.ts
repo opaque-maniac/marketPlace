@@ -5,17 +5,18 @@
  * @param {NextFunction} next - Next function
  */
 
-import { Response, NextFunction, Request } from "express";
+import { Response, NextFunction } from "express";
 import prisma from "../../utils/db";
 import { AuthenticatedRequest } from "../../types";
 import { newCartItemSocket } from "../../websockets/sockets";
+import { serverError } from "../../utils/globals";
 
 // Function to fetch cart
 export const fetchCart = async (
   req: AuthenticatedRequest,
   res: Response,
   next: NextFunction,
-) => {
+): Promise<void> => {
   try {
     const { user } = req;
     const page = req.query.page ? parseInt(req.query.page as string) : 1;
@@ -56,14 +57,18 @@ export const fetchCart = async (
       cartItems.pop();
     }
 
-    return res.status(200).json({
+    res.status(200).json({
       message: "Cart fetched successfully",
       cart,
       hasNext,
       cartItems,
     });
   } catch (e) {
-    return next(e as Error);
+    if (e instanceof Error) {
+      next(e);
+      return;
+    }
+    next(serverError);
   }
 };
 
@@ -72,7 +77,7 @@ export const fetchCartItem = async (
   req: AuthenticatedRequest,
   res: Response,
   next: NextFunction,
-) => {
+): Promise<void> => {
   try {
     const { id } = req.params;
     const { user } = req;
@@ -98,18 +103,23 @@ export const fetchCartItem = async (
     });
 
     if (!cartItems) {
-      return res.status(404).json({
+      res.status(404).json({
         message: "Cart item not found",
         errorCode: "M400",
       });
+      return;
     }
 
-    return res.status(200).json({
+    res.status(200).json({
       message: "Cart item fetched successfully",
       data: cartItems,
     });
   } catch (e) {
-    return next(e as Error);
+    if (e instanceof Error) {
+      next(e);
+      return;
+    }
+    next(serverError);
   }
 };
 
@@ -118,7 +128,7 @@ export const orderCartItem = async (
   req: AuthenticatedRequest,
   res: Response,
   next: NextFunction,
-) => {
+): Promise<void> => {
   try {
     const { id } = req.params;
     const { user } = req;
@@ -151,6 +161,7 @@ export const orderCartItem = async (
             productID: cartItem.productID,
             quantity: cartItem.quantity,
             totalAmount: cartItem.product.price * cartItem.quantity,
+            sellerID: cartItem.product.sellerID,
           },
         });
 
@@ -179,12 +190,16 @@ export const orderCartItem = async (
       },
     );
 
-    return res.status(201).json({
+    res.status(201).json({
       message: "Order created",
       order,
     });
   } catch (e) {
-    return next(e as Error);
+    if (e instanceof Error) {
+      next(e);
+      return;
+    }
+    next(serverError);
   }
 };
 
@@ -193,7 +208,7 @@ export const orderAllCartItems = async (
   req: AuthenticatedRequest,
   res: Response,
   next: NextFunction,
-) => {
+): Promise<void> => {
   try {
     const { user } = req;
 
@@ -233,6 +248,7 @@ export const orderAllCartItems = async (
               productID: item.productID,
               quantity: item.quantity,
               totalAmount: item.product.price * item.quantity,
+              sellerID: item.product.sellerID,
             },
           });
 
@@ -260,11 +276,15 @@ export const orderAllCartItems = async (
       },
     );
 
-    return res.status(201).json({
+    res.status(201).json({
       message: "Order created successfully",
     });
   } catch (e) {
-    return next(e as Error);
+    if (e instanceof Error) {
+      next(e);
+      return;
+    }
+    next(serverError);
   }
 };
 
@@ -273,7 +293,7 @@ export const removeFromCart = async (
   req: AuthenticatedRequest,
   res: Response,
   next: NextFunction,
-) => {
+): Promise<void> => {
   try {
     const { id } = req.params;
 
@@ -292,12 +312,16 @@ export const removeFromCart = async (
       },
     });
 
-    return res.status(203).json({
+    res.status(203).json({
       message: "Item removed from cart",
       cartItem,
     });
   } catch (e) {
-    return next(e as Error);
+    if (e instanceof Error) {
+      next(e);
+      return;
+    }
+    next(serverError);
   }
 };
 
@@ -306,7 +330,7 @@ export const addToCart = async (
   req: AuthenticatedRequest,
   res: Response,
   next: NextFunction,
-) => {
+): Promise<void> => {
   try {
     const { id } = req.params;
     const quantity = req.query.quantity
@@ -339,10 +363,11 @@ export const addToCart = async (
     });
 
     if (!product) {
-      return res.status(404).json({
+      res.status(404).json({
         message: "Product not found",
         errorCode: "P400",
       });
+      return;
     }
 
     const existingCartItem = cart.cartItems.find(
@@ -359,7 +384,7 @@ export const addToCart = async (
         },
       });
 
-      return res.status(200).json({
+      res.status(200).json({
         message: "Item added to cart",
         cartItem: updatedCartItem,
         new: false,
@@ -375,14 +400,18 @@ export const addToCart = async (
 
       await newCartItemSocket(user.id);
 
-      return res.status(201).json({
+      res.status(201).json({
         message: "Item added to cart",
         cartItem: newCartItem,
         new: true,
       });
     }
   } catch (e) {
-    return next(e as Error);
+    if (e instanceof Error) {
+      next(e);
+      return;
+    }
+    next(serverError);
   }
 };
 
@@ -391,7 +420,7 @@ export const emptyCart = async (
   req: AuthenticatedRequest,
   res: Response,
   next: NextFunction,
-) => {
+): Promise<void> => {
   try {
     const { user } = req;
 
@@ -415,11 +444,15 @@ export const emptyCart = async (
       },
     });
 
-    return res.status(203).json({
+    res.status(203).json({
       message: "Cart emptied successfully",
     });
   } catch (e) {
-    return next(e as Error);
+    if (e instanceof Error) {
+      next(e);
+      return;
+    }
+    next(serverError);
   }
 };
 
@@ -427,7 +460,7 @@ export const fetchCartCount = async (
   req: AuthenticatedRequest,
   res: Response,
   next: NextFunction,
-) => {
+): Promise<void> => {
   try {
     const userId = req.user?.id;
 
@@ -451,10 +484,14 @@ export const fetchCartCount = async (
       },
     });
 
-    return res.status(200).json({
+    res.status(200).json({
       count,
     });
   } catch (e) {
-    return next(e as Error);
+    if (e instanceof Error) {
+      next(e);
+      return;
+    }
+    next(serverError);
   }
 };

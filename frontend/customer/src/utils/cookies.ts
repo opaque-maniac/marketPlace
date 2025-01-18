@@ -8,7 +8,7 @@ const cookies = new Cookies();
 
 const accessLabel: string = "hazina-customer-access-token";
 const refreshLabel: string = "hazina-customer-refresh-token";
-const userIDLabel: string = "hazina-customer-id";
+const userIDLabel: string = "hazina-customer-user-id";
 
 export const setAccessToken = (token: string) => {
   cookies.set(accessLabel, token, {

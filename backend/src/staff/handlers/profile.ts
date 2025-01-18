@@ -8,13 +8,14 @@
 import { Response, NextFunction } from "express";
 import prisma from "../../utils/db";
 import { AuthenticatedRequest, StaffUpdateProfileRequest } from "../../types";
+import { serverError } from "../../utils/globals";
 
 // Fetch profile
 export const fetchProfile = async (
   req: AuthenticatedRequest,
   res: Response,
-  next: NextFunction
-) => {
+  next: NextFunction,
+): Promise<void> => {
   try {
     const { id } = req.params;
 
@@ -28,18 +29,23 @@ export const fetchProfile = async (
     });
 
     if (!profile) {
-      return res.status(404).json({
+      res.status(404).json({
         message: "Profile not found",
         errorCode: "I401",
       });
+      return;
     }
 
-    return res.status(200).json({
+    res.status(200).json({
       message: "Profile fetched successfully",
       data: profile,
     });
   } catch (e) {
-    return next(e as Error);
+    if (e instanceof Error) {
+      next(e);
+      return;
+    }
+    next(serverError);
   }
 };
 
@@ -47,8 +53,8 @@ export const fetchProfile = async (
 export const updateProfile = async (
   req: StaffUpdateProfileRequest,
   res: Response,
-  next: NextFunction
-) => {
+  next: NextFunction,
+): Promise<void> => {
   try {
     const { id } = req.params;
     const { email, firstName, lastName } = req.body;
@@ -95,15 +101,19 @@ export const updateProfile = async (
       {
         maxWait: 5000,
         timeout: 10000,
-      }
+      },
     );
 
-    return res.status(200).json({
+    res.status(200).json({
       message: "Profile updated successfully",
       data: staff,
     });
   } catch (e) {
-    return next(e as Error);
+    if (e instanceof Error) {
+      next(e);
+      return;
+    }
+    next(serverError);
   }
 };
 
@@ -111,8 +121,8 @@ export const updateProfile = async (
 export const deleteProfile = async (
   req: AuthenticatedRequest,
   res: Response,
-  next: NextFunction
-) => {
+  next: NextFunction,
+): Promise<void> => {
   try {
     const { id } = req.params;
 
@@ -122,11 +132,15 @@ export const deleteProfile = async (
       },
     });
 
-    return res.status(203).json({
+    res.status(203).json({
       message: "Profile deleted successfully",
       data: profile,
     });
   } catch (e) {
-    return next(e as Error);
+    if (e instanceof Error) {
+      next(e);
+      return;
+    }
+    next(serverError);
   }
 };

@@ -8,12 +8,13 @@
 import { NextFunction, Response } from "express";
 import { AuthenticatedRequest, StaffUpdateCommentRequest } from "../../types";
 import prisma from "../../utils/db";
+import { serverError } from "../../utils/globals";
 
 export const fetchProductComments = async (
   req: AuthenticatedRequest,
   res: Response,
-  next: NextFunction
-) => {
+  next: NextFunction,
+): Promise<void> => {
   try {
     const { id } = req.params;
     const page = req.query.page ? parseInt(req.query.page as string) : 1;
@@ -26,10 +27,11 @@ export const fetchProductComments = async (
     });
 
     if (!product) {
-      return res.status(404).json({
+      res.status(404).json({
         message: "Product not found",
         errorCode: "P400",
       });
+      return;
     }
 
     const comments = await prisma.comment.findMany({
@@ -53,21 +55,25 @@ export const fetchProductComments = async (
       comments.pop();
     }
 
-    return res.status(200).json({
+    res.status(200).json({
       message: "Comments fetched successfully",
       comments,
       hasNext,
     });
   } catch (e) {
-    return next(e as Error);
+    if (e instanceof Error) {
+      next(e);
+      return;
+    }
+    next(serverError);
   }
 };
 
 export const fetchComments = async (
   req: AuthenticatedRequest,
   res: Response,
-  next: NextFunction
-) => {
+  next: NextFunction,
+): Promise<void> => {
   try {
     const page = req.query.page ? parseInt(req.query.page as string) : 1;
     const limit = req.query.limit ? parseInt(req.query.limit as string) : 10;
@@ -90,21 +96,25 @@ export const fetchComments = async (
       comments.pop();
     }
 
-    return res.status(200).json({
+    res.status(200).json({
       message: "Comments fetched successfully",
       comments,
       hasNext,
     });
   } catch (e) {
-    return next(e as Error);
+    if (e instanceof Error) {
+      next(e);
+      return;
+    }
+    next(serverError);
   }
 };
 
 export const fetchIndividualComment = async (
   req: AuthenticatedRequest,
   res: Response,
-  next: NextFunction
-) => {
+  next: NextFunction,
+): Promise<void> => {
   try {
     const { id } = req.params;
 
@@ -122,26 +132,31 @@ export const fetchIndividualComment = async (
     });
 
     if (!comment) {
-      return res.status(404).json({
+      res.status(404).json({
         message: "Comment not found",
         errorCode: "C400",
       });
+      return;
     }
 
-    return res.status(200).json({
+    res.status(200).json({
       message: "Comment fetched successfully",
       comment,
     });
   } catch (e) {
-    return next(e as Error);
+    if (e instanceof Error) {
+      next(e);
+      return;
+    }
+    next(serverError);
   }
 };
 
 export const updateComment = async (
   req: StaffUpdateCommentRequest,
   res: Response,
-  next: NextFunction
-) => {
+  next: NextFunction,
+): Promise<void> => {
   try {
     const { id } = req.params;
     const { message } = req.body;
@@ -153,10 +168,11 @@ export const updateComment = async (
     });
 
     if (!comment) {
-      return res.status(404).json({
+      res.status(404).json({
         message: "Comment not found",
         errorCode: "C400",
       });
+      return;
     }
 
     await prisma.comment.update({
@@ -168,20 +184,24 @@ export const updateComment = async (
       },
     });
 
-    return res.status(200).json({
+    res.status(200).json({
       message: "Comment updated successfully",
       comment,
     });
   } catch (e) {
-    return next(e as Error);
+    if (e instanceof Error) {
+      next(e);
+      return;
+    }
+    next(serverError);
   }
 };
 
 export const deleteComment = async (
   req: AuthenticatedRequest,
   res: Response,
-  next: NextFunction
-) => {
+  next: NextFunction,
+): Promise<void> => {
   try {
     const { id } = req.params;
 
@@ -192,10 +212,11 @@ export const deleteComment = async (
     });
 
     if (!comment) {
-      return res.status(404).json({
+      res.status(404).json({
         message: "Comment not found",
         errorCode: "C400",
       });
+      return;
     }
 
     await prisma.comment.delete({
@@ -204,10 +225,14 @@ export const deleteComment = async (
       },
     });
 
-    return res.status(200).json({
+    res.status(200).json({
       message: "Comment deleted successfully",
     });
   } catch (e) {
-    return next(e as Error);
+    if (e instanceof Error) {
+      next(e);
+      return;
+    }
+    next(serverError);
   }
 };
