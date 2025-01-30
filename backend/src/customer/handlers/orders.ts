@@ -88,7 +88,6 @@ export const fetchIndividualOrder = async (
         product: {
           include: {
             images: true,
-            seller: true,
           },
         },
       },
@@ -98,9 +97,22 @@ export const fetchIndividualOrder = async (
       throw new Error("Order not found");
     }
 
+    const seller = await prisma.seller.findUnique({
+      where: { id: order.sellerID },
+      include: {
+        image: true,
+      },
+    });
+
+    if (!seller) {
+      throw new Error("Order seller not found");
+    }
+
+    const newOrder = { ...order, seller: seller };
+
     res.status(200).json({
       message: "Fetched order",
-      order,
+      order: newOrder,
     });
   } catch (e) {
     if (e instanceof Error) {

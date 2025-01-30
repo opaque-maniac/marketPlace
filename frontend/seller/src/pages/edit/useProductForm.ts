@@ -4,10 +4,10 @@ import { Product } from "../../utils/types";
 const useProductForm = (product: Product) => {
   enum ActionType {
     UPDATE_NAME = "UPDATE_NAME",
-    UPDATE_PRICE = "UPDATE_PRICE",
+    UPDATE_BUYINGPRICE = "UPDATE_BUYINGPRICE",
+    UPDATE_SELLINGPRICE = "UPDATE_SELLINGPRICE",
     UPDATE_DESCRIPTION = "UPDATE_DESCRIPTION",
     UPDATE_CATEGORY = "UPDATE_CATEGORY",
-    UPDATE_DISCOUNT = "UPDATE_DISCOUNT",
     UPDATE_INVENTORY = "UPDATE_INVENTORY",
   }
 
@@ -18,34 +18,34 @@ const useProductForm = (product: Product) => {
 
   interface State {
     name: string;
-    price: string;
+    buyingPrice: string;
+    sellingPrice: string;
     description: string;
     category: string;
-    discount: string | number;
     inventory: string;
   }
 
   const initialState: State = {
     name: product.name,
-    price: product.price.toString(),
+    buyingPrice: product.buyingPrice.toFixed(2),
+    sellingPrice: product.sellingPrice.toFixed(2),
     description: product.description,
     category: product.category,
     inventory: product.inventory.toString(),
-    discount: product.discountPercentage.toString(),
   };
 
   const reducer = (state: State, action: Action): State => {
     switch (action.type) {
       case ActionType.UPDATE_NAME:
         return { ...state, name: action.payload as string };
-      case ActionType.UPDATE_PRICE:
-        return { ...state, price: action.payload as string };
+      case ActionType.UPDATE_BUYINGPRICE:
+        return { ...state, buyingPrice: action.payload as string };
+      case ActionType.UPDATE_SELLINGPRICE:
+        return { ...state, sellingPrice: action.payload as string };
       case ActionType.UPDATE_DESCRIPTION:
         return { ...state, description: action.payload as string };
       case ActionType.UPDATE_CATEGORY:
         return { ...state, category: action.payload as string };
-      case ActionType.UPDATE_DISCOUNT:
-        return { ...state, discount: action.payload as string };
       case ActionType.UPDATE_INVENTORY:
         return { ...state, inventory: action.payload as string };
       default:

@@ -5,6 +5,7 @@ import Transition from "../transition";
 import EllipseIcon from "../icons/ellipse";
 import DeleteComment from "../../pages/product/deletecomment";
 import useUserStore from "../../utils/store";
+import { formatDate } from "../../utils/date";
 
 interface Props {
   comment: Comment;
@@ -17,24 +18,6 @@ const CommentItem = ({ comment, productId, refetch }: Props) => {
   const [open, setOpen] = useState<boolean>(false);
   const user = useUserStore((state) => state.user);
   const hidden = user === comment.customerID ? "" : "hidden";
-
-  const formatDate = (isoString: string) => {
-    const date = new Date(isoString);
-
-    // Corrected formatting options for date and time
-    const options: Intl.DateTimeFormatOptions = {
-      year: "numeric",
-      month: "long",
-      day: "numeric",
-      // hour: "numeric",
-      // minute: "numeric",
-      // second: "numeric",
-      // timeZoneName: "short",
-    };
-
-    // Using Intl.DateTimeFormat to get a readable date and time string
-    return new Intl.DateTimeFormat("en-US", options).format(date);
-  };
 
   return (
     <Transition>
@@ -83,10 +66,12 @@ const CommentItem = ({ comment, productId, refetch }: Props) => {
           <div>
             {comment.message.length > 100 ? (
               <>
-                <div>
-                  {clicked
-                    ? comment.message
-                    : `${comment.message.substring(0, 100)}...`}
+                <div className="mx-1">
+                  <p>
+                    {clicked
+                      ? comment.message
+                      : `${comment.message.substring(0, 100)}...`}
+                  </p>
                 </div>
                 <div>
                   <button
@@ -95,9 +80,9 @@ const CommentItem = ({ comment, productId, refetch }: Props) => {
                       setClicked(() => !clicked);
                     }}
                     aria-label="toggle comment"
-                    className="bg-transparent underline"
+                    className="bg-transparent underline text-sm"
                   >
-                    {clicked ? "Show Less" : "Show More"}
+                    {clicked ? "Less" : "More"}
                   </button>
                 </div>
               </>

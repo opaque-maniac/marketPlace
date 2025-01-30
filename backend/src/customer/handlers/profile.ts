@@ -17,11 +17,15 @@ export const fetchProfile = async (
   next: NextFunction,
 ): Promise<void> => {
   try {
-    const { id } = req.params;
+    const { user } = req;
+
+    if (!user) {
+      throw new Error("User not found");
+    }
 
     const customer = await prisma.customer.findUnique({
       where: {
-        id,
+        id: user.id,
       },
       include: {
         image: true,
@@ -29,11 +33,7 @@ export const fetchProfile = async (
     });
 
     if (!customer) {
-      res.status(404).json({
-        message: "Customer not found",
-        errorCode: "I401",
-      });
-      return;
+      throw new Error("User profile not found");
     }
 
     res.status(200).json({
@@ -56,8 +56,21 @@ export const updateProfile = async (
   next: NextFunction,
 ): Promise<void> => {
   try {
-    const { id } = req.params;
     const { firstName, lastName, phone, address } = req.body;
+    const { user } = req;
+
+    if (!user) {
+      throw new Error("User not found");
+    }
+
+    const exists = await prisma.customer.findUnique({
+      where: { id: user.id },
+    });
+
+    if (!exists) {
+      throw new Error("User profile not found");
+    }
+
     let filename: string | undefined;
 
     if (Array.isArray(req.files)) {
@@ -72,7 +85,7 @@ export const updateProfile = async (
       async (txl) => {
         const updatedCustomer = await txl.customer.update({
           where: {
-            id,
+            id: user.id,
           },
           data: {
             firstName,
@@ -125,11 +138,23 @@ export const deleteProfile = async (
   next: NextFunction,
 ): Promise<void> => {
   try {
-    const { id } = req.params;
+    const { user } = req;
+
+    if (!user) {
+      throw new Error("User not found");
+    }
+
+    const profile = await prisma.customer.findUnique({
+      where: { id: user.id },
+    });
+
+    if (!profile) {
+      throw new Error("Profile not found");
+    }
 
     const customer = await prisma.customer.delete({
       where: {
-        id,
+        id: user.id,
       },
     });
 

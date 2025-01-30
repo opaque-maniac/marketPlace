@@ -3,6 +3,7 @@ import { Link, useLocation, useNavigate } from "react-router-dom";
 import CloseIcon from "./icons/closeIcon";
 import SearchForm from "./searchform";
 import userStore from "../utils/store";
+import { removeAccessToken, removeRefreshToken } from "../utils/cookies";
 
 interface Props {
   callback: () => void;
@@ -10,8 +11,22 @@ interface Props {
 
 const Navigation = ({ callback }: Props) => {
   const user = userStore((state) => state.user);
+  const removeUser = userStore((state) => state.removeUser);
   const navigate = useNavigate();
   const path = useLocation().pathname;
+
+  const logoutHandler = useMemo(
+    () => (e: React.MouseEvent<HTMLAnchorElement>) => {
+      e.preventDefault();
+      removeAccessToken();
+      removeRefreshToken();
+      removeUser();
+      navigate("/", { replace: true });
+      callback();
+    },
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+    [callback, navigate],
+  );
 
   // Memoize the clickHandler to avoid recreating the function on every render
   const clickHandler = useMemo(
@@ -69,24 +84,6 @@ const Navigation = ({ callback }: Props) => {
           <>
             <li>
               <Link
-                onClick={(e) => clickHandler(e, "/cart")}
-                to="/cart"
-                className={path === "/cart" ? "underline" : ""}
-              >
-                Cart
-              </Link>
-            </li>
-            <li>
-              <Link
-                onClick={(e) => clickHandler(e, "/wishlist")}
-                to="/wishlist"
-                className={path === "/wishlist" ? "underline" : ""}
-              >
-                Wishlist
-              </Link>
-            </li>
-            <li>
-              <Link
                 onClick={(e) => clickHandler(e, "/orders")}
                 to="/orders"
                 className={path === "/orders" ? "underline" : ""}
@@ -96,7 +93,16 @@ const Navigation = ({ callback }: Props) => {
             </li>
             <li>
               <Link
-                onClick={(e) => clickHandler(e, "/logout")}
+                onClick={(e) => clickHandler(e, "/profile")}
+                to="/profile"
+                className={path === "/profile" ? "underline" : ""}
+              >
+                Profile
+              </Link>
+            </li>
+            <li>
+              <Link
+                onClick={(e) => logoutHandler(e)}
                 to="/logout"
                 className={path === "/logout" ? "underline" : ""}
               >
@@ -128,7 +134,7 @@ const Navigation = ({ callback }: Props) => {
         )}
       </>
     );
-  }, [clickHandler, path, user]);
+  }, [clickHandler, path, user, logoutHandler]);
 
   return (
     <>

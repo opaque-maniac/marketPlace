@@ -27,11 +27,7 @@ export const fetchUserWishlist = async (
     });
 
     if (!customer) {
-      res.status(404).json({
-        errorCode: "P400",
-        message: "User not found",
-      });
-      return;
+      throw new Error("Customer not found");
     }
 
     const wishlistItems = await prisma.wishListItem.findMany({
@@ -80,7 +76,7 @@ export const emptyWishlist = async (
     });
 
     if (!wishlist) {
-      throw new Error("Wishlist not found");
+      throw new Error("Customer wishlist not found");
     }
 
     await prisma.wishListItem.deleteMany({
@@ -156,7 +152,7 @@ export const fetchWishlistItem = async (
     });
 
     if (!wishlistItem) {
-      throw new Error("Wishlist not found");
+      throw new Error("Customer wishlist not found");
     }
 
     res.status(200).json({

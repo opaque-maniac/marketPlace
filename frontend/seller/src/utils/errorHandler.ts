@@ -1,50 +1,68 @@
-export default function errorHandler(
-  errCode: string,
-): [boolean, string | null] {
-  const ignoreErrors = [
-    "C400",
-    "M400",
-    "W400",
-    "O401",
-    "I400",
-    "I401",
-    "I403",
-    "I402",
-  ];
-  const redirectToRefreshToken = ["J401"];
-  const logoutErrors = ["J400", "J402", "J403", "J404", "J405", "R400"];
-  const show404Errors = ["J406", "P400", "M402", "O400"];
-  const show500Errors = ["S500", "M401", "BD100", "BD101", "BD102", "BD103"];
+import { Dispatch, SetStateAction } from "react";
+import { NavigateFunction } from "react-router-dom";
+import { ErrorResponse } from "./types";
 
-  if (!errCode) {
-    return [false, "/500"];
+const logout: string[] = ["A001", "PR02", "A003"];
+const logoutAndMessage = ["A002", "A006"];
+const errors404 = [
+  "C002",
+  "P001",
+  "CM01",
+  "OR01",
+  "SE01",
+  "W002",
+  "CU01",
+  "CU02",
+  "ST01",
+  "A005",
+  "CU03",
+  "PR03",
+];
+const errors500 = ["SE02", "W001", "S001"];
+const messageErrors = ["PR01", "I001", "I002", "C003", "OR02"];
+const messageAnd500 = ["C001"];
+const refreshError = ["A004"];
+
+export function errorHandler(
+  error: Error,
+  navigate: NavigateFunction,
+  setErr: Dispatch<SetStateAction<string | null>>,
+  setError: Dispatch<SetStateAction<boolean>>,
+) {
+  try {
+    const { errorCode, message } = JSON.parse(error.message) as ErrorResponse;
+
+    switch (true) {
+      case logout.includes(errorCode):
+        navigate("/logout", { replace: true });
+        break;
+      case logoutAndMessage.includes(errorCode):
+        setErr(message);
+        navigate("/logout", { replace: true });
+        break;
+      case errors404.includes(errorCode):
+        navigate("/404");
+        break;
+      case errors500.includes(errorCode):
+        setError(true);
+        navigate("/500", { replace: true });
+        break;
+      case messageErrors.includes(errorCode):
+        setErr(message);
+        break;
+      case messageAnd500.includes(errorCode):
+        setErr(message);
+        navigate("/500", { replace: true });
+        break;
+      case refreshError.includes(errorCode):
+        navigate("/refresh");
+        break;
+      default:
+        setErr("Something unexpected happened");
+        break;
+    }
+  } catch (e) {
+    setError(true);
+    navigate("/500", { replace: true });
   }
-
-  if (ignoreErrors.includes(errCode)) {
-    return [true, null];
-  }
-
-  if (redirectToRefreshToken.includes(errCode)) {
-    return [false, "/refresh-token"];
-  }
-
-  if (logoutErrors.includes(errCode)) {
-    // Trigger logout process here
-    return [false, "/logout"];
-  }
-
-  if (show404Errors.includes(errCode)) {
-    return [false, "/404"];
-  }
-
-  if (show500Errors.includes(errCode)) {
-    return [false, "/500"];
-  }
-
-  if (ignoreErrors.includes(errCode)) {
-    return [true, null];
-  }
-
-  // If the error should be shown as a message
-  return [false, "/500"];
 }

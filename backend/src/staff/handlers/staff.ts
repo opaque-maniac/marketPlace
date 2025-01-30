@@ -88,6 +88,10 @@ export const fetchIndividualStaff = async (
       },
     });
 
+    if (!staff) {
+      throw new Error("Staff not found");
+    }
+
     res.status(200).json({
       message: "Staff fetched successfully",
       staff,
@@ -110,6 +114,15 @@ export const updateStaff = async (
   try {
     const { id } = req.params;
     const { firstName, lastName, email } = req.body;
+
+    const exists = await prisma.staff.findUnique({
+      where: { id },
+    });
+
+    if (!exists) {
+      throw new Error("Staff not found");
+    }
+
     let filename: string | undefined;
 
     if (Array.isArray(req.files)) {
@@ -178,6 +191,14 @@ export const enableStaff = async (
   try {
     const { id } = req.params;
 
+    const exists = await prisma.staff.findUnique({
+      where: { id },
+    });
+
+    if (!exists) {
+      throw new Error("Staff not found");
+    }
+
     const staff = await prisma.staff.update({
       where: { id },
       data: {
@@ -207,6 +228,14 @@ export const disableStaff = async (
   try {
     const { id } = req.params;
 
+    const exists = await prisma.staff.findUnique({
+      where: { id },
+    });
+
+    if (!exists) {
+      throw new Error("Staff not found");
+    }
+
     const staff = await prisma.staff.update({
       where: { id },
       data: {
@@ -235,6 +264,14 @@ export const deleteStaff = async (
 ): Promise<void> => {
   try {
     const { id } = req.params;
+
+    const exists = await prisma.staff.findUnique({
+      where: { id },
+    });
+
+    if (!exists) {
+      throw new Error("Staff not found");
+    }
 
     const staff = await prisma.staff.delete({
       where: { id },

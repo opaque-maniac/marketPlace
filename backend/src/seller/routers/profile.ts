@@ -3,7 +3,6 @@ import { body } from "express-validator";
 import { stringConfig, createStorage } from "../../utils/globals";
 import {
   allowIfAuthenticated,
-  isProfileOwner,
   isSeller,
 } from "../../middleware/auth-middleware";
 import { deleteProfile, fetchProfile, updateProfie } from "../handlers/profile";
@@ -16,18 +15,11 @@ const sellerStorage = createStorage("uploads/sellers");
 const sellerUpload = multer({ storage: sellerStorage });
 
 // Profile management
-router.get(
-  "/:id",
-  allowIfAuthenticated,
-  isSeller,
-  isProfileOwner,
-  fetchProfile,
-);
+router.get("/", allowIfAuthenticated, isSeller, fetchProfile);
 router.put(
-  "/:id",
+  "/",
   allowIfAuthenticated,
   isSeller,
-  isProfileOwner,
   body("name").isString().isLength(stringConfig),
   body("email").isEmail(),
   body("phone")
@@ -35,15 +27,10 @@ router.put(
     .matches(/^[0-9]{10}$/)
     .optional(),
   body("address").isString().isLength(stringConfig).optional(),
+  body("bio").optional().isString().isLength({ min: 10, max: 500 }),
   sellerUpload.single("image"),
   updateProfie,
 );
-router.delete(
-  "/:id",
-  allowIfAuthenticated,
-  isSeller,
-  isProfileOwner,
-  deleteProfile,
-);
+router.delete("/", allowIfAuthenticated, isSeller, deleteProfile);
 
 export default router;

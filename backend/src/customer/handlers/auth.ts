@@ -29,11 +29,7 @@ export const register = async (
     });
 
     if (alreadyExists) {
-      res.status(400).json({
-        message: "User already exists",
-        errorCode: "I400",
-      });
-      return;
+      throw new Error("User already exists");
     }
 
     const salt = await bcrypt.genSalt(10);
@@ -99,29 +95,17 @@ export const login = async (
     });
 
     if (!customer) {
-      res.status(401).json({
-        message: "Invalid email or password",
-        errorCode: "I401",
-      });
-      return;
+      throw new Error("Invalid email or password");
     }
 
     if (!customer.active) {
-      res.status(401).json({
-        message: "Account is not active",
-        errorCode: "I402",
-      });
-      return;
+      throw new Error("User is not active");
     }
 
     const isPasswordValid = await bcrypt.compare(password, customer.password);
 
     if (!isPasswordValid) {
-      res.status(401).json({
-        message: "Invalid email or password",
-        errorCode: "I403",
-      });
-      return;
+      throw new Error("Invalid email or password");
     }
 
     const token = generateToken(customer.id, customer.email, "customer");

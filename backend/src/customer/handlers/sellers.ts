@@ -29,11 +29,7 @@ export const fetchSellerProfile = async (
     });
 
     if (!seller) {
-      res.status(404).json({
-        message: "Product not found",
-        errorCode: "P400",
-      });
-      return;
+      throw new Error("Seller not found");
     }
 
     res.status(200).json({
@@ -58,15 +54,19 @@ export const fetchSellerProducts = async (
   try {
     const page = req.query.page ? parseInt(req.query.page as string) : 1;
     const limit = req.query.limit ? parseInt(req.query.limit as string) : 10;
-    const { user } = req;
+    const { id } = req.params;
 
-    if (!user) {
-      throw new Error("User not found");
+    const seller = await prisma.seller.findUnique({
+      where: { id },
+    });
+
+    if (!seller) {
+      throw new Error("Seller not found");
     }
 
     const products = await prisma.product.findMany({
       where: {
-        sellerID: user.id,
+        sellerID: seller.id,
       },
       include: {
         images: true,

@@ -1,10 +1,9 @@
 import { Link } from "react-router-dom";
 import { Product } from "../../utils/types";
 import AddToCart from "../../pages/product/addtocart";
-import EyeOpen from "../icons/show";
-import { useState } from "react";
-import Modal from "../modal";
-import CloseIcon from "../icons/closeIcon";
+import { apiHost, apiProtocol } from "../../utils/generics";
+import ProductWishlistButton from "./productwishlitbutton";
+import { calculateDiscount } from "../../utils/price";
 
 interface Props {
   product: Product;
@@ -12,53 +11,54 @@ interface Props {
 }
 
 const ProductItem = ({ product, color }: Props) => {
-  const [clicked, setClicked] = useState<boolean>(false);
-
-  const calculateOriginalPrice = (
-    price: number,
-    discountPercentage: number,
-  ): number => {
-    const discountAmount = price * (discountPercentage / 100);
-    const originalPrice = price + discountAmount;
-    return originalPrice;
-  };
+  const discount = calculateDiscount(product.buyingPrice, product.sellingPrice);
 
   return (
-    <div className="h-350">
-      <Link to={`/products/${product.id}`}>
-        <div className="h-250 w-270 relative pt-1">
-          <img
-            src={`http://localhost:3020/${product.images[0].url}`}
-            alt={product.name}
-            className="h-full w-full"
-            loading="lazy"
-          />
-          <div className="absolute top-4 right-4">
-            <button
-              onClick={(e) => {
-                e.preventDefault();
-                setClicked(true);
-              }}
-              aria-label="Add To Wishlist"
-              className="h-8 w-8 bg-white rounded-full pl-1 pr-1"
+    <div>
+      <Link
+        to={`/products/${product.id}`}
+        className="block min-h-[350px] relative w-[270px]"
+      >
+        <div>
+          <div className="h-[250px] w-[270px] flex items-end justify-center pb-4">
+            <img
+              src={`${apiProtocol}://${apiHost}/${product.images[0].url}`}
+              alt={product.name}
+              className="h-[220px] w-[230px]"
+              loading="lazy"
+            />
+          </div>
+          <div className="absolute top-0 right-1 bg-red-600 h-10 w-10 rounded-tr-md rounded-bl-md flex justify-center items-center">
+            <span
+              aria-label={`${discount}% discount`}
+              className="font-semibold text-white"
             >
-              <EyeOpen />
-            </button>
+              {discount}%
+            </span>
+          </div>
+          <div className="absolute top-14 right-2">
+            <ProductWishlistButton productID={product.id} />
           </div>
         </div>
         <div>
           <p className={`text-${color} text-xl text-center`}>{product.name}</p>
         </div>
         <div className="flex justify-around items-center py-1">
-          <span className="text-red-400">${product.price.toFixed(2)}</span>
+          <span className="text-red-400">
+            {product.sellingPrice.toLocaleString("en-US", {
+              style: "currency",
+              currency: "USD",
+              maximumFractionDigits: 2,
+            })}
+          </span>
           <span
             className={`${color === "white" ? "text-gray-200" : "text-gray-400"} line-through`}
           >
-            $
-            {calculateOriginalPrice(
-              product.price,
-              product.discountPercentage,
-            ).toFixed(2)}
+            {product.buyingPrice.toLocaleString("en-US", {
+              style: "currency",
+              currency: "USD",
+              maximumFractionDigits: 2,
+            })}
           </span>
         </div>
         <div className="flex justify-center items-center">
@@ -69,27 +69,6 @@ const ProductItem = ({ product, color }: Props) => {
           />
         </div>
       </Link>
-      {clicked && (
-        <Modal callback={() => setClicked(false)}>
-          <div className="h-screen md:w-600 w-350 mx-auto relative flex justify-center items-center">
-            <button
-              onClick={(e) => {
-                e.preventDefault();
-                setClicked(false);
-              }}
-              className="absolute md:-left-20 md:top-10 top-2 left-0 h-8 w-8 bg-white border border-black rounded-sm"
-            >
-              <CloseIcon />
-            </button>
-            <img
-              src={`http://localhost:3020/${product.images[0].url}`}
-              alt={product.name}
-              loading="lazy"
-              className="w-full h-500"
-            />
-          </div>
-        </Modal>
-      )}
     </div>
   );
 };

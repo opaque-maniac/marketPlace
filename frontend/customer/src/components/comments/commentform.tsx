@@ -1,13 +1,15 @@
 import { useMutation } from "@tanstack/react-query";
 import { sendComment } from "../../utils/mutations/comments/sendcomment";
 import { FormEventHandler, useContext, useRef, useState } from "react";
-import { ErrorResponse } from "../../utils/types";
-import errorHandler from "../../utils/errorHandler";
-import { ErrorContext, ShowErrorContext } from "../../utils/errorContext";
+import {
+  ErrorContext,
+  ShowErrorContext,
+  ShowMessageContext,
+} from "../../utils/errorContext";
 import { useNavigate } from "react-router-dom";
 import SendIcon from "../icons/send";
 import Loader from "../loader";
-import SuccessComponent from "../success";
+import { errorHandler } from "../../utils/errorHandler";
 
 interface Props {
   id: string;
@@ -15,47 +17,25 @@ interface Props {
 }
 
 const CommentForm = ({ id, refetch }: Props) => {
-  const [success, setSuccess] = useState<boolean>(false);
   const [, setErr] = useContext(ShowErrorContext);
   const [, setError] = useContext(ErrorContext);
+  const [, setMessage] = useContext(ShowMessageContext);
   const navigate = useNavigate();
   const ref = useRef<HTMLFormElement>(null);
 
   const mutation = useMutation({
     mutationFn: sendComment,
-    onError: (error: Error) => {
-      try {
-        const errorObj = JSON.parse(error.message) as ErrorResponse;
-        const [show, url] = errorHandler(errorObj.errorCode);
-
-        if (show) {
-          setErr(errorObj.message);
-        } else {
-          if (url) {
-            if (url === "/500") {
-              setError(true);
-            }
-            navigate(url, { replace: true });
-          } else {
-            setError(true);
-            navigate("/500", { replace: true });
-          }
-        }
-      } catch (e) {
-        if (e instanceof Error) {
-          setErr("Something unexpected happened");
-        }
-        navigate("/", { replace: true });
-      }
+    onError: (error) => {
+      errorHandler(error, navigate, setErr, setError);
     },
     onSuccess: () => {
       if (ref.current) {
         ref.current.reset();
       }
-      setSuccess(true);
+      setMessage("Comment sent successfully");
       refetch();
       setTimeout(() => {
-        setSuccess(false);
+        setMessage(null);
       }, 3000);
     },
   });
@@ -69,7 +49,6 @@ const CommentForm = ({ id, refetch }: Props) => {
 
   return (
     <div className="w-full">
-      {success && <SuccessComponent message="Successfully Sent Comment" />}
       <form
         ref={ref}
         onSubmit={submitHandler}
@@ -79,14 +58,15 @@ const CommentForm = ({ id, refetch }: Props) => {
           <label htmlFor="message" className="sr-only">
             Comment Message
           </label>
-          <textarea
+          <input
+            type="text"
             name="message"
             id="message"
             placeholder="Enter comment"
             className="block h-14 w-full border focus:border border-black px-1"
             maxLength={225}
             minLength={10}
-          ></textarea>
+          />
         </div>
         <div>
           <button

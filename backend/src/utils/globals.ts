@@ -37,3 +37,5 @@ export const productCategories = [
 ];
 
 export const serverError = new Error("Internal server error");
+
+export const floatRegex = /^[-+]?\d*\.\d+$|^[-+]?\+$/;

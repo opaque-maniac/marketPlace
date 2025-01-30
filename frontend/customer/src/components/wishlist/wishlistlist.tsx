@@ -1,5 +1,18 @@
-import WishlistItemComponent from "./wishlistitem";
 import { WishlistItem } from "../../utils/types";
+import Loader from "../loader";
+import { lazy, Suspense } from "react";
+
+const WishlistItemComponent = lazy(() => import("./wishlistitem"));
+
+const Fallback = () => {
+  return (
+    <div className="w-[270px] h-[350px] flex justify-center items-center">
+      <div className="h-10 w-10">
+        <Loader color="#fff" />
+      </div>
+    </div>
+  );
+};
 
 interface Props {
   wishlistItems: WishlistItem[];
@@ -11,10 +24,12 @@ const Wishlist = ({ wishlistItems, color, refetch }: Props) => {
   return (
     <div className="h-full w-full">
       {wishlistItems.length > 0 ? (
-        <ul className="flex h-full flex-wrap md:flex-row flex-col lg:gap-16 md:gap-36 md:pl-10 lg:p-0 md:justify-start items-center justify-center">
+        <ul className="flex h-full flex-wrap md:flex-row flex-col lg:gap-16 md:gap-36 gap-6 md:pl-10 lg:p-0 md:justify-start items-center justify-center">
           {wishlistItems.map((wishItem) => (
             <li key={wishItem.id}>
-              <WishlistItemComponent item={wishItem} refetch={refetch} />
+              <Suspense fallback={<Fallback />}>
+                <WishlistItemComponent item={wishItem} refetch={refetch} />
+              </Suspense>
             </li>
           ))}
         </ul>

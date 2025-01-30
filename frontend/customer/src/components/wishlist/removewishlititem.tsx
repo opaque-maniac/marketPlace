@@ -2,12 +2,11 @@ import { MouseEventHandler, useContext } from "react";
 import { useNavigate } from "react-router-dom";
 import { ErrorContext, ShowErrorContext } from "../../utils/errorContext";
 import { useMutation } from "@tanstack/react-query";
-import { ErrorResponse } from "../../utils/types";
-import errorHandler from "../../utils/errorHandler";
 import Transition from "../transition";
 import Loader from "../loader";
 import TrashIcon from "../icons/trash";
 import { removeFromWishlist } from "../../utils/mutations/wishlist/removefromwishlist";
+import { errorHandler } from "../../utils/errorHandler";
 
 interface Props {
   id: string;
@@ -21,30 +20,8 @@ const RemoveWishlistItem = ({ id, refetch }: Props) => {
 
   const mutation = useMutation({
     mutationFn: removeFromWishlist,
-    onError: (error: Error) => {
-      try {
-        const errorObj = JSON.parse(error.message) as ErrorResponse;
-        const [show, url] = errorHandler(errorObj.errorCode);
-
-        if (show) {
-          setErr(errorObj.message);
-        } else {
-          if (url) {
-            if (url === "/500") {
-              setError(true);
-            }
-            navigate(url, { replace: true });
-          } else {
-            setError(true);
-            navigate("/500", { replace: true });
-          }
-        }
-      } catch (e) {
-        if (e instanceof Error) {
-          setErr("Something unexpected happened");
-        }
-        navigate("/", { replace: true });
-      }
+    onError: (error) => {
+      errorHandler(error, navigate, setErr, setError);
     },
     onSuccess: () => {
       refetch();
@@ -56,17 +33,17 @@ const RemoveWishlistItem = ({ id, refetch }: Props) => {
     mutation.mutate({ id });
   };
 
+  const disable = mutation.isPending ? true : false;
+  const cursor = mutation.isPaused ? "cursor-not-allowed" : "cursor-pointer";
+
   return (
     <Transition>
       <button
-        disabled={mutation.isIdle ? false : true}
+        disabled={disable}
         onClick={clickHandler}
-        className="flex justify-start items-center gap-2 border border-black h-8 p-2 rounded-sm bg-white"
+        className={`h-8 w-8 rounded-full bg-white p-1 flex justify-center items-center border border-black/20 ${cursor}`}
       >
-        <div className="h-6 w-6">
-          {mutation.isPending ? <Loader color="#000" /> : <TrashIcon />}
-        </div>
-        <span className="text-sm">Remove</span>
+        {mutation.isPending ? <Loader color="#000" /> : <TrashIcon />}
       </button>
     </Transition>
   );

@@ -7,10 +7,9 @@ import ArrowRight from "../../components/icons/arrowright";
 import ArrowLeft from "../../components/icons/arrowleft";
 import { ErrorContext, ShowErrorContext } from "../../utils/errorContext";
 import { useNavigate } from "react-router-dom";
-import { ErrorResponse } from "../../utils/types";
-import errorHandler from "../../utils/errorHandler";
 import CommentForm from "../../components/comments/commentform";
 import useUserStore from "../../utils/store";
+import { errorHandler } from "../../utils/errorHandler";
 
 interface Props {
   id: string;
@@ -29,28 +28,7 @@ const CommentList = ({ id }: Props) => {
   });
 
   if (query.isError) {
-    const data = query.error;
-    try {
-      const error = JSON.parse(data.message) as ErrorResponse;
-      const [show, url] = errorHandler(error.errorCode);
-      if (show) {
-        setErr(error.message);
-      } else {
-        if (url) {
-          if (url === "/500") {
-            setError(true);
-          }
-          navigate(url);
-        } else {
-          setError(true);
-          navigate("/500", { replace: true });
-        }
-      }
-    } catch (e) {
-      if (e instanceof Error) {
-        setErr("An unexpected error occurred.");
-      }
-    }
+    errorHandler(query.error, navigate, setErr, setError);
   }
 
   const refetchComments = useCallback(() => {
@@ -60,7 +38,7 @@ const CommentList = ({ id }: Props) => {
 
   return (
     <div
-      className={`h-full border rounded-lg w-full mx-auto ${query.data && query.data.data.length > 3 ? "overflow-y-scroll" : ""}`}
+      className={"h-full border rounded-lg xl:w-7/12 md:w-10/12 w-full mx-auto"}
     >
       <div className="min-h-60">
         {query.isLoading && (
@@ -75,9 +53,9 @@ const CommentList = ({ id }: Props) => {
             {query.data ? (
               <div>
                 {query.data.data.length > 0 ? (
-                  <ul className="flex flex-col justify-center items-center gap-4 py-2">
+                  <ul className="flex flex-col justify-evenly items-center gap-4 py-2 md:h-96 h-auto overflow-y-scroll border-b border-black/25 pb-2 mx-auto no-scrollbar rounded-b-md">
                     {query.data.data.map((comment) => (
-                      <li key={comment.id} className="w-10/12">
+                      <li key={comment.id} className="md:w-10/12 w-11/12">
                         <CommentItem
                           refetch={refetchComments}
                           comment={comment}

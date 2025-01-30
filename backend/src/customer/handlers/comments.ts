@@ -28,11 +28,7 @@ export const fetchProductComments = async (
     });
 
     if (!product) {
-      res.status(404).json({
-        message: "Product not found",
-        errorCode: "P400",
-      });
-      return;
+      throw new Error("Product not found");
     }
 
     const comments = await prisma.comment.findMany({
@@ -79,6 +75,11 @@ export const createProductComment = async (
   try {
     const { message } = req.body;
     const { id } = req.params;
+    const { user } = req;
+
+    if (!user) {
+      throw new Error("User not found");
+    }
 
     const product = await prisma.product.findUnique({
       where: {
@@ -87,20 +88,13 @@ export const createProductComment = async (
     });
 
     if (!product) {
-      res.status(404).json({
-        message: "Product not found",
-        errorCode: "P400",
-      });
-      return;
+      throw new Error("Product not found");
     }
 
-    if (!req.user) {
-      throw new Error("User not found");
-    }
     const comment = await prisma.comment.create({
       data: {
         message,
-        customerID: req.user.id,
+        customerID: user.id,
         productID: product.id,
       },
     });
@@ -142,11 +136,7 @@ export const fetchIndividualComment = async (
     });
 
     if (!comment) {
-      res.status(404).json({
-        message: "Comment not found",
-        errorCode: "C400",
-      });
-      return;
+      throw new Error("Comment not found");
     }
 
     res.status(200).json({
@@ -170,6 +160,11 @@ export const deleteProductComment = async (
 ): Promise<void> => {
   try {
     const { id, commentId } = req.params;
+    const { user } = req;
+
+    if (!user) {
+      throw new Error("User not found");
+    }
 
     const product = await prisma.product.findUnique({
       where: {
@@ -178,22 +173,14 @@ export const deleteProductComment = async (
     });
 
     if (!product) {
-      res.status(404).json({
-        message: "Product not found",
-        errorCode: "P400",
-      });
-      return;
-    }
-
-    if (!req.user) {
-      throw new Error("User not found");
+      throw new Error("Product not found");
     }
 
     const comment = await prisma.comment.delete({
       where: {
         id: commentId,
         productID: product.id,
-        customerID: req.user.id,
+        customerID: user.id,
       },
     });
 

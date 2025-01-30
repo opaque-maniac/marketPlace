@@ -1,16 +1,18 @@
 import { useReducer } from "react";
-import { Seller } from "../../utils/types";
+import { Customer } from "../../utils/types";
 
-const useProfileForm = (profile: Seller) => {
+const useProfileForm = (profile: Customer) => {
   interface State {
-    name: string;
+    firstName: string;
+    lastName: string;
     email: string;
     address: string;
     phone: string;
   }
 
   enum ActionType {
-    CHANGE_NAME = "CHANGE_NAME",
+    CHANGE_FIRSTNAME = "CHANGE_FIRSNAME",
+    CHANGE_LASTNAME = "CHANGE_LASTNAME",
     CHANGE_EMAIL = "CHANGE_EMAIL",
     CHANGE_ADDRESS = "CHANGE_ADDRESS",
     CHANGE_PHONE = "CHANGE_PHONE",
@@ -22,7 +24,8 @@ const useProfileForm = (profile: Seller) => {
   }
 
   const initialState: State = {
-    name: profile.name,
+    firstName: profile.firstName,
+    lastName: profile.lastName,
     email: profile.email,
     address: profile.address ?? "",
     phone: profile.phone ?? "",
@@ -30,8 +33,10 @@ const useProfileForm = (profile: Seller) => {
 
   const reducer = (state: State, action: Action): State => {
     switch (action.type) {
-      case ActionType.CHANGE_NAME:
-        return { ...state, name: action.payload };
+      case ActionType.CHANGE_FIRSTNAME:
+        return { ...state, firstName: action.payload };
+      case ActionType.CHANGE_LASTNAME:
+        return { ...state, lastName: action.payload };
       case ActionType.CHANGE_EMAIL:
         return { ...state, email: action.payload };
       case ActionType.CHANGE_ADDRESS:

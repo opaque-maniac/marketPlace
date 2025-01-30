@@ -68,8 +68,15 @@ export const createProduct = async (
   next: NextFunction,
 ): Promise<void> => {
   try {
-    const { name, description, price, category, inventory, discount } =
-      req.body;
+    const {
+      name,
+      description,
+      buyingPrice,
+      sellingPrice,
+      category,
+      inventory,
+      discount,
+    } = req.body;
     let filenames: string[] | undefined;
     const { user } = req;
 
@@ -88,11 +95,7 @@ export const createProduct = async (
     });
 
     if (!seller) {
-      res.status(404).json({
-        message: "Seller not found",
-        errorCode: "J406",
-      });
-      return;
+      throw new Error("User profile not found");
     }
 
     const product = await prisma.$transaction(async (txl) => {
@@ -100,11 +103,11 @@ export const createProduct = async (
         data: {
           name,
           description,
-          price: parseFloat(price),
+          buyingPrice: parseFloat(buyingPrice),
+          sellingPrice: parseFloat(sellingPrice),
           category: category as CATEGORIES,
           inventory: parseInt(inventory),
           sellerID: seller.id,
-          discountPercentage: discount ? parseFloat(discount) : 0,
         },
       });
 
@@ -153,6 +156,10 @@ export const fetchIndividualProduct = async (
       },
     });
 
+    if (!product) {
+      throw new Error("Product not found");
+    }
+
     res.status(200).json({
       message: "Product fetched successfully",
       product,
@@ -174,48 +181,69 @@ export const updateIndividualProduct = async (
 ): Promise<void> => {
   try {
     const { id } = req.params;
-    const { name, description, price, category, inventory, discount } =
-      req.body;
+    const {
+      name,
+      description,
+      buyingPrice,
+      sellingPrice,
+      category,
+      inventory,
+      discount,
+    } = req.body;
     let filenames: string[] | undefined;
 
     if (req.files && Array.isArray(req.files)) {
       filenames = req.files.map((file) => file.filename);
     }
 
-    const product = await prisma.$transaction(async (txl) => {
-      const updatedProduct = await txl.product.update({
-        where: {
-          id,
-        },
-        data: {
-          name,
-          description,
-          price: parseFloat(price),
-          category: category as CATEGORIES,
-          inventory: parseInt(inventory),
-          discountPercentage: discount ? parseInt(discount) : 0,
-        },
-      });
+    const exists = await prisma.product.findUnique({
+      where: { id },
+    });
 
-      if (filenames) {
-        await txl.productImage.deleteMany({
+    if (!exists) {
+      throw new Error("Product not found");
+    }
+
+    const product = await prisma.$transaction(
+      async (txl) => {
+        const updatedProduct = await txl.product.update({
           where: {
-            productID: id,
+            id,
+          },
+          data: {
+            name,
+            description,
+            buyingPrice: parseFloat(buyingPrice),
+            sellingPrice: parseFloat(sellingPrice),
+            category: category as CATEGORIES,
+            inventory: parseInt(inventory),
           },
         });
 
-        for (let i = 0; i < filenames.length; i++) {
-          await txl.productImage.create({
-            data: {
-              productID: updatedProduct.id,
-              url: `uploads/products/${filenames[i]}`,
+        if (filenames) {
+          await txl.productImage.deleteMany({
+            where: {
+              productID: id,
             },
           });
-        }
-      }
 
-      return updatedProduct;
-    });
+          for (let i = 0; i < filenames.length; i++) {
+            await txl.productImage.create({
+              data: {
+                productID: updatedProduct.id,
+                url: `uploads/products/${filenames[i]}`,
+              },
+            });
+          }
+        }
+
+        return updatedProduct;
+      },
+      {
+        maxWait: 5000,
+        timeout: 10000,
+      },
+    );
 
     res.status(200).json({
       message: "Product updated successfully",

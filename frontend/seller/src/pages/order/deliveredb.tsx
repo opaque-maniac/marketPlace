@@ -1,12 +1,11 @@
 import { useMutation } from "@tanstack/react-query";
 import TickIcon from "../../components/icons/tick";
 import { makeOrderDelivered } from "../../utils/mutations/orders/makeorderdelivered";
-import { ErrorResponse } from "../../utils/types";
-import errorHandler from "../../utils/errorHandler";
 import { MouseEventHandler, useContext } from "react";
 import { ErrorContext, ShowErrorContext } from "../../utils/errorContext";
 import { useNavigate } from "react-router-dom";
 import Loader from "../../components/loader";
+import { errorHandler } from "../../utils/errorHandler";
 
 interface Props {
   id: string;
@@ -23,22 +22,7 @@ const DeliveredButton = ({ id, ready, delivered, refetch }: Props) => {
   const mutation = useMutation({
     mutationFn: makeOrderDelivered,
     onError: (error) => {
-      const errorObj = JSON.parse(error.message) as ErrorResponse;
-      const [show, url] = errorHandler(errorObj.errorCode);
-
-      if (show) {
-        setErr(errorObj.message);
-      } else {
-        if (url) {
-          if (url === "/500") {
-            setError(true);
-          }
-          navigate(url, { replace: true });
-        } else {
-          setError(true);
-          navigate("/500", { replace: true });
-        }
-      }
+      errorHandler(error, navigate, setErr, setError);
     },
     onSuccess: () => {
       refetch();

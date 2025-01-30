@@ -40,7 +40,7 @@ const NavItem = ({ placeholder, url, label, callback }: Props) => {
       callback();
     }, 200);
     if (query) {
-      navigate(`${url}/search/?query=${query}`);
+      navigate(`${url}?page=1&query=${query}`);
     } else {
       navigate(`${url}`);
     }

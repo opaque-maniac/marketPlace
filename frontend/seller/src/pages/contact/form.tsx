@@ -2,10 +2,9 @@ import { useMutation } from "@tanstack/react-query";
 import { sendContact } from "../../utils/mutations/contact";
 import { FormEventHandler, MutableRefObject, useContext } from "react";
 import { useNavigate } from "react-router-dom";
-import { ErrorResponse } from "../../utils/types";
 import Loader from "../../components/loader";
 import { ErrorContext, ShowErrorContext } from "../../utils/errorContext";
-import errorHandler from "../../utils/errorHandler";
+import { errorHandler } from "../../utils/errorHandler";
 
 const ContactForm = () => {
   const [, setError] = useContext(ErrorContext);
@@ -16,29 +15,7 @@ const ContactForm = () => {
   const mutation = useMutation({
     mutationFn: sendContact,
     onError: (error) => {
-      try {
-        const errorObj = JSON.parse(error.message) as ErrorResponse;
-        const [show, url] = errorHandler(errorObj.errorCode);
-
-        if (show) {
-          setErr(errorObj.message);
-        } else {
-          if (url) {
-            if (url === "/500") {
-              setError(true);
-            }
-            navigate(url, { replace: true });
-          } else {
-            setError(true);
-            navigate("/500", { replace: true });
-          }
-        }
-      } catch (e) {
-        if (e instanceof Error) {
-          setErr("Something unexpected happened");
-        }
-        navigate("/", { replace: true });
-      }
+      errorHandler(error, navigate, setErr, setError);
     },
     onSuccess: (data) => {
       if (!data) {

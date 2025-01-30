@@ -3,8 +3,6 @@ import Transition from "../../components/transition";
 import { useNavigate } from "react-router-dom";
 import { useQuery } from "@tanstack/react-query";
 import { fetchProducts } from "../../utils/queries/products/fetchproducts";
-import errorHandler from "../../utils/errorHandler";
-import { ErrorResponse } from "../../utils/types";
 import { useContext } from "react";
 import { ShowErrorContext, ErrorContext } from "../../utils/errorContext";
 import FirstSection from "./sections/first";
@@ -17,6 +15,7 @@ import SeventhSection from "./sections/seventh";
 import EighthSection from "./sections/eight";
 import NinethSection from "./sections/nineth";
 import TenthSection from "./sections/tenth";
+import { errorHandler } from "../../utils/errorHandler";
 
 const HomePage = () => {
   const [, setError] = useContext(ErrorContext);
@@ -29,31 +28,11 @@ const HomePage = () => {
   });
 
   if (query.isError) {
-    const data = query.error;
-    try {
-      const error = JSON.parse(data.message) as ErrorResponse;
-      const [show, url] = errorHandler(error.errorCode);
-      if (show) {
-        setErr(error.message);
-      } else {
-        if (url) {
-          if (url === "/500") {
-            setError(true);
-          }
-          navigate(url);
-        } else {
-          setError(true);
-          navigate("/500", { replace: true });
-        }
-      }
-    } catch (e) {
-      if (e instanceof Error) {
-        setErr("An unexpected error occurred.");
-      }
-    }
+    errorHandler(query.error, navigate, setErr, setError);
   }
 
   const data = query.data?.data;
+  console.log(data);
 
   return (
     <Transition>

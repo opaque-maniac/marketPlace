@@ -20,8 +20,24 @@ export const fetchSellers = async (
   try {
     const page = req.query.page ? parseInt(req.query.page as string) : 1;
     const limit = req.query.limit ? parseInt(req.query.limit as string) : 10;
+    const query = req.query.query ? (req.query.query as string) : "";
 
     const sellers = await prisma.seller.findMany({
+      where: query
+        ? {
+            OR: [
+              {
+                name: {
+                  contains: query,
+                  mode: "insensitive",
+                },
+              },
+              {
+                email: query,
+              },
+            ],
+          }
+        : {},
       include: {
         image: true,
       },
@@ -68,11 +84,7 @@ export const fetchIndividualSeller = async (
     });
 
     if (!seller) {
-      res.status(404).json({
-        message: "Seller not found",
-        errorCode: "I401",
-      });
-      return;
+      throw new Error("Seller not found");
     }
 
     res.status(200).json({
@@ -106,11 +118,7 @@ export const fetchSellerProducts = async (
     });
 
     if (!seller) {
-      res.status(404).json({
-        message: "Seller not found",
-        errorCode: "I401",
-      });
-      return;
+      throw new Error("Seller not found");
     }
 
     const products = await prisma.product.findMany({
@@ -289,48 +297,6 @@ export const deleteSeller = async (
     res.status(203).json({
       message: "Seller deleted successfully",
       seller,
-    });
-  } catch (e) {
-    if (e instanceof Error) {
-      next(e);
-      return;
-    }
-    next(serverError);
-  }
-};
-
-// To search for a seller
-export const searchSeller = async (
-  req: AuthenticatedRequest,
-  res: Response,
-  next: NextFunction,
-): Promise<void> => {
-  try {
-    const query = req.query.query ? (req.query.query as string) : "";
-    const page = req.query.page ? parseInt(req.query.page as string) : 1;
-    const limit = req.query.limit ? parseInt(req.query.limit as string) : 10;
-
-    const sellers = await prisma.seller.findMany({
-      where: {
-        name: {
-          contains: query,
-          mode: "insensitive",
-        },
-      },
-      skip: (page - 1) * limit,
-      take: limit + 1,
-    });
-
-    const hasNext = sellers.length > limit;
-
-    if (hasNext) {
-      sellers.pop();
-    }
-
-    res.status(200).json({
-      message: "Sellers fetched successfully",
-      sellers,
-      hasNext,
     });
   } catch (e) {
     if (e instanceof Error) {

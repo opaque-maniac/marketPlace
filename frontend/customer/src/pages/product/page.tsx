@@ -1,11 +1,9 @@
 import { useQuery } from "@tanstack/react-query";
 import Transition from "../../components/transition";
 import { fetchProduct } from "../../utils/queries/products/fetchindividualproduct";
-import { useNavigate, useParams } from "react-router-dom";
-import { useContext, useEffect, useState } from "react";
+import { Link, useNavigate, useParams } from "react-router-dom";
+import { lazy, Suspense, useContext, useEffect, useState } from "react";
 import { ErrorContext, ShowErrorContext } from "../../utils/errorContext";
-import errorHandler from "../../utils/errorHandler";
-import { ErrorResponse } from "../../utils/types";
 import { Helmet } from "react-helmet";
 import TickIcon from "../../components/icons/tick";
 import CloseIcon from "../../components/icons/closeIcon";
@@ -13,9 +11,24 @@ import AddToCart from "./addtocart";
 import AddToWishlist from "./addtowishlist";
 import TruckIcon from "../../components/icons/truck";
 import ArrowPath from "../../components/icons/arrowpath";
-import Related from "./related";
-import CommentList from "./comments";
 import PageLoader from "../../components/pageloader";
+import { apiHost, apiProtocol } from "../../utils/generics";
+import { errorHandler } from "../../utils/errorHandler";
+import Loader from "../../components/loader";
+import { calculateDiscount } from "../../utils/price";
+
+const Related = lazy(() => import("./related"));
+const CommentList = lazy(() => import("./comments"));
+
+const Fallback = () => {
+  return (
+    <div className="h-[400px] w-full flex justify-center items-center">
+      <div className="w-10 h-10">
+        <Loader color="#000" />
+      </div>
+    </div>
+  );
+};
 
 const IndividualProductPage = () => {
   const navigate = useNavigate();
@@ -36,45 +49,20 @@ const IndividualProductPage = () => {
     queryKey: ["product", id as string],
   });
 
-  const calculateOriginalPrice = (
-    price: number,
-    discountPercentage: number,
-  ): number => {
-    const discountAmount = price * (discountPercentage / 100);
-    const originalPrice = price + discountAmount;
-    return originalPrice;
-  };
-
   if (query.isError) {
-    const data = query.error;
-    try {
-      const error = JSON.parse(data.message) as ErrorResponse;
-      const [show, url] = errorHandler(error.errorCode);
-      if (show) {
-        setErr(error.message);
-      } else {
-        if (url) {
-          if (url === "/500") {
-            setError(true);
-          }
-          navigate(url);
-        } else {
-          setError(true);
-          navigate("/500", { replace: true });
-        }
-      }
-    } catch (e) {
-      if (e instanceof Error) {
-        setErr("An unexpected error occurred.");
-      }
-    }
+    errorHandler(query.error, navigate, setErr, setError);
   }
 
   if (query.isSuccess && !query.data?.data) {
     navigate("/404", { replace: true });
   }
 
+  let discount = `0`;
   const product = query.data?.data;
+
+  if (product) {
+    discount = calculateDiscount(product.buyingPrice, product.sellingPrice);
+  }
 
   return (
     <Transition>
@@ -93,8 +81,8 @@ const IndividualProductPage = () => {
           <PageLoader />
         ) : (
           <>
-            <div className="flex pb-8 lg:flex-row flex-col items-center pt-8 md:justify-around">
-              <section className="flex justify-start items-center gap-4 md:flex-row flex-col">
+            <div className="flex pb-8 xl:flex-row flex-col xl:items-start items-center pt-8 lg:justify-evenly">
+              <section className="flex justify-start items-center gap-4 md:flex-row flex-col xl:border-none lg:border lg:border-red-500">
                 {product && product.images.length > 1 && (
                   <div className="flex md:flex-col flex-row flex-wrap gap-4 justify-center items-center md:order-1 order-2">
                     {product &&
@@ -105,7 +93,7 @@ const IndividualProductPage = () => {
                         return (
                           <img
                             key={index}
-                            src={`http://localhost:3020/${img.url}`}
+                            src={`${apiProtocol}://${apiHost}/${img.url}`}
                             alt={product.name}
                             className="border w-170 h-138"
                           />
@@ -122,55 +110,88 @@ const IndividualProductPage = () => {
                 </div>
               </section>
 
-              <section className="md:w-5/12 w-full md:px-0 px-2">
+              <section className="xl:w-5/12 lg:w-8/12 md:w-10/12 w-full md:px-0 px-2">
                 {product && (
                   <>
-                    <h3 className="text-2xl font-semibold">{product.name}</h3>
-                    <div className="flex justify-start items-center gap-10 text-xl">
+                    <div className="flex justify-start items-center gap-6 xl:pt-0 pt-4">
+                      <h3 className="text-2xl font-semibold">{product.name}</h3>
+                      <div className="w-10 h-10 bg-red-500 flex justify-center items-center rounded-tr-md rounded-bl-md shadow-md">
+                        <span className="font-bold text-gray-100">
+                          {discount}%
+                        </span>
+                      </div>
+                    </div>
+                    <div className="flex justify-start items-center gap-10 text-xl py-2">
                       <span className="text-red-400">
-                        ${product.price.toFixed(2)}
+                        {product.sellingPrice.toLocaleString("en-US", {
+                          style: "currency",
+                          currency: "USD",
+                          maximumFractionDigits: 2,
+                        })}
                       </span>
                       <span className="line-through text-gray-400">
-                        $
-                        {calculateOriginalPrice(
-                          product.price,
-                          product.discountPercentage,
-                        ).toFixed(2)}
+                        {product.buyingPrice.toLocaleString("en-US", {
+                          style: "currency",
+                          currency: "USD",
+                          maximumFractionDigits: 2,
+                        })}
                       </span>
                     </div>
                     <div className="flex justify-start items-center gap-4">
-                      <span
-                        className={
-                          product.inventory > 0
-                            ? "text-green-400"
-                            : "text-red-400"
+                      <div className="flex justify-start items-center gap-4">
+                        <span
+                          className={
+                            product.inventory > 0
+                              ? "text-green-400"
+                              : "text-red-400"
+                          }
+                        >
+                          {product.inventory > 0 ? "In Stock" : "Out Of Stock"}
+                        </span>{" "}
+                        <span
+                          className={`block h-4 w-4 border rounded-full ${product.inventory > 0 ? "text-green-400 border-green-400" : "text-red-400 border-red-400"}`}
+                        >
+                          {product.inventory > 0 ? <TickIcon /> : <CloseIcon />}
+                        </span>
+                      </div>
+                      <div>
+                        <span>{product.inventory} left</span>
+                      </div>
+                    </div>
+                    <div className="py-4 flex justify-start items-center gap-4 pl-2">
+                      <img
+                        src={
+                          product.seller.image
+                            ? `${apiProtocol}://${apiHost}/${product.seller.image.url}`
+                            : "/images/profile.svg"
                         }
+                        alt={product.seller.name}
+                        className="h-10 w-10 rounded-full"
+                      />
+                      <Link
+                        className="underline text-blue-500"
+                        to={`/sellers/${product.sellerID}`}
                       >
-                        {product.inventory > 0 ? "In Stock" : "Out Of Stock"}
-                      </span>{" "}
-                      <span
-                        className={`block h-4 w-4 border rounded-full ${product.inventory > 0 ? "text-green-400 border-green-400" : "text-red-400 border-red-400"}`}
-                      >
-                        {product.inventory > 0 ? <TickIcon /> : <CloseIcon />}
-                      </span>
+                        {product.seller.name}
+                      </Link>
                     </div>
                     <div>
-                      {product.description.length > 100 ? (
+                      {product.description.length > 200 ? (
                         <>
                           <p>
                             {clicked
                               ? product.description
-                              : `${product.description.slice(0, 100)}...`}
+                              : `${product.description.slice(0, 200)}...`}
                           </p>
                           <button
                             onClick={(e) => {
                               e.preventDefault();
                               setClicked(() => !clicked);
                             }}
-                            className="underline"
+                            className="underline text-sm"
                             aria-label="toggle description"
                           >
-                            {clicked ? "Read Less" : "Read More"}
+                            {clicked ? "Less" : "More"}
                           </button>
                         </>
                       ) : (
@@ -215,14 +236,27 @@ const IndividualProductPage = () => {
                 </div>
               </section>
             </div>
-            <section className="md:w-8/12 w-11/12 mx-auto rounded min-h-80 border mt-8">
-              {product && <CommentList id={product.id} />}
+            <section
+              id="weee"
+              className="md:w-8/12 md:pb-0 pb-4 w-11/12 mx-auto rounded min-h-80 mt-8"
+            >
+              {product && (
+                <Suspense fallback={<Fallback />}>
+                  <CommentList id={product.id} />{" "}
+                </Suspense>
+              )}
             </section>
-            <section className="min-h-400 w-full px-2">
+            <section className="min-h-400 w-full xl:px-0 md:px-4">
               <div className="py-4">
-                <h3 className="text-xl font-semibold">Related Products</h3>
+                <h3 className="text-xl font-semibold md:text-start text-center">
+                  Related Products
+                </h3>
               </div>
-              {product && <Related product={product} />}
+              {product && (
+                <Suspense fallback={<Fallback />}>
+                  <Related product={product} />{" "}
+                </Suspense>
+              )}
             </section>
           </>
         )}

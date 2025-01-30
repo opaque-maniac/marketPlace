@@ -274,3 +274,14 @@ export interface SuccessStaffProfileResponse {
 export interface SuccessWishlistQueryResponse {
   message: string;
 }
+
+export interface SuccessCustomerResponse {
+  message: string;
+  customer: Customer;
+}
+
+export interface SuccessSellersListResponse {
+  message: string;
+  sellers: Seller[];
+  hasNext: boolean;
+}

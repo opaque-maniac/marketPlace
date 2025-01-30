@@ -6,14 +6,12 @@ import { sendNewProduct } from "../../utils/mutations/products/newproduct";
 import { FormEventHandler, useContext, useState } from "react";
 import Loader from "../../components/loader";
 import { ErrorContext } from "../../utils/errorContext";
-import { ErrorResponse } from "../../utils/types";
-import errorHandler from "../../utils/errorHandler";
-import ShowError from "../../components/showErr";
+import { errorHandler } from "../../utils/errorHandler";
 
 const NewProductPage = () => {
   const navigate = useNavigate();
   const [, setError] = useContext(ErrorContext);
-  const [err, setErr] = useState<string | null>(null);
+  const [, setErr] = useState<string | null>(null);
 
   const mutation = useMutation({
     mutationFn: sendNewProduct,
@@ -26,22 +24,7 @@ const NewProductPage = () => {
       }
     },
     onError: (error) => {
-      const errorObj = JSON.parse(error.message) as ErrorResponse;
-      const [show, url] = errorHandler(errorObj.errorCode);
-
-      if (show) {
-        setErr(errorObj.message);
-      } else {
-        if (url) {
-          if (url === "/500") {
-            setError(true);
-          }
-          navigate(url, { replace: true });
-        } else {
-          setError(true);
-          navigate("/500", { replace: true });
-        }
-      }
+      errorHandler(error, navigate, setErr, setError);
     },
   });
 
@@ -49,10 +32,6 @@ const NewProductPage = () => {
     e.preventDefault();
     const formData = new FormData(e.currentTarget);
     mutation.mutate({ data: formData });
-  };
-
-  const callback = () => {
-    setErr(() => null);
   };
 
   return (
@@ -73,9 +52,7 @@ const NewProductPage = () => {
         <div className="pt-4">
           <h2 className="text-center text-3xl md:pb-0 pb-4">New Product</h2>
         </div>
-        <div className="h-12">
-          {err && <ShowError error={err} callback={callback} />}
-        </div>
+        <div className="h-12"></div>
         <section
           className="md:flex justify-center items-center"
           style={{
@@ -102,19 +79,32 @@ const NewProductPage = () => {
               </div>
               <div className="md:mb-0 mb-4">
                 <label htmlFor="price" className="sr-only">
-                  Price
+                  Initial Price
                 </label>
                 <input
                   type="text"
-                  name="price"
-                  id="price"
-                  placeholder="price"
+                  name="buyingPrice"
+                  id="buyingPrice"
+                  placeholder="Initial Price"
                   className="block w-72 h-12 px-2 text-lg auth-input focus:auth-input focus:outline-none bg-white"
                   required
                 />
               </div>
             </div>
             <div className="flex md:justify-between justify-center items-center md:flex-row flex-col gap-2 md:mb-4 mb-4">
+              <div className="md:mb-0 mb-4">
+                <label htmlFor="price" className="sr-only">
+                  Final Price
+                </label>
+                <input
+                  type="text"
+                  name="sellingPrice"
+                  id="sellingPrice"
+                  placeholder="Final Price"
+                  className="block w-72 h-12 px-2 text-lg auth-input focus:auth-input focus:outline-none bg-white"
+                  required
+                />
+              </div>
               <div className="md:mb-0 mb-4">
                 <label htmlFor="inventory" className="sr-only">
                   Inventory
@@ -128,44 +118,31 @@ const NewProductPage = () => {
                   required
                 />
               </div>
-              <div className="md:mb-0 mb-4">
-                <label htmlFor="category" className="sr-only">
-                  Category
-                </label>
-                <select
-                  name="category"
-                  id="category"
-                  className="block w-72 h-12 px-2 text-lg auth-input focus:auth-input focus:outline-none bg-white"
-                  required
-                >
-                  <option value="ELECTRONICS">ELECTRONICS</option>
-                  <option value="FASHION">FASHION</option>
-                  <option value="HOME">HOME</option>
-                  <option value="BEAUTY">BEAUTY</option>
-                  <option value="SPORTS">SPORTS</option>
-                  <option value="FOOD">FOOD</option>
-                  <option value="BOOKS">BOOKS</option>
-                  <option value="TOYS">TOYS</option>
-                  <option value="OTHER">OTHER</option>
-                </select>
-              </div>
             </div>
-            <div className="flex md:justify-between justify-center items-center md:flex-row flex-col gap-2 md:mb-4 mb-4">
+            <div className="flex md:justify-between justify-center md:items-start items-center md:flex-row flex-col gap-2 md:mb-4 mb-4">
               <div>
-                <div className="mb-8">
-                  <label htmlFor="discount" className="sr-only">
-                    Discount
+                <div className="md:mb-0 mb-4">
+                  <label htmlFor="category" className="sr-only">
+                    Category
                   </label>
-                  <input
-                    type="text"
-                    name="discount"
-                    id="discount"
-                    placeholder="Discount Percentage"
+                  <select
+                    name="category"
+                    id="category"
                     className="block w-72 h-12 px-2 text-lg auth-input focus:auth-input focus:outline-none bg-white"
                     required
-                  />
+                  >
+                    <option value="ELECTRONICS">ELECTRONICS</option>
+                    <option value="FASHION">FASHION</option>
+                    <option value="HOME">HOME</option>
+                    <option value="BEAUTY">BEAUTY</option>
+                    <option value="SPORTS">SPORTS</option>
+                    <option value="FOOD">FOOD</option>
+                    <option value="BOOKS">BOOKS</option>
+                    <option value="TOYS">TOYS</option>
+                    <option value="OTHER">OTHER</option>
+                  </select>
                 </div>
-                <div className="md:mb-0 mb-4">
+                <div className="md:mb-0 mb-4 pt-2">
                   <label htmlFor="images">Images</label>
                   <input
                     type="file"

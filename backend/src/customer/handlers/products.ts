@@ -85,61 +85,12 @@ export const fetchIndividualProduct = async (
     });
 
     if (!product) {
-      res.status(404).json({
-        message: "Product not found",
-        errorCode: "P400",
-      });
-      return;
+      throw new Error("Product not found");
     }
 
     res.status(200).json({
       message: "Product fetched successfully",
       data: product,
-    });
-  } catch (e) {
-    if (e instanceof Error) {
-      next(e);
-      return;
-    }
-    next(serverError);
-  }
-};
-
-// Function to search products
-export const searchProduct = async (
-  req: Request,
-  res: Response,
-  next: NextFunction,
-): Promise<void> => {
-  try {
-    const query = req.query.query ? (req.query.query as string) : "";
-    const limit = req.query.limit ? parseInt(req.query.limit as string) : 10;
-    const page = req.query.page ? parseInt(req.query.page as string) : 1;
-
-    const products = await prisma.product.findMany({
-      where: {
-        name: {
-          contains: query,
-          mode: "insensitive",
-        },
-      },
-      include: {
-        images: true,
-      },
-      take: limit + 1,
-      skip: (page - 1) * limit,
-    });
-
-    const hasNext = products.length > limit;
-
-    if (hasNext) {
-      products.pop();
-    }
-
-    res.status(200).json({
-      message: "Queried products",
-      products,
-      hasNext,
     });
   } catch (e) {
     if (e instanceof Error) {

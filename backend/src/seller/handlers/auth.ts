@@ -21,6 +21,14 @@ export const register = async (
   try {
     const { email, name, password } = req.body;
 
+    const sellerExists = await prisma.seller.findUnique({
+      where: { email },
+    });
+
+    if (sellerExists) {
+      throw new Error("User already exists");
+    }
+
     const salt = await bcrypt.genSalt(10);
     const hashedPassword = await bcrypt.hash(password, salt);
 
@@ -61,29 +69,17 @@ export const login = async (
     });
 
     if (!seller) {
-      res.status(401).json({
-        message: "Invalid email or password",
-        errorCode: "I403",
-      });
-      return;
+      throw new Error("Invalid email or password");
     }
 
     if (!seller.active) {
-      res.status(401).json({
-        message: "Account is not active",
-        errorCode: "I402",
-      });
-      return;
+      throw new Error("User is not active");
     }
 
     const isPasswordValid = await bcrypt.compare(password, seller.password);
 
     if (!isPasswordValid) {
-      res.status(401).json({
-        message: "Invalid email or password",
-        errorCode: "I403",
-      });
-      return;
+      throw new Error("Invalid email or password");
     }
 
     const token = generateToken(seller.id, seller.email, "seller");

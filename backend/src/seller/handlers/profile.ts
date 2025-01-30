@@ -17,12 +17,15 @@ export const fetchProfile = async (
   next: NextFunction,
 ): Promise<void> => {
   try {
-    const { id } = req.params;
-    console.log(id);
+    const { user } = req;
+
+    if (!user) {
+      throw new Error("User not found");
+    }
 
     const seller = await prisma.seller.findUnique({
       where: {
-        id,
+        id: user.id,
       },
       include: {
         image: true,
@@ -30,11 +33,7 @@ export const fetchProfile = async (
     });
 
     if (!seller) {
-      res.status(404).json({
-        message: "Seller not found",
-        errorCode: "I403",
-      });
-      return;
+      throw new Error("Profile not found");
     }
 
     res.status(200).json({
@@ -56,9 +55,13 @@ export const updateProfie = async (
   next: NextFunction,
 ): Promise<void> => {
   try {
-    const { id } = req.params;
-    const { name, email, phone, address } = req.body;
+    const { name, email, phone, address, bio } = req.body;
     let filename: string | undefined;
+    const { user } = req;
+
+    if (!user) {
+      throw new Error("User not found");
+    }
 
     if (Array.isArray(req.files)) {
       filename = req.files ? req.files[0].filename : undefined;
@@ -68,16 +71,27 @@ export const updateProfie = async (
       filename = undefined;
     }
 
+    const exists = await prisma.seller.findUnique({
+      where: {
+        id: user.id,
+      },
+    });
+
+    if (!exists) {
+      throw new Error("Profile not found");
+    }
+
     const seller = await prisma.$transaction(
       async (txl) => {
         const updatedSeller = await txl.seller.update({
           where: {
-            id,
+            id: user.id,
           },
           data: {
             name,
             email,
             phone,
+            bio,
             address,
           },
         });
@@ -85,13 +99,13 @@ export const updateProfie = async (
         if (filename) {
           await txl.sellerImage.deleteMany({
             where: {
-              sellerID: id,
+              sellerID: user.id,
             },
           });
 
           await txl.sellerImage.create({
             data: {
-              sellerID: id,
+              sellerID: user.id,
               url: `uploads/sellers/${filename}`,
             },
           });
@@ -124,11 +138,23 @@ export const deleteProfile = async (
   next: NextFunction,
 ): Promise<void> => {
   try {
-    const { id } = req.params;
+    const { user } = req;
+
+    if (!user) {
+      throw new Error("User not found");
+    }
+
+    const exists = await prisma.seller.findUnique({
+      where: { id: user.id },
+    });
+
+    if (!exists) {
+      throw new Error("Profile not found");
+    }
 
     await prisma.seller.delete({
       where: {
-        id,
+        id: user.id,
       },
     });
 

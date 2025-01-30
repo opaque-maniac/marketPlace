@@ -8,7 +8,6 @@ import Footer from "./components/footer";
 import CheckPermissions from "./utils/permissions";
 import PageLoader from "./components/pageloader";
 import ScrollToTop from "./utils/scrolltotop";
-import ProductsSearchPage from "./pages/products_search/page";
 
 const HomePage = lazy(() => import("./pages/home/page"));
 const LoginPage = lazy(() => import("./pages/login/page"));
@@ -24,7 +23,6 @@ const FAQPage = lazy(() => import("./pages/faq/page"));
 const TermsPage = lazy(() => import("./pages/terms/page"));
 const ProductsPage = lazy(() => import("./pages/products/page"));
 const CustomersPage = lazy(() => import("./pages/customers/page"));
-const CustomersSearchPage = lazy(() => import("./pages/customer_search/page"));
 const IndividualProductPage = lazy(() => import("./pages/product/page"));
 const EditProductPage = lazy(() => import("./pages/editproduct/page"));
 const DeleteProductPage = lazy(() => import("./pages/deleteproduct/page"));
@@ -75,15 +73,7 @@ const App = () => {
                       path="/products/:id/delete"
                       element={<DeleteProductPage />}
                     />
-                    <Route
-                      path="/products/search"
-                      element={<ProductsSearchPage />}
-                    />
                     <Route path="/customers" element={<CustomersPage />} />
-                    <Route
-                      path="/customers/search "
-                      element={<CustomersSearchPage />}
-                    />
                     <Route path="/logout" element={<LogoutPage />} />
                     <Route path="/500" element={<Error500 />} />
                     <Route path="*" element={<Error404 />} />

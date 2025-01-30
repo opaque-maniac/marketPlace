@@ -25,11 +25,11 @@ const staffStorage = createStorage("uploads/staff");
 const staffUpload = multer({ storage: staffStorage });
 
 // fetch profile
-router.get("/:id", fetchProfile);
+router.get("/", fetchProfile);
 
 // update profile
 router.put(
-  "/:id",
+  "/",
   body("email").isEmail(),
   body("firstName").isString().isLength(stringConfig),
   body("lastName").isString().isLength(stringConfig),
@@ -38,6 +38,6 @@ router.put(
 );
 
 // delete profile
-router.delete("/:id", deleteProfile);
+router.delete("/", deleteProfile);
 
 export default router;

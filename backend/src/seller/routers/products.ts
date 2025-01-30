@@ -4,6 +4,7 @@ import {
   stringConfig,
   createStorage,
   productCategories,
+  floatRegex,
 } from "../../utils/globals";
 import {
   allowIfAuthenticated,
@@ -38,7 +39,8 @@ router.post(
   isSeller,
   body("name").isString().isLength(stringConfig),
   body("description").isString().isLength({ min: 10, max: 255 }),
-  body("price").isNumeric(),
+  body("buyingPrice").isString().matches(floatRegex),
+  body("sellingPrice").isString().matches(floatRegex),
   body("inventory").isNumeric(),
   body("discount").isNumeric().optional(),
   body("category").isIn(productCategories),
@@ -59,7 +61,8 @@ router.put(
   isProductOwner,
   body("name").isString().isLength(stringConfig),
   body("description").isString().isLength({ min: 10, max: 255 }),
-  body("price").isNumeric(),
+  body("buyingPrice").isString().matches(floatRegex),
+  body("sellingPrice").isString().matches(floatRegex),
   body("inventory").isNumeric(),
   body("discount").isNumeric().optional(),
   body("category").isIn(productCategories),

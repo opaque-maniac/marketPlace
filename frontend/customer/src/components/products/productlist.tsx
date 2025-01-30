@@ -1,6 +1,18 @@
-import { useLocation } from "react-router-dom";
 import { Product } from "../../utils/types";
-import ProductItem from "./product";
+import Loader from "../loader";
+import { lazy, Suspense } from "react";
+
+const ProductItem = lazy(() => import("./product"));
+
+const ProductLoader = ({ color }: { color: string }) => {
+  return (
+    <div className="w-[270px] h-[350px] flex justify-center items-center">
+      <div className="w-10 h-10">
+        <Loader color={color} />
+      </div>
+    </div>
+  );
+};
 
 interface Props {
   products: Product[];
@@ -19,25 +31,32 @@ const ProductList = ({
   center,
   zeroHeight = "auto",
 }: Props) => {
-  const { pathname } = useLocation();
-
   const justify =
-    overflow === true ? "justify-start" : "justify-center lg:gap-10 md:gap-20";
-  const scrollColor = color == "white" ? "scroll-black" : "scroll-white";
+    overflow === true
+      ? "justify-start"
+      : "md:justify-start justify-center flex-wrap";
+  const scrollColor = color === "white" ? "scroll-black" : "scroll-white";
   const overflowStyle = overflow
     ? "overflow-x-auto scroll-mod overflow-y-hidden pb-2"
     : "flex-wrap md:flex-row flex-col";
   const align = center ? "items-center" : "md:items-start items-center";
+  const gap = full ? "lg:gap-16 md:gap-36" : "";
 
   return (
     <div className="h-full w-full">
       {products.length > 0 ? (
         <ul
-          className={`flex h-full ${justify} ${align} gap-4 ${scrollColor} ${overflowStyle}`}
+          className={`flex h-full ${justify} ${align} gap-6 ${gap} ${scrollColor} ${overflowStyle}`}
         >
           {products.map((product) => (
             <li key={product.id}>
-              <ProductItem product={product} color={color} />
+              <Suspense
+                fallback={
+                  <ProductLoader color={color === "white" ? "#000" : "#fff"} />
+                }
+              >
+                <ProductItem product={product} color={color} />
+              </Suspense>
             </li>
           ))}
         </ul>
@@ -49,9 +68,7 @@ const ProductList = ({
           <p
             className={`text-2xl font-semibold text-wrap text-center text-${color}`}
           >
-            {pathname.includes("wishlist")
-              ? "No products in your wishlist"
-              : "No Products Have Been Posted Yet"}
+            No Products Have Been Posted Yet
           </p>
         </div>
       )}

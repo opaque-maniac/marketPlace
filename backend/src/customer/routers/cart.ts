@@ -7,7 +7,6 @@ import {
   addToCart,
   emptyCart,
   fetchCart,
-  fetchCartCount,
   fetchCartItem,
   orderAllCartItems,
   orderCartItem,
@@ -40,8 +39,5 @@ router.put("/:id", orderCartItem);
 
 // remove from cart
 router.delete("/:id", removeFromCart);
-
-// fetch cart count
-router.get("/cartcount", fetchCartCount);
 
 export default router;

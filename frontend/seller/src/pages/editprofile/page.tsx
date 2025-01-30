@@ -1,16 +1,14 @@
-import { FormEventHandler, useContext, useEffect } from "react";
+import { useContext, useEffect } from "react";
 import Transition from "../../components/transition";
 import useUserStore from "../../utils/store";
 import { useNavigate } from "react-router-dom";
-import { useMutation, useQuery } from "@tanstack/react-query";
+import { useQuery } from "@tanstack/react-query";
 import { fetchProfile } from "../../utils/queries/profile";
 import { ErrorContext, ShowErrorContext } from "../../utils/errorContext";
-import { ErrorResponse } from "../../utils/types";
-import errorHandler from "../../utils/errorHandler";
 import { Helmet } from "react-helmet";
 import Loader from "../../components/loader";
 import ProfileForm from "./form";
-import { sendUpdateProfile } from "../../utils/mutations/profile/updateprofile";
+import { errorHandler } from "../../utils/errorHandler";
 
 const UpdateProfilePage = () => {
   const user = useUserStore((state) => state.user);
@@ -31,69 +29,8 @@ const UpdateProfilePage = () => {
   });
 
   if (query.isError) {
-    const data = query.error;
-    try {
-      const error = JSON.parse(data.message) as ErrorResponse;
-      const [show, url] = errorHandler(error.errorCode);
-      if (show) {
-        setErr(error.message);
-      } else {
-        if (url) {
-          if (url === "/500") {
-            setError(true);
-          }
-          navigate(url);
-        }
-      }
-    } catch (e) {
-      if (e instanceof Error) {
-        setErr("An unexpected error occurred.");
-      }
-    }
+    errorHandler(query.error, navigate, setErr, setError);
   }
-
-  const mutation = useMutation({
-    mutationFn: sendUpdateProfile,
-    onSuccess: (data) => {
-      if (data) {
-        navigate("/profile", { replace: true });
-      } else {
-        setError(true);
-        navigate("/500", { replace: true });
-      }
-    },
-    onError: (error) => {
-      try {
-        const errorObj = JSON.parse(error.message) as ErrorResponse;
-        const [show, url] = errorHandler(errorObj.errorCode);
-
-        if (show) {
-          setErr(errorObj.message);
-        } else {
-          if (url) {
-            if (url === "/500") {
-              setError(true);
-            }
-            navigate(url, { replace: true });
-          } else {
-            setError(true);
-            navigate("/500", { replace: true });
-          }
-        }
-      } catch (e) {
-        if (e instanceof Error) {
-          setErr("Something unexpected happened");
-        }
-        navigate("/", { replace: true });
-      }
-    },
-  });
-
-  const submitHandler: FormEventHandler<HTMLFormElement> = (e) => {
-    e.preventDefault();
-    const formData = new FormData(e.currentTarget);
-    mutation.mutate({ data: formData, id: user as string });
-  };
 
   return (
     <Transition>
@@ -130,13 +67,7 @@ const UpdateProfilePage = () => {
           )}
           {query.isSuccess && query.data ? (
             <>
-              {query.data.seller && (
-                <ProfileForm
-                  handler={submitHandler}
-                  isLoading={mutation.isPending}
-                  profile={query.data.seller}
-                />
-              )}
+              {query.data.seller && <ProfileForm profile={query.data.seller} />}
             </>
           ) : null}
         </section>

@@ -2,7 +2,6 @@ import { useQuery } from "@tanstack/react-query";
 import Transition from "../../components/transition";
 import Loader from "../../components/loader";
 import { ErrorResponse } from "../../utils/types";
-import errorHandler from "../../utils/errorHandler";
 import { useNavigate } from "react-router-dom";
 import { useContext, useEffect, useState } from "react";
 import { ErrorContext, ShowErrorContext } from "../../utils/errorContext";
@@ -11,6 +10,7 @@ import ArrowRight from "../../components/icons/arrowright";
 import { Helmet } from "react-helmet";
 import OrdersList from "./orderlist";
 import { fetchOrders } from "../../utils/queries/orders/fetchorders";
+import { errorHandler } from "../../utils/errorHandler";
 
 const OrdersPage = () => {
   const [, setError] = useContext(ErrorContext);
@@ -35,25 +35,7 @@ const OrdersPage = () => {
   });
 
   if (query.isError) {
-    const data = query.error;
-    try {
-      const error = JSON.parse(data.message) as ErrorResponse;
-      const [show, url] = errorHandler(error.errorCode);
-      if (show) {
-        setErr(error.message);
-      } else {
-        if (url) {
-          if (url === "/500") {
-            setError(true);
-          }
-          navigate(url);
-        }
-      }
-    } catch (e) {
-      if (e instanceof Error) {
-        setErr("An unexpected error occurred.");
-      }
-    }
+    errorHandler(query.error, navigate, setErr, setError);
   }
 
   const handlePrev = (e: React.MouseEvent) => {

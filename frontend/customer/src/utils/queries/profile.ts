@@ -1,27 +1,32 @@
 import { QueryFunction } from "@tanstack/react-query";
 import { ErrorResponse, SuccessCustomerResponse } from "../types";
-import { getAccessToken } from "../cookies";
+import { getAccessToken, getUserID } from "../cookies";
 import { responseError, tokenError } from "../errors";
 import { apiHost, apiProtocol } from "../generics";
 
 export const fetchProfile: QueryFunction<
   SuccessCustomerResponse,
-  ["profile", string]
+  ["profile"]
 > = async ({ queryKey }) => {
   try {
-    const [, id] = queryKey;
-    const url = `${apiProtocol}://${apiHost}/customers/profile/${id}`;
+    const id = getUserID();
+
+    if (!id) {
+      throw tokenError;
+    }
+
+    const url = `${apiProtocol}://${apiHost}/customers/profile`;
 
     const token = getAccessToken();
 
     if (!token) {
       throw tokenError();
     }
-
     const options = {
       method: "GET",
       headers: {
         Authorization: `Bearer ${token}`,
+        "Content-Type": "application/json",
       },
     };
 

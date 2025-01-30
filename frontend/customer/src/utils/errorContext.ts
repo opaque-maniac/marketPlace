@@ -8,3 +8,7 @@ export const ErrorContext = createContext<
 export const ShowErrorContext = createContext<
   [string | null, Dispatch<SetStateAction<string | null>>]
 >([null, () => {}]);
+
+export const ShowMessageContext = createContext<
+  [string | null, Dispatch<SetStateAction<string | null>>]
+>([null, () => {}]);

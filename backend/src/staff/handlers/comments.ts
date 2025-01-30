@@ -27,11 +27,7 @@ export const fetchProductComments = async (
     });
 
     if (!product) {
-      res.status(404).json({
-        message: "Product not found",
-        errorCode: "P400",
-      });
-      return;
+      throw new Error("Product not found");
     }
 
     const comments = await prisma.comment.findMany({
@@ -77,8 +73,34 @@ export const fetchComments = async (
   try {
     const page = req.query.page ? parseInt(req.query.page as string) : 1;
     const limit = req.query.limit ? parseInt(req.query.limit as string) : 10;
+    const query = req.query.query ? (req.query.query as string) : "";
 
     const comments = await prisma.comment.findMany({
+      where: query
+        ? {
+            OR: [
+              {
+                customer: {
+                  firstName: {
+                    contains: query,
+                    mode: "insensitive",
+                  },
+                },
+              },
+              {
+                customer: {
+                  lastName: {
+                    contains: query,
+                    mode: "insensitive",
+                  },
+                },
+              },
+              {
+                productID: query,
+              },
+            ],
+          }
+        : {},
       include: {
         customer: {
           include: {
@@ -132,11 +154,7 @@ export const fetchIndividualComment = async (
     });
 
     if (!comment) {
-      res.status(404).json({
-        message: "Comment not found",
-        errorCode: "C400",
-      });
-      return;
+      throw new Error("Comment not found");
     }
 
     res.status(200).json({
@@ -168,11 +186,7 @@ export const updateComment = async (
     });
 
     if (!comment) {
-      res.status(404).json({
-        message: "Comment not found",
-        errorCode: "C400",
-      });
-      return;
+      throw new Error("Comment not found");
     }
 
     await prisma.comment.update({
@@ -212,11 +226,7 @@ export const deleteComment = async (
     });
 
     if (!comment) {
-      res.status(404).json({
-        message: "Comment not found",
-        errorCode: "C400",
-      });
-      return;
+      throw new Error("Comment not found");
     }
 
     await prisma.comment.delete({

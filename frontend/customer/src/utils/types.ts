@@ -68,14 +68,15 @@ export interface Product {
   id: string;
   name: string;
   description: string;
-  price: number;
+  buyingPrice: number;
+  sellingPrice: number;
   inventory: number;
   category: Categories;
-  discountPercentage: number;
   images: ProductImages[];
   createdAt: string;
   updatedAt: string | null;
   sellerID: string;
+  seller: Seller;
 }
 
 export interface SuccessProductsResponse {
@@ -125,6 +126,7 @@ export interface Seller {
   name: string;
   email: string;
   address?: string;
+  bio?: string;
   phone?: string;
   createdAt: string;
   updatedAt: string | null;
@@ -267,4 +269,9 @@ export interface SuccessCancelOrderResponse {
 export interface SuccessIndividualOrderResponse {
   message: string;
   order: Order;
+}
+
+export interface SuccessFetchSellerResponse {
+  message: string;
+  seller: Seller;
 }

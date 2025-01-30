@@ -1,8 +1,6 @@
 import { useQuery } from "@tanstack/react-query";
 import Transition from "../../components/transition";
 import Loader from "../../components/loader";
-import { ErrorResponse } from "../../utils/types";
-import errorHandler from "../../utils/errorHandler";
 import { useNavigate } from "react-router-dom";
 import { useCallback, useContext, useEffect } from "react";
 import { ErrorContext, ShowErrorContext } from "../../utils/errorContext";
@@ -13,6 +11,7 @@ import { fetchCart } from "../../utils/queries/cart/cart";
 import EmptyCart from "../../components/cart/emptycart";
 import CartList from "../../components/cart/cartlist";
 import OrderCart from "../../components/cart/ordercart";
+import { errorHandler } from "../../utils/errorHandler";
 
 const CartPage = () => {
   const [, setError] = useContext(ErrorContext);
@@ -24,7 +23,7 @@ const CartPage = () => {
   // When page state changes
   useEffect(() => {
     if (!urlParams.get("page")) {
-      navigate("/cart?page=1");
+      navigate("?page=1", { replace: true });
     }
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []);
@@ -37,27 +36,7 @@ const CartPage = () => {
   });
 
   if (query.isError) {
-    const data = query.error;
-    try {
-      const error = JSON.parse(data.message) as ErrorResponse;
-      const [show, url] = errorHandler(error.errorCode);
-      if (show) {
-        setErr(error.message);
-      } else {
-        if (url) {
-          if (url === "/500") {
-            setError(true);
-          }
-          navigate(url);
-        } else {
-          setErr("An unexpected error occurred.");
-        }
-      }
-    } catch (e) {
-      if (e instanceof Error) {
-        setErr("An unexpected error occurred.");
-      }
-    }
+    errorHandler(query.error, navigate, setErr, setError);
   }
 
   const handlePrev = (e: React.MouseEvent) => {
@@ -102,7 +81,7 @@ const CartPage = () => {
         <meta name="google" content="nositelinkssearchbox" />
       </Helmet>
       <main role="main">
-        <div className="flex justify-between item-center pr-4 pt-4">
+        <div className="flex justify-between item-center md:mx-0 mx-2 pt-4 md:pb-0 pb-4">
           <OrderCart
             refetch={refetchCart}
             disable={!data || data?.cartItems.length === 0}

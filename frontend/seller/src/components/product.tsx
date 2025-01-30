@@ -29,13 +29,11 @@ const ProductItem = ({ product }: Props) => {
             <p className="text-xl text-center">{product.name}</p>
           </div>
           <div className="w-full flex justify-evenly items-center">
-            <span className="text-red-400">${`${product.price}`}</span>
+            <span className="text-red-400">
+              ${product.sellingPrice.toFixed(2)}
+            </span>
             <span className="text-gray-400 line-through">
-              $
-              {(
-                product.price -
-                (product.price * product.discountPercentage) / 100
-              ).toFixed(2)}
+              ${product.buyingPrice.toFixed(2)}{" "}
             </span>
           </div>
           <div>

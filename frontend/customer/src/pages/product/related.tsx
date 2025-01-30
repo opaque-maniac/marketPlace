@@ -1,12 +1,12 @@
 import { useQuery } from "@tanstack/react-query";
 import { fetchRelatedProducts } from "../../utils/queries/products/fetchrelatedproducts";
-import { ErrorResponse, Product } from "../../utils/types";
+import { Product } from "../../utils/types";
 import Loader from "../../components/loader";
 import ProductList from "../../components/products/productlist";
-import errorHandler from "../../utils/errorHandler";
 import { useContext } from "react";
 import { ErrorContext, ShowErrorContext } from "../../utils/errorContext";
 import { useNavigate } from "react-router-dom";
+import { errorHandler } from "../../utils/errorHandler";
 
 interface Props {
   product: Product;
@@ -33,28 +33,7 @@ const Related = ({ product }: Props) => {
   }
 
   if (query.isError) {
-    const data = query.error;
-    try {
-      const error = JSON.parse(data.message) as ErrorResponse;
-      const [show, url] = errorHandler(error.errorCode);
-      if (show) {
-        setErr(error.message);
-      } else {
-        if (url) {
-          if (url === "/500") {
-            setError(true);
-          }
-          navigate(url);
-        } else {
-          setError(true);
-          navigate("/500", { replace: true });
-        }
-      }
-    } catch (e) {
-      if (e instanceof Error) {
-        setErr("An unexpected error occurred.");
-      }
-    }
+    errorHandler(query.error, navigate, setErr, setError);
   }
 
   const productData = query.data?.data || [];
@@ -62,21 +41,13 @@ const Related = ({ product }: Props) => {
 
   return (
     <div className="h-full w-full pb-4">
-      {products && products.length > 0 && (
-        <ProductList
-          products={products}
-          overflow={true}
-          color="black"
-          full={false}
-        />
-      )}
-      {products && products.length === 0 && (
-        <div className="flex justify-center h-full w-full items-center">
-          <p className="text-2xl font-semibold text-wrap text-center text-black">
-            No Related Products Found
-          </p>
-        </div>
-      )}
+      <ProductList
+        products={products}
+        overflow={true}
+        color="black"
+        full={false}
+        zeroHeight="400px"
+      />
     </div>
   );
 };

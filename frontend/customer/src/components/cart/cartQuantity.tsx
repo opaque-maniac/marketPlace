@@ -2,17 +2,17 @@ import { useMutation } from "@tanstack/react-query";
 import { MouseEventHandler, useContext, useEffect, useState } from "react";
 import { updateCartItem } from "../../utils/mutations/cart/updatecartitem";
 import { ErrorContext, ShowErrorContext } from "../../utils/errorContext";
-import { ErrorResponse } from "../../utils/types";
-import errorHandler from "../../utils/errorHandler";
 import { useNavigate } from "react-router-dom";
 import Loader from "../loader";
+import { errorHandler } from "../../utils/errorHandler";
 
 interface Props {
   quantity: number;
   id: string;
+  inventory: number;
 }
 
-const CartQuantity = ({ quantity, id }: Props) => {
+const CartQuantity = ({ quantity, id, inventory }: Props) => {
   const [ammount, setAmmount] = useState<number>(quantity);
   const [added, setAdded] = useState<boolean>(false);
 
@@ -32,55 +32,42 @@ const CartQuantity = ({ quantity, id }: Props) => {
     },
     onError: (error: Error) => {
       if (added) {
-        setAmmount(() => ammount - 1);
+        setAmmount((prev) => prev - 1);
       } else {
-        setAmmount(() => ammount + 1);
+        setAmmount((prev) => prev + 1);
       }
       setAdded(false);
-      try {
-        const errorObj = JSON.parse(error.message) as ErrorResponse;
-        const [show, url] = errorHandler(errorObj.errorCode);
-
-        if (show) {
-          setErr(errorObj.message);
-        } else {
-          if (url) {
-            if (url === "/500") {
-              setError(true);
-            }
-            navigate(url, { replace: true });
-          } else {
-            setError(true);
-            navigate("/500", { replace: true });
-          }
-        }
-      } catch (e) {
-        if (e instanceof Error) {
-          setErr("Something unexpected happened");
-        }
-      }
+      errorHandler(error, navigate, setErr, setError);
     },
   });
 
+  const disablePrev = mutation.isPending || ammount <= 1;
+
   const handleMinus: MouseEventHandler<HTMLButtonElement> = (e) => {
     e.preventDefault();
-    if (ammount !== 1) {
-      setAmmount(() => ammount - 1);
+    if (ammount > 1) {
+      setAmmount((prev) => prev - 1);
     }
   };
 
+  const disableNext = mutation.isPending || ammount >= inventory;
+
   const handlePlus: MouseEventHandler<HTMLButtonElement> = (e) => {
     e.preventDefault();
-    setAmmount(() => ammount + 1);
+    if (ammount < inventory) {
+      setAmmount((prev) => prev + 1);
+    }
   };
 
   return (
     <div className="flex justify-center items-center">
       <div>
         <button
-          disabled={ammount === 1 || mutation.isPending}
+          disabled={disablePrev}
           onClick={handleMinus}
-          className="h-10 w-10 rounded-tl-lg rounded-bl-lg flex justify-center items-center border border-black/25"
+          className={`h-10 w-10 rounded-tl-lg rounded-bl-lg flex justify-center items-center border border-black/25 ${
+            disablePrev ? "cursor-not-allowed" : "cursor-pointer"
+          }`}
         >
           <span>-</span>
         </button>
@@ -97,8 +84,10 @@ const CartQuantity = ({ quantity, id }: Props) => {
       <div>
         <button
           onClick={handlePlus}
-          disabled={mutation.isPending}
-          className="h-10 w-10 rounded-tr-lg rounded-br-lg flex justify-center items-center border border-black/25"
+          disabled={disableNext}
+          className={`h-10 w-10 rounded-tr-lg rounded-br-lg flex justify-center items-center border border-black/25 ${
+            disableNext ? "cursor-not-allowed" : "cursor-pointer"
+          }`}
         >
           <span>+</span>
         </button>

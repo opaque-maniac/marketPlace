@@ -1,14 +1,15 @@
 import { useContext, useEffect } from "react";
 import Transition from "../../components/transition";
 import useUserStore from "../../utils/store";
-import { useNavigate } from "react-router-dom";
+import { Link, useNavigate } from "react-router-dom";
 import { ErrorContext, ShowErrorContext } from "../../utils/errorContext";
 import { useQuery } from "@tanstack/react-query";
 import { fetchProfile } from "../../utils/queries/profile";
 import Loader from "../../components/loader";
-import errorHandler from "../../utils/errorHandler";
-import { ErrorResponse } from "../../utils/types";
 import { Helmet } from "react-helmet";
+import { errorHandler } from "../../utils/errorHandler";
+import { formatDate } from "../../utils/date";
+import KeyIcon from "../../components/icons/key";
 
 const ProfilePage = () => {
   const user = useUserStore((state) => state.user);
@@ -26,29 +27,11 @@ const ProfilePage = () => {
 
   const query = useQuery({
     queryFn: fetchProfile,
-    queryKey: ["profile", user as string],
+    queryKey: ["profile"],
   });
 
   if (query.isError) {
-    const data = query.error;
-    try {
-      const error = JSON.parse(data.message) as ErrorResponse;
-      const [show, url] = errorHandler(error.errorCode);
-      if (show) {
-        setErr(error.message);
-      } else {
-        if (url) {
-          if (url === "/500") {
-            setError(true);
-          }
-          navigate(url);
-        }
-      }
-    } catch (e) {
-      if (e instanceof Error) {
-        setErr("An unexpected error occurred.");
-      }
-    }
+    errorHandler(query.error, navigate, setErr, setError);
   }
 
   const customer = query.data?.data;
@@ -67,6 +50,11 @@ const ProfilePage = () => {
           {" "}
           Home / <span className="font-extrabold">Profile</span>
         </p>
+        <div className="absolute top-4 right-4">
+          <Link to={"/settings"} className="block w-6 h-6">
+            <KeyIcon />
+          </Link>
+        </div>
         {query.isLoading && (
           <section
             className="flex justify-center items-center"
@@ -83,7 +71,7 @@ const ProfilePage = () => {
           <>
             {customer ? (
               <section>
-                <div className="md:w-10/12 w-11/12 mx-auto rounded-lg shadow-xl border flex justify-around items-center md:flex-row flex-col mb-10 md:gap-0 gap-4 py-2">
+                <div className="flex lg:flex-row flex-col justify-center items-center md:gap-14 gap-6">
                   <div>
                     <img
                       src={
@@ -96,43 +84,39 @@ const ProfilePage = () => {
                     />
                   </div>
                   <div>
-                    <p>{`${customer.firstName} ${customer.lastName}`}</p>
-                    <p>{customer.email}</p>
-                    <p>
-                      Phone: <span>{customer.phone ?? "No phone number"}</span>
-                    </p>
-                    <p>
-                      Address: <span>{customer.address ?? "No address"}</span>
-                    </p>
-                    <p>
-                      Joined: <span>{customer.createdAt}</span>
-                    </p>
-                    <p>
-                      Last updated: <span>{customer.updatedAt}</span>
-                    </p>
+                    <div className="pb-2">
+                      <p className="text-xl">{`${customer.firstName} ${customer.lastName}`}</p>
+                    </div>
+                    <div className="flex flex-col gap-1">
+                      <div>
+                        <p>{customer.email}</p>
+                      </div>
+                      <p>
+                        Phone:{" "}
+                        <span>{customer.phone ?? "No phone number"}</span>
+                      </p>
+                      <p>
+                        Address: <span>{customer.address ?? "No address"}</span>
+                      </p>
+                      <p>
+                        Joined: <span>{formatDate(customer.createdAt)}</span>
+                      </p>
+                    </div>
+                    <div className="mx-auto flex md:justify-start justify-center items-center md:flex-row flex-col py-6 gap-6">
+                      <Link
+                        to={"/profile/update"}
+                        className="h-10 w-40 rounded-lg bg-green-400 text-center text-white flex justify-center items-center font-semibold"
+                      >
+                        <span>Update Profile</span>
+                      </Link>
+                      <Link
+                        to={"/profile/delete"}
+                        className="h-10 w-40 rounded-lg bg-red-400 text-center text-white flex justify-center items-center font-semibold"
+                      >
+                        <span>Delete Profile</span>
+                      </Link>
+                    </div>
                   </div>
-                </div>
-                <div className="md:w-10/12 w-11/12 mb-8 mx-auto rounded-lg shadow-xl border flex justify-around items-center md:flex-row flex-col py-4 md:gap-0 gap-4">
-                  <button
-                    onClick={(e) => {
-                      e.preventDefault();
-                      navigate("/profile/update");
-                    }}
-                    aria-label="Update Profile"
-                    className="h-10 w-40 rounded-lg bg-green-400 text-center"
-                  >
-                    Update Profile
-                  </button>
-                  <button
-                    onClick={(e) => {
-                      e.preventDefault();
-                      navigate("/profile/delete");
-                    }}
-                    aria-label="Delete Profile"
-                    className="h-10 w-40 rounded-lg bg-red-400 text-center"
-                  >
-                    Delete Profile
-                  </button>
                 </div>
               </section>
             ) : null}

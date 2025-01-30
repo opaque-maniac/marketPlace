@@ -5,6 +5,7 @@ import {
   PrismaClientValidationError,
 } from "@prisma/client/runtime/library";
 import { Request, Response, NextFunction } from "express";
+import { stat } from "fs";
 import { JsonWebTokenError } from "jsonwebtoken";
 
 const errorHandler = async (
@@ -13,130 +14,190 @@ const errorHandler = async (
   res: Response,
   next: NextFunction,
 ): Promise<void> => {
+  let status = 500;
+  let message = "Internal server error";
+  let code = "S001";
+
   console.log(error);
-  // JWT errors
-  if (error instanceof JsonWebTokenError) {
-    if (error.message === "jwt expired") {
-      res.status(401).json({
-        message: "Token expired",
-        errorCode: "J401",
-      });
-      return;
-    }
-    res.status(403).json({
-      message: "Unauthorized",
-      errorCode: "J406",
-    });
-    return;
+  switch (error.message) {
+    case "User already exists":
+      message = error.message;
+      code = "PR01";
+      status = 400;
+      break;
+    case "Invalid email or password":
+      code = "I002";
+      message = error.message;
+      status = 400;
+      break;
+    case "User not found":
+      code = "A001";
+      message = "Unauthorized";
+      status = 401;
+      break;
+    case "User profile not found":
+      code = "PR03";
+      status = 404;
+      message = error.message;
+      break;
+    case "User is not active":
+      code = "A002";
+      message = "Profile is not active";
+      status = 401;
+      break;
+    case "Cart not found":
+      message = error.message;
+      status = 500;
+      code = "C001";
+      break;
+    case "Cart item not found":
+      message = error.message;
+      status = 404;
+      code = "C002";
+      break;
+    case "No items in cart":
+      code = "C003";
+      status = 400;
+      message = error.message;
+      break;
+    case "Product not found":
+      status = 404;
+      code = "P001";
+      message = error.message;
+      break;
+    case "Comment not found":
+      code = "CM01";
+      status = 404;
+      message = error.message;
+      break;
+    case "Order not found":
+      status = 404;
+      code = "OR01";
+      message = error.message;
+      break;
+    case "Seller not found":
+      status = 404;
+      code = "SE01";
+      message = error.message;
+      break;
+    case "Order seller not found":
+      code = "SE02";
+      status = 500;
+      message = error.message;
+      break;
+    case "Order cannot be cancelled":
+      status = 400;
+      code = "OR02";
+      message = error.message;
+      break;
+    case "Profile not found":
+      code = "PR02";
+      status = 401;
+      message = error.message;
+      break;
+    case "Wishlist not found":
+      status = 500;
+      code = "W001";
+      message = error.message;
+      break;
+    case "Wishlist item not found":
+      status = 404;
+      code = "W002";
+      message = error.message;
+      break;
+    case "Auth token not found":
+      message = "Unauthorized";
+      status = 401;
+      code = "A003";
+      break;
+    case "Customer not found":
+      message = error.message;
+      status = 404;
+      code = "CU01";
+      break;
+    case "Customer cart not found":
+      status = 404;
+      code = "CU02";
+      message = error.message;
+      break;
+    case "Staff not found":
+      status = 404;
+      code = "ST01";
+      message = error.message;
+      break;
+    case "Unauthorized":
+      status = 401;
+      code = "A005";
+      message = error.message;
+      break;
+    case "Customer wishlist not found":
+      code = "CU03";
+      status = 404;
+      message = error.message;
+      break;
+    case "Invalid refresh token":
+      message = "Session expired";
+      status = 401;
+      code = "A006";
+      break;
+    default:
+      // JWT errors
+      if (error instanceof JsonWebTokenError) {
+        //if (error.message === "jwt expired") {
+        //}
+
+        message = "Unauthorized";
+        status = 401;
+        code = "A004";
+        break;
+      }
+
+      // internal server error
+      if (error.message === "Internal server error") {
+        code = "S001";
+        message = error.message;
+        status = 500;
+        break;
+      }
+
+      // Prisma errors
+      if (error instanceof PrismaClientRustPanicError) {
+        code = "S001";
+        message = "Internal server error";
+        status = 500;
+        break;
+      }
+
+      if (error instanceof PrismaClientInitializationError) {
+        code = "S001";
+        message = "Internal server error";
+        status = 500;
+        break;
+      }
+
+      if (error instanceof PrismaClientKnownRequestError) {
+        code = "S001";
+        message = "Internal server error";
+        status = 500;
+        break;
+      }
+
+      if (error instanceof PrismaClientValidationError) {
+        code = "S001";
+        message = "Internal server error";
+        status = 500;
+        break;
+      }
+
+      code = "S001";
+      message = "Internal server error";
+      status = 500;
+      break;
   }
 
-  // User not found error
-  if (error.message === "User not found") {
-    res.status(404).json({
-      message: "User not found",
-      errorCode: "I403",
-    });
-    return;
-  }
-
-  // Cart not found
-  if (error.message === "Cart not found") {
-    res.status(404).json({
-      message: "Cart not found",
-      errorCode: "M400",
-    });
-    return;
-  }
-
-  // Cannot cancell order
-  if (error.message === "Order cannot be cancelled") {
-    res.status(400).json({
-      message: "Order cannot be cancelled",
-      errorCode: "O402",
-    });
-    return;
-  }
-
-  if (error.message === "No items in cart") {
-    res.status(400).json({
-      message: "No cart item found",
-      errorCode: "M401",
-    });
-    return;
-  }
-
-  // Wishlist error
-  if (error.message === "Wishlist not found") {
-    res.status(404).json({
-      message: "Wishlist not found",
-      errorCode: "W400",
-    });
-    return;
-  }
-
-  // Order errors
-  if (error.message === "Order not found") {
-    res.status(404).json({
-      message: "Order not found",
-      errorCode: "O400",
-    });
-    return;
-  }
-
-  // Cart item not found
-  if (error.message === "Cart item not found") {
-    res.status(404).json({
-      message: "Cart item not found",
-      errorCode: "M402",
-    });
-    return;
-  }
-
-  // internal server error
-  if (error.message === "Internal server error") {
-    res.status(500).json({
-      message: "Internal server error",
-      errorCode: "S500",
-    });
-    return;
-  }
-
-  // Prisma errors
-  if (error instanceof PrismaClientRustPanicError) {
-    res.status(500).json({
-      message: "Internal server error",
-      errorCode: "DB101",
-    });
-    return;
-  }
-
-  if (error instanceof PrismaClientInitializationError) {
-    res.status(500).json({
-      message: "Internal server error",
-      errorCode: "DB102",
-    });
-    return;
-  }
-
-  if (error instanceof PrismaClientKnownRequestError) {
-    res.status(400).json({
-      message: error.message,
-      errorCode: "DB100",
-    });
-    return;
-  }
-
-  if (error instanceof PrismaClientValidationError) {
-    res.status(400).json({
-      message: error.message,
-      errorCode: "DB103",
-    });
-    return;
-  }
-
-  res.status(500).json({
-    message: "Internal server error",
-    errorCode: "S500",
+  res.status(status).json({
+    message,
+    errorCode: code,
   });
 };
 

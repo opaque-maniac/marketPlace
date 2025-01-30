@@ -1,7 +1,5 @@
 import { useQuery } from "@tanstack/react-query";
 import Transition from "../../components/transition";
-import { ErrorResponse } from "../../utils/types";
-import errorHandler from "../../utils/errorHandler";
 import { useNavigate } from "react-router-dom";
 import { useContext, useEffect } from "react";
 import { ErrorContext, ShowErrorContext } from "../../utils/errorContext";
@@ -9,49 +7,41 @@ import ArrowLeft from "../../components/icons/arrowleft";
 import ArrowRight from "../../components/icons/arrowright";
 import { Helmet } from "react-helmet";
 import PageLoader from "../../components/pageloader";
-import { fetchCustomers } from "../../utils/queries/customers";
 import Customer from "../../components/customers/customer";
+import { fetchCustomers } from "../../utils/queries/customers/fetchcustomers";
+import { errorHandler } from "../../utils/errorHandler";
 
 const CustomersPage = () => {
   const [, setError] = useContext(ErrorContext);
   const navigate = useNavigate();
   const [, setErr] = useContext(ShowErrorContext);
   const _page = new URLSearchParams(window.location.search).get("page");
+  const _query = new URLSearchParams(window.location.search).get("query");
 
   useEffect(() => {
-    if (!_page) {
-      navigate(`?page=${Number(_page) || 1}`);
+    if (!_page && !_query) {
+      navigate(`?page=1&query=`, { replace: true });
+    } else if (!_page) {
+      navigate(`?page=1&query=${_query}`, { replace: true });
+    } else if (!_query) {
+      navigate(`?page=${page}&query=`, { replace: true });
+    } else {
+      navigate(`?page=1&query=`, { replace: true });
     }
+
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []);
 
   const page = Number(_page) || 1;
+  const queryStr = String(_query) || "";
 
   const query = useQuery({
-    queryKey: ["products", page, 20],
+    queryKey: ["products", page, 20, queryStr],
     queryFn: fetchCustomers,
   });
 
   if (query.isError) {
-    const data = query.error;
-    try {
-      const error = JSON.parse(data.message) as ErrorResponse;
-      const [show, url] = errorHandler(error.errorCode);
-      if (show) {
-        setErr(error.message);
-      } else {
-        if (url) {
-          if (url === "/500") {
-            setError(true);
-          }
-          navigate(url);
-        }
-      }
-    } catch (e) {
-      if (e instanceof Error) {
-        setErr("An unexpected error occurred.");
-      }
-    }
+    errorHandler(query.error, navigate, setErr, setError);
   }
 
   const handlePrev = (e: React.MouseEvent) => {

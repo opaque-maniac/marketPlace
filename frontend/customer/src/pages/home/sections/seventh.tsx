@@ -9,25 +9,33 @@ interface Props {
 
 const SeventhSection = ({ products, isLoading }: Props) => {
   return (
-    <section style={{ minHeight: "900px" }}>
+    <section className="md:min-h-[900px] min-h-[370px]">
       {isLoading ? (
-        <div
-          style={{ height: "900px" }}
-          className="w-full flex justify-center items-center"
-        >
+        <div className="w-full flex justify-center items-center h-[900px]">
           <div className="h-20 w-20">
             <Loader color="#000000" />
           </div>
         </div>
       ) : (
-        <div style={{ minHeight: "900px" }}>
-          <ProductList
-            products={products}
-            color="black"
-            overflow={false}
-            full={false}
-            zeroHeight="900px"
-          />
+        <div className="md:min-h-[900px] min-h-[370px]">
+          <div className="md:block hidden">
+            <ProductList
+              products={products}
+              color="black"
+              overflow={false}
+              full={false}
+              zeroHeight="900px"
+            />
+          </div>
+          <div className="md:hidden block">
+            <ProductList
+              products={products}
+              color="black"
+              overflow={false}
+              full={false}
+              zeroHeight="370px"
+            />
+          </div>
         </div>
       )}
     </section>

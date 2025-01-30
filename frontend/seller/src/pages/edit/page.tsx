@@ -3,14 +3,11 @@ import Transition from "../../components/transition";
 import { Helmet } from "react-helmet";
 import { useQuery } from "@tanstack/react-query";
 import { fetchIndividualProduct } from "../../utils/queries/products/fetchindividualproduct";
-import { FormEventHandler, useContext, useEffect } from "react";
+import { useContext, useEffect } from "react";
 import Loader from "../../components/loader";
 import ProductForm from "./form";
-import { useMutation } from "@tanstack/react-query";
-import { sendUpdateProduct } from "../../utils/mutations/products/updateproduct";
-import { ErrorResponse } from "../../utils/types";
-import errorHandler from "../../utils/errorHandler";
 import { ErrorContext, ShowErrorContext } from "../../utils/errorContext";
+import { errorHandler } from "../../utils/errorHandler";
 
 const EditProductPage = () => {
   const { id } = useParams();
@@ -31,69 +28,8 @@ const EditProductPage = () => {
   });
 
   if (query.isError) {
-    const data = query.error;
-    try {
-      const error = JSON.parse(data.message) as ErrorResponse;
-      const [show, url] = errorHandler(error.errorCode);
-      if (show) {
-        setErr(error.message);
-      } else {
-        if (url) {
-          if (url === "/500") {
-            setError(true);
-          }
-          navigate(url);
-        }
-      }
-    } catch (e) {
-      if (e instanceof Error) {
-        setErr("An unexpected error occurred.");
-      }
-    }
+    errorHandler(query.error, navigate, setErr, setError);
   }
-
-  const mutation = useMutation({
-    mutationFn: sendUpdateProduct,
-    onSuccess: (data) => {
-      if (data) {
-        navigate(`/products/${id}`);
-      } else {
-        setError(true);
-        navigate("/500", { replace: true });
-      }
-    },
-    onError: (error) => {
-      try {
-        const errorObj = JSON.parse(error.message) as ErrorResponse;
-        const [show, url] = errorHandler(errorObj.errorCode);
-
-        if (show) {
-          setErr(errorObj.message);
-        } else {
-          if (url) {
-            if (url === "/500") {
-              setError(true);
-            }
-            navigate(url, { replace: true });
-          } else {
-            setError(true);
-            navigate("/500", { replace: true });
-          }
-        }
-      } catch (e) {
-        if (e instanceof Error) {
-          setErr("Something unexpected happened");
-        }
-        navigate("/", { replace: true });
-      }
-    },
-  });
-
-  const submitHandler: FormEventHandler<HTMLFormElement> = (e) => {
-    e.preventDefault();
-    const formData = new FormData(e.currentTarget);
-    mutation.mutate({ data: formData, id: id as string });
-  };
 
   return (
     <Transition>
@@ -122,11 +58,7 @@ const EditProductPage = () => {
           {query.isSuccess && (
             <>
               {query.data && query.data.product && (
-                <ProductForm
-                  product={query.data.product}
-                  handler={submitHandler}
-                  isLoading={mutation.isPending}
-                />
+                <ProductForm product={query.data.product} />
               )}
             </>
           )}

@@ -29,6 +29,7 @@ export interface SellerUpdateRequest extends AuthenticatedRequest {
     name: string;
     email: string;
     phone?: string;
+    bio?: string;
     address?: string;
   };
 }
@@ -37,7 +38,8 @@ export interface ProductCreateUpdateRequest extends AuthenticatedRequest {
   body: {
     name: string;
     description: string;
-    price: string;
+    buyingPrice: string;
+    sellingPrice: string;
     category: string;
     sellerID: string;
     inventory: string;

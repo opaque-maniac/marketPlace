@@ -1,15 +1,41 @@
 import { Helmet } from "react-helmet";
 import Transition from "../../components/transition";
-import { MouseEventHandler } from "react";
-import { useNavigate } from "react-router-dom";
+import { MouseEventHandler, useContext } from "react";
+import { Link, useNavigate } from "react-router-dom";
+import { useMutation } from "@tanstack/react-query";
+import { sendDeleteProfile } from "../../utils/mutations/profile/deleteprofile";
+import { ErrorContext, ShowErrorContext } from "../../utils/errorContext";
+import { errorHandler } from "../../utils/errorHandler";
+import { removeAccessToken, removeRefreshToken } from "../../utils/cookies";
+import useUserStore from "../../utils/store";
+import Loader from "../../components/loader";
 
 const DeleteProfilePage = () => {
   const navigate = useNavigate();
+  const removeUser = useUserStore((state) => state.removeUser);
+  const [, setErr] = useContext(ShowErrorContext);
+  const [, setError] = useContext(ErrorContext);
 
-  const handleCancel: MouseEventHandler<HTMLButtonElement> = (e) => {
+  const { isPending, mutate } = useMutation({
+    mutationFn: sendDeleteProfile,
+    onSuccess: () => {
+      removeAccessToken();
+      removeRefreshToken();
+      removeUser();
+      navigate("/", { replace: true });
+    },
+    onError: (error) => {
+      errorHandler(error, navigate, setErr, setError);
+    },
+  });
+
+  const confirmClick: MouseEventHandler<HTMLButtonElement> = (e) => {
     e.preventDefault();
-    navigate("/profile");
+    mutate();
   };
+
+  const disable = isPending ? true : false;
+  const cursor = disable ? "cursor-not-allowed" : "cursor-pointer";
 
   return (
     <Transition>
@@ -38,18 +64,19 @@ const DeleteProfilePage = () => {
             </h2>
             <div className="flex md:justify-around justify-center items-center md:flex-row flex-col md:gap-0 gap-4">
               <button
-                className="block h-10 w-40 rounded-lg bg-red-400 md:mb-0 mb-8"
+                disabled={disable}
+                onClick={confirmClick}
+                className={`flex justify-center items-center h-10 w-40 rounded-lg bg-red-400 md:mb-0 mb-8 p-1 ${cursor}`}
                 aria-label="Delete Product"
               >
-                Delete
+                {isPending ? <Loader color="#fff" /> : <span>Delete</span>}
               </button>
-              <button
-                onClick={handleCancel}
-                aria-label="Back To Product Page"
-                className="block h-10 w-40 rounded-lg bg-green-400"
+              <Link
+                to={"/profile"}
+                className={`flex justify-center items-center h-10 w-40 rounded-lg bg-green-400`}
               >
-                Cancel
-              </button>
+                <span>Cancel</span>
+              </Link>
             </div>
           </div>
         </section>

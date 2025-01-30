@@ -9,6 +9,7 @@ import { Response, NextFunction } from "express";
 import generateToken from "./token";
 import { TokenRefreshRequest } from "../types";
 import jwt, { JwtPayload } from "jsonwebtoken";
+import { serverError } from "./globals";
 
 interface DecodedToken extends JwtPayload {
   id: string;
@@ -22,15 +23,13 @@ const tokenSecret = process.env.JWT_SECRET || "somethingintheorange";
 export const refreshToken = async (
   req: TokenRefreshRequest,
   res: Response,
-  next: NextFunction
+  next: NextFunction,
 ) => {
   try {
     const { refreshToken } = req.body;
 
     if (!refreshToken) {
-      return res.status(401).json({
-        message: "Unauthorized. No refresh token provided",
-      });
+      throw new Error("Invalid refresh token");
     }
 
     const user = jwt.verify(refreshToken, tokenSecret) as DecodedToken;
@@ -41,17 +40,11 @@ export const refreshToken = async (
     });
   } catch (e) {
     if (e instanceof jwt.JsonWebTokenError) {
-      if (e.message === "jwt expired") {
-        return res.status(401).json({
-          message: "Refresh token expired, log in again",
-          errorCode: "J404",
-        });
-      }
-      return res.status(403).json({
-        message: "Unauthorized",
-        errorCode: "J406",
-      });
+      throw new Error("Invalid refresh token");
+    } else if (e instanceof Error) {
+      next(e);
+    } else {
+      next(serverError);
     }
-    next(e as Error);
   }
 };

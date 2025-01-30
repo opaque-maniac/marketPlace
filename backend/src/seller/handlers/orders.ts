@@ -98,11 +98,7 @@ export const fetchIndividualOrder = async (
     });
 
     if (!order) {
-      res.status(404).json({
-        message: "Order not found",
-        errorCode: "O400",
-      });
-      return;
+      throw new Error("Order not found");
     }
 
     res.status(200).json({
@@ -148,11 +144,7 @@ export const updateOrder = async (
     });
 
     if (!order) {
-      res.status(404).json({
-        message: "Order not found",
-        errorCode: "O400",
-      });
-      return;
+      throw new Error("Order not found");
     }
 
     if (status === "CANCELLED") {

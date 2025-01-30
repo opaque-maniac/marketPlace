@@ -103,11 +103,7 @@ export const fetchCartItem = async (
     });
 
     if (!cartItems) {
-      res.status(404).json({
-        message: "Cart item not found",
-        errorCode: "M400",
-      });
-      return;
+      throw new Error("Cart item not found");
     }
 
     res.status(200).json({
@@ -160,7 +156,7 @@ export const orderCartItem = async (
             customerID: user.id,
             productID: cartItem.productID,
             quantity: cartItem.quantity,
-            totalAmount: cartItem.product.price * cartItem.quantity,
+            totalAmount: cartItem.product.sellingPrice * cartItem.quantity,
             sellerID: cartItem.product.sellerID,
           },
         });
@@ -189,6 +185,8 @@ export const orderCartItem = async (
         timeout: 10000,
       },
     );
+
+    await newCartItemSocket(user.id);
 
     res.status(201).json({
       message: "Order created",
@@ -247,7 +245,7 @@ export const orderAllCartItems = async (
               customerID: user.id,
               productID: item.productID,
               quantity: item.quantity,
-              totalAmount: item.product.price * item.quantity,
+              totalAmount: item.product.sellingPrice * item.quantity,
               sellerID: item.product.sellerID,
             },
           });
@@ -275,6 +273,8 @@ export const orderAllCartItems = async (
         timeout: 10000,
       },
     );
+
+    await newCartItemSocket(user.id);
 
     res.status(201).json({
       message: "Order created successfully",
@@ -311,6 +311,8 @@ export const removeFromCart = async (
         },
       },
     });
+
+    await newCartItemSocket(user.id);
 
     res.status(203).json({
       message: "Item removed from cart",
@@ -363,11 +365,7 @@ export const addToCart = async (
     });
 
     if (!product) {
-      res.status(404).json({
-        message: "Product not found",
-        errorCode: "P400",
-      });
-      return;
+      throw new Error("Product not found");
     }
 
     const existingCartItem = cart.cartItems.find(
@@ -375,37 +373,29 @@ export const addToCart = async (
     );
 
     if (existingCartItem) {
-      const updatedCartItem = await prisma.cartItem.update({
-        where: {
-          id: existingCartItem.id,
-        },
-        data: {
-          quantity: quantity,
-        },
-      });
-
       res.status(200).json({
         message: "Item added to cart",
-        cartItem: updatedCartItem,
+        cartItem: existingCartItem,
         new: false,
       });
-    } else {
-      const newCartItem = await prisma.cartItem.create({
-        data: {
-          cartID: cart.id,
-          productID: product.id,
-          quantity: quantity,
-        },
-      });
-
-      await newCartItemSocket(user.id);
-
-      res.status(201).json({
-        message: "Item added to cart",
-        cartItem: newCartItem,
-        new: true,
-      });
+      return;
     }
+
+    const newCartItem = await prisma.cartItem.create({
+      data: {
+        cartID: cart.id,
+        productID: product.id,
+        quantity: quantity,
+      },
+    });
+
+    await newCartItemSocket(user.id);
+
+    res.status(201).json({
+      message: "Item added to cart",
+      cartItem: newCartItem,
+      new: true,
+    });
   } catch (e) {
     if (e instanceof Error) {
       next(e);
@@ -444,6 +434,8 @@ export const emptyCart = async (
       },
     });
 
+    await newCartItemSocket(user.id);
+
     res.status(203).json({
       message: "Cart emptied successfully",
     });
@@ -462,15 +454,15 @@ export const fetchCartCount = async (
   next: NextFunction,
 ): Promise<void> => {
   try {
-    const userId = req.user?.id;
+    const { user } = req;
 
-    if (!userId) {
+    if (!user) {
       throw new Error("User not found");
     }
 
     const cart = await prisma.cart.findUnique({
       where: {
-        customerID: userId,
+        customerID: user.id,
       },
     });
 

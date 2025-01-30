@@ -92,11 +92,7 @@ export const fetchIndividualProduct = async (
     });
 
     if (!product) {
-      res.status(404).json({
-        message: "Product not found",
-        errorCode: "P400",
-      });
-      return;
+      throw new Error("Product not found");
     }
 
     res.status(200).json({
@@ -120,7 +116,14 @@ export const updateProduct = async (
 ): Promise<void> => {
   try {
     const { id } = req.params;
-    const { name, description, price, category, inventory } = req.body;
+    const {
+      name,
+      description,
+      buyingPrice,
+      sellingPrice,
+      category,
+      inventory,
+    } = req.body;
     let filenames: string[] | undefined;
 
     if (req.files && Array.isArray(req.files)) {
@@ -136,7 +139,8 @@ export const updateProduct = async (
           data: {
             name,
             description,
-            price: parseFloat(price),
+            buyingPrice: parseFloat(buyingPrice),
+            sellingPrice: parseFloat(sellingPrice),
             category: category as CATEGORIES,
             inventory: parseInt(inventory),
           },
@@ -187,31 +191,17 @@ export const deleteProduct = async (
   try {
     const { id } = req.params;
 
-    const product = await prisma.product.findUnique({
-      where: {
-        id,
-      },
-      include: {
-        images: true,
-        seller: {
-          include: {
-            image: true,
-          },
-        },
-      },
+    const exists = await prisma.product.findUnique({
+      where: { id },
     });
 
-    if (!product) {
-      res.status(404).json({
-        message: "Product not found",
-        errorCode: "P400",
-      });
-      return;
+    if (!exists) {
+      throw new Error("Product not found");
     }
 
     await prisma.product.delete({
       where: {
-        id: product.id,
+        id: id,
       },
     });
 

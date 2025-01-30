@@ -44,6 +44,7 @@ model Seller {
   email     String       @unique
   name      String
   password  String
+  bio       String?
   address   String?
   phone     String?
   active    Boolean      @default(true)
@@ -103,22 +104,22 @@ enum CATEGORIES {
 }
 
 model Product {
-  id                 String         @id @default(uuid())
-  name               String
-  description        String
-  price              Float
-  category           CATEGORIES
-  sellerID           String
-  seller             Seller         @relation(fields: [sellerID], references: [id], onDelete: Cascade)
-  images             ProductImage[]
-  cartItems          CartItem[]
-  wishlistItems      WishListItem[]
-  comments           Comment[]
-  orders             Order[]
-  discountPercentage Float
-  createdAt          DateTime       @default(now())
-  updatedAt          DateTime       @updatedAt
-  inventory          Int
+  id            String         @id @default(uuid())
+  name          String
+  description   String
+  sellingPrice  Float          @default(0)
+  buyingPrice   Float          @default(0)
+  category      CATEGORIES
+  sellerID      String
+  seller        Seller         @relation(fields: [sellerID], references: [id], onDelete: Cascade)
+  images        ProductImage[]
+  cartItems     CartItem[]
+  wishlistItems WishListItem[]
+  comments      Comment[]
+  orders        Order[]
+  createdAt     DateTime       @default(now())
+  updatedAt     DateTime       @updatedAt
+  inventory     Int
 }
 
 model ProductImage {

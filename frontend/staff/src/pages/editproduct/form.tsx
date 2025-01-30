@@ -1,17 +1,45 @@
 import Transition from "../../components/transition";
 import { Product } from "../../utils/types";
 import useProductForm from "./useProductForm";
-import { FormEventHandler } from "react";
+import { FormEventHandler, useContext } from "react";
 import Loader from "../../components/loader";
+import { useMutation } from "@tanstack/react-query";
+import { updateProduct } from "../../utils/mutations/products";
+import { useNavigate, useParams } from "react-router-dom";
+import { ErrorContext, ShowErrorContext } from "../../utils/errorContext";
+import { errorHandler } from "../../utils/errorHandler";
 
 interface Props {
   product: Product;
-  handler: FormEventHandler<HTMLFormElement>;
-  isLoading: boolean;
 }
 
-const ProductForm = ({ product, handler, isLoading }: Props) => {
+const ProductForm = ({ product }: Props) => {
   const { state, dispatch, ActionType } = useProductForm(product);
+  const navigate = useNavigate();
+  const { id } = useParams();
+  const [, setErr] = useContext(ShowErrorContext);
+  const [, setError] = useContext(ErrorContext);
+
+  const { mutate, isPending } = useMutation({
+    mutationFn: updateProduct,
+    onSuccess: (data) => {
+      if (data) {
+        navigate(`/products/${id}`);
+      } else {
+        setError(true);
+        navigate("/500", { replace: true });
+      }
+    },
+    onError: (error) => {
+      errorHandler(error, navigate, setErr, setError);
+    },
+  });
+
+  const submitHandler: FormEventHandler<HTMLFormElement> = (e) => {
+    e.preventDefault();
+    const formData = new FormData(e.currentTarget);
+    mutate({ formData, id: id as string });
+  };
 
   return (
     <Transition>
@@ -22,7 +50,7 @@ const ProductForm = ({ product, handler, isLoading }: Props) => {
         }}
       >
         <form
-          onSubmit={handler}
+          onSubmit={submitHandler}
           className="lg:w-7/12 md:w-10/12 w-11/12 mx-auto shadow-xl lg:px-2"
         >
           <div className="flex md:justify-between justify-center items-center md:flex-row flex-col gap-2 md:mb-4 mb-4">
@@ -209,18 +237,10 @@ const ProductForm = ({ product, handler, isLoading }: Props) => {
           <div className="w-full py-2 flex md:justify-end justify-center px-4">
             <button
               aria-label="Submit Product"
-              className="bg-red-400 tex-white text-lg text-center w-40 h-10 rounded-lg"
+              className="bg-red-400 tex-white text-lg text-center w-40 h-10 rounded-lg py-4 flex justify-center items-center"
               type="submit"
             >
-              {isLoading ? (
-                <div className="h-full w-full flex justify-center items-center">
-                  <div className="h-10 w-10">
-                    <Loader color="#000000" />
-                  </div>
-                </div>
-              ) : (
-                "Submit"
-              )}
+              {isPending ? <Loader color="#000000" /> : <span>Submit</span>}
             </button>
           </div>
         </form>

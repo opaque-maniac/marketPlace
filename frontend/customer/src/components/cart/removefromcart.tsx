@@ -3,9 +3,8 @@ import { useNavigate } from "react-router-dom";
 import { MouseEventHandler, useContext } from "react";
 import { ErrorContext, ShowErrorContext } from "../../utils/errorContext";
 import { removeFromCart } from "../../utils/mutations/cart/removefromcart";
-import { ErrorResponse } from "../../utils/types";
-import errorHandler from "../../utils/errorHandler";
 import Loader from "../loader";
+import { errorHandler } from "../../utils/errorHandler";
 
 interface Props {
   id: string;
@@ -22,29 +21,8 @@ const RemoveFromCart = ({ id, refetch }: Props) => {
     onSuccess: () => {
       refetch();
     },
-    onError: (error: Error) => {
-      try {
-        const errorObj = JSON.parse(error.message) as ErrorResponse;
-        const [show, url] = errorHandler(errorObj.errorCode);
-
-        if (show) {
-          setErr(errorObj.message);
-        } else {
-          if (url) {
-            if (url === "/500") {
-              setError(true);
-            }
-            navigate(url, { replace: true });
-          } else {
-            setError(true);
-            navigate("/500", { replace: true });
-          }
-        }
-      } catch (e) {
-        if (e instanceof Error) {
-          setErr("Something unexpected happened");
-        }
-      }
+    onError: (error) => {
+      errorHandler(error, navigate, setErr, setError);
     },
   });
 
@@ -58,7 +36,10 @@ const RemoveFromCart = ({ id, refetch }: Props) => {
       <button
         onClick={clickHandler}
         disabled={mutation.isPending}
-        className="block h-10 w-20 bg-red-500 text-white rounded-lg"
+        aria-label="Remove from cart"
+        className={`block h-10 w-20 bg-red-500 text-white rounded-lg ${
+          mutation.isPending ? "cursor-not-allowed" : "cursor-pointer"
+        }`}
       >
         {mutation.isPending ? (
           <div className="h-10 w-10 p-1 mx-auto">

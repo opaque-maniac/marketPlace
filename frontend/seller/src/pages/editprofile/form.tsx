@@ -1,22 +1,50 @@
-import { FormEventHandler } from "react";
+import { FormEventHandler, useContext } from "react";
 import Transition from "../../components/transition";
 import { Seller } from "../../utils/types";
 import useProfileForm from "./useProfileForm";
 import Loader from "../../components/loader";
+import { useMutation } from "@tanstack/react-query";
+import { sendUpdateProfile } from "../../utils/mutations/profile/updateprofile";
+import { useNavigate } from "react-router-dom";
+import useUserStore from "../../utils/store";
+import { ErrorContext, ShowErrorContext } from "../../utils/errorContext";
+import { errorHandler } from "../../utils/errorHandler";
 
 interface Props {
   profile: Seller;
-  isLoading: boolean;
-  handler: FormEventHandler<HTMLFormElement>;
 }
 
-const ProfileForm = ({ profile, isLoading, handler }: Props) => {
+const ProfileForm = ({ profile }: Props) => {
   const { state, dispatch, ActionType } = useProfileForm(profile);
+  const navigate = useNavigate();
+  const user = useUserStore((state) => state.user);
+  const [, setErr] = useContext(ShowErrorContext);
+  const [, setError] = useContext(ErrorContext);
+
+  const { isPending, mutate } = useMutation({
+    mutationFn: sendUpdateProfile,
+    onSuccess: (data) => {
+      if (data) {
+        navigate("/profile", { replace: true });
+      } else {
+        setError(true);
+        navigate("/500", { replace: true });
+      }
+    },
+    onError: (error) => {
+      errorHandler(error, navigate, setErr, setError);
+    },
+  });
+  const submitHandler: FormEventHandler<HTMLFormElement> = (e) => {
+    e.preventDefault();
+    const formData = new FormData(e.currentTarget);
+    mutate({ data: formData, id: user as string });
+  };
 
   return (
     <Transition>
       <form
-        onSubmit={handler}
+        onSubmit={submitHandler}
         className="shadow-lg md:w-8/12 w-11/12 mx-auto md:mb-0 mb-8"
       >
         <div className="md:flex block justify-center items-center md:gap-14">
@@ -144,7 +172,7 @@ const ProfileForm = ({ profile, isLoading, handler }: Props) => {
             className="h-10 w-40 rounded-lg bg-red-400 text-center"
             aria-label="Submit Profile"
           >
-            {isLoading ? <Loader color="#000000" /> : "Submit"}
+            {isPending ? <Loader color="#000000" /> : "Submit"}
           </button>
         </div>
       </form>

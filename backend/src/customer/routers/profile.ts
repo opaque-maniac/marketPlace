@@ -4,7 +4,6 @@ import { stringConfig, createStorage } from "../../utils/globals";
 import {
   allowIfAuthenticated,
   isCustomer,
-  isProfileOwner,
 } from "../../middleware/auth-middleware";
 import multer from "multer";
 import {
@@ -18,7 +17,6 @@ const router = Router();
 // middleware
 router.use(allowIfAuthenticated);
 router.use(isCustomer);
-router.use(isProfileOwner);
 
 // File upload
 const customerStorage = createStorage("uploads/customers");
@@ -26,9 +24,9 @@ const customerStorage = createStorage("uploads/customers");
 const upload = multer({ storage: customerStorage });
 
 // For profile managemnt
-router.get("/:id", fetchProfile);
+router.get("/", fetchProfile);
 router.put(
-  "/:id",
+  "/",
   body("firstName").isString().isLength(stringConfig),
   body("lastName").isString().isLength(stringConfig),
   body("phone")
@@ -39,6 +37,6 @@ router.put(
   upload.single("image"),
   updateProfile,
 );
-router.delete("/:id", deleteProfile);
+router.delete("/", deleteProfile);
 
 export default router;

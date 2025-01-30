@@ -1,14 +1,13 @@
 import { useNavigate, useParams } from "react-router-dom";
 import Transition from "../../components/transition";
 import { useQuery } from "@tanstack/react-query";
-import { fetchIndividualProduct } from "../../utils/queries/products";
 import { useContext, useEffect, useState } from "react";
-import errorHandler from "../../utils/errorHandler";
-import { ErrorResponse } from "../../utils/types";
 import Loader from "../../components/loader";
 import CommentList from "./comments";
 import { ErrorContext, ShowErrorContext } from "../../utils/errorContext";
 import { Helmet } from "react-helmet";
+import { fetchIndividualProduct } from "../../utils/queries/products/fetchindividualproducts";
+import { errorHandler } from "../../utils/errorHandler";
 
 const ProductPage = () => {
   const { id } = useParams();
@@ -30,25 +29,7 @@ const ProductPage = () => {
   });
 
   if (query.isError) {
-    const data = query.error;
-    try {
-      const error = JSON.parse(data.message) as ErrorResponse;
-      const [show, url] = errorHandler(error.errorCode);
-      if (show) {
-        setErr(error.message);
-      } else {
-        if (url) {
-          if (url === "/500") {
-            setError(true);
-          }
-          navigate(url);
-        }
-      }
-    } catch (e) {
-      if (e instanceof Error) {
-        setErr("An unexpected error occurred.");
-      }
-    }
+    errorHandler(query.error, navigate, setErr, setError);
   }
 
   const calclulateOriginal = (price: number, discount: number) => {

@@ -16,12 +16,12 @@ router.use(allowIfAuthenticated);
 router.use(isCustomer);
 
 // fetch orders
-router.get("/orders", fetchOrders);
+router.get("/", fetchOrders);
 
 // fetch individual order
-router.get("/orders/:id", fetchIndividualOrder);
+router.get("/:id", fetchIndividualOrder);
 
 // cancel order
-router.delete("/orders/:id/cancel", cancelOrder);
+router.delete("/:id/cancel", cancelOrder);
 
 export default router;

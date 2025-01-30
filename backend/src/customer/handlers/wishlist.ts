@@ -93,11 +93,7 @@ export const addToWishlist = async (
     });
 
     if (!product) {
-      res.status(404).json({
-        message: "Product not found",
-        errorCode: "P404",
-      });
-      return;
+      throw new Error("Product not found");
     }
 
     const wishlist = await prisma.wishList.findUnique({
@@ -123,22 +119,23 @@ export const addToWishlist = async (
         wishlistItem: existingItem,
         new: false,
       });
-    } else {
-      const wishlistItem = await prisma.wishListItem.create({
-        data: {
-          productID: product.id,
-          wishlistID: wishlist.id,
-        },
-      });
-
-      await newWishlistItemSocket(user.id);
-
-      res.status(201).json({
-        message: "Item added to wishlist",
-        wishlistItem,
-        new: true,
-      });
+      return;
     }
+
+    const wishlistItem = await prisma.wishListItem.create({
+      data: {
+        productID: product.id,
+        wishlistID: wishlist.id,
+      },
+    });
+
+    await newWishlistItemSocket(user.id);
+
+    res.status(201).json({
+      message: "Item added to wishlist",
+      wishlistItem,
+      new: true,
+    });
   } catch (e) {
     if (e instanceof Error) {
       next(e);
@@ -179,7 +176,7 @@ export const fetchWishlistItem = async (
     });
 
     if (!wishlistItem) {
-      throw new Error("Wishlist not found");
+      throw new Error("Wishlist item not found");
     }
 
     res.status(200).json({
@@ -211,6 +208,23 @@ export const removeFromWishlist = async (
       throw new Error("User not found");
     }
 
+    const exists = await prisma.wishListItem.findUnique({
+      where: {
+        id,
+        wishlist: {
+          customerID: user.id,
+        },
+      },
+    });
+
+    if (!exists) {
+      res.status(203).json({
+        message: "Item removed from wishlist",
+        wishlistItem: exists,
+      });
+      return;
+    }
+
     const wishlistItem = await prisma.wishListItem.delete({
       where: {
         id,
@@ -219,6 +233,8 @@ export const removeFromWishlist = async (
         },
       },
     });
+
+    await newWishlistItemSocket(user.id);
 
     res.status(203).json({
       message: "Item removed from wishlist",
@@ -262,6 +278,8 @@ export const emptyWishlist = async (
       },
     });
 
+    await newWishlistItemSocket(user.id);
+
     res.status(203).json({
       message: "Wishlist emptied successfully",
     });
@@ -280,16 +298,16 @@ export const fetchWishlistCount = async (
   next: NextFunction,
 ): Promise<void> => {
   try {
-    const userId = req.user?.id;
+    const { user } = req;
 
-    if (!userId) {
+    if (!user) {
       throw new Error("User not found");
     }
 
     const count = await prisma.wishListItem.count({
       where: {
         wishlist: {
-          customerID: userId,
+          customerID: user.id,
         },
       },
     });

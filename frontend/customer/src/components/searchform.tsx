@@ -11,8 +11,8 @@ const SearchForm = () => {
     const formDate = new FormData(e.currentTarget);
     const query = formDate.get("query") as string;
     const encoded = encodeURIComponent(query);
-    form.current?.reset();
     navigate(`/explore?page=1&query=${encoded}`);
+    form.current?.reset();
   };
 
   return (

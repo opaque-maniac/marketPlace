@@ -1,11 +1,14 @@
 import useUserStore from "../utils/store";
 import ProfileIcon from "./icons/profileIcon";
-
+import { memo } from "react";
 import SearchForm from "./searchform";
 import { MouseEventHandler, useState } from "react";
 import ProfileMenu from "./profilemenu";
 import WishlistComponent from "./wishlist/wishlistComponent";
 import CartComponent from "./cart/cartComponent";
+
+const MemoCartComponent = memo(CartComponent);
+const MemoWishlistComponent = memo(WishlistComponent);
 
 const Action = () => {
   const user = useUserStore((state) => state.user);
@@ -24,8 +27,8 @@ const Action = () => {
       {user && (
         <>
           <div className="flex justify-start items-center gap-4 h-14">
-            <CartComponent />
-            <WishlistComponent />
+            <MemoCartComponent />
+            <MemoWishlistComponent />
           </div>
           <div className="md:block hidden">
             <div className="w-10 h-10 relative">

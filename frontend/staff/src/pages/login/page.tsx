@@ -2,9 +2,6 @@ import { Link, useNavigate } from "react-router-dom";
 import Transition from "../../components/transition";
 import AuthLayout from "./layout";
 import { useMutation } from "@tanstack/react-query";
-import { sendLogin } from "../../utils/mutations/auth";
-import { ErrorResponse } from "../../utils/types";
-import errorHandler from "../../utils/errorHandler";
 import { FormEventHandler, useContext, useState } from "react";
 import Loader from "../../components/loader";
 import { ShowErrorContext, ErrorContext } from "../../utils/errorContext";
@@ -13,6 +10,8 @@ import userStore from "../../utils/store";
 import EyeClosed from "../../components/icons/hide";
 import EyeOpen from "../../components/icons/show";
 import { Helmet } from "react-helmet";
+import { sendLogin } from "../../utils/mutations/auth/login";
+import { errorHandler } from "../../utils/errorHandler";
 
 const LoginPage = () => {
   const navigate = useNavigate();
@@ -24,29 +23,7 @@ const LoginPage = () => {
   const mutation = useMutation({
     mutationFn: sendLogin,
     onError: (error) => {
-      try {
-        const errorObj = JSON.parse(error.message) as ErrorResponse;
-        const [show, url] = errorHandler(errorObj.errorCode);
-
-        if (show) {
-          setErr(errorObj.message);
-        } else {
-          if (url) {
-            if (url === "/500") {
-              setError(true);
-            }
-            navigate(url, { replace: true });
-          } else {
-            setError(true);
-            navigate("/500", { replace: true });
-          }
-        }
-      } catch (e) {
-        if (e instanceof Error) {
-          setErr("Something unexpected happened");
-        }
-        navigate("/", { replace: true });
-      }
+      errorHandler(error, navigate, setErr, setError);
     },
     onSuccess: (data) => {
       if (data) {

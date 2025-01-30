@@ -89,11 +89,7 @@ export const fetchIndividualCustomer = async (
     });
 
     if (!customer) {
-      res.status(404).json({
-        message: "Customer not found",
-        errorCode: "I401",
-      });
-      return;
+      throw new Error("Customer not found");
     }
 
     res.status(200).json({
@@ -244,6 +240,14 @@ export const deleteCustomer = async (
 ): Promise<void> => {
   try {
     const { id } = req.params;
+
+    const exists = await prisma.customer.findUnique({
+      where: { id },
+    });
+
+    if (!exists) {
+      throw new Error("Customer not found");
+    }
 
     const customer = await prisma.customer.delete({
       where: {

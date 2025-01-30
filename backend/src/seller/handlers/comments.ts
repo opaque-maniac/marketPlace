@@ -28,11 +28,7 @@ export const fetchProductComments = async (
     });
 
     if (!product) {
-      res.status(404).json({
-        message: "Product not found",
-        errorCode: "P400",
-      });
-      return;
+      throw new Error("Product not found");
     }
 
     const comments = await prisma.comment.findMany({
@@ -94,11 +90,7 @@ export const fetchIndividualComment = async (
     });
 
     if (!comment) {
-      res.status(404).json({
-        message: "Comment not found",
-        errorCode: "C400",
-      });
-      return;
+      throw new Error("Comment not found");
     }
 
     res.status(200).json({

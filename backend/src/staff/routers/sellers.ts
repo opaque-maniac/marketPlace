@@ -13,7 +13,6 @@ import {
   fetchIndividualSeller,
   fetchSellerProducts,
   fetchSellers,
-  searchSeller,
   updateSeller,
 } from "../handlers/sellers";
 
@@ -55,8 +54,5 @@ router.post("/:id/disable", disableSeller);
 
 // delete seller
 router.delete("/:id", deleteSeller);
-
-// search seller
-router.post("/discover/search", searchSeller);
 
 export default router;

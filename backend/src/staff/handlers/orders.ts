@@ -57,8 +57,11 @@ export const fetchAllOrders = async (
             status,
           },
       include: {
-        customer: true,
-        product: true,
+        product: {
+          include: {
+            images: true,
+          },
+        },
       },
       skip: (page - 1) * limit,
       take: limit + 1,
@@ -95,14 +98,22 @@ export const fetchIndividualOrder = async (
 
     const order = await prisma.order.findUnique({
       where: { id },
+      include: {
+        product: {
+          include: {
+            images: true,
+            seller: {
+              include: {
+                image: true,
+              },
+            },
+          },
+        },
+      },
     });
 
     if (!order) {
-      res.status(404).json({
-        message: "Order not found",
-        errorCode: "O400",
-      });
-      return;
+      throw new Error("Order not found");
     }
 
     res.status(200).json({
@@ -133,11 +144,7 @@ export const updateOrderStatus = async (
     });
 
     if (!order) {
-      res.status(404).json({
-        message: "Order not found",
-        errorCode: "O400",
-      });
-      return;
+      throw new Error("Order not found");
     }
 
     if (status === "CANCELLED") {
@@ -206,11 +213,7 @@ export const deleteOrder = async (
     });
 
     if (!order) {
-      res.status(404).json({
-        message: "Order not found",
-        errorCode: "O400",
-      });
-      return;
+      throw new Error("Order not found");
     }
 
     if (order.status === "CANCELLED") {

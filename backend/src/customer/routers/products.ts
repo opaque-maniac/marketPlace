@@ -1,10 +1,6 @@
 import { Router } from "express";
 import { body } from "express-validator";
-import {
-  fetchIndividualProduct,
-  fetchProducts,
-  searchProduct,
-} from "../handlers/products";
+import { fetchIndividualProduct, fetchProducts } from "../handlers/products";
 import {
   createProductComment,
   deleteProductComment,
@@ -24,9 +20,6 @@ router.get("/", fetchProducts);
 
 // fetch individual product
 router.get("/:id", fetchIndividualProduct);
-
-// search products
-router.get("/search", searchProduct);
 
 // fetch comments
 router.get("/:id/comments", fetchProductComments);

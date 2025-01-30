@@ -3,9 +3,9 @@ import { responseError, tokenError } from "../../errors";
 import { apiHost, apiProtocol } from "../../generics";
 import { ErrorResponse, SuccessSellerResponse } from "../../types";
 
-export const sendDeleteProfile = async (id: string) => {
+export const sendDeleteProfile = async () => {
   try {
-    const url = `${apiProtocol}://${apiHost}/seller/profile/${id}`;
+    const url = `${apiProtocol}://${apiHost}/customers/profile`;
 
     const token = getAccessToken();
 

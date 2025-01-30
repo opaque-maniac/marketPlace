@@ -5,9 +5,8 @@ import { deleteComment } from "../../utils/mutations/comments/deletecomment";
 import { MouseEventHandler, useContext } from "react";
 import Loader from "../../components/loader";
 import { useNavigate } from "react-router-dom";
-import { ErrorResponse } from "../../utils/types";
-import errorHandler from "../../utils/errorHandler";
 import { ErrorContext, ShowErrorContext } from "../../utils/errorContext";
+import { errorHandler } from "../../utils/errorHandler";
 
 interface Props {
   id: string;
@@ -23,29 +22,7 @@ const DeleteComment = ({ id, productId, refetch }: Props) => {
   const mutation = useMutation({
     mutationFn: deleteComment,
     onError: (error: Error) => {
-      try {
-        const errorObj = JSON.parse(error.message) as ErrorResponse;
-        const [show, url] = errorHandler(errorObj.errorCode);
-
-        if (show) {
-          setErr(errorObj.message);
-        } else {
-          if (url) {
-            if (url === "/500") {
-              setError(true);
-            }
-            navigate(url, { replace: true });
-          } else {
-            setError(true);
-            navigate("/500", { replace: true });
-          }
-        }
-      } catch (e) {
-        if (e instanceof Error) {
-          setErr("Something unexpected happened");
-        }
-        navigate("/", { replace: true });
-      }
+      errorHandler(error, navigate, setErr, setError);
     },
     onSuccess: () => {
       refetch();
@@ -57,12 +34,15 @@ const DeleteComment = ({ id, productId, refetch }: Props) => {
     mutation.mutate({ productId, commentId: id });
   };
 
+  const disable = mutation.isPending ? true : false;
   return (
     <Transition>
       <button
-        disabled={mutation.isIdle ? false : true}
+        disabled={disable}
         onClick={clickHandler}
-        className="flex justify-start items-center gap-2 border border-black h-8 p-2 rounded-sm bg-white"
+        className={`flex justify-start items-center gap-2 border border-black h-8 p-2 rounded-sm bg-white ${
+          disable ? "cursor-not-allowed" : "cursor-pointer"
+        }`}
       >
         <div className="h-6 w-6">
           {mutation.isPending ? <Loader color="#000" /> : <TrashIcon />}

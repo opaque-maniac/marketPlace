@@ -4,9 +4,9 @@ import { cancelOrder } from "../../utils/mutations/orders/cancelorder";
 import { MouseEventHandler, useContext } from "react";
 import { ErrorContext, ShowErrorContext } from "../../utils/errorContext";
 import { ErrorResponse, OrderStatus } from "../../utils/types";
-import errorHandler from "../../utils/errorHandler";
 import { useNavigate } from "react-router-dom";
 import Loader from "../loader";
+import { errorHandler } from "../../utils/errorHandler";
 
 interface Props {
   id: string;
@@ -24,29 +24,8 @@ const CancelOrderButton = ({ id, refetch, status }: Props) => {
     onSuccess: () => {
       refetch();
     },
-    onError: (error: Error) => {
-      try {
-        const errorObj = JSON.parse(error.message) as ErrorResponse;
-        const [show, url] = errorHandler(errorObj.errorCode);
-
-        if (show) {
-          setErr(errorObj.message);
-        } else {
-          if (url) {
-            if (url === "/500") {
-              setError(true);
-            }
-            navigate(url, { replace: true });
-          } else {
-            setError(true);
-            navigate("/500", { replace: true });
-          }
-        }
-      } catch (e) {
-        if (e instanceof Error) {
-          setErr("Something unexpected happened");
-        }
-      }
+    onError: (error) => {
+      errorHandler(error, navigate, setErr, setError);
     },
   });
 

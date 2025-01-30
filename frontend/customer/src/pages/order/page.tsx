@@ -1,17 +1,14 @@
 import { Helmet } from "react-helmet";
 import Transition from "../../components/transition";
-import { useNavigate, useParams } from "react-router-dom";
+import { Link, useNavigate, useParams } from "react-router-dom";
 import { useEffect, useContext, useCallback } from "react";
 import { ErrorContext, ShowErrorContext } from "../../utils/errorContext";
 import { useQuery } from "@tanstack/react-query";
 import { fetchIndividualOrder } from "../../utils/queries/orders/fetchindividualorder";
 import { formatDate } from "../../utils/date";
 import PageLoader from "../../components/pageloader";
-import { ErrorResponse } from "../../utils/types";
-import errorHandler from "../../utils/errorHandler";
-import OrderItems from "./items";
-import CancelOrderButton from "../../components/orders/cancelorder";
-import PayOrderButton from "../../components/orders/payorder";
+import { apiHost, apiProtocol } from "../../utils/generics";
+import { errorHandler } from "../../utils/errorHandler";
 
 const IndividualOrderPage = () => {
   const { id } = useParams();
@@ -35,27 +32,8 @@ const IndividualOrderPage = () => {
   const order = query.data?.order;
 
   if (query.isError) {
-    const data = query.error;
-    try {
-      const error = JSON.parse(data.message) as ErrorResponse;
-      const [show, url] = errorHandler(error.errorCode);
-      if (show) {
-        setErr(error.message);
-      } else {
-        if (url) {
-          if (url === "/500") {
-            setError(true);
-          }
-          navigate(url);
-        } else {
-          setErr("An unexpected error occurred.");
-        }
-      }
-    } catch (e) {
-      if (e instanceof Error) {
-        setErr("An unexpected error occurred.");
-      }
-    }
+    const { error } = query;
+    errorHandler(error, navigate, setErr, setError);
   }
 
   if (query.isSuccess && !order) {
@@ -67,6 +45,8 @@ const IndividualOrderPage = () => {
     // eslint-disable-next-line @typescript-eslint/no-floating-promises
     query.refetch();
   }, [query]);
+
+  console.log(order);
 
   return (
     <Transition>
@@ -84,31 +64,95 @@ const IndividualOrderPage = () => {
           <div>
             {order ? (
               <>
-                <div className="pt-10 pb-4 border-b border-black w-full">
-                  <section className="flex justify-start items-center gap-6 mx-auto md:w-600 w-300">
-                    <div className="flex flex-col justify-evenly items-start font-semibold">
-                      <p>ID</p>
-                      <p>STATUS</p>
-                      <p>TOTAL</p>
-                      <p>DATE</p>
-                    </div>
-                    <div className="flex flex-col justify-evenly items-start">
-                      <p>: {order.id}</p>
-                      <p>: {order.status}</p>
-                      <p>: ${`${order.totalAmount}`}</p>
-                      <p>: {formatDate(order.createdAt)}</p>
-                    </div>
-                  </section>
-                  <section className="flex md:flex-row flex-col md:gap-0 gap-6 justify-evenly items-center pt-6">
-                    <PayOrderButton status={order.status} />
-                    <CancelOrderButton
-                      id={order.id}
-                      refetch={refetch}
-                      status={order.status}
+                <div className="w-full flex md:justify-evenly justify-center md:items-start items-center gap-6 md:flex-row flex-col flex-wrap md:min-h-[600px] pt-4">
+                  <section>
+                    <img
+                      src={`${apiProtocol}://${apiHost}/${order.product.images[0].url}`}
+                      alt={order.product.name}
+                      className="md:h-[500px] h-[450px] md:w-[450px] w-[350px]"
                     />
                   </section>
+                  <section className="md:w-5/12">
+                    <div className="flex justify-start items-center gap-[50px] pb-6">
+                      <Link
+                        target="_blank"
+                        className="lg:no-underline lg:hover:underline underline"
+                        to={`/products/${order.product.id}`}
+                      >
+                        <h3 className="font-semibold text-start text-xl">
+                          {order.product.name}
+                        </h3>
+                      </Link>
+                    </div>
+
+                    <div>
+                      <p>
+                        Date:{" "}
+                        <span className="text-sm font-semibold">
+                          {formatDate(order.createdAt)}
+                        </span>
+                      </p>
+                    </div>
+                    <div>
+                      <p>
+                        Quantity: <span>{order.quantity}</span>
+                      </p>
+                    </div>
+                    <div>
+                      <p>
+                        Total:{" "}
+                        <span>
+                          {order.totalAmount.toLocaleString("en-US", {
+                            style: "currency",
+                            currency: "USD",
+                          })}
+                        </span>
+                      </p>
+                    </div>
+                    <div>
+                      <p>
+                        Status: <span>{order.status}</span>
+                      </p>
+                    </div>
+                    <div className="pb-4">
+                      <div className="pb-4">
+                        <h3>Seller:</h3>
+                      </div>
+                      <Link
+                        to={`/sellers/${order.sellerID}/products`}
+                        className="lg:no-underline underline lg:hover:underline flex justify-start items-center gap-4"
+                        target="_blank"
+                      >
+                        <div>
+                          <img
+                            className="w-[40px] h-[40px] border rounded-full"
+                            src="/images/profile.svg"
+                            alt={""}
+                          />
+                        </div>
+                        <div>{order.seller.name}</div>
+                      </Link>
+                    </div>
+                    <section className="flex md:flex-row flex-col md:justify-start justify-center items-center md:gap-8 gap-6 pt-4 text-lg md:pb-0 pb-4">
+                      <div>
+                        <Link
+                          to={`/orders/${order.id}/pay`}
+                          className="flex justify-center items-center w-40 h-10 text-white bg-blue-500 rounded"
+                        >
+                          <span>Pay</span>
+                        </Link>
+                      </div>
+                      <div>
+                        <button
+                          aria-label="Cancel order"
+                          className="flex justify-center items-center w-40 h-10 text-white bg-red-500 rounded"
+                        >
+                          <span>Cancel</span>
+                        </button>
+                      </div>
+                    </section>
+                  </section>
                 </div>
-                <OrderItems id={order.id} />
               </>
             ) : null}
           </div>

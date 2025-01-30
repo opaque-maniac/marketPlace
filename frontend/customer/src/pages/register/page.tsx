@@ -3,14 +3,13 @@ import Transition from "../../components/transition";
 import AuthLayout from "../login/layout";
 import { FormEventHandler, useContext, useState } from "react";
 import { useMutation } from "@tanstack/react-query";
-import { ErrorResponse } from "../../utils/types";
-import errorHandler from "../../utils/errorHandler";
 import EyeClosed from "../../components/icons/hide";
 import EyeOpen from "../../components/icons/show";
 import Loader from "../../components/loader";
 import { ShowErrorContext, ErrorContext } from "../../utils/errorContext";
 import { Helmet } from "react-helmet";
 import { sendRegister } from "../../utils/mutations/auth/register";
+import { errorHandler } from "../../utils/errorHandler";
 
 const RegisterPage = () => {
   const navigate = useNavigate();
@@ -21,29 +20,7 @@ const RegisterPage = () => {
   const mutation = useMutation({
     mutationFn: sendRegister,
     onError: (error) => {
-      try {
-        const errorObj = JSON.parse(error.message) as ErrorResponse;
-        const [show, url] = errorHandler(errorObj.errorCode);
-
-        if (show) {
-          setErr(errorObj.message);
-        } else {
-          if (url) {
-            if (url === "/500") {
-              setError(true);
-            }
-            navigate(url, { replace: true });
-          } else {
-            setError(true);
-            navigate("/500", { replace: true });
-          }
-        }
-      } catch (e) {
-        if (e instanceof Error) {
-          setErr("Something unexpected happened");
-        }
-        navigate("/", { replace: true });
-      }
+      errorHandler(error, navigate, setErr, setError);
     },
     onSuccess: (data) => {
       if (data && data.customer) {
@@ -154,7 +131,7 @@ const RegisterPage = () => {
             </button>
           </div>
         </form>
-        <div className="pt-4">
+        <div className="pt-4 flex md:justify-start justify-center items-center">
           <Link to={"/login"} className="underline">
             {"Have an account? Log in"}
           </Link>

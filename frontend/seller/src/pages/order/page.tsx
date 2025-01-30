@@ -1,7 +1,6 @@
 import { useQuery } from "@tanstack/react-query";
 import Transition from "../../components/transition";
 import { ErrorResponse } from "../../utils/types";
-import errorHandler from "../../utils/errorHandler";
 import { Link, useNavigate, useParams } from "react-router-dom";
 import { useCallback, useContext, useEffect } from "react";
 import { ErrorContext, ShowErrorContext } from "../../utils/errorContext";
@@ -9,6 +8,7 @@ import { Helmet } from "react-helmet";
 import { fetchOrder } from "../../utils/queries/orders/fetchindividualorder";
 import PageLoader from "../../components/pageloader";
 import DeliveredButton from "./deliveredb";
+import { errorHandler } from "../../utils/errorHandler";
 
 const IndividualOrderPage = () => {
   const [, setError] = useContext(ErrorContext);
@@ -42,25 +42,7 @@ const IndividualOrderPage = () => {
   });
 
   if (query.isError) {
-    const data = query.error;
-    try {
-      const error = JSON.parse(data.message) as ErrorResponse;
-      const [show, url] = errorHandler(error.errorCode);
-      if (show) {
-        setErr(error.message);
-      } else {
-        if (url) {
-          if (url === "/500") {
-            setError(true);
-          }
-          navigate(url);
-        }
-      }
-    } catch (e) {
-      if (e instanceof Error) {
-        setErr("An unexpected error occurred.");
-      }
-    }
+    errorHandler(query.error, navigate, setErr, setError);
   }
 
   const order = query.data?.order;

@@ -3,12 +3,11 @@ import Transition from "../../components/transition";
 import { useQuery } from "@tanstack/react-query";
 import { fetchIndividualProduct } from "../../utils/queries/products/fetchindividualproduct";
 import { useContext, useEffect, useState } from "react";
-import errorHandler from "../../utils/errorHandler";
-import { ErrorResponse } from "../../utils/types";
 import Loader from "../../components/loader";
 import CommentList from "./comments";
 import { ErrorContext, ShowErrorContext } from "../../utils/errorContext";
 import { Helmet } from "react-helmet";
+import { errorHandler } from "../../utils/errorHandler";
 
 const ProductPage = () => {
   const { id } = useParams();
@@ -30,25 +29,7 @@ const ProductPage = () => {
   });
 
   if (query.isError) {
-    const data = query.error;
-    try {
-      const error = JSON.parse(data.message) as ErrorResponse;
-      const [show, url] = errorHandler(error.errorCode);
-      if (show) {
-        setErr(error.message);
-      } else {
-        if (url) {
-          if (url === "/500") {
-            setError(true);
-          }
-          navigate(url);
-        }
-      }
-    } catch (e) {
-      if (e instanceof Error) {
-        setErr("An unexpected error occurred.");
-      }
-    }
+    errorHandler(query.error, navigate, setErr, setError);
   }
 
   const calclulateOriginal = (price: number, discount: number) => {
@@ -117,14 +98,10 @@ const ProductPage = () => {
                     </h3>
                     <div className="flex justify-center items-center gap-20">
                       <span className="text-red-400">
-                        ${data.product.price.toFixed(2)}
+                        ${data.product.sellingPrice.toFixed(2)}
                       </span>
                       <span className="line-through">
-                        $
-                        {calclulateOriginal(
-                          data.product.price,
-                          data.product.discountPercentage,
-                        ).toFixed(2)}
+                        {data.product.buyingPrice.toFixed(2)}
                       </span>
                     </div>
                     <div className="md:w-10/12 mx-auto w-11/12">

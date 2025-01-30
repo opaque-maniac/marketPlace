@@ -28,21 +28,13 @@ export const login = async (
     });
 
     if (!staff) {
-      res.status(401).json({
-        message: "Invalid email or password",
-        errorCode: "I403",
-      });
-      return;
+      throw new Error("Invalid email or password");
     }
 
     const match = await bcrypt.compare(password, staff.password);
 
     if (!match) {
-      res.status(401).json({
-        message: "Invalid email or password",
-        errorCode: "I403",
-      });
-      return;
+      throw new Error("Invalid email or password");
     }
 
     const token = generateToken(staff.id, staff.email, "staff");
@@ -71,6 +63,14 @@ export const registerStaff = async (
 ): Promise<void> => {
   try {
     const { email, firstName, lastName, role, password } = req.body;
+
+    const staffExists = await prisma.customer.findUnique({
+      where: { email },
+    });
+
+    if (staffExists) {
+      throw new Error("User already exists");
+    }
 
     const salt = await bcrypt.genSalt(10);
     const hashedPassword = await bcrypt.hash(password, salt);

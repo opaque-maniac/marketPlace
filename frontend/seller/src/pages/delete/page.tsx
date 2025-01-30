@@ -3,10 +3,9 @@ import Transition from "../../components/transition";
 import { Helmet } from "react-helmet";
 import { MouseEventHandler, useContext, useEffect } from "react";
 import { useMutation } from "@tanstack/react-query";
-import { ErrorResponse } from "../../utils/types";
-import errorHandler from "../../utils/errorHandler";
 import { ErrorContext, ShowErrorContext } from "../../utils/errorContext";
 import { sendDeleteProduct } from "../../utils/mutations/products/deleteproduct";
+import { errorHandler } from "../../utils/errorHandler";
 
 const DeleteProductPage = () => {
   const { id } = useParams();
@@ -27,29 +26,7 @@ const DeleteProductPage = () => {
       navigate("/", { replace: true });
     },
     onError: (error) => {
-      try {
-        const errorObj = JSON.parse(error.message) as ErrorResponse;
-        const [show, url] = errorHandler(errorObj.errorCode);
-
-        if (show) {
-          setErr(errorObj.message);
-        } else {
-          if (url) {
-            if (url === "/500") {
-              setError(true);
-            }
-            navigate(url, { replace: true });
-          } else {
-            setError(true);
-            navigate("/500", { replace: true });
-          }
-        }
-      } catch (e) {
-        if (e instanceof Error) {
-          setErr("Something unexpected happened");
-        }
-        navigate("/", { replace: true });
-      }
+      errorHandler(error, navigate, setErr, setError);
     },
   });
 

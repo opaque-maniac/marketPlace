@@ -27,11 +27,7 @@ export const fetchUserCart = async (
     });
 
     if (!customer) {
-      res.status(404).json({
-        errorCode: "P400",
-        message: "User not found",
-      });
-      return;
+      throw new Error("Customer not found");
     }
 
     const cartItems = await prisma.cartItem.findMany({
@@ -82,7 +78,7 @@ export const emptyCart = async (
     });
 
     if (!cart) {
-      throw new Error("Cart not found");
+      throw new Error("Customer cart not found");
     }
 
     await prisma.cartItem.deleteMany({
@@ -191,6 +187,14 @@ export const deleteCartItem = async (
 ): Promise<void> => {
   try {
     const { id } = req.params;
+
+    const item = await prisma.cartItem.findUnique({
+      where: { id },
+    });
+
+    if (!item) {
+      throw new Error("Cart item not found");
+    }
 
     await prisma.cartItem.delete({
       where: { id },

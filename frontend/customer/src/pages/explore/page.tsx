@@ -1,7 +1,5 @@
 import { useQuery } from "@tanstack/react-query";
 import Transition from "../../components/transition";
-import { ErrorResponse } from "../../utils/types";
-import errorHandler from "../../utils/errorHandler";
 import { useNavigate } from "react-router-dom";
 import { useContext, useEffect } from "react";
 import { ErrorContext, ShowErrorContext } from "../../utils/errorContext";
@@ -11,12 +9,13 @@ import { Helmet } from "react-helmet";
 import { fetchProducts } from "../../utils/queries/products/fetchproducts";
 import ProductList from "../../components/products/productlist";
 import PageLoader from "../../components/pageloader";
+import { errorHandler } from "../../utils/errorHandler";
 
 const ExplorePage = () => {
   const [, setError] = useContext(ErrorContext);
+  const [, setErr] = useContext(ShowErrorContext);
 
   const navigate = useNavigate();
-  const [, setErr] = useContext(ShowErrorContext);
 
   const urlParams = new URLSearchParams(window.location.search);
 
@@ -44,25 +43,7 @@ const ExplorePage = () => {
   });
 
   if (query.isError) {
-    const data = query.error;
-    try {
-      const error = JSON.parse(data.message) as ErrorResponse;
-      const [show, url] = errorHandler(error.errorCode);
-      if (show) {
-        setErr(error.message);
-      } else {
-        if (url) {
-          if (url === "/500") {
-            setError(true);
-          }
-          navigate(url);
-        }
-      }
-    } catch (e) {
-      if (e instanceof Error) {
-        setErr("An unexpected error occurred.");
-      }
-    }
+    errorHandler(query.error, navigate, setErr, setError);
   }
 
   const handlePrev = (e: React.MouseEvent) => {

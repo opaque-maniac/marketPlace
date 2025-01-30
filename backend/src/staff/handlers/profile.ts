@@ -17,7 +17,11 @@ export const fetchProfile = async (
   next: NextFunction,
 ): Promise<void> => {
   try {
-    const { id } = req.params;
+    const id = req.user?.id;
+
+    if (!id) {
+      throw new Error("User not found");
+    }
 
     const profile = await prisma.staff.findUnique({
       where: {
@@ -29,11 +33,7 @@ export const fetchProfile = async (
     });
 
     if (!profile) {
-      res.status(404).json({
-        message: "Profile not found",
-        errorCode: "I401",
-      });
-      return;
+      throw new Error("Profile not found");
     }
 
     res.status(200).json({
@@ -56,8 +56,20 @@ export const updateProfile = async (
   next: NextFunction,
 ): Promise<void> => {
   try {
-    const { id } = req.params;
+    const { user } = req;
     const { email, firstName, lastName } = req.body;
+
+    if (!user) {
+      throw new Error("User not found");
+    }
+    const exists = await prisma.staff.findUnique({
+      where: { id: user.id },
+    });
+
+    if (!exists) {
+      throw new Error("Profile not found");
+    }
+
     let filename: string | undefined;
 
     if (Array.isArray(req.files)) {
@@ -72,7 +84,7 @@ export const updateProfile = async (
       async (txl) => {
         const updatedStaff = await txl.staff.update({
           where: {
-            id,
+            id: user.id,
           },
           data: {
             email,
@@ -84,14 +96,14 @@ export const updateProfile = async (
         if (filename) {
           await txl.staffImage.deleteMany({
             where: {
-              staffID: id,
+              staffID: user.id,
             },
           });
 
           await txl.staffImage.create({
             data: {
               url: `uploads/staff/${filename}`,
-              staffID: id,
+              staffID: user.id,
             },
           });
         }
@@ -124,11 +136,23 @@ export const deleteProfile = async (
   next: NextFunction,
 ): Promise<void> => {
   try {
-    const { id } = req.params;
+    const { user } = req;
+
+    if (!user) {
+      throw new Error("User not found");
+    }
+
+    const exists = await prisma.staff.findUnique({
+      where: { id: user.id },
+    });
+
+    if (!exists) {
+      throw new Error("Profile not found");
+    }
 
     const profile = await prisma.staff.delete({
       where: {
-        id,
+        id: user.id,
       },
     });
 

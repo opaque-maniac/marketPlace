@@ -1,12 +1,30 @@
-import { Link } from "react-router-dom";
+import { Link, useNavigate } from "react-router-dom";
 import Transition from "./transition";
-import { MouseEventHandler } from "react";
+import { MouseEventHandler, useMemo } from "react";
+import useUserStore from "../utils/store";
+import { removeAccessToken, removeRefreshToken } from "../utils/cookies";
 
 interface Props {
   callback: () => void;
 }
 
 const ProfileMenu = ({ callback }: Props) => {
+  const removeUser = useUserStore((state) => state.removeUser);
+  const navigate = useNavigate();
+
+  const logoutHandler = useMemo(
+    () => (e: React.MouseEvent<HTMLAnchorElement>) => {
+      e.preventDefault();
+      removeAccessToken();
+      removeRefreshToken();
+      removeUser();
+      navigate("/", { replace: true });
+      callback();
+    },
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+    [callback, navigate],
+  );
+
   const clickHandler: MouseEventHandler<HTMLAnchorElement> = () => {
     setTimeout(() => {
       callback();
@@ -51,7 +69,7 @@ const ProfileMenu = ({ callback }: Props) => {
             }}
           >
             <div>
-              <Link onClick={clickHandler} to={"/logout"}>
+              <Link onClick={(e) => logoutHandler(e)} to={"/logout"}>
                 <p>Log Out</p>
               </Link>
             </div>

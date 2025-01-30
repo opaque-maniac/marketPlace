@@ -47,10 +47,10 @@ export interface Product {
   id: string;
   name: string;
   description: string;
-  price: number;
+  buyingPrice: number;
+  sellingPrice: number;
   inventory: number;
   category: Categories;
-  discountPercentage: number;
   images: ProductImages[];
   createdAt: string;
   updatedAt: string | null;

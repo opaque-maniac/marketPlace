@@ -10,7 +10,7 @@ const OrderItem = ({ order }: Props) => {
   return (
     <Link
       to={`/orders/${order.id}`}
-      className="flex justify-evenly items-center gap-4 border border-black/25 pl-1 md:w-500 w-350 h-180"
+      className="flex justify-evenly items-center gap-4 border border-black/25 pl-1 md:w-500 w-350 h-[200px]"
     >
       <div>
         <img
@@ -19,9 +19,15 @@ const OrderItem = ({ order }: Props) => {
           className="h-32 w-32"
         />
       </div>
-      <div className="md:w-auto w-20">
+      <div className="md:w-auto w-6/12">
         <h2 className="font-semibold">{order.product.name}</h2>
-        <p>Price: ${order.product.price}</p>
+        <p>
+          Price:{" "}
+          {order.product.sellingPrice.toLocaleString("en-US", {
+            style: "currency",
+            currency: "USD",
+          })}
+        </p>
         <p>Quantity: {order.quantity}</p>
         <p>Status: {order.status}</p>
         <p>Date: {formatDate(order.createdAt)}</p>
