@@ -6,6 +6,7 @@ import { Link } from "react-router-dom";
 import Modal from "./modal";
 import Navigation from "./navigation";
 import ShowError from "./errorcomponet";
+import ShowMessage from "./messagecomponet";
 
 const Header = () => {
   const [isMenuOpen, setIsMenuOpen] = useState<boolean>(false);
@@ -45,6 +46,7 @@ const Header = () => {
         ) : null}
       </header>
       <ShowError />
+      <ShowMessage />
     </>
   );
 };

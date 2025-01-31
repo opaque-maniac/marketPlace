@@ -3,15 +3,15 @@ import Transition from "../../components/transition";
 import { Link, useNavigate } from "react-router-dom";
 import { useMutation } from "@tanstack/react-query";
 import { sendNewProduct } from "../../utils/mutations/products/newproduct";
-import { FormEventHandler, useContext, useState } from "react";
+import { FormEventHandler, useContext } from "react";
 import Loader from "../../components/loader";
-import { ErrorContext } from "../../utils/errorContext";
+import { ErrorContext, ShowErrorContext } from "../../utils/errorContext";
 import { errorHandler } from "../../utils/errorHandler";
 
 const NewProductPage = () => {
   const navigate = useNavigate();
   const [, setError] = useContext(ErrorContext);
-  const [, setErr] = useState<string | null>(null);
+  const [, setErr] = useContext(ShowErrorContext);
 
   const mutation = useMutation({
     mutationFn: sendNewProduct,

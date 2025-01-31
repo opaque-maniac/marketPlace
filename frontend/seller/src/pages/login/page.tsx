@@ -5,7 +5,7 @@ import { useMutation } from "@tanstack/react-query";
 import { sendLogin } from "../../utils/mutations/auth/login";
 import { FormEventHandler, useContext, useState } from "react";
 import Loader from "../../components/loader";
-import { ErrorContext } from "../../utils/errorContext";
+import { ErrorContext, ShowErrorContext } from "../../utils/errorContext";
 import { setAccessToken, setRefreshToken } from "../../utils/cookies";
 import userStore from "../../utils/store";
 import EyeClosed from "../../components/icons/hide";
@@ -15,8 +15,8 @@ import { errorHandler } from "../../utils/errorHandler";
 
 const LoginPage = () => {
   const navigate = useNavigate();
-  const [, setErr] = useState<string | null>(null);
   const [, setError] = useContext(ErrorContext);
+  const [, setErr] = useContext(ShowErrorContext);
   const [show, setShow] = useState<boolean>(false);
   const setUser = userStore((state) => state.setUser);
 

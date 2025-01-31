@@ -1,7 +1,7 @@
 import { Link } from "react-router-dom";
 import NavItem from "./navitem";
 import HomeIcon from "./icons/home";
-import LogoutIcon from "./icons/logout";
+import LogoutLink from "./logoutlink";
 
 type Data = {
   placeholder: string;
@@ -86,17 +86,7 @@ const AuthNavigaton = ({ callback }: Props) => {
         >
           <HomeIcon />
         </Link>
-        <Link
-          to={"/logout"}
-          onClick={() => {
-            setTimeout(() => {
-              callback();
-            }, 100);
-          }}
-          className="block h-10 w-10 border text-black/50 hover:text-black focus:text-black border-black/50 hover:border-black focus:border-black p-1 rounded-full"
-        >
-          <LogoutIcon />
-        </Link>
+        <LogoutLink callback={callback} />
       </div>
       <ul>
         {data.map((item) => (

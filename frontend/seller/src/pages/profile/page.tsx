@@ -1,12 +1,11 @@
-import { useContext, useEffect, useState } from "react";
+import { useContext, useEffect } from "react";
 import Transition from "../../components/transition";
 import useUserStore from "../../utils/store";
 import { useNavigate } from "react-router-dom";
-import { ErrorContext } from "../../utils/errorContext";
+import { ErrorContext, ShowErrorContext } from "../../utils/errorContext";
 import { useQuery } from "@tanstack/react-query";
 import { fetchProfile } from "../../utils/queries/profile";
 import Loader from "../../components/loader";
-import ShowError from "../../components/showErr";
 import { Helmet } from "react-helmet";
 import { errorHandler } from "../../utils/errorHandler";
 
@@ -14,7 +13,7 @@ const ProfilePage = () => {
   const user = useUserStore((state) => state.user);
   const navigate = useNavigate();
   const [, setError] = useContext(ErrorContext);
-  const [err, setErr] = useState<string | null>(null);
+  const [, setErr] = useContext(ShowErrorContext);
 
   useEffect(() => {
     if (!user) {
@@ -33,10 +32,6 @@ const ProfilePage = () => {
     errorHandler(query.error, navigate, setErr, setError);
   }
 
-  const callback = () => {
-    setErr(() => null);
-  };
-
   return (
     <Transition>
       <Helmet>
@@ -51,9 +46,6 @@ const ProfilePage = () => {
           {" "}
           Home / <span className="font-extrabold">Profile</span>
         </p>
-        <div className="h-12">
-          {err && <ShowError error={err} callback={callback} />}
-        </div>
         {query.isLoading && (
           <section
             className="flex justify-center items-center"

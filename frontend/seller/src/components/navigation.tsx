@@ -2,6 +2,7 @@ import { Link, useLocation, useNavigate } from "react-router-dom";
 import CloseIcon from "./icons/closeIcon";
 import SearchForm from "./searchform";
 import userStore from "../utils/store";
+import { useMemo } from "react";
 
 interface Props {
   callback: () => void;
@@ -12,16 +13,27 @@ const Navigation = ({ callback }: Props) => {
   const navigate = useNavigate();
   const path = useLocation().pathname;
 
-  const clickHanlder = (
-    e: React.MouseEvent<HTMLAnchorElement>,
-    path: string,
-  ) => {
-    e.preventDefault();
-    callback();
-    setTimeout(() => {
-      navigate(path);
-    }, 300);
-  };
+  const logoutHanlder = useMemo(
+    () => (e: React.MouseEvent<HTMLAnchorElement>) => {
+      e.preventDefault();
+      callback();
+      setTimeout(() => {
+        navigate("/");
+      }, 300);
+    },
+    [],
+  );
+
+  const clickHanlder = useMemo(
+    () => (e: React.MouseEvent<HTMLAnchorElement>, path: string) => {
+      e.preventDefault();
+      callback();
+      setTimeout(() => {
+        navigate(path);
+      }, 300);
+    },
+    [callback, navigate],
+  );
 
   return (
     <>
@@ -112,7 +124,7 @@ const Navigation = ({ callback }: Props) => {
                 <li>
                   <Link
                     onClick={(e) => {
-                      clickHanlder(e, "/logout");
+                      logoutHanlder(e);
                     }}
                     to={"/logout"}
                     className={path === "/logout" ? "underline" : ""}

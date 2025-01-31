@@ -1,6 +1,5 @@
 import { useQuery } from "@tanstack/react-query";
 import Transition from "../../components/transition";
-import { ErrorResponse } from "../../utils/types";
 import { Link, useNavigate, useParams } from "react-router-dom";
 import { useCallback, useContext, useEffect } from "react";
 import { ErrorContext, ShowErrorContext } from "../../utils/errorContext";

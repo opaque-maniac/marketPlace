@@ -4,7 +4,6 @@ import AuthLayout from "../login/layout";
 import { FormEventHandler, useContext, useState } from "react";
 import { useMutation } from "@tanstack/react-query";
 import { sendRegister } from "../../utils/mutations/auth/register";
-import { ErrorResponse } from "../../utils/types";
 import EyeClosed from "../../components/icons/hide";
 import EyeOpen from "../../components/icons/show";
 import Loader from "../../components/loader";

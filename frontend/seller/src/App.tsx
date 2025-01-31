@@ -5,9 +5,10 @@ import { lazy, Suspense, useState } from "react";
 import { ErrorContext, ShowErrorContext } from "./utils/errorContext";
 import Header from "./components/header";
 import Footer from "./components/footer";
-import CheckPermissions from "./utils/permissions";
 import PageLoader from "./components/pageloader";
 import ScrollToTop from "./utils/scrolltotop";
+import ProtectedRoute from "./components/routes/protectedroutes";
+import AuthRoute from "./components/routes/authroutes";
 
 const HomePage = lazy(() => import("./pages/home/page"));
 const LoginPage = lazy(() => import("./pages/login/page"));
@@ -18,7 +19,6 @@ const AboutPage = lazy(() => import("./pages/about/page"));
 const RegisterPage = lazy(() => import("./pages/register/page"));
 const ProductPage = lazy(() => import("./pages/product/page"));
 const NewProductPage = lazy(() => import("./pages/new/page"));
-const LogoutPage = lazy(() => import("./pages/logout/page"));
 const ProfilePage = lazy(() => import("./pages/profile/page"));
 const UpdateProfilePage = lazy(() => import("./pages/editprofile/page"));
 const DeleteProductPage = lazy(() => import("./pages/delete/page"));
@@ -50,50 +50,52 @@ const App = () => {
         <ErrorContext.Provider value={error}>
           <ShowErrorContext.Provider value={showError}>
             <QueryClientProvider client={queryClient}>
-              <CheckPermissions />
               <ScrollToTop />
               <Header />
               <div className="pt-14 mx-auto lg:max-w-1300 min-h-screen">
                 <Suspense fallback={<PageLoader />}>
                   <Routes>
-                    <Route path="/" element={<HomePage />} />
-                    <Route path="/products/:id" element={<ProductPage />} />
-                    <Route
-                      path="/products/:id/delete"
-                      element={<DeleteProductPage />}
-                    />
-                    <Route
-                      path="/products/:id/edit"
-                      element={<EditProductPage />}
-                    />
-                    <Route path="/new" element={<NewProductPage />} />
+                    <Route element={<ProtectedRoute />}>
+                      <Route path="/" element={<HomePage />} />
+                      <Route path="/products/:id" element={<ProductPage />} />
+                      <Route
+                        path="/products/:id/delete"
+                        element={<DeleteProductPage />}
+                      />
+                      <Route
+                        path="/products/:id/edit"
+                        element={<EditProductPage />}
+                      />
+                      <Route path="/new" element={<NewProductPage />} />
+                      <Route path="/profile" element={<ProfilePage />} />
+                      <Route
+                        path="/profile/update"
+                        element={<UpdateProfilePage />}
+                      />
+                      <Route
+                        path="/profile/delete"
+                        element={<DeleteProfilePage />}
+                      />
+                      <Route path="/orders" element={<OrdersPage />} />
+                      <Route
+                        path="/orders/:id"
+                        element={<IndividualOrderPage />}
+                      />
+                      <Route
+                        path="/refresh-token"
+                        element={<RefreshTokenPage />}
+                      />
+                    </Route>
+                    <Route element={<AuthRoute />}>
+                      <Route path="/login" element={<LoginPage />} />
+                      <Route path="/register" element={<RegisterPage />} />
+                    </Route>
                     <Route path="/contact" element={<ContactPage />} />
                     <Route path="/about" element={<AboutPage />} />
                     <Route path="/fees" element={<FeePage />} />
                     <Route path="/privacy" element={<PrivacyPage />} />
                     <Route path="/faq" element={<FAQPage />} />
                     <Route path="/terms" element={<TermsPage />} />
-                    <Route path="/profile" element={<ProfilePage />} />
-                    <Route
-                      path="/profile/update"
-                      element={<UpdateProfilePage />}
-                    />
-                    <Route
-                      path="/profile/delete"
-                      element={<DeleteProfilePage />}
-                    />
-                    <Route path="/orders" element={<OrdersPage />} />
-                    <Route
-                      path="/orders/:id"
-                      element={<IndividualOrderPage />}
-                    />
-                    <Route
-                      path="/refresh-token"
-                      element={<RefreshTokenPage />}
-                    />
-                    <Route path="/login" element={<LoginPage />} />
-                    <Route path="/register" element={<RegisterPage />} />
-                    <Route path="/logout" element={<LogoutPage />} />
                     <Route path="/500" element={<Error500 />} />
                     <Route path="*" element={<Error404 />} />
                   </Routes>

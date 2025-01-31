@@ -3,7 +3,6 @@ import Transition from "../../components/transition";
 import { fetchProducts } from "../../utils/queries/products/fetchproducts";
 import Loader from "../../components/loader";
 import ProductsList from "./productslist";
-import { ErrorResponse } from "../../utils/types";
 import { useNavigate } from "react-router-dom";
 import { useContext, useEffect } from "react";
 import { ErrorContext, ShowErrorContext } from "../../utils/errorContext";

@@ -5,9 +5,10 @@ import { lazy, Suspense, useState } from "react";
 import { ErrorContext, ShowErrorContext } from "./utils/errorContext";
 import Header from "./components/header";
 import Footer from "./components/footer";
-import CheckPermissions from "./utils/permissions";
 import PageLoader from "./components/pageloader";
 import ScrollToTop from "./utils/scrolltotop";
+import AuthRoute from "./components/routes/authroutes";
+import ProtectedRoute from "./components/routes/protectedroute";
 
 const HomePage = lazy(() => import("./pages/home/page"));
 const LoginPage = lazy(() => import("./pages/login/page"));
@@ -16,7 +17,6 @@ const Error500 = lazy(() => import("./pages/500/page"));
 const ContactPage = lazy(() => import("./pages/contact/page"));
 const AboutPage = lazy(() => import("./pages/about/page"));
 const RegisterPage = lazy(() => import("./pages/register/page"));
-const LogoutPage = lazy(() => import("./pages/logout/page"));
 const FeePage = lazy(() => import("./pages/fee/page"));
 const PrivacyPage = lazy(() => import("./pages/privacy/page"));
 const FAQPage = lazy(() => import("./pages/faq/page"));
@@ -45,7 +45,6 @@ const App = () => {
         <ErrorContext.Provider value={error}>
           <ShowErrorContext.Provider value={err}>
             <QueryClientProvider client={queryClient}>
-              <CheckPermissions />
               <ScrollToTop />
               <Header />
               <div className="pt-14 mx-auto lg:max-w-1300 min-h-screen">
@@ -58,23 +57,26 @@ const App = () => {
                     <Route path="/privacy" element={<PrivacyPage />} />
                     <Route path="/faq" element={<FAQPage />} />
                     <Route path="/terms" element={<TermsPage />} />
-                    <Route path="/login" element={<LoginPage />} />
-                    <Route path="/register" element={<RegisterPage />} />
-                    <Route path="/products" element={<ProductsPage />} />
-                    <Route
-                      path="/products/:id"
-                      element={<IndividualProductPage />}
-                    />
-                    <Route
-                      path="/products/:id/edit"
-                      element={<EditProductPage />}
-                    />
-                    <Route
-                      path="/products/:id/delete"
-                      element={<DeleteProductPage />}
-                    />
-                    <Route path="/customers" element={<CustomersPage />} />
-                    <Route path="/logout" element={<LogoutPage />} />
+                    <Route element={<AuthRoute />}>
+                      <Route path="/login" element={<LoginPage />} />
+                      <Route path="/register" element={<RegisterPage />} />
+                    </Route>
+                    <Route element={<ProtectedRoute />}>
+                      <Route path="/products" element={<ProductsPage />} />
+                      <Route
+                        path="/products/:id"
+                        element={<IndividualProductPage />}
+                      />
+                      <Route
+                        path="/products/:id/edit"
+                        element={<EditProductPage />}
+                      />
+                      <Route
+                        path="/products/:id/delete"
+                        element={<DeleteProductPage />}
+                      />
+                      <Route path="/customers" element={<CustomersPage />} />
+                    </Route>
                     <Route path="/500" element={<Error500 />} />
                     <Route path="*" element={<Error404 />} />
                   </Routes>
