@@ -10,7 +10,7 @@ const OrderItem = ({ order }: Props) => {
   return (
     <Link
       to={`/orders/${order.id}`}
-      className="flex justify-evenly items-center gap-4 border border-black/25 pl-1 md:w-500 w-350 h-[200px]"
+      className="order-item flex justify-evenly items-center gap-4 border border-black/25 pl-1 md:w-500 w-350 h-[200px]"
     >
       <div>
         <img

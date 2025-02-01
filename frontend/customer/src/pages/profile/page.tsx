@@ -13,6 +13,8 @@ import KeyIcon from "../../components/icons/key";
 import PhoneIcon from "../../components/icons/phone";
 import EmailIcon from "../../components/icons/email";
 import LocationPinIcon from "../../components/icons/pin";
+import SettingsButton from "../../components/settingsbutton";
+import GearIcon from "../../components/icons/gear";
 
 const ProfilePage = () => {
   const user = useUserStore((state) => state.user);
@@ -54,8 +56,8 @@ const ProfilePage = () => {
           Home / <span className="font-extrabold">Profile</span>
         </p>
         <div className="absolute top-4 right-4">
-          <Link to={"/settings"} className="block w-6 h-6">
-            <KeyIcon />
+          <Link to={"/settings"} className="block w-7 h-7">
+            <GearIcon />
           </Link>
         </div>
         {query.isLoading && (
@@ -73,63 +75,47 @@ const ProfilePage = () => {
         {query.isSuccess && query.data ? (
           <>
             {customer ? (
-              <section>
-                <div className="flex lg:flex-row flex-col justify-center items-center md:gap-14 gap-6">
-                  <div>
-                    <img
-                      src={
-                        customer.image
-                          ? `http://localhost:3000/uploads/seller/${customer.image.url}`
-                          : "/images/profile.svg"
-                      }
-                      alt={`${customer.firstName} ${customer.lastName}`}
-                      className="w-80 h-80"
-                    />
+              <section className="flex lg:flex-row flex-col justify-center items-center md:gap-14 gap-6">
+                <div>
+                  <img
+                    src={
+                      customer.image
+                        ? `http://localhost:3000/uploads/seller/${customer.image.url}`
+                        : "/images/profile.svg"
+                    }
+                    alt={`${customer.firstName} ${customer.lastName}`}
+                    className="w-80 h-80"
+                  />
+                </div>
+                <div>
+                  <div className="pb-4">
+                    <p className="text-xl font-semibold">{`${customer.firstName} ${customer.lastName}`}</p>
                   </div>
-                  <div>
-                    <div className="pb-4">
-                      <p className="text-xl font-semibold">{`${customer.firstName} ${customer.lastName}`}</p>
+                  <div className="flex flex-col gap-2">
+                    <div className="flex justify-start items-center gap-1">
+                      <div className="w-7 h-7 bg-black text-white rounded-full p-1">
+                        <EmailIcon />
+                      </div>
+                      <p>{customer.email}</p>
                     </div>
-                    <div className="flex flex-col gap-2">
-                      <div className="flex justify-start items-center gap-1">
-                        <div className="w-7 h-7 bg-black text-white rounded-full p-1">
-                          <EmailIcon />
-                        </div>
-                        <p>{customer.email}</p>
+                    <div className="flex justify-start items-center gap-1">
+                      <div className="w-7 h-7 bg-black text-white rounded-full p-1">
+                        <PhoneIcon />
                       </div>
-                      <div className="flex justify-start items-center gap-1">
-                        <div className="w-7 h-7 bg-black text-white rounded-full p-1">
-                          <PhoneIcon />
-                        </div>
-                        <p>
-                          Phone: <span>{customer.phone ?? "None"}</span>
-                        </p>
-                      </div>
-                      <div className="flex justify-start items-center gap-1">
-                        <div className="w-7 h-7 bg-black text-white rounded-full p-1">
-                          <LocationPinIcon />
-                        </div>
-                        <p>
-                          Address: <span>{customer.address ?? "None"}</span>
-                        </p>
-                      </div>
-                      <div className="py-4">
-                        <p>{formatDate(customer.createdAt)}</p>
-                      </div>
+                      <p>
+                        Phone: <span>{customer.phone ?? "None"}</span>
+                      </p>
                     </div>
-                    <div className="mx-auto flex md:justify-start justify-center items-center md:flex-row flex-col py-6 gap-6">
-                      <Link
-                        to={"/profile/update"}
-                        className="h-10 w-40 rounded-lg bg-green-400 text-center text-white flex justify-center items-center font-semibold"
-                      >
-                        <span>Update Profile</span>
-                      </Link>
-                      <Link
-                        to={"/profile/delete"}
-                        className="h-10 w-40 rounded-lg bg-red-400 text-center text-white flex justify-center items-center font-semibold"
-                      >
-                        <span>Delete Profile</span>
-                      </Link>
+                    <div className="flex justify-start items-center gap-1">
+                      <div className="w-7 h-7 bg-black text-white rounded-full p-1">
+                        <LocationPinIcon />
+                      </div>
+                      <p>
+                        Address: <span>{customer.address ?? "None"}</span>
+                      </p>
+                    </div>
+                    <div className="py-4">
+                      <p>{formatDate(customer.createdAt)}</p>
                     </div>
                   </div>
                 </div>

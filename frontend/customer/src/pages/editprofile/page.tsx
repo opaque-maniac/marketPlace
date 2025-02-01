@@ -1,4 +1,4 @@
-import { useContext, useEffect } from "react";
+import { lazy, Suspense, useContext, useEffect } from "react";
 import Transition from "../../components/transition";
 import useUserStore from "../../utils/store";
 import { Link, useNavigate } from "react-router-dom";
@@ -7,8 +7,19 @@ import { fetchProfile } from "../../utils/queries/profile";
 import { ErrorContext, ShowErrorContext } from "../../utils/errorContext";
 import { Helmet } from "react-helmet";
 import Loader from "../../components/loader";
-import ProfileForm from "./form";
 import { errorHandler } from "../../utils/errorHandler";
+
+const ProfileForm = lazy(() => import("./form"));
+
+const Fallback = () => {
+  return (
+    <div className="xl:h-[290px] xl:w-[758px] lg:w-[592px] md:h-[495px] md:w-[473px] h-[472px] w-[344px] flex justify-center items-center">
+      <div className="h-8 w-8">
+        <Loader color="#000" />
+      </div>
+    </div>
+  );
+};
 
 const UpdateProfilePage = () => {
   const user = useUserStore((state) => state.user);
@@ -49,10 +60,7 @@ const UpdateProfilePage = () => {
           {" "}
           Home / <span className="font-extrabold">Update Profile</span>
         </p>
-        <div className="pt-4">
-          <h2 className="text-center text-3xl md:pb-0 pb-4">Update Profile</h2>
-        </div>
-        <section>
+        <div>
           {query.isLoading && (
             <section
               className="flex justify-center items-center"
@@ -66,15 +74,21 @@ const UpdateProfilePage = () => {
             </section>
           )}
           {query.isSuccess && query.data ? (
-            <>{query.data.data && <ProfileForm profile={query.data.data} />}</>
+            <>
+              {query.data.data && (
+                <Suspense fallback={<Fallback />}>
+                  <ProfileForm profile={query.data.data} />{" "}
+                </Suspense>
+              )}
+            </>
           ) : null}
-        </section>
-        <div className="pt-4 w-full flex justify-center">
+        </div>
+        <div className="pt-8 w-full flex justify-center">
           <Link
-            className="mx-auto lg:no-underline underline lg:hover:underline"
-            to={`/profile`}
+            className="mx-auto xl:no-underline underline xl:hover:underline"
+            to={`/settings`}
           >
-            Go back to profile
+            Cancel
           </Link>
         </div>
       </main>

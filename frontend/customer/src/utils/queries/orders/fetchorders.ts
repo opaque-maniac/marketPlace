@@ -7,11 +7,11 @@ import { apiHost, apiProtocol } from "../../generics";
 
 export const fetchOrders: QueryFunction<
   SuccessOrdersResponse,
-  ["orders", number, number, string]
+  ["orders", number, number, string, string]
 > = async ({ queryKey }) => {
   try {
-    const [, page, limit, status] = queryKey;
-    const url = `${apiProtocol}://${apiHost}/customers/orders?page=${page}&limit=${limit}&status=${status}`;
+    const [, page, limit, status, query] = queryKey;
+    const url = `${apiProtocol}://${apiHost}/customers/orders?page=${page}&limit=${limit}&status=${status}&query=${query}`;
     const token = getAccessToken();
 
     if (!token) {

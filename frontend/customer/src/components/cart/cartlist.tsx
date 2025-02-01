@@ -1,5 +1,18 @@
+import { lazy, Suspense } from "react";
 import { CartItem } from "../../utils/types";
-import CartItemComponent from "./cartItem";
+import Loader from "../loader";
+
+const CartItemComponent = lazy(() => import("./cartItem"));
+
+const Fallback = () => {
+  return (
+    <div className="w-[250px] md:h-180 h-[346px] flex justify-center items-center">
+      <div className="h-8 w-8">
+        <Loader color="#000" />
+      </div>
+    </div>
+  );
+};
 
 interface Props {
   cartItems: CartItem[];
@@ -16,7 +29,9 @@ const CartList = ({ cartItems, color, refetch }: Props) => {
         >
           {cartItems.map((item) => (
             <li key={item.id}>
-              <CartItemComponent cartItem={item} refetch={refetch} />
+              <Suspense fallback={<Fallback />}>
+                <CartItemComponent cartItem={item} refetch={refetch} />
+              </Suspense>
             </li>
           ))}
         </ul>

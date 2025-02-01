@@ -1,7 +1,7 @@
 import { Helmet } from "react-helmet";
 import Transition from "../../components/transition";
 import { Link, useNavigate, useParams } from "react-router-dom";
-import { useEffect, useContext, useCallback } from "react";
+import { useEffect, useContext, useCallback, lazy, Suspense } from "react";
 import { ErrorContext, ShowErrorContext } from "../../utils/errorContext";
 import { useQuery } from "@tanstack/react-query";
 import { fetchIndividualOrder } from "../../utils/queries/orders/fetchindividualorder";
@@ -9,6 +9,25 @@ import { formatDate } from "../../utils/date";
 import PageLoader from "../../components/pageloader";
 import { apiHost, apiProtocol } from "../../utils/generics";
 import { errorHandler } from "../../utils/errorHandler";
+import Loader from "../../components/loader";
+
+const CancelOrderButtonComponent = lazy(
+  () => import("../../components/orders/cancelorderbutton"),
+);
+
+const Fallback = () => {
+  return (
+    <div>
+      <button
+        aria-label="Go back to order"
+        className="rounded flex justify-center items-center text-white bg-red-500 py-2"
+        disabled
+      >
+        <Loader color="#fff" />
+      </button>
+    </div>
+  );
+};
 
 const IndividualOrderPage = () => {
   const { id } = useParams();
@@ -45,8 +64,6 @@ const IndividualOrderPage = () => {
     // eslint-disable-next-line @typescript-eslint/no-floating-promises
     query.refetch();
   }, [query]);
-
-  console.log(order);
 
   return (
     <Transition>
@@ -142,14 +159,12 @@ const IndividualOrderPage = () => {
                           <span>Pay</span>
                         </Link>
                       </div>
-                      <div>
-                        <button
-                          aria-label="Cancel order"
-                          className="flex justify-center items-center w-40 h-10 text-white bg-red-500 rounded"
-                        >
-                          <span>Cancel</span>
-                        </button>
-                      </div>
+                      <Suspense fallback={<Fallback />}>
+                        <CancelOrderButtonComponent
+                          orderID={order.id}
+                          refetch={refetch}
+                        />
+                      </Suspense>
                     </section>
                   </section>
                 </div>

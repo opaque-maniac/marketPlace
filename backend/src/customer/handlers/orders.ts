@@ -21,6 +21,7 @@ export const fetchOrders = async (
     const { user } = req;
     const page = req.query.page ? parseInt(req.query.page as string) : 1;
     const limit = req.query.limit ? parseInt(req.query.limit as string) : 10;
+    const query = req.query.query ? (req.query.query as string) : "";
     const status = req.query.status
       ? (req.query.status as ORDER_STATUS)
       : undefined;
@@ -31,6 +32,14 @@ export const fetchOrders = async (
 
     const orders = await prisma.order.findMany({
       where: {
+        product: query
+          ? {
+              name: {
+                contains: query,
+                mode: "insensitive",
+              },
+            }
+          : undefined,
         customerID: user.id,
         status,
       },

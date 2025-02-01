@@ -52,31 +52,26 @@ const DeleteProfilePage = () => {
           Home / <span className="font-extrabold">Delete Profile</span>
         </p>
 
-        <section
-          className="md:flex justify-center items-center shadow-xl border rounded-lg lg:w-8/12 mx-auto w-10/12"
-          style={{
-            minHeight: "calc(100vh - 14rem)",
-          }}
-        >
+        <section className="xl:w-4/12 md:w-6/12 w-11/12 mx-auto shadow-md px-8 py-10 border rounded">
           <div>
             <h2 className="text-center text-2xl md:pb-0 pb-4 mb-6 md:pt-0 pt-4">
-              Are you sure you want to delete your profile
+              Are you sure you want to delete your profile?
             </h2>
-            <div className="flex md:justify-around justify-center items-center md:flex-row flex-col md:gap-0 gap-4">
+            <div className="flex md:justify-around justify-center items-center md:flex-row flex-col md:gap-0 gap-6">
+              <Link
+                to={"/settings"}
+                className={`flex justify-center items-center h-10 w-40 rounded-lg bg-green-500 text-white`}
+              >
+                <span>Cancel</span>
+              </Link>
               <button
                 disabled={disable}
                 onClick={confirmClick}
-                className={`flex justify-center items-center h-10 w-40 rounded-lg bg-red-400 md:mb-0 mb-8 p-1 ${cursor}`}
+                className={`flex justify-center items-center h-10 w-40 rounded-lg bg-red-500 p-1 text-white ${cursor}`}
                 aria-label="Delete Product"
               >
                 {isPending ? <Loader color="#fff" /> : <span>Delete</span>}
               </button>
-              <Link
-                to={"/profile"}
-                className={`flex justify-center items-center h-10 w-40 rounded-lg bg-green-400`}
-              >
-                <span>Cancel</span>
-              </Link>
             </div>
           </div>
         </section>

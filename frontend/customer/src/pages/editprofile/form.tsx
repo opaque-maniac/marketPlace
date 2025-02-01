@@ -46,9 +46,9 @@ const ProfileForm = ({ profile }: Props) => {
     <Transition>
       <form
         onSubmit={submitHandler}
-        className="shadow-lg md:w-8/12 w-11/12 mx-auto md:flex flex-col md:gap-2"
+        className="shadow-lg border pt-4 md:w-7/12 w-11/12 mx-auto md:flex flex-col md:gap-2"
       >
-        <div className="flex md:flex-row flex-col md:justify-around justify-center items-center gap-4">
+        <div className="flex xl:flex-row flex-col xl:justify-around justify-center items-center gap-4">
           <div>
             <label htmlFor="name" className="sr-only">
               First Name
@@ -102,7 +102,7 @@ const ProfileForm = ({ profile }: Props) => {
             />
           </div>
         </div>
-        <div className="flex md:flex-row flex-col md:justify-around justify-center items-center gap-4">
+        <div className="flex xl:flex-row flex-col xl:justify-around justify-center items-center gap-4 xl:pt-0 pt-2">
           <div>
             <label htmlFor="email" className="sr-only">
               Email
@@ -155,7 +155,7 @@ const ProfileForm = ({ profile }: Props) => {
             />
           </div>
         </div>
-        <div className="flex md:flex-row flex-col md:justify-around justify-center items-center gap-4">
+        <div className="flex xl:flex-row flex-col xl:justify-around justify-center items-center gap-4">
           <div className="mb-4">
             <label htmlFor="phone (optional)" className="sr-only">
               Phone
@@ -193,7 +193,7 @@ const ProfileForm = ({ profile }: Props) => {
             />
           </div>
         </div>
-        <div className="h-20 flex justify-center md:justify-end items-center md:pr-6">
+        <div className="h-20 flex justify-center xl:justify-end items-center md:pr-8">
           <button
             type="submit"
             className={`h-10 w-40 rounded-lg bg-red-400 flex justify-center items-center text-white font-semibold p-2 ${

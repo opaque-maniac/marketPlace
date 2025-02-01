@@ -1,15 +1,28 @@
 import { useQuery } from "@tanstack/react-query";
 import Transition from "../../components/transition";
 import { useNavigate } from "react-router-dom";
-import { useContext, useEffect, useState } from "react";
+import { lazy, Suspense, useContext, useEffect, useState } from "react";
 import { ErrorContext, ShowErrorContext } from "../../utils/errorContext";
 import ArrowLeft from "../../components/icons/arrowleft";
 import ArrowRight from "../../components/icons/arrowright";
 import { Helmet } from "react-helmet";
 import PageLoader from "../../components/pageloader";
 import { fetchOrders } from "../../utils/queries/orders/fetchorders";
-import OrderItem from "../../components/orders/orderitem";
 import { errorHandler } from "../../utils/errorHandler";
+import OrderSearchForm from "../../components/ordersearchform";
+import Loader from "../../components/loader";
+
+const OrderItem = lazy(() => import("../../components/orders/orderitem"));
+
+const Fallback = () => {
+  return (
+    <div className="md:h-[200px] w-350 flex justify-center items-center">
+      <div className="h-8 w-8">
+        <Loader color="#000" />
+      </div>
+    </div>
+  );
+};
 
 const OrdersPage = () => {
   const [status, setStatus] = useState<string>("");
@@ -17,19 +30,32 @@ const OrdersPage = () => {
 
   const navigate = useNavigate();
   const [, setErr] = useContext(ShowErrorContext);
-  const page = new URLSearchParams(window.location.search).get("page");
+  const urlParams = new URLSearchParams(window.location.search);
 
   useEffect(() => {
-    if (!page) {
-      navigate("?page=1", { replace: true });
+    const _page = urlParams.get("page");
+    const _query = urlParams.get("quer");
+    const replace = { replace: true };
+
+    if (!_page && !_query) {
+      navigate("?page=1&query=", replace);
+    } else if (!_page) {
+      navigate(`?page=1&query=${_query}`, replace);
+    } else if (!_query) {
+      if (!Number.isNaN(_page)) {
+        navigate("?page=1&query=", replace);
+      }
+      navigate(`?page=${_page}&query=`, replace);
     }
+
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []);
 
-  const _page = Number(page) || 1;
+  const page = Number(urlParams.get("page")) || 1;
+  const queryStr = String(urlParams.get("query")) || "";
 
   const query = useQuery({
-    queryKey: ["orders", _page, 20, status],
+    queryKey: ["orders", page, 20, status, queryStr],
     queryFn: fetchOrders,
   });
 
@@ -39,8 +65,8 @@ const OrdersPage = () => {
 
   const handlePrev = (e: React.MouseEvent) => {
     e.preventDefault();
-    if (_page > 1) {
-      const newPage = _page - 1;
+    if (page > 1) {
+      const newPage = page - 1;
       navigate(`?page=${newPage}`);
       window.scrollTo(0, 0);
     }
@@ -49,7 +75,7 @@ const OrdersPage = () => {
   const handleNext = (e: React.MouseEvent) => {
     e.preventDefault();
     if (query.data?.hasNext) {
-      const newPage = _page + 1;
+      const newPage = page + 1;
       navigate(`?page=${newPage}`);
       window.scrollTo(0, 0);
     }
@@ -67,12 +93,12 @@ const OrdersPage = () => {
         <meta name="google" content="nositelinkssearchbox" />
       </Helmet>
       <main role="main">
-        <div className="py-2 flex md:flex-row flex-col justify-evenly items-center md:gap-0 gap-4">
-          <div>
-            <h2 className="text-xl md:text-start text-center font-semibold">
-              Orders
-            </h2>
-          </div>
+        <div>
+          <h2 className="text-xl md:text-start text-center font-semibold">
+            Orders
+          </h2>
+        </div>
+        <div className="py-2 flex md:flex-row flex-col md:justify-between justify-center items-center md:gap-0 gap-4">
           <div>
             <select
               aria-label="Filter orders by status"
@@ -90,6 +116,9 @@ const OrdersPage = () => {
               <option value="CANCELLED">CANCELLED</option>
             </select>
           </div>
+          <div>
+            <OrderSearchForm />
+          </div>
         </div>
         <section
           className="px-2 py-2"
@@ -104,7 +133,9 @@ const OrdersPage = () => {
                   <ul className="flex h-full flex-wrap md:flex-row flex-col gap-10 md:pl-10 lg:p-0 justify-evenly items-center">
                     {data.orders.map((order) => (
                       <li key={order.id}>
-                        <OrderItem order={order} />
+                        <Suspense fallback={<Fallback />}>
+                          <OrderItem order={order} />
+                        </Suspense>
                       </li>
                     ))}
                   </ul>
@@ -125,7 +156,7 @@ const OrdersPage = () => {
         <section className="flex justify-center items-center gap-6 py-4">
           <div>
             <button
-              disabled={!data || _page == 1}
+              disabled={!data || page == 1}
               className="w-8 h-8 p-1 rounded-full border border-black"
               onClick={handlePrev}
             >

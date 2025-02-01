@@ -38,6 +38,7 @@ const OrdersPage = lazy(() => import("./pages/orders/page"));
 const IndividualOrderPage = lazy(() => import("./pages/order/page"));
 const SellerProfilePage = lazy(() => import("./pages/seller/page"));
 const SellerPRoductsPage = lazy(() => import("./pages/sellerproducts/page"));
+const SettingsPage = lazy(() => import("./pages/settings/page"));
 
 const queryClient = new QueryClient({
   defaultOptions: {
@@ -114,6 +115,7 @@ const App = () => {
                           path="/refresh-token"
                           element={<RefreshTokenPage />}
                         />
+                        <Route path="/settings" element={<SettingsPage />} />
                       </Route>
                       <Route element={<AuthRoute />}>
                         <Route path="/login" element={<LoginPage />} />
