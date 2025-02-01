@@ -25,15 +25,24 @@ export const fetchProducts = async (
     const { user } = req;
     const page = req.query.page ? parseInt(req.query.page as string) : 1;
     const limit = req.query.limit ? parseInt(req.query.limit as string) : 10;
+    const query = req.query.query ? (req.query.query as string) : "";
 
     if (!user) {
       throw new Error("User not found");
     }
 
     const products = await prisma.product.findMany({
-      where: {
-        sellerID: user.id,
-      },
+      where: query
+        ? {
+            name: {
+              contains: query,
+              mode: "insensitive",
+            },
+            sellerID: user.id,
+          }
+        : {
+            sellerID: user.id,
+          },
       include: {
         images: true,
       },
@@ -220,7 +229,7 @@ export const updateIndividualProduct = async (
           },
         });
 
-        if (filenames) {
+        if (filenames && filenames.length > 0) {
           await txl.productImage.deleteMany({
             where: {
               productID: id,

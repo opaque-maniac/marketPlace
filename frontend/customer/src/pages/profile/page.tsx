@@ -10,6 +10,9 @@ import { Helmet } from "react-helmet";
 import { errorHandler } from "../../utils/errorHandler";
 import { formatDate } from "../../utils/date";
 import KeyIcon from "../../components/icons/key";
+import PhoneIcon from "../../components/icons/phone";
+import EmailIcon from "../../components/icons/email";
+import LocationPinIcon from "../../components/icons/pin";
 
 const ProfilePage = () => {
   const user = useUserStore((state) => state.user);
@@ -84,23 +87,35 @@ const ProfilePage = () => {
                     />
                   </div>
                   <div>
-                    <div className="pb-2">
-                      <p className="text-xl">{`${customer.firstName} ${customer.lastName}`}</p>
+                    <div className="pb-4">
+                      <p className="text-xl font-semibold">{`${customer.firstName} ${customer.lastName}`}</p>
                     </div>
-                    <div className="flex flex-col gap-1">
-                      <div>
+                    <div className="flex flex-col gap-2">
+                      <div className="flex justify-start items-center gap-1">
+                        <div className="w-7 h-7 bg-black text-white rounded-full p-1">
+                          <EmailIcon />
+                        </div>
                         <p>{customer.email}</p>
                       </div>
-                      <p>
-                        Phone:{" "}
-                        <span>{customer.phone ?? "No phone number"}</span>
-                      </p>
-                      <p>
-                        Address: <span>{customer.address ?? "No address"}</span>
-                      </p>
-                      <p>
-                        Joined: <span>{formatDate(customer.createdAt)}</span>
-                      </p>
+                      <div className="flex justify-start items-center gap-1">
+                        <div className="w-7 h-7 bg-black text-white rounded-full p-1">
+                          <PhoneIcon />
+                        </div>
+                        <p>
+                          Phone: <span>{customer.phone ?? "None"}</span>
+                        </p>
+                      </div>
+                      <div className="flex justify-start items-center gap-1">
+                        <div className="w-7 h-7 bg-black text-white rounded-full p-1">
+                          <LocationPinIcon />
+                        </div>
+                        <p>
+                          Address: <span>{customer.address ?? "None"}</span>
+                        </p>
+                      </div>
+                      <div className="py-4">
+                        <p>{formatDate(customer.createdAt)}</p>
+                      </div>
                     </div>
                     <div className="mx-auto flex md:justify-start justify-center items-center md:flex-row flex-col py-6 gap-6">
                       <Link

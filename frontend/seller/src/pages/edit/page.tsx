@@ -41,7 +41,9 @@ const EditProductPage = () => {
         <meta name="google" content="nositelinkssearchbox" />
       </Helmet>
       <main role="main">
-        <h2>Edit the product</h2>
+        <div>
+          <h3>Edit Product</h3>
+        </div>
         <div>
           {query.isLoading && (
             <section
@@ -58,13 +60,15 @@ const EditProductPage = () => {
           {query.isSuccess && (
             <>
               {query.data && query.data.product && (
-                <ProductForm product={query.data.product} />
+                <div className="md:pt-10">
+                  <ProductForm product={query.data.product} />
+                </div>
               )}
             </>
           )}
         </div>
-        <div className="flex justify-center items-center">
-          <Link className="underline" to={`/products/${id}`}>
+        <div className="flex justify-center items-center pt-6">
+          <Link className="underline font-semibold" to={`/products/${id}`}>
             Cancel
           </Link>
         </div>

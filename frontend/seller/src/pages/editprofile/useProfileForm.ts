@@ -7,6 +7,7 @@ const useProfileForm = (profile: Seller) => {
     email: string;
     address: string;
     phone: string;
+    bio: string;
   }
 
   enum ActionType {
@@ -14,6 +15,7 @@ const useProfileForm = (profile: Seller) => {
     CHANGE_EMAIL = "CHANGE_EMAIL",
     CHANGE_ADDRESS = "CHANGE_ADDRESS",
     CHANGE_PHONE = "CHANGE_PHONE",
+    CHANGE_BIO = "CHANGE_BIO",
   }
 
   interface Action {
@@ -26,6 +28,7 @@ const useProfileForm = (profile: Seller) => {
     email: profile.email,
     address: profile.address ?? "",
     phone: profile.phone ?? "",
+    bio: profile.bio ?? "",
   };
 
   const reducer = (state: State, action: Action): State => {
@@ -38,6 +41,8 @@ const useProfileForm = (profile: Seller) => {
         return { ...state, address: action.payload };
       case ActionType.CHANGE_PHONE:
         return { ...state, phone: action.payload };
+      case ActionType.CHANGE_BIO:
+        return { ...state, bio: action.payload };
       default:
         return state;
     }

@@ -1,12 +1,8 @@
 import { FormEventHandler } from "react";
-import SearchIcon from "./icons/searchIcon";
 import { useNavigate } from "react-router-dom";
+import SearchIcon from "../../components/icons/searchIcon";
 
-interface Props {
-  callback: () => void;
-}
-
-const SearchForm = ({ callback }: Props) => {
+const OrderSearchForm = () => {
   const navigate = useNavigate();
 
   const submitHandler: FormEventHandler<HTMLFormElement> = (e) => {
@@ -14,16 +10,12 @@ const SearchForm = ({ callback }: Props) => {
     const formDate = new FormData(e.currentTarget);
     const query = formDate.get("query") as string;
     const encoded = encodeURIComponent(query);
-    setTimeout(() => {
-      window.scrollTo(0, 0);
-      navigate(`?page=1&query=${encoded}`);
-    }, 100);
-    callback();
+    navigate(`?page=1&query=${encoded}`);
   };
 
   return (
     <form
-      className="flex justify-start items-center h-12 border w-full rounded-r"
+      className="flex justify-start items-center h-10 border rounded-r w-[250px]"
       onSubmit={submitHandler}
     >
       <div className="w-11/12 pl-2 h-full border-r">
@@ -35,11 +27,14 @@ const SearchForm = ({ callback }: Props) => {
           name="query"
           id="query"
           placeholder="Query"
-          className="bg-transparent block h-11 focus:border-none focus:outline-none w-full"
+          className="bg-transparent block h-9 focus:border-none focus:outline-none w-full"
         />
       </div>
       <div className="px-1">
-        <button aria-label="Send Search Query" className="block h-6 w-6">
+        <button
+          aria-label="Send Search Query"
+          className="block h-10 w-full p-1"
+        >
           <SearchIcon />
         </button>
       </div>
@@ -47,4 +42,4 @@ const SearchForm = ({ callback }: Props) => {
   );
 };
 
-export default SearchForm;
+export default OrderSearchForm;

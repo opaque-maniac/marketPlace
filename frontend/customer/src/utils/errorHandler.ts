@@ -2,6 +2,7 @@ import { Dispatch, SetStateAction } from "react";
 import { NavigateFunction } from "react-router-dom";
 import { ErrorResponse } from "./types";
 import { removeAccessToken, removeRefreshToken, removeUserID } from "./cookies";
+import { logoutFunction } from "./logout";
 
 const logout: string[] = ["A001", "PR02", "A003"];
 const logoutAndMessage = ["A002", "A006"];
@@ -30,20 +31,13 @@ export function errorHandler(
   setErr: Dispatch<SetStateAction<string | null>>,
   setError: Dispatch<SetStateAction<boolean>>,
 ) {
-  const logoutFunc = () => {
-    removeAccessToken();
-    removeRefreshToken();
-    removeUserID();
-    navigate("/", { replace: true });
-  };
-
   if (error instanceof Error) {
     try {
       const { errorCode, message } = JSON.parse(error.message) as ErrorResponse;
 
       switch (true) {
         case logout.includes(errorCode):
-          logoutFunc();
+          logoutFunction(navigate);
           break;
         case logoutAndMessage.includes(errorCode):
           setErr(message);

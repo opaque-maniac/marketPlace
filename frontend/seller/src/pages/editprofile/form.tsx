@@ -6,7 +6,6 @@ import Loader from "../../components/loader";
 import { useMutation } from "@tanstack/react-query";
 import { sendUpdateProfile } from "../../utils/mutations/profile/updateprofile";
 import { useNavigate } from "react-router-dom";
-import useUserStore from "../../utils/store";
 import { ErrorContext, ShowErrorContext } from "../../utils/errorContext";
 import { errorHandler } from "../../utils/errorHandler";
 
@@ -17,7 +16,6 @@ interface Props {
 const ProfileForm = ({ profile }: Props) => {
   const { state, dispatch, ActionType } = useProfileForm(profile);
   const navigate = useNavigate();
-  const user = useUserStore((state) => state.user);
   const [, setErr] = useContext(ShowErrorContext);
   const [, setError] = useContext(ErrorContext);
 
@@ -38,17 +36,18 @@ const ProfileForm = ({ profile }: Props) => {
   const submitHandler: FormEventHandler<HTMLFormElement> = (e) => {
     e.preventDefault();
     const formData = new FormData(e.currentTarget);
-    mutate({ data: formData, id: user as string });
+    mutate({ data: formData });
   };
 
   return (
     <Transition>
       <form
         onSubmit={submitHandler}
-        className="shadow-lg md:w-8/12 w-11/12 mx-auto md:mb-0 mb-8"
+        id="PRDF"
+        className="border shadow-lg md:w-8/12 w-11/12 mx-auto py-4 px-2 flex xl:flex-row flex-col xl:justify-around justify-center xl:gap-0 gap-2"
       >
-        <div className="md:flex block justify-center items-center md:gap-14">
-          <div className="mb-4">
+        <div className="md:w-auto w-10/12 xl:mx-0 mx-auto flex flex-col gap-2">
+          <div>
             <label htmlFor="name" className="sr-only">
               Name
             </label>
@@ -100,59 +99,81 @@ const ProfileForm = ({ profile }: Props) => {
               placeholder="Email"
             />
           </div>
-        </div>
-        <div className="md:flex block justify-center items-center md:gap-14">
           <div>
-            <div className="mb-2">
-              <label htmlFor="address (optional)" className="sr-only">
-                Address
-              </label>
-              <input
-                type="text"
-                name="address"
-                id="address"
-                value={state.address}
-                onChange={(e) =>
-                  dispatch({
-                    type: ActionType.CHANGE_ADDRESS,
-                    payload: e.target.value,
-                  })
-                }
-                onBlur={(e) =>
-                  dispatch({
-                    type: ActionType.CHANGE_ADDRESS,
-                    payload: e.target.value,
-                  })
-                }
-                className="block w-72 h-12 px-2 text-lg auth-input md:mx-0 mx-auto focus:auth-input focus:outline-none bg-white"
-                placeholder="Address (optional)"
-              />
-            </div>
-            <div className="mb-4">
-              <label htmlFor="phone (optional)" className="sr-only">
-                Phone
-              </label>
-              <input
-                type="tel"
-                name="phone"
-                id="phone"
-                value={state.phone}
-                onChange={(e) =>
-                  dispatch({
-                    type: ActionType.CHANGE_PHONE,
-                    payload: e.target.value,
-                  })
-                }
-                onBlur={(e) =>
-                  dispatch({
-                    type: ActionType.CHANGE_PHONE,
-                    payload: e.target.value,
-                  })
-                }
-                className="block w-72 h-12 px-2 text-lg auth-input md:mx-0 mx-auto focus:auth-input focus:outline-none bg-white"
-                placeholder="Phone (optional)"
-              />
-            </div>
+            <label htmlFor="address (optional)" className="sr-only">
+              Address
+            </label>
+            <input
+              type="text"
+              name="address"
+              id="address"
+              value={state.address}
+              onChange={(e) =>
+                dispatch({
+                  type: ActionType.CHANGE_ADDRESS,
+                  payload: e.target.value,
+                })
+              }
+              onBlur={(e) =>
+                dispatch({
+                  type: ActionType.CHANGE_ADDRESS,
+                  payload: e.target.value,
+                })
+              }
+              className="block w-72 h-12 px-2 text-lg auth-input md:mx-0 mx-auto focus:auth-input focus:outline-none bg-white"
+              placeholder="Address (optional)"
+            />
+          </div>
+          <div className="mb-4">
+            <label htmlFor="phone (optional)" className="sr-only">
+              Phone
+            </label>
+            <input
+              type="tel"
+              name="phone"
+              id="phone"
+              value={state.phone}
+              onChange={(e) =>
+                dispatch({
+                  type: ActionType.CHANGE_PHONE,
+                  payload: e.target.value,
+                })
+              }
+              onBlur={(e) =>
+                dispatch({
+                  type: ActionType.CHANGE_PHONE,
+                  payload: e.target.value,
+                })
+              }
+              className="block w-72 h-12 px-2 text-lg auth-input md:mx-0 mx-auto focus:auth-input focus:outline-none bg-white"
+              placeholder="Phone (optional)"
+            />
+          </div>
+        </div>
+        <div className="md:w-auto w-10/12 xl:mx-0 mx-auto flex flex-col gap-2">
+          <div className="mt-4">
+            <label htmlFor="phone (optional)" className="sr-only">
+              Bio
+            </label>
+            <textarea
+              name="bio"
+              id="bio"
+              value={state.bio}
+              onChange={(e) =>
+                dispatch({
+                  type: ActionType.CHANGE_BIO,
+                  payload: e.target.value,
+                })
+              }
+              onBlur={(e) =>
+                dispatch({
+                  type: ActionType.CHANGE_BIO,
+                  payload: e.target.value,
+                })
+              }
+              className="block w-72 h-32 px-2 text-lg auth-input md:mx-0 mx-auto focus:auth-input focus:outline-none bg-white"
+              placeholder="Bio (optional)"
+            ></textarea>
           </div>
           <div>
             <label htmlFor="image" className="md:mx-0 mx-auto w-72 block">
@@ -165,15 +186,15 @@ const ProfileForm = ({ profile }: Props) => {
               className="md:mx-0 mx-auto w-72 block"
             />
           </div>
-        </div>
-        <div className="h-20 flex justify-center md:justify-end items-center md:pr-6">
-          <button
-            type="submit"
-            className="h-10 w-40 rounded-lg bg-red-400 text-center"
-            aria-label="Submit Profile"
-          >
-            {isPending ? <Loader color="#000000" /> : "Submit"}
-          </button>
+          <div className="h-20 flex justify-center md:justify-end items-center w-full">
+            <button
+              type="submit"
+              className="h-10 w-40 rounded-lg bg-red-400 text-white flex justify-center items-center py-2"
+              aria-label="Submit Profile"
+            >
+              {isPending ? <Loader color="#fff" /> : <span>Submit</span>}
+            </button>
+          </div>
         </div>
       </form>
     </Transition>

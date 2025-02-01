@@ -10,7 +10,7 @@ const ShowError = () => {
     <>
       {error && (
         <Transition>
-          <div className="w-56 h-12 flex justify-start items-center gap-2 bg-red-400 rounded-lg fixed top-16 right-4">
+          <div className="w-56 min-h-12 p-2 flex justify-start items-center gap-2 bg-red-400 rounded-lg fixed top-16 right-4">
             <p
               aria-live="assertive"
               role="alert"

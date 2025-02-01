@@ -6,11 +6,10 @@ import { apiHost, apiProtocol } from "../generics";
 
 export const fetchProfile: QueryFunction<
   SuccessSellerResponse,
-  ["profile", string]
+  ["profile"]
 > = async ({ queryKey }) => {
   try {
-    const [, id] = queryKey;
-    const url = `${apiProtocol}://${apiHost}/seller/profile/${id}`;
+    const url = `${apiProtocol}://${apiHost}/seller/profile`;
 
     const token = getAccessToken();
 

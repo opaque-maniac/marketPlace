@@ -6,7 +6,7 @@ const PageLoader = () => {
 
   return (
     <Transition time={1}>
-      <main className="flex justify-center items-center min-h-screen">
+      <main className="flex justify-center items-center h-screen w-full">
         <div className="w-10 h-10">
           <Loader color={color} />
         </div>

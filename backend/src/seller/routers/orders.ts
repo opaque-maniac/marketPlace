@@ -7,7 +7,6 @@ import {
 import {
   fetchIndividualOrder,
   fetchOrders,
-  searchOrder,
   updateOrder,
 } from "../handlers/orders";
 
@@ -34,6 +33,5 @@ router.put(
     ]),
   updateOrder,
 );
-router.post("/search", searchOrder);
 
 export default router;

@@ -1,31 +1,36 @@
-import { useContext, useEffect } from "react";
+import { Suspense, useContext } from "react";
 import Transition from "../../components/transition";
-import useUserStore from "../../utils/store";
-import { useNavigate } from "react-router-dom";
+import { Link, useNavigate } from "react-router-dom";
 import { ErrorContext, ShowErrorContext } from "../../utils/errorContext";
 import { useQuery } from "@tanstack/react-query";
 import { fetchProfile } from "../../utils/queries/profile";
 import Loader from "../../components/loader";
 import { Helmet } from "react-helmet";
 import { errorHandler } from "../../utils/errorHandler";
+import { formatDate } from "../../utils/date";
+import EmailIcon from "../../components/icons/email";
+import PhoneIcon from "../../components/icons/phone";
+import LocationPinIcon from "../../components/icons/pin";
+import ProfileBio from "./bio";
+
+const Fallback = () => {
+  return (
+    <div className="flex justify-center items-center min-h-[250px] w-full">
+      <div className="w-8 h-8">
+        <Loader color="#000" />
+      </div>
+    </div>
+  );
+};
 
 const ProfilePage = () => {
-  const user = useUserStore((state) => state.user);
   const navigate = useNavigate();
   const [, setError] = useContext(ErrorContext);
   const [, setErr] = useContext(ShowErrorContext);
 
-  useEffect(() => {
-    if (!user) {
-      setError(() => true);
-      navigate("/500", { replace: true });
-    }
-    // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, []);
-
   const query = useQuery({
     queryFn: fetchProfile,
-    queryKey: ["profile", user as string],
+    queryKey: ["profile"],
   });
 
   if (query.isError) {
@@ -47,13 +52,8 @@ const ProfilePage = () => {
           Home / <span className="font-extrabold">Profile</span>
         </p>
         {query.isLoading && (
-          <section
-            className="flex justify-center items-center"
-            style={{
-              minHeight: "calc(100vh - 13.8rem)",
-            }}
-          >
-            <div className="h-20 w-20">
+          <section className="flex justify-center items-center h-screen">
+            <div className="h-10 w-10">
               <Loader color="#000000" />
             </div>
           </section>
@@ -61,8 +61,8 @@ const ProfilePage = () => {
         {query.isSuccess && query.data ? (
           <>
             {query.data.seller ? (
-              <section>
-                <div className="md:w-10/12 w-11/12 mx-auto rounded-lg shadow-xl border flex justify-around items-center md:flex-row flex-col mb-10 md:gap-0 gap-4 py-2">
+              <>
+                <section className="flex md:flex-row flex-col justify-center items-center md:gap-20 gap-6 pb-4">
                   <div>
                     <img
                       src={
@@ -75,45 +75,82 @@ const ProfilePage = () => {
                     />
                   </div>
                   <div>
-                    <p>{query.data.seller.name}</p>
-                    <p>{query.data.seller.email}</p>
-                    <p>
-                      Phone: <span>{query.data.seller.phone}</span>
-                    </p>
-                    <p>
-                      Address: <span>{query.data.seller.address}</span>
-                    </p>
-                    <p>
-                      Joined: <span>{query.data.seller.createdAt}</span>
-                    </p>
-                    <p>
-                      Last updated: <span>{query.data.seller.updatedAt}</span>
-                    </p>
+                    <div className="pb-4">
+                      <h3 className="text-xl font-semibold">
+                        {query.data.seller.name}
+                      </h3>
+                    </div>
+                    <ul className="flex flex-col gap-2">
+                      <li>
+                        <div className="flex justify-start items-center gap-1">
+                          <div className="w-7 h-7 text-white bg-black rounded-full p-1">
+                            <EmailIcon />
+                          </div>
+                          <p>{query.data.seller.email}</p>
+                        </div>
+                      </li>
+                      <li>
+                        <div className="flex justify-start items-center gap-1">
+                          <div className="w-7 h-7 text-white bg-black rounded-full p-1">
+                            <PhoneIcon />
+                          </div>
+                          <p>
+                            Phone:{" "}
+                            <span>{query.data.seller.phone ?? "None"}</span>
+                          </p>
+                        </div>
+                      </li>
+                      <li>
+                        <div className="flex justify-start items-center gap-1">
+                          <div className="w-7 h-7 text-white bg-black rounded-full p-1">
+                            <LocationPinIcon />
+                          </div>
+                          <p>
+                            Address: <span>{query.data.seller.address}</span>
+                          </p>
+                        </div>
+                      </li>
+                    </ul>
+                    <p>{formatDate(query.data.seller.createdAt)}</p>
+
+                    {/* Links */}
+                    <div className="flex xl:flex-row flex-col xl:justify-start justify-center items-center xl:gap-10 gap-4 pt-4">
+                      <Link
+                        to={"/profile/update"}
+                        className="flex justify-center items-center h-10 w-40 rounded-lg bg-green-500 text-white"
+                      >
+                        <span>Update Profile</span>
+                      </Link>
+                      <Link
+                        to={"/profile/delete"}
+                        className="flex justify-center items-center h-10 w-40 rounded-lg bg-red-500 text-white"
+                      >
+                        <span>Delete Profile</span>
+                      </Link>
+                    </div>
                   </div>
-                </div>
-                <div className="md:w-10/12 w-11/12 mb-8 mx-auto rounded-lg shadow-xl border flex justify-around items-center md:flex-row flex-col py-4 md:gap-0 gap-4">
-                  <button
-                    onClick={(e) => {
-                      e.preventDefault();
-                      navigate("/profile/update");
-                    }}
-                    aria-label="Update Profile"
-                    className="h-10 w-40 rounded-lg bg-green-400 text-center"
-                  >
-                    Update Profile
-                  </button>
-                  <button
-                    onClick={(e) => {
-                      e.preventDefault();
-                      navigate("/profile/delete");
-                    }}
-                    aria-label="Delete Profile"
-                    className="h-10 w-40 rounded-lg bg-red-400 text-center"
-                  >
-                    Delete Profile
-                  </button>
-                </div>
-              </section>
+                </section>
+                <section className="w-full border-t border-black-50 ">
+                  <div className="pb-2">
+                    <h3 className="text-center text-xl font-bold underline">
+                      Bio
+                    </h3>
+                  </div>
+                  <div>
+                    {query.data.seller.bio ? (
+                      <Suspense fallback={<Fallback />}>
+                        <ProfileBio bio={query.data.seller.bio} />
+                      </Suspense>
+                    ) : (
+                      <div className="h-[250px] w-full flex justify-center items-center">
+                        <p className="text-center text-lg font-semibold">
+                          No bio available
+                        </p>
+                      </div>
+                    )}
+                  </div>
+                </section>
+              </>
             ) : null}
           </>
         ) : null}

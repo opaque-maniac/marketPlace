@@ -8,6 +8,11 @@ import { fetchOrder } from "../../utils/queries/orders/fetchindividualorder";
 import PageLoader from "../../components/pageloader";
 import DeliveredButton from "./deliveredb";
 import { errorHandler } from "../../utils/errorHandler";
+import { formatDate } from "../../utils/date";
+import EmailIcon from "../../components/icons/email";
+import PhoneIcon from "../../components/icons/phone";
+import LocationPinIcon from "../../components/icons/pin";
+import StatusForm from "./statusform";
 
 const IndividualOrderPage = () => {
   const [, setError] = useContext(ErrorContext);
@@ -22,18 +27,6 @@ const IndividualOrderPage = () => {
     }
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []);
-
-  const formatDate = (isoString: string) => {
-    const date = new Date(isoString);
-
-    const options: Intl.DateTimeFormatOptions = {
-      year: "numeric",
-      month: "long",
-      day: "numeric",
-    };
-
-    return new Intl.DateTimeFormat("en-US", options).format(date);
-  };
 
   const query = useQuery({
     queryKey: ["order", id as string],
@@ -72,72 +65,81 @@ const IndividualOrderPage = () => {
           <>
             {order && (
               <>
-                <div className="flex md:flex-row flex-col md:justify-evenly justify-center md:gap-0 gap-4">
+                <div className="flex xl:flex-row flex-col xl:justify-evenly justify-center md:items-start items-center md:gap-0 gap-4 w-full">
                   <div>
                     <img
                       src={`http://localhost:3020/${order.product.images[0].url}`}
                       alt={order.product.name}
-                      loading="lazy"
-                      style={{ height: "400px", width: "300px" }}
-                      className="md:mx-0 mx-auto"
+                      className="h-[400px] w-[350px]"
                     />
                   </div>
-                  <div className="md:mx-0 mx-auto">
-                    <h3 className="text-2xl font-semibold">
-                      {order.product.name}
-                    </h3>
-                    <div
-                      style={{ height: "200px" }}
-                      className="flex justify-start gap-6 items-center w-80"
-                    >
-                      <div className="h-full flex flex-col justify-between font-semibold">
-                        <p>CUSTOMER</p>
-                        <p>QUANTITY</p>
-                        <p>TOTAL</p>
-                        <p>DATE</p>
-                        <p>READY</p>
-                        <p>DELIVERED</p>
+                  <div className="md:pl-0 pl-4">
+                    <Link target="_blank" to={`/products/${order.productID}`}>
+                      <h3 className="text-2xl font-bold xl:no-underline hover:underline underline">
+                        {order.product.name}
+                      </h3>
+                    </Link>
+                    <div className="flex justify-start items-center gap-10 mt-2">
+                      <div>
+                        <p className="font-semibold">{order.status}</p>
                       </div>
-                      <div className="h-full flex flex-col justify-center gap-2">
+                      <div>
                         <p>
-                          :{"  "}
-                          {`${order.order.customer.firstName} ${order.order.customer.lastName}`}
-                        </p>
-                        <p>
-                          :{"  "}
-                          {order.quantity}
-                        </p>
-                        <p>
-                          :{"  "}$
-                          {(order.quantity * order.product.price).toFixed(2)}
-                        </p>
-                        <p>
-                          :{"  "}
-                          {formatDate(order.dateCreated)}
-                        </p>
-                        <p>
-                          :{"  "}
-                          {order.ready ? "Yes" : "No"}
-                        </p>
-                        <p>
-                          :{"  "}
-                          {order.delivered ? "Yes" : "No"}
+                          {order.totalAmount.toLocaleString("en-US", {
+                            style: "currency",
+                            currency: "USD",
+                            maximumFractionDigits: 2,
+                          })}
                         </p>
                       </div>
                     </div>
-                    <div className="py-4 flex justify-center items-center">
-                      <Link
-                        className="text-blue-400 underline"
-                        to={`/products/${order.product.id}`}
-                      >
-                        View Product
-                      </Link>
+                    <div>
+                      <p>{formatDate(order.createdAt)}</p>
                     </div>
-                    <div className="flex justify-center items-center pb-4">
-                      <DeliveredButton
-                        ready={order.ready}
-                        delivered={order.delivered}
-                        id={order.id}
+
+                    {/* */}
+                    <h3 className="text-lg font-bold mt-4">Customer</h3>
+                    <div>
+                      <p>
+                        {order.customer.firstName} {order.customer.lastName}
+                      </p>
+
+                      <div className="flex justify-start items-center gap-2 pt-2">
+                        <div className="h-7 w-7 text-white bg-black rounded-full p-1">
+                          <EmailIcon />
+                        </div>
+                        <p>{order.customer.email}</p>
+                      </div>
+                      <div className="flex justify-start items-center gap-2 pt-2">
+                        <div className="h-7 w-7 text-white bg-black rounded-full p-1">
+                          <PhoneIcon />
+                        </div>
+                        <p>{order.customer.phone ?? "Not provided"}</p>
+                      </div>
+                      <div className="flex justify-start items-center gap-2 pt-2">
+                        <div className="h-7 w-7 text-white bg-black rounded-full p-1">
+                          <LocationPinIcon />
+                        </div>
+                        <p>{order.customer.address ?? "Not provided"}</p>
+                      </div>
+                    </div>
+
+                    {/* Disclaimer */}
+                    <div className="pt-4">
+                      <p className="text-sm font-semibold underline">
+                        All payments should be made on delivery as per the{" "}
+                        <Link to={"/terms"}>terms & conditions</Link>
+                      </p>
+                    </div>
+
+                    {/* Status form */}
+                    <div className="mt-4 md:pb-0 pb-20">
+                      <div className="pb-2">
+                        <h3 className="text-lg font-semibold">Update Status</h3>
+                      </div>
+                      <StatusForm
+                        orderID={order.id}
+                        initialStatus={order.status}
                         refetch={refetch}
                       />
                     </div>

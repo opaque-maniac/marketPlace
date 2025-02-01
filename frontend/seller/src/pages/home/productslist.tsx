@@ -22,23 +22,13 @@ const ProductsList = ({ products }: Props): JSX.Element => {
   return (
     <section>
       {products.length === 0 ? (
-        <div
-          style={{
-            minHeight: "calc(100vh - 10.8rem)",
-          }}
-          className="flex justify-center items-center"
-        >
+        <div className="flex justify-center items-center h-screen">
           <div>
-            <h2 className="text-2xl text-wrap text-center">{`You haven't posted any products yet!`}</h2>
+            <h2 className="text-2xl text-wrap text-center">{`No products have been found!`}</h2>
           </div>
         </div>
       ) : (
-        <ul
-          style={{
-            minHeight: "calc(100vh - 5.4rem)",
-          }}
-          className="flex md:justify-evenly justify-center items-center gap-6 flex-wrap"
-        >
+        <ul className="grid lg:grid-cols-3 md:grid-cols-2 grid-cols-1 gap-6">
           {products.map((product) => (
             <li key={product.id}>
               <Suspense fallback={<ProductFallback />}>

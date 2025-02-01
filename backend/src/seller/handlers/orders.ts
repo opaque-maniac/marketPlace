@@ -7,11 +7,7 @@
 
 import { Response, NextFunction } from "express";
 import prisma from "../../utils/db";
-import {
-  AuthenticatedRequest,
-  OrderSearchRequest,
-  SellerUpdateOrderRequest,
-} from "../../types";
+import { AuthenticatedRequest, SellerUpdateOrderRequest } from "../../types";
 import { ORDER_STATUS } from "@prisma/client";
 import { serverError } from "../../utils/globals";
 
@@ -24,6 +20,7 @@ export const fetchOrders = async (
   try {
     const page = req.query.page ? parseInt(req.query.page as string) : 1;
     const limit = req.query.limit ? parseInt(req.query.limit as string) : 10;
+    const query = req.query.query ? (req.query.query as string) : "";
     const status = req.query.status
       ? (req.query.status as ORDER_STATUS)
       : undefined;
@@ -36,7 +33,13 @@ export const fetchOrders = async (
 
     const orderItems = await prisma.order.findMany({
       where: {
-        status,
+        product: {
+          name: {
+            contains: query,
+            mode: "insensitive",
+          },
+        },
+        status: status ? ORDER_STATUS[status] : "PENDING",
         sellerID: user.id,
       },
       include: {
@@ -94,6 +97,7 @@ export const fetchIndividualOrder = async (
             images: true,
           },
         },
+        customer: true,
       },
     });
 
@@ -190,60 +194,11 @@ export const updateOrder = async (
       });
     }
 
+    // send client email
+
     res.status(200).json({
       message: "Order marked as delivered",
       order,
-    });
-  } catch (e) {
-    if (e instanceof Error) {
-      next(e);
-      return;
-    }
-    next(serverError);
-  }
-};
-
-// Function to search for order
-export const searchOrder = async (
-  req: OrderSearchRequest,
-  res: Response,
-  next: NextFunction,
-): Promise<void> => {
-  try {
-    const query = req.query.query as string;
-    const page = req.query.page ? parseInt(req.query.page as string) : 1;
-    const limit = req.query.limit ? parseInt(req.query.limit as string) : 10;
-
-    const products = await prisma.order.findMany({
-      where: {
-        product: {
-          name: {
-            contains: query,
-            mode: "insensitive",
-          },
-        },
-      },
-      include: {
-        product: {
-          include: {
-            images: true,
-          },
-        },
-      },
-      take: limit + 1,
-      skip: (page - 1) * limit,
-    });
-
-    const hasNext = products.length > limit;
-
-    if (hasNext) {
-      products.pop();
-    }
-
-    res.status(200).json({
-      message: "Orders fetched successfully",
-      hasNext,
-      orders: products,
     });
   } catch (e) {
     if (e instanceof Error) {

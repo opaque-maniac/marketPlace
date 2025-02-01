@@ -1,20 +1,36 @@
-import { useNavigate, useParams } from "react-router-dom";
+import { Link, useNavigate, useParams } from "react-router-dom";
 import Transition from "../../components/transition";
 import { useQuery } from "@tanstack/react-query";
 import { fetchIndividualProduct } from "../../utils/queries/products/fetchindividualproduct";
-import { useContext, useEffect, useState } from "react";
+import { lazy, Suspense, useContext, useEffect } from "react";
 import Loader from "../../components/loader";
-import CommentList from "./comments";
 import { ErrorContext, ShowErrorContext } from "../../utils/errorContext";
 import { Helmet } from "react-helmet";
 import { errorHandler } from "../../utils/errorHandler";
+import { calculateDiscount } from "../../utils/discount";
+import ProductDescription from "./description";
+import { formatDate } from "../../utils/date";
+import TickIcon from "../../components/icons/tick";
+import CloseIcon from "../../components/icons/closeIcon";
+import ProductImagesComponent from "./images";
+
+const CommentList = lazy(() => import("./comments"));
+
+const CommentFallback = () => {
+  return (
+    <div className="h-72 w-full flex justify-center items-center">
+      <div className="w-10 h-10 mx-auto">
+        <Loader color="#000000" />
+      </div>
+    </div>
+  );
+};
 
 const ProductPage = () => {
   const { id } = useParams();
   const navigate = useNavigate();
   const [, setErr] = useContext(ShowErrorContext);
   const [, setError] = useContext(ErrorContext);
-  const [show, setShow] = useState<boolean>(false);
 
   useEffect(() => {
     if (!id) {
@@ -32,10 +48,6 @@ const ProductPage = () => {
     errorHandler(query.error, navigate, setErr, setError);
   }
 
-  const calclulateOriginal = (price: number, discount: number) => {
-    return price - (price * discount) / 100;
-  };
-
   const { data } = query;
 
   return (
@@ -49,11 +61,8 @@ const ProductPage = () => {
       </Helmet>
       <main role="main">
         {query.isLoading && (
-          <div
-            style={{ width: "screen", height: "calc(100vh - 10.8rem)" }}
-            className="flex justify-center items-center"
-          >
-            <div className="h-20 w-20">
+          <div className="flex justify-center items-center w-screen h-screen">
+            <div className="h-10 w-10">
               <Loader color="#000000" />
             </div>
           </div>
@@ -62,110 +71,108 @@ const ProductPage = () => {
           <>
             {data && data.product ? (
               <>
-                <div>
-                  <section className="flex justify-center items-center md:flex-row flex-col md:gap-6">
-                    <div className="md:mb-0 mb-6">
-                      <img
-                        src={`http://localhost:3020/${data.product.images[0].url}`}
-                        alt={data.product.name}
-                        className="md:w-600 w-80 md:h-600 h-300 mx-auto"
-                      />
+                <div className="flex lg:justify-around justify-center lg:items-start items-center lg:flex-row flex-col gap-8">
+                  <ProductImagesComponent
+                    images={data.product.images}
+                    name={data.product.name}
+                  />
+                  <section className="xl:w-6/12 md:w-9/12 w-11/12 mx-auto pt-4">
+                    <div className="flex justify-start items-center gap-10 p-1">
+                      <h3 className="font-semibold text-xl">
+                        {data.product.name}
+                      </h3>
+                      <div
+                        aria-label={`${calculateDiscount(data.product.buyingPrice, data.product.sellingPrice)} percent discount`}
+                        className="w-10 h-10 bg-red-500 text-white rounded-tr-md rounded-bl-md flex justify-center items-center"
+                      >
+                        <span className="font-semibold">
+                          {calculateDiscount(
+                            data.product.buyingPrice,
+                            data.product.sellingPrice,
+                          )}
+                          %
+                        </span>
+                      </div>
                     </div>
-                    <div>
-                      {data.product.images.length > 1 ? (
-                        <ul className="flex justify-center items-center md:flex-col flex-row gap-4 flex-wrap">
-                          {data.product.images.map((image, index) => {
-                            if (index === 0) {
-                              return null;
-                            }
-                            return (
-                              <li key={image.id}>
-                                <img
-                                  src={`http://localhost:3020/${image.url}`}
-                                  alt={data.product.name}
-                                  className="w-32 h-32"
-                                />
-                              </li>
-                            );
-                          })}
-                        </ul>
-                      ) : null}
-                    </div>
-                  </section>
-                  <section className="md:w-8/12 w-11/12 mx-auto border shadow-xl rounded-lg mt-8 p-2">
-                    <h3 className="font-semibold text-center text-xl py-4">
-                      {data.product.name}
-                    </h3>
-                    <div className="flex justify-center items-center gap-20">
+                    <div className="flex justify-start items-center gap-10">
                       <span className="text-red-400">
-                        ${data.product.sellingPrice.toFixed(2)}
+                        {data.product.sellingPrice.toLocaleString("en-US", {
+                          style: "currency",
+                          currency: "USD",
+                          maximumFractionDigits: 2,
+                        })}
                       </span>
                       <span className="line-through">
-                        {data.product.buyingPrice.toFixed(2)}
+                        {data.product.buyingPrice.toLocaleString("en-US", {
+                          style: "currency",
+                          currency: "USD",
+                          maximumFractionDigits: 2,
+                        })}
                       </span>
                     </div>
-                    <div className="md:w-10/12 mx-auto w-11/12">
-                      <p>
-                        {show
-                          ? data.product.description
-                          : `${data.product.description.slice(0, 100)}...`}
-                      </p>
-                      <a
-                        href="clkdcslcnsls"
-                        role="button"
-                        aria-label={show ? "Show Less" : "Show More"}
-                        className="underline"
-                        onClick={(e) => {
-                          e.preventDefault();
-                          setShow(() => !show);
-                        }}
-                      >
-                        {show ? "Show Less" : "Show More"}
-                      </a>
+                    <div className="pt-2">
+                      <div className="mb-1 flex justify-start items-center gap-10">
+                        <p>
+                          Stock: <span>{data.product.inventory}</span>
+                        </p>
+                        <div className="flex justify-start items-center gap-2">
+                          <div
+                            className={`h-5 w-5 text-green-500 border ${
+                              data.product.inventory <= 0
+                                ? "border-red-500"
+                                : "border-green-500"
+                            } rounded-full`}
+                          >
+                            {data.product.inventory <= 0 ? (
+                              <CloseIcon />
+                            ) : (
+                              <TickIcon />
+                            )}
+                          </div>
+                          <p
+                            className={
+                              data.product.inventory <= 0
+                                ? "text-red-500"
+                                : "text-green-500"
+                            }
+                          >
+                            {data.product.inventory <= 0
+                              ? "Out of stock"
+                              : "In stock"}
+                          </p>
+                        </div>
+                      </div>
+                      <p>{formatDate(data.product.createdAt)}</p>
                     </div>
-                    <div className="flex justify-center items-center flex-col">
-                      <p>
-                        Created: <span>{data.product.createdAt}</span>
-                      </p>
-                      <p>
-                        Stock: <span>{data.product.inventory}</span>
-                      </p>
+                    <div className="pt-4">
+                      <ProductDescription
+                        description={data.product.description}
+                      />
+                    </div>
+                    <div className="flex md:justify-start justify-center items-center md:flex-row flex-col md:gap-10 gap-6 pt-4">
+                      <Link
+                        to={`/products/${data.product.id}/edit`}
+                        className="flex justify-center items-center bg-green-400 w-40 h-10 rounded-lg text-white"
+                      >
+                        <span>Update</span>
+                      </Link>
+                      <Link
+                        to={`/products/${data.product.id}/delete`}
+                        className="flex justify-center items-center bg-red-400 w-40 h-10 rounded-lg text-white"
+                      >
+                        <span>Delete</span>
+                      </Link>
                     </div>
                   </section>
                 </div>
-                <section className="md:w-8/12 w-11/12 mx-auto border shadow-xl rounded-lg mt-8 p-2 flex justify-center items-center md:flex-row flex-col md:gap-14 gap-8">
-                  <div>
-                    <button
-                      className="bg-green-400 w-40 h-10 rounded-lg text-center"
-                      onClick={(e) => {
-                        e.preventDefault();
-                        navigate(`/products/${data.product.id}/edit`);
-                      }}
-                      aria-label="Update Product"
-                    >
-                      Update
-                    </button>
-                  </div>
-                  <div>
-                    <button
-                      className="bg-red-400 w-40 h-10 rounded-lg text-center"
-                      onClick={(e) => {
-                        e.preventDefault();
-                        navigate(`/products/${data.product.id}/delete`);
-                      }}
-                      aria-label="Delete Product"
-                    >
-                      Delete
-                    </button>
-                  </div>
-                </section>
+
                 <section className="my-8">
                   {data.product ? (
-                    <div>
+                    <Suspense fallback={<CommentFallback />}>
                       <Transition>
                         <CommentList id={data.product.id} />
                       </Transition>
-                    </div>
+                    </Suspense>
                   ) : null}
                 </section>
               </>

@@ -6,7 +6,6 @@ import { Link } from "react-router-dom";
 import Modal from "./modal";
 import Navigation from "./navigation";
 import ShowError from "./errorcomponet";
-import ShowMessage from "./messagecomponet";
 
 const Header = () => {
   const [isMenuOpen, setIsMenuOpen] = useState<boolean>(false);
@@ -22,10 +21,10 @@ const Header = () => {
   };
 
   return (
-    <>
+    <div className="fixed top-0 left-0 right-0 bg-white border-b border-black/50 z-10">
       <header
         role="banner"
-        className="flex justify-between items-center px-10 border-b border-black/50 h-14 fixed top-0 left-0 right-0 bg-white shadow-md z-10"
+        className="flex justify-between items-center h-14 mx-auto max-w-1300 xl:px-0 px-2"
       >
         <div className="h-10 w-10">
           <Link to={user ? "/" : "/login"}>
@@ -34,7 +33,7 @@ const Header = () => {
         </div>
         <button
           onClick={handleMenuToggle}
-          className="h-8 w-8 border border-black rounded flex items-center justify-center"
+          className="h-[30px] w-[30px] border border-black rounded flex items-center justify-center"
           aria-label="Open menu"
         >
           <MenuIcon />
@@ -46,8 +45,7 @@ const Header = () => {
         ) : null}
       </header>
       <ShowError />
-      <ShowMessage />
-    </>
+    </div>
   );
 };
 

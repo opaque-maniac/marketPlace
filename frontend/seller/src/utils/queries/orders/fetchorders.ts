@@ -10,8 +10,8 @@ export const fetchOrders: QueryFunction<
   ["orders", number, number, string, string]
 > = async ({ queryKey }) => {
   try {
-    const [, page, limit, ready, delivered] = queryKey;
-    const url = `${apiProtocol}://${apiHost}/seller/orders?page=${page}&limit=${limit}&ready=${ready}&delivered=${delivered}`;
+    const [, page, limit, status, query] = queryKey;
+    const url = `${apiProtocol}://${apiHost}/seller/orders?page=${page}&limit=${limit}&status=${status}&query=${query}`;
     const token = getAccessToken();
 
     if (!token) {

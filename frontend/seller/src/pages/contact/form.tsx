@@ -92,15 +92,18 @@ const ContactForm = () => {
             className="block w-full h-40 bg-gray-200 focus:outline-none pl-1 focus:border-b border-black"
           ></textarea>
         </div>
-        <div className="flex md:justify-end justify-center items-center h-24 md:pr-2">
+        <div className="flex md:justify-end justify-center items-center min-h-20 md:pr-2">
           <button
             aria-label="Send Message"
             disabled={mutation.isIdle ? false : true}
-            className="flex justify-center items-center bg-red-400 rounded-lg"
+            className="flex justify-center items-center bg-red-400 rounded-lg h-10 w-40 py-1 font-semibold text-white"
             type="submit"
-            style={{ width: "215px", height: "56px" }}
           >
-            {mutation.isPending ? <Loader color="#ffffff" /> : "Send Message"}
+            {mutation.isPending ? (
+              <Loader color="#ffffff" />
+            ) : (
+              <span>Send Message</span>
+            )}
           </button>
         </div>
       </form>

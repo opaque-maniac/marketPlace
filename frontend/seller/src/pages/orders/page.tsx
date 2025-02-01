@@ -10,26 +10,38 @@ import { Helmet } from "react-helmet";
 import OrdersList from "./orderlist";
 import { fetchOrders } from "../../utils/queries/orders/fetchorders";
 import { errorHandler } from "../../utils/errorHandler";
+import OrderSearchForm from "./searcform";
 
 const OrdersPage = () => {
   const [, setError] = useContext(ErrorContext);
   const [, setErr] = useContext(ShowErrorContext);
   const navigate = useNavigate();
-  const [ready, setReady] = useState<string>("all");
-  const [delivered, setDelivered] = useState<string>("all");
   const urlParams = new URLSearchParams(window.location.search);
 
+  const [status, setStatus] = useState<string>("PEDNING");
+
   useEffect(() => {
-    if (!urlParams.get("page")) {
-      navigate(`?page=1`, { replace: true });
+    const _page = urlParams.get("page");
+    const _query = urlParams.get("query");
+
+    if (!_page && !_query) {
+      navigate(`?page=1&query=`, { replace: true });
+    } else if (!_page) {
+      navigate(`?page=1&query=${_query}`);
+    } else if (!_query) {
+      if (!Number.isNaN(_page)) {
+        navigate(`?page=1&query=`, { replace: true });
+      }
+      navigate(`?page=${_page}&query=`, { replace: true });
     }
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []);
 
   const page = Number(urlParams.get("page")) || 1;
+  const queryStr = String(urlParams.get("query")) || "";
 
   const query = useQuery({
-    queryKey: ["orders", page, 10, ready, delivered],
+    queryKey: ["orders", page, 10, status, queryStr],
     queryFn: fetchOrders,
   });
 
@@ -41,7 +53,7 @@ const OrdersPage = () => {
     e.preventDefault();
     if (page > 1) {
       const newPage = page - 1;
-      navigate(`?page=${newPage}`);
+      navigate(`?page=${newPage}&query=${queryStr}`);
       window.scrollTo(0, 0);
     }
   };
@@ -50,7 +62,7 @@ const OrdersPage = () => {
     e.preventDefault();
     if (query.data?.hasNext) {
       const newPage = page + 1;
-      navigate(`?page=${newPage}`);
+      navigate(`?page=${newPage}&query=${queryStr}`);
       window.scrollTo(0, 0);
     }
   };
@@ -66,57 +78,52 @@ const OrdersPage = () => {
       </Helmet>
       <main role="main">
         <section className="h-full pt-4">
-          <div className="flex md:flex-row flex-col md:justify-evenly items-center md:gap-0 gap-4">
+          <div className="flex md:justify-between justify-center md:flex-row flex-col items-center md:gap-0 gap-4 xl:pr-0 pr-4 pb-4">
+            <form>
+              <div>
+                <label htmlFor="delivered" className="sr-only">
+                  Delivered
+                </label>
+                <select
+                  name="delivered"
+                  id="delivered"
+                  value={status}
+                  onChange={(e) => setStatus(e.target.value)}
+                  className="border border-black rounded p-2 block w-40"
+                  onBlur={(e) => setStatus(e.target.value)}
+                >
+                  <option value={"PENDING"}>PENDING</option>
+                  <option value={"PROCESSING"}>PROCESSING</option>
+                  <option value={"SHIPPED"}>SHIPPED</option>
+                  <option value={"READY"}>READY</option>
+                  <option value={"DELIVERED"}>DELIVERED</option>
+                  <option value={"CANCELLED"}>DELIVERED</option>
+                </select>
+              </div>
+            </form>
             <div>
-              <label className="block" htmlFor="ready">
-                Ready
-              </label>
-              <select
-                name="ready"
-                id="ready"
-                aria-label="Filter for whether order is ready or not"
-                value={ready}
-                onChange={(e) => setReady(e.target.value)}
-                className="border border-black rounded-md p-2"
-                onBlur={(e) => setReady(e.target.value)}
-              >
-                <option value="all">All</option>
-                <option value="true">Ready</option>
-                <option value="false">Not Ready</option>
-              </select>
-            </div>
-            <div>
-              <label htmlFor="delivered" className="block">
-                Delivered
-              </label>
-              <select
-                name="delivered"
-                id="delivered"
-                aria-label="Filter for whether order is delivered or not"
-                value={delivered}
-                onChange={(e) => setDelivered(e.target.value)}
-                className="border border-black rounded-md p-2"
-                onBlur={(e) => setDelivered(e.target.value)}
-              >
-                <option value="all">All</option>
-                <option value="true">Ready</option>
-                <option value="false">Not Ready</option>
-              </select>
+              <OrderSearchForm />
             </div>
           </div>
           {query.isLoading ? (
             <div
               className="flex justify-center items-center"
               style={{
-                minHeight: "calc(100vh - 10.8rem)",
+                minHeight: "calc(100vh - 9rem)",
               }}
             >
-              <div className="h-20 w-20">
+              <div className="h-10 w-10">
                 <Loader color="#000000" />
               </div>
             </div>
           ) : (
-            <OrdersList orders={query.data?.orders || []} />
+            <div
+              style={{
+                minHeight: "calc(100vh - 9rem)",
+              }}
+            >
+              <OrdersList orders={query.data?.orders || []} />
+            </div>
           )}
         </section>
         <section className="flex justify-center items-center gap-6 py-4">

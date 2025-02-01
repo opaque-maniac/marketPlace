@@ -4,7 +4,13 @@ import { responseError, tokenError } from "../../errors";
 import { SuccessOrderResponse } from "../../types";
 import { apiHost, apiProtocol } from "../../generics";
 
-export const updateOrder = async ({ id }: { id: string }) => {
+export const updateOrder = async ({
+  id,
+  status,
+}: {
+  id: string;
+  status: string;
+}) => {
   try {
     const url = `${apiProtocol}://${apiHost}/seller/orders/${id}`;
     const token = getAccessToken();
@@ -18,6 +24,7 @@ export const updateOrder = async ({ id }: { id: string }) => {
       headers: {
         Authorization: `Bearer ${token}`,
       },
+      body: JSON.stringify({ status }),
     };
 
     const response = await fetch(url, options);

@@ -1,9 +1,22 @@
-import { Link } from "react-router-dom";
+import { lazy, Suspense } from "react";
 import Transition from "../../components/transition";
-import { OrderItem } from "../../utils/types";
+import { Order } from "../../utils/types";
+import Loader from "../../components/loader";
+
+const OrderItem = lazy(() => import("../../components/order"));
+
+const Fallback = () => {
+  return (
+    <div className="w-[350px] h-[200px] flex justify-center items-center">
+      <div className="h-8 w-8">
+        <Loader color="#000" />
+      </div>
+    </div>
+  );
+};
 
 interface Props {
-  orders: OrderItem[];
+  orders: Order[];
 }
 
 const OrdersList = ({ orders }: Props) => {
@@ -15,32 +28,15 @@ const OrdersList = ({ orders }: Props) => {
         }}
       >
         {orders.length > 0 ? (
-          <div className="flex flex-col gap-4 md:pl-2 pl-1">
+          <ul className="grid xl:grid-cols-2 grid-cols-1">
             {orders.map((order) => (
-              <Link to={`/orders/${order.id}`} key={order.id}>
-                <div key={order.id} className="border-b border-gray-200 py-4">
-                  <div className="flex justify-between items-center">
-                    <div>
-                      <h1 className="text-lg font-semibold">
-                        Order ID: {order.id}
-                      </h1>
-                      <p className="text-sm text-gray-500">
-                        Ordered on: {new Date(order.createdAt).toDateString()}
-                      </p>
-                    </div>
-                    <div>
-                      <h1 className="text-lg font-semibold">
-                        Total: ${order.product.price * order.quantity}
-                      </h1>
-                      <p className="text-sm text-gray-500">
-                        Status: {order.ready ? "Ready" : "Not Ready"}
-                      </p>
-                    </div>
-                  </div>
-                </div>
-              </Link>
+              <li key={order.id} className="mx-auto pb-6">
+                <Suspense fallback={<Fallback />}>
+                  <OrderItem order={order} />
+                </Suspense>
+              </li>
             ))}
-          </div>
+          </ul>
         ) : (
           <div
             className="flex justify-center items-center"

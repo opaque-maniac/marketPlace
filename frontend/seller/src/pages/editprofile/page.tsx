@@ -1,31 +1,33 @@
-import { useContext, useEffect } from "react";
+import { lazy, Suspense, useContext } from "react";
 import Transition from "../../components/transition";
-import useUserStore from "../../utils/store";
-import { useNavigate } from "react-router-dom";
+import { Link, useNavigate } from "react-router-dom";
 import { useQuery } from "@tanstack/react-query";
 import { fetchProfile } from "../../utils/queries/profile";
 import { ErrorContext, ShowErrorContext } from "../../utils/errorContext";
 import { Helmet } from "react-helmet";
 import Loader from "../../components/loader";
-import ProfileForm from "./form";
 import { errorHandler } from "../../utils/errorHandler";
 
+const ProfileForm = lazy(() => import("./form"));
+
+const Fallback = () => {
+  return (
+    <div className="lg:w-8/12 md:w-9/12 w-11/12 xl:h-[328px] h-[568px] flex justify-center items-center">
+      <div className="w-6 h-6">
+        <Loader color="#000" />
+      </div>
+    </div>
+  );
+};
+
 const UpdateProfilePage = () => {
-  const user = useUserStore((state) => state.user);
   const [, setErr] = useContext(ShowErrorContext);
   const [, setError] = useContext(ErrorContext);
   const navigate = useNavigate();
 
-  useEffect(() => {
-    if (!user) {
-      navigate("/500", { replace: true });
-    }
-    // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, []);
-
   const query = useQuery({
     queryFn: fetchProfile,
-    queryKey: ["profile", user as string],
+    queryKey: ["profile"],
   });
 
   if (query.isError) {
@@ -49,9 +51,6 @@ const UpdateProfilePage = () => {
           {" "}
           Home / <span className="font-extrabold">Update Profile</span>
         </p>
-        <div className="pt-4">
-          <h2 className="text-center text-3xl md:pb-0 pb-4">Update Profile</h2>
-        </div>
         <section>
           {query.isLoading && (
             <section
@@ -67,7 +66,18 @@ const UpdateProfilePage = () => {
           )}
           {query.isSuccess && query.data ? (
             <>
-              {query.data.seller && <ProfileForm profile={query.data.seller} />}
+              {query.data.seller && (
+                <>
+                  <Suspense fallback={<Fallback />}>
+                    <ProfileForm profile={query.data.seller} />{" "}
+                  </Suspense>
+                  <div className="h-10 flex justify-center items-center">
+                    <Link className="underline font-semibold" to={"/profile"}>
+                      Cancel
+                    </Link>
+                  </div>
+                </>
+              )}
             </>
           ) : null}
         </section>

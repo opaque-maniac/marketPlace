@@ -44,21 +44,13 @@ const NewProductPage = () => {
         <meta name="google" content="nositelinkssearchbox" />
       </Helmet>
 
-      <main role="main" className="h-full pt-20 relative pb-6">
+      <main role="main" className="h-full relative">
         <p className="absolute top-4 left-4">
           {" "}
-          Home / <span className="font-extrabold">New</span>
+          Home / <span className="font-extrabold">New Product</span>
         </p>
-        <div className="pt-4">
-          <h2 className="text-center text-3xl md:pb-0 pb-4">New Product</h2>
-        </div>
         <div className="h-12"></div>
-        <section
-          className="md:flex justify-center items-center"
-          style={{
-            minHeight: "calc(100vh - 14rem)",
-          }}
-        >
+        <section className="md:flex justify-start items-center">
           <form
             onSubmit={submitHandler}
             className="lg:w-7/12 md:w-10/12 w-11/12 mx-auto shadow-xl border rounded-lg py-2 lg:px-2"
@@ -184,7 +176,7 @@ const NewProductPage = () => {
             </div>
           </form>
         </section>
-        <div className="flex justify-center items-center md:py-0 py-6">
+        <div className="flex justify-center items-center pt-6 md:pb-0 pb-4">
           <Link className="underline" to="/">
             Go back to home
           </Link>

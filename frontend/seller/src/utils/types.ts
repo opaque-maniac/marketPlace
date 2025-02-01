@@ -104,6 +104,7 @@ export interface Seller {
   email: string;
   address?: string;
   phone?: string;
+  bio?: string;
   createdAt: string;
   updatedAt: string | null;
   image?: SellerImage;
@@ -126,21 +127,13 @@ export interface Order {
   id: string;
   totalAmount: number;
   status: OrderStatus;
-  customerID: string;
-  createdAt: string;
-  updatedAt: string | null;
-}
-
-export interface OrderItem {
-  id: string;
   quantity: number;
+  customerID: string;
+  customer: Customer;
   productID: string;
   product: Product;
-  ready: boolean;
-  delivered: boolean;
-  orderID: string;
-  dateCreated: string;
-  dateUpdated: string | null;
+  createdAt: string;
+  updatedAt: string | null;
 }
 
 export interface Customer {
@@ -148,24 +141,23 @@ export interface Customer {
   email: string;
   firstName: string;
   lastName: string;
-  address: string;
+  address?: string;
+  phone?: string;
+  createdAt: string;
+  updatedAt: string;
 }
 
 export interface OrderWithCustomer extends Order {
   customer: Customer;
 }
 
-export interface OrderItemWithOrder extends OrderItem {
-  order: OrderWithCustomer;
-}
-
 export interface SuccessOrdersResponse {
   message: string;
-  orders: OrderItemWithOrder[];
+  orders: Order[];
   hasNext: boolean;
 }
 
 export interface SuccessOrderResponse {
   message: string;
-  order: OrderItemWithOrder;
+  order: Order;
 }

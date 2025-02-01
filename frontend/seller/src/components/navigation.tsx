@@ -3,6 +3,7 @@ import CloseIcon from "./icons/closeIcon";
 import SearchForm from "./searchform";
 import userStore from "../utils/store";
 import { useMemo } from "react";
+import { logoutFunc } from "../utils/logout";
 
 interface Props {
   callback: () => void;
@@ -16,12 +17,12 @@ const Navigation = ({ callback }: Props) => {
   const logoutHanlder = useMemo(
     () => (e: React.MouseEvent<HTMLAnchorElement>) => {
       e.preventDefault();
-      callback();
       setTimeout(() => {
-        navigate("/");
-      }, 300);
+        callback();
+      }, 100);
+      logoutFunc(navigate);
     },
-    [],
+    [callback, navigate],
   );
 
   const clickHanlder = useMemo(
@@ -47,10 +48,14 @@ const Navigation = ({ callback }: Props) => {
       >
         <CloseIcon />
       </button>
-      <div className="fixed h-screen md:w-96 w-52 top-0 right-0 z-40 bg-white px-2">
-        <div className="h-20 mt-20">{user ? <SearchForm /> : null}</div>
+      <div className="fixed h-screen md:w-96 w-52 top-0 right-0 z-40 bg-white px-2 pt-10">
+        {user ? (
+          <div className="h-20 w-11/12 pl-8">
+            <SearchForm callback={callback} />
+          </div>
+        ) : null}
         <nav role="navigation">
-          <ul className="flex flex-col justify-start items-center gap-4">
+          <ul className="flex flex-col justify-start items-start gap-4 pl-8">
             {user ? (
               <li>
                 <Link

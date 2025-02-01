@@ -4,6 +4,7 @@ import PhoneIcon from "../../components/icons/phone";
 import { Seller } from "../../utils/types";
 import SellerNavigation from "./navigation";
 import EmailIcon from "../../components/icons/email";
+import LocationPinIcon from "../../components/icons/pin";
 
 interface Props {
   seller: Seller;
@@ -48,7 +49,7 @@ const SellersLayout = ({ seller }: Props) => {
             <li>
               <div className="flex justify-start items-center gap-4">
                 <div className="w-8 h-8 bg-black text-white rounded-full p-1">
-                  <PhoneIcon />
+                  <LocationPinIcon />
                 </div>
                 <p>{seller.address ? seller.address : "Not provided"}</p>
               </div>

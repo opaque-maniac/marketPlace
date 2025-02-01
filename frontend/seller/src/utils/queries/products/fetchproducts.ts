@@ -6,11 +6,11 @@ import { apiHost, apiProtocol } from "../../generics";
 
 export const fetchProducts: QueryFunction<
   SuccessProductsResponse,
-  ["products", number, number]
+  ["products", number, number, string]
 > = async ({ queryKey }) => {
   try {
-    const [, page, limit] = queryKey;
-    const url = `${apiProtocol}://${apiHost}/seller/products?page=${page}&limit=${limit}`;
+    const [, page, limit, query] = queryKey;
+    const url = `${apiProtocol}://${apiHost}/seller/products?page=${page}&limit=${limit}&query=${query}`;
     const token = getAccessToken();
 
     if (!token) {

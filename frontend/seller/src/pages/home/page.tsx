@@ -18,16 +18,30 @@ const HomePage = () => {
   const urlParams = new URLSearchParams(window.location.search);
 
   useEffect(() => {
-    if (!urlParams.get("page")) {
-      navigate(`?page=1`, { replace: true });
+    const _page = urlParams.get("page");
+    const _query = urlParams.get("query");
+    const replace = { replace: true };
+
+    if (!_page && !_query) {
+      navigate(`?page=1&query=`, replace);
+    } else if (!_page) {
+      navigate(`?page=1&query=${_query}`, replace);
+    } else if (!_query) {
+      if (!Number.isNaN(_page)) {
+        navigate(`?page=1&query=${_query}`, replace);
+      } else {
+        navigate(`?page=1&query=`, replace);
+      }
     }
 
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []);
 
   const page = Number(urlParams.get("page")) || 1;
+  const queryStr = String(urlParams.get("query")) || "";
+
   const query = useQuery({
-    queryKey: ["products", page, 10],
+    queryKey: ["products", page, 10, queryStr],
     queryFn: fetchProducts,
   });
 
@@ -69,12 +83,7 @@ const HomePage = () => {
           }}
         >
           {query.isLoading ? (
-            <div
-              className="flex justify-center items-center"
-              style={{
-                minHeight: "calc(100vh - 5.4rem)",
-              }}
-            >
+            <div className="flex justify-center items-center h-screen w-full">
               <div className="h-10 w-10">
                 <Loader color="#000000" />
               </div>

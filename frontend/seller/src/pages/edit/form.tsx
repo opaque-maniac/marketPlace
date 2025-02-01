@@ -43,15 +43,10 @@ const ProductForm = ({ product }: Props) => {
 
   return (
     <Transition>
-      <section
-        className="md:flex justify-center items-center"
-        style={{
-          minHeight: "calc(100vh - 14rem)",
-        }}
-      >
+      <section className="md:flex justify-center items-center">
         <form
           onSubmit={submitHandler}
-          className="lg:w-7/12 md:w-10/12 w-11/12 mx-auto shadow-xl border rounded-lg py-2 lg:px-2"
+          className="lg:w-7/12 md:w-10/12 w-11/12 mx-auto shadow-xl border rounded-lg md:pt-2 pt-4 pb-2 lg:px-2"
         >
           <div className="flex md:justify-between justify-center items-center md:flex-row flex-col gap-2 md:mb-4 mb-4">
             <div className="md:mb-0 mb-4">
@@ -136,6 +131,19 @@ const ProductForm = ({ product }: Props) => {
                 type="number"
                 name="inventory"
                 id="inventory"
+                value={state.inventory}
+                onChange={(e) => {
+                  dispatch({
+                    type: ActionType.UPDATE_INVENTORY,
+                    payload: e.currentTarget.value,
+                  });
+                }}
+                onBlur={(e) => {
+                  dispatch({
+                    type: ActionType.UPDATE_INVENTORY,
+                    payload: e.currentTarget.value,
+                  });
+                }}
                 placeholder="Inventory"
                 className="block w-72 h-12 px-2 text-lg auth-input focus:auth-input focus:outline-none bg-white"
                 required
@@ -173,7 +181,6 @@ const ProductForm = ({ product }: Props) => {
                   id="images"
                   className="block w-72 h-10 px-2 text-lg bg-white"
                   multiple
-                  required
                 />
               </div>
             </div>
@@ -185,6 +192,19 @@ const ProductForm = ({ product }: Props) => {
                 name="description"
                 id="description"
                 placeholder="Description"
+                value={product.description}
+                onChange={(e) =>
+                  dispatch({
+                    type: ActionType.UPDATE_DESCRIPTION,
+                    payload: e.currentTarget.value,
+                  })
+                }
+                onBlur={(e) =>
+                  dispatch({
+                    type: ActionType.UPDATE_DESCRIPTION,
+                    payload: e.currentTarget.value,
+                  })
+                }
                 className="block w-72 h-40 px-2 text-lg auth-input focus:auth-input focus:outline-none bg-white"
                 required
               />
@@ -193,12 +213,12 @@ const ProductForm = ({ product }: Props) => {
           <div className="w-full py-2 flex md:justify-end justify-center px-4">
             <button
               aria-label="Submit Product"
-              className="bg-red-400 w-40 h-10 rounded-lg flex justify-center items-center"
+              className="bg-red-400 text-white w-40 h-10 rounded-lg flex justify-center items-center py-2"
               type="submit"
             >
               {isPending ? (
                 <div className="h-10 w-10">
-                  <Loader color="#000000" />
+                  <Loader color="#fff" />
                 </div>
               ) : (
                 <span className="tex-white text-lg">Submit</span>
