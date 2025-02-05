@@ -275,3 +275,12 @@ export interface SuccessFetchSellerResponse {
   message: string;
   seller: Seller;
 }
+
+export interface SuccessEmailResponse {
+  message: string;
+  email: string;
+}
+
+export interface SuccessTokenResponse {
+  message: string;
+}

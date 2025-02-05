@@ -60,6 +60,7 @@ const UpdateProfilePage = () => {
           {" "}
           Home / <span className="font-extrabold">Update Profile</span>
         </p>
+
         <div>
           {query.isLoading && (
             <section

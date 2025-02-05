@@ -74,7 +74,7 @@ const CartQuantity = ({ quantity, id, inventory }: Props) => {
       </div>
       <div className="h-10 w-10 border-b border-t border-black/25 flex justify-center items-center">
         {mutation.isPending ? (
-          <div className="h-10 w-10 mx-auto p-1">
+          <div className="h-8 w-8 mx-auto p-1">
             <Loader color="#000" />
           </div>
         ) : (

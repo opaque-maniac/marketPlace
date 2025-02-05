@@ -7,8 +7,6 @@ import { ErrorContext, ShowErrorContext } from "../../utils/errorContext";
 import { Helmet } from "react-helmet";
 import TickIcon from "../../components/icons/tick";
 import CloseIcon from "../../components/icons/closeIcon";
-import AddToCart from "./addtocart";
-import AddToWishlist from "./addtowishlist";
 import TruckIcon from "../../components/icons/truck";
 import ArrowPath from "../../components/icons/arrowpath";
 import PageLoader from "../../components/pageloader";
@@ -19,6 +17,21 @@ import { calculateDiscount } from "../../utils/price";
 
 const Related = lazy(() => import("./related"));
 const CommentList = lazy(() => import("./comments"));
+const AddToCart = lazy(() => import("./addtocart"));
+const AddToWishlist = lazy(() => import("./addtowishlist"));
+
+const ButtonFallback = ({ background }: { background: string }) => {
+  return (
+    <button
+      disabled
+      className={`rounded h-10 w-40 bg-${background}-500 text-white cursor-not-allowed`}
+    >
+      <div className="h-8 w-8 pt-1 mx-auto py-1">
+        <Loader color={"#fff"} />
+      </div>
+    </button>
+  );
+};
 
 const Fallback = () => {
   return (
@@ -170,7 +183,7 @@ const IndividualProductPage = () => {
                       />
                       <Link
                         className="underline text-blue-500"
-                        to={`/sellers/${product.sellerID}`}
+                        to={`/sellers/${product.sellerID}/products`}
                       >
                         {product.seller.name}
                       </Link>
@@ -199,12 +212,20 @@ const IndividualProductPage = () => {
                       )}
                     </div>
                     <div className="flex py-8 md:justify-around items-center justify-center md:flex-row flex-col md:gap-0 gap-4">
-                      <AddToCart
-                        id={product.id}
-                        color="green-500"
-                        text="white"
-                      />
-                      <AddToWishlist id={product.id} />
+                      <Suspense
+                        fallback={<ButtonFallback background="green" />}
+                      >
+                        <AddToCart
+                          id={product.id}
+                          color="green-500"
+                          text="white"
+                        />
+                      </Suspense>
+                      <Suspense
+                        fallback={<ButtonFallback background="green" />}
+                      >
+                        <AddToWishlist id={product.id} />
+                      </Suspense>
                     </div>
                   </>
                 )}
@@ -214,7 +235,7 @@ const IndividualProductPage = () => {
                     style={{ height: "90px" }}
                     className="md:w-399 w-80 border-b border-black flex justify-start items-center gap-4 px-2"
                   >
-                    <div className="h-16 w-16">
+                    <div className="h-14 w-14">
                       <TruckIcon />
                     </div>
                     <div>
@@ -225,7 +246,7 @@ const IndividualProductPage = () => {
                     </div>
                   </div>
                   <div className="md:w-399 w-80 flex justify-start items-center gap-4 px-2">
-                    <div className="h-16 w-16">
+                    <div className="h-14 w-14">
                       <ArrowPath />
                     </div>
                     <div>

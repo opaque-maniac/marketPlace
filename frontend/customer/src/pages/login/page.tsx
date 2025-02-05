@@ -107,7 +107,7 @@ const LoginPage = () => {
             >
               {mutation.isIdle ? "Log In" : <Loader color="#ffffff" />}
             </button>
-            <Link to={"/forgot-password"} className="text-red-400">
+            <Link to={"/reset-password"} className="text-red-400">
               Forgot Password
             </Link>
           </div>

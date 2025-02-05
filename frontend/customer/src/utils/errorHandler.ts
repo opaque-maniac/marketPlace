@@ -1,11 +1,10 @@
 import { Dispatch, SetStateAction } from "react";
 import { NavigateFunction } from "react-router-dom";
 import { ErrorResponse } from "./types";
-import { removeAccessToken, removeRefreshToken, removeUserID } from "./cookies";
 import { logoutFunction } from "./logout";
 
 const logout: string[] = ["A001", "PR02", "A003"];
-const logoutAndMessage = ["A002", "A006"];
+const logoutAndMessage = ["A002", "A006", "SEC1"];
 const errors404 = [
   "C002",
   "P001",
@@ -21,7 +20,7 @@ const errors404 = [
   "PR03",
 ];
 const errors500 = ["SE02", "W001", "S001"];
-const messageErrors = ["PR01", "I001", "I002", "C003", "OR02"];
+const messageErrors = ["PR01", "I001", "I002", "C003", "OR02", "SEC0", "SEC2"];
 const messageAnd500 = ["C001"];
 const refreshError = ["A004"];
 

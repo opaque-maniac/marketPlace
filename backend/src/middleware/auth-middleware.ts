@@ -1,14 +1,8 @@
 import { Response, NextFunction } from "express";
 import jwt, { JwtPayload } from "jsonwebtoken";
-import { AuthenticatedRequest } from "../types";
+import { AuthenticatedRequest, DecodedToken } from "../types";
 import prisma from "../utils/db";
 import { serverError } from "../utils/globals";
-
-interface DecodedToken extends JwtPayload {
-  id: string;
-  email: string;
-  userType: string;
-}
 
 export const allowIfAuthenticated = (
   req: AuthenticatedRequest,

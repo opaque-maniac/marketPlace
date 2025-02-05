@@ -8,7 +8,7 @@
 import { Response, NextFunction } from "express";
 import prisma from "../../utils/db";
 import { AuthenticatedRequest, CustomerUpdateRequest } from "../../types";
-import { serverError } from "../../utils/globals";
+import { maskEmail, serverError } from "../../utils/globals";
 
 // Function to fetch profile
 export const fetchProfile = async (
@@ -38,7 +38,7 @@ export const fetchProfile = async (
 
     res.status(200).json({
       message: "Customer fetched successfully",
-      data: customer,
+      data: { ...customer, email: maskEmail(customer.email) },
     });
   } catch (e) {
     if (e instanceof Error) {

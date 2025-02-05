@@ -5,6 +5,7 @@ import { allowIfActive } from "./middleware/auth-middleware";
 import { refreshToken } from "./utils/publicHandlers";
 import customerRouter from "./customer/router";
 import sellerRouter from "./seller/router";
+import securityRouter from "./security/router";
 import rateLimit from "express-rate-limit";
 import { slowDown } from "express-slow-down";
 import staffRouter from "./staff/router";
@@ -33,7 +34,7 @@ app.use("/uploads", express.static(path.join(__dirname, "../uploads")));
 const corsOptions = {
   origin: ["http://localhost:5173"],
   optionsSuccessStatus: 200,
-  methods: ["GET", "POST", "PUT", "DELETE"],
+  methods: ["GET", "POST", "PUT", "DELETE", "PATCH"],
 };
 
 const limiter = rateLimit({
@@ -58,6 +59,8 @@ app.use("/staff", staffRouter);
 
 // Token refresh route
 app.post("/api/tokenrefresh", limiter, refreshToken);
+
+// Complaints
 app.post(
   "/complaints",
   limiter,
@@ -70,6 +73,9 @@ app.post(
   body("message").isString().isLength(stringConfig),
   sendComplaint,
 );
+
+// security
+app.use("/security", securityRouter);
 
 app.use(errorHandler);
 

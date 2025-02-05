@@ -12,7 +12,7 @@ const SeventhSection = ({ products, isLoading }: Props) => {
     <section className="md:min-h-[900px] min-h-[370px]">
       {isLoading ? (
         <div className="w-full flex justify-center items-center h-[900px]">
-          <div className="h-20 w-20">
+          <div className="h-10 w-10">
             <Loader color="#000000" />
           </div>
         </div>

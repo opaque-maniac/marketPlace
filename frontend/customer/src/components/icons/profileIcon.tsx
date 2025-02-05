@@ -1,10 +1,14 @@
-const ProfileIcon = () => {
+interface Props {
+  fill?: string;
+}
+
+const ProfileIcon = ({ fill = "none" }: Props) => {
   return (
     <svg
       role="img"
       aria-label="Profile Icon"
       xmlns="http://www.w3.org/2000/svg"
-      fill="none"
+      fill={fill}
       viewBox="0 0 24 24"
       strokeWidth={1.5}
       stroke="currentColor"

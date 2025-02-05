@@ -2,7 +2,11 @@ import { Link, useNavigate } from "react-router-dom";
 import Transition from "./transition";
 import { MouseEventHandler, useMemo } from "react";
 import useUserStore from "../utils/store";
-import { removeAccessToken, removeRefreshToken } from "../utils/cookies";
+import {
+  removeAccessToken,
+  removeRefreshToken,
+  removeUserID,
+} from "../utils/cookies";
 
 interface Props {
   callback: () => void;
@@ -18,6 +22,7 @@ const ProfileMenu = ({ callback }: Props) => {
       removeAccessToken();
       removeRefreshToken();
       removeUser();
+      removeUserID();
       navigate("/", { replace: true });
       callback();
     },

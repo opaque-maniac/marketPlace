@@ -7,15 +7,9 @@
 
 import { Response, NextFunction } from "express";
 import generateToken from "./token";
-import { TokenRefreshRequest } from "../types";
-import jwt, { JwtPayload } from "jsonwebtoken";
+import { TokenRefreshRequest, DecodedToken } from "../types";
+import jwt from "jsonwebtoken";
 import { serverError } from "./globals";
-
-interface DecodedToken extends JwtPayload {
-  id: string;
-  email: string;
-  userType: string;
-}
 
 const tokenSecret = process.env.JWT_SECRET || "somethingintheorange";
 

@@ -5,7 +5,6 @@ const useProfileForm = (profile: Customer) => {
   interface State {
     firstName: string;
     lastName: string;
-    email: string;
     address: string;
     phone: string;
   }
@@ -13,7 +12,6 @@ const useProfileForm = (profile: Customer) => {
   enum ActionType {
     CHANGE_FIRSTNAME = "CHANGE_FIRSNAME",
     CHANGE_LASTNAME = "CHANGE_LASTNAME",
-    CHANGE_EMAIL = "CHANGE_EMAIL",
     CHANGE_ADDRESS = "CHANGE_ADDRESS",
     CHANGE_PHONE = "CHANGE_PHONE",
   }
@@ -26,7 +24,6 @@ const useProfileForm = (profile: Customer) => {
   const initialState: State = {
     firstName: profile.firstName,
     lastName: profile.lastName,
-    email: profile.email,
     address: profile.address ?? "",
     phone: profile.phone ?? "",
   };
@@ -37,8 +34,6 @@ const useProfileForm = (profile: Customer) => {
         return { ...state, firstName: action.payload };
       case ActionType.CHANGE_LASTNAME:
         return { ...state, lastName: action.payload };
-      case ActionType.CHANGE_EMAIL:
-        return { ...state, email: action.payload };
       case ActionType.CHANGE_ADDRESS:
         return { ...state, address: action.payload };
       case ActionType.CHANGE_PHONE:

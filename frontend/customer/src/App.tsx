@@ -39,6 +39,15 @@ const IndividualOrderPage = lazy(() => import("./pages/order/page"));
 const SellerProfilePage = lazy(() => import("./pages/seller/page"));
 const SellerPRoductsPage = lazy(() => import("./pages/sellerproducts/page"));
 const SettingsPage = lazy(() => import("./pages/settings/page"));
+const ChangeEmailRequestPage = lazy(
+  () => import("./pages/change-email-request/page"),
+);
+const ChangePasswordRequestPage = lazy(
+  () => import("./pages/change-password-request/page"),
+);
+const ResetPasswordRequestPage = lazy(
+  () => import("./pages/reset-password-request/page"),
+);
 
 const queryClient = new QueryClient({
   defaultOptions: {
@@ -116,10 +125,22 @@ const App = () => {
                           element={<RefreshTokenPage />}
                         />
                         <Route path="/settings" element={<SettingsPage />} />
+                        <Route
+                          path="/change-email"
+                          element={<ChangeEmailRequestPage />}
+                        />
+                        <Route
+                          path="/change-password"
+                          element={<ChangePasswordRequestPage />}
+                        />
                       </Route>
                       <Route element={<AuthRoute />}>
                         <Route path="/login" element={<LoginPage />} />
                         <Route path="/register" element={<RegisterPage />} />
+                        <Route
+                          path="/reset-password"
+                          element={<ResetPasswordRequestPage />}
+                        />
                       </Route>
                       <Route path="/500" element={<Error500 />} />
                       <Route path="*" element={<Error404 />} />

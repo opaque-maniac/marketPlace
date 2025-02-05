@@ -52,7 +52,7 @@ const ProductList = ({
             <li key={product.id}>
               <Suspense
                 fallback={
-                  <ProductLoader color={color === "white" ? "#000" : "#fff"} />
+                  <ProductLoader color={color === "white" ? "#fff" : "#000"} />
                 }
               >
                 <ProductItem product={product} color={color} />

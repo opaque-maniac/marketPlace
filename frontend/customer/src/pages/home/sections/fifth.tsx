@@ -31,7 +31,7 @@ const FifthSection = ({ products, isLoading }: Props) => {
           style={{ height: "calc(518px - 7.6rem)" }}
           className="w-full flex justify-center items-center"
         >
-          <div className="h-20 w-20">
+          <div className="h-10 w-10">
             <Loader color="#000000" />
           </div>
         </div>

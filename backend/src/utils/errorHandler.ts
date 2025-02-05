@@ -5,7 +5,6 @@ import {
   PrismaClientValidationError,
 } from "@prisma/client/runtime/library";
 import { Request, Response, NextFunction } from "express";
-import { stat } from "fs";
 import { JsonWebTokenError } from "jsonwebtoken";
 
 const errorHandler = async (
@@ -139,6 +138,21 @@ const errorHandler = async (
       message = "Session expired";
       status = 401;
       code = "A006";
+      break;
+    case "Invalid security token":
+      message = "Security code has expired";
+      status = 401;
+      code = "SEC0";
+      break;
+    case "Permission denied":
+      message = error.message;
+      status = 401;
+      code = "SEC1";
+      break;
+    case "Reset profile not found":
+      message = "Profile not found";
+      status = 401;
+      code = "SEC2";
       break;
     default:
       // JWT errors

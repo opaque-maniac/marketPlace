@@ -6,7 +6,7 @@ const CartItemComponent = lazy(() => import("./cartItem"));
 
 const Fallback = () => {
   return (
-    <div className="w-[250px] md:h-180 h-[346px] flex justify-center items-center">
+    <div className="w-[250px] md:h-180 h-[400px] flex justify-center items-center">
       <div className="h-8 w-8">
         <Loader color="#000" />
       </div>

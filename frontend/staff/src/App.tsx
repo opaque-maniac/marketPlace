@@ -6,9 +6,9 @@ import { ErrorContext, ShowErrorContext } from "./utils/errorContext";
 import Header from "./components/header";
 import Footer from "./components/footer";
 import PageLoader from "./components/pageloader";
-import ScrollToTop from "./utils/scrolltotop";
 import AuthRoute from "./components/routes/authroutes";
 import ProtectedRoute from "./components/routes/protectedroute";
+import ScrollToTopRoute from "./components/routes/scrolltotop";
 
 const HomePage = lazy(() => import("./pages/home/page"));
 const LoginPage = lazy(() => import("./pages/login/page"));
@@ -45,40 +45,41 @@ const App = () => {
         <ErrorContext.Provider value={error}>
           <ShowErrorContext.Provider value={err}>
             <QueryClientProvider client={queryClient}>
-              <ScrollToTop />
               <Header />
               <div className="pt-14 mx-auto lg:max-w-1300 min-h-screen">
                 <Suspense fallback={<PageLoader />}>
                   <Routes>
-                    <Route path="/" element={<HomePage />} />
-                    <Route path="/contact" element={<ContactPage />} />
-                    <Route path="/about" element={<AboutPage />} />
-                    <Route path="/fees" element={<FeePage />} />
-                    <Route path="/privacy" element={<PrivacyPage />} />
-                    <Route path="/faq" element={<FAQPage />} />
-                    <Route path="/terms" element={<TermsPage />} />
-                    <Route element={<AuthRoute />}>
-                      <Route path="/login" element={<LoginPage />} />
-                      <Route path="/register" element={<RegisterPage />} />
+                    <Route element={<ScrollToTopRoute />}>
+                      <Route path="/" element={<HomePage />} />
+                      <Route path="/contact" element={<ContactPage />} />
+                      <Route path="/about" element={<AboutPage />} />
+                      <Route path="/fees" element={<FeePage />} />
+                      <Route path="/privacy" element={<PrivacyPage />} />
+                      <Route path="/faq" element={<FAQPage />} />
+                      <Route path="/terms" element={<TermsPage />} />
+                      <Route element={<AuthRoute />}>
+                        <Route path="/login" element={<LoginPage />} />
+                        <Route path="/register" element={<RegisterPage />} />
+                      </Route>
+                      <Route element={<ProtectedRoute />}>
+                        <Route path="/products" element={<ProductsPage />} />
+                        <Route
+                          path="/products/:id"
+                          element={<IndividualProductPage />}
+                        />
+                        <Route
+                          path="/products/:id/edit"
+                          element={<EditProductPage />}
+                        />
+                        <Route
+                          path="/products/:id/delete"
+                          element={<DeleteProductPage />}
+                        />
+                        <Route path="/customers" element={<CustomersPage />} />
+                      </Route>
+                      <Route path="/500" element={<Error500 />} />
+                      <Route path="*" element={<Error404 />} />
                     </Route>
-                    <Route element={<ProtectedRoute />}>
-                      <Route path="/products" element={<ProductsPage />} />
-                      <Route
-                        path="/products/:id"
-                        element={<IndividualProductPage />}
-                      />
-                      <Route
-                        path="/products/:id/edit"
-                        element={<EditProductPage />}
-                      />
-                      <Route
-                        path="/products/:id/delete"
-                        element={<DeleteProductPage />}
-                      />
-                      <Route path="/customers" element={<CustomersPage />} />
-                    </Route>
-                    <Route path="/500" element={<Error500 />} />
-                    <Route path="*" element={<Error404 />} />
                   </Routes>
                 </Suspense>
               </div>

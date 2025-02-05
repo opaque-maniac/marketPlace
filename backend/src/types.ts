@@ -1,5 +1,27 @@
-import { ORDER_STATUS, STAFF_ROLE } from "@prisma/client";
+import {
+  Customer,
+  ORDER_STATUS,
+  Seller,
+  Staff,
+  STAFF_ROLE,
+} from "@prisma/client";
 import { Request } from "express";
+import { JwtPayload } from "jsonwebtoken";
+
+export type UserRole = "customer" | "staff" | "seller";
+
+export type UserAllTypes = Customer | Seller | Staff;
+
+export interface DecodedToken extends JwtPayload {
+  id: string;
+  email: string;
+  userType: UserRole;
+}
+
+export interface SecurityDecodedToken extends JwtPayload {
+  emai: string;
+  userType: UserRole;
+}
 
 export interface RegisterSellerRequest extends Request {
   body: {
@@ -17,11 +39,7 @@ export interface LoginRequest extends Request {
 }
 
 export interface AuthenticatedRequest extends Request {
-  user?: {
-    id: string;
-    email: string;
-    userType: string;
-  };
+  user?: DecodedToken;
 }
 
 export interface SellerUpdateRequest extends AuthenticatedRequest {
@@ -166,5 +184,32 @@ export interface StaffUpdateCommentRequest extends AuthenticatedRequest {
 export interface SellerUpdateOrderRequest extends AuthenticatedRequest {
   body: {
     status: ORDER_STATUS;
+  };
+}
+
+export interface VerifySecurityCodeRequest extends AuthenticatedRequest {
+  body: {
+    token: string;
+  };
+}
+
+export interface ChangeEmailRequest extends AuthenticatedRequest {
+  body: {
+    email: string;
+    token: string;
+  };
+}
+
+export interface ChangePasswordRequest extends AuthenticatedRequest {
+  body: {
+    password: string;
+    token: string;
+  };
+}
+
+export interface ResetPasswordRequest extends Request {
+  body: {
+    email: string;
+    role: UserRole;
   };
 }

@@ -33,7 +33,7 @@ const OrderSearchForm = () => {
       <div className="px-1">
         <button
           aria-label="Send Search Query"
-          className="block h-10 w-full p-1"
+          className="block h-10 w-full p-2"
         >
           <SearchIcon />
         </button>

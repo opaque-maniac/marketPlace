@@ -105,7 +105,7 @@ const OrdersPage = () => {
               onChange={(e) => setStatus(e.target.value)}
               onBlur={(e) => setStatus(e.target.value)}
               value={status}
-              className="block w-40 md:h-6 h-8 border border-black/25 focus:border focus:border-black/25"
+              className="block w-40 md:h-8 h-8 border border-black/25 focus:border focus:border-black/25"
             >
               <option value="">All</option>
               <option value="PENDING">PENDING</option>

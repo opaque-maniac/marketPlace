@@ -21,7 +21,7 @@ const NinethSection = ({ products, isLoading }: Props) => {
         <div className="bg-black md:w-6/12 w-full p-2 md:min-h-[800px] min-h-[370px]">
           {isLoading ? (
             <div className="w-full flex justify-center items-center md:h-[800px] h-[370px]">
-              <div className="h-20 w-20">
+              <div className="h-10 w-10">
                 <Loader color="#ffffff" />
               </div>
             </div>

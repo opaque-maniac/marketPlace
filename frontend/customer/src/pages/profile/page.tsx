@@ -9,11 +9,9 @@ import Loader from "../../components/loader";
 import { Helmet } from "react-helmet";
 import { errorHandler } from "../../utils/errorHandler";
 import { formatDate } from "../../utils/date";
-import KeyIcon from "../../components/icons/key";
 import PhoneIcon from "../../components/icons/phone";
 import EmailIcon from "../../components/icons/email";
 import LocationPinIcon from "../../components/icons/pin";
-import SettingsButton from "../../components/settingsbutton";
 import GearIcon from "../../components/icons/gear";
 
 const ProfilePage = () => {
@@ -56,7 +54,11 @@ const ProfilePage = () => {
           Home / <span className="font-extrabold">Profile</span>
         </p>
         <div className="absolute top-4 right-4">
-          <Link to={"/settings"} className="block w-7 h-7">
+          <Link
+            aria-label="Go to settings"
+            to={"/settings"}
+            className="block w-7 h-7"
+          >
             <GearIcon />
           </Link>
         </div>
@@ -67,7 +69,7 @@ const ProfilePage = () => {
               minHeight: "calc(100vh - 13.8rem)",
             }}
           >
-            <div className="h-20 w-20">
+            <div className="h-10 w-10">
               <Loader color="#000000" />
             </div>
           </section>

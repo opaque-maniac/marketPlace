@@ -46,9 +46,9 @@ const ProfileForm = ({ profile }: Props) => {
     <Transition>
       <form
         onSubmit={submitHandler}
-        className="shadow-lg border pt-4 md:w-7/12 w-11/12 mx-auto md:flex flex-col md:gap-2"
+        className="shadow-lg border pt-4 xl:w-5/12 md:w-7/12 w-11/12 mx-auto md:flex flex-col md:gap-2 md:p-4"
       >
-        <div className="flex xl:flex-row flex-col xl:justify-around justify-center items-center gap-4">
+        <div className="flex flex-col justify-center items-center gap-4">
           <div>
             <label htmlFor="name" className="sr-only">
               First Name
@@ -102,33 +102,7 @@ const ProfileForm = ({ profile }: Props) => {
             />
           </div>
         </div>
-        <div className="flex xl:flex-row flex-col xl:justify-around justify-center items-center gap-4 xl:pt-0 pt-2">
-          <div>
-            <label htmlFor="email" className="sr-only">
-              Email
-            </label>
-            <input
-              type="email"
-              name="email"
-              id="email"
-              className="block w-72 h-12 px-2 text-lg auth-input md:mx-0 mx-auto focus:auth-input focus:outline-none bg-white"
-              value={state.email}
-              onChange={(e) =>
-                dispatch({
-                  type: ActionType.CHANGE_EMAIL,
-                  payload: e.target.value,
-                })
-              }
-              onBlur={(e) =>
-                dispatch({
-                  type: ActionType.CHANGE_EMAIL,
-                  payload: e.target.value,
-                })
-              }
-              required
-              placeholder="Email"
-            />
-          </div>
+        <div className="flex flex-col justify-center items-center gap-4 pt-2">
           <div className="mb-2">
             <label htmlFor="address (optional)" className="sr-only">
               Address
@@ -154,8 +128,6 @@ const ProfileForm = ({ profile }: Props) => {
               placeholder="Address (optional)"
             />
           </div>
-        </div>
-        <div className="flex xl:flex-row flex-col xl:justify-around justify-center items-center gap-4">
           <div className="mb-4">
             <label htmlFor="phone (optional)" className="sr-only">
               Phone
@@ -181,6 +153,8 @@ const ProfileForm = ({ profile }: Props) => {
               placeholder="Phone (optional)"
             />
           </div>
+        </div>
+        <div className="flex flex-col justify-center items-center gap-4">
           <div>
             <label htmlFor="image" className="md:mx-0 mx-auto w-72 block">
               Image
@@ -192,17 +166,17 @@ const ProfileForm = ({ profile }: Props) => {
               className="md:mx-0 mx-auto w-72 block"
             />
           </div>
-        </div>
-        <div className="h-20 flex justify-center xl:justify-end items-center md:pr-8">
-          <button
-            type="submit"
-            className={`h-10 w-40 rounded-lg bg-red-400 flex justify-center items-center text-white font-semibold p-2 ${
-              isPending ? "cursor-not-allowed" : "cursor-pointer"
-            }`}
-            aria-label="Submit Profile"
-          >
-            {isPending ? <Loader color="#000000" /> : <span>Submit</span>}
-          </button>
+          <div className="h-20 flex justify-center xl:justify-end items-center md:pr-8 xl:py-4">
+            <button
+              type="submit"
+              className={`h-10 w-40 rounded-lg bg-red-400 flex justify-center items-center text-white font-semibold p-2 ${
+                isPending ? "cursor-not-allowed" : "cursor-pointer"
+              }`}
+              aria-label="Submit Profile"
+            >
+              {isPending ? <Loader color="#000000" /> : <span>Submit</span>}
+            </button>
+          </div>
         </div>
       </form>
     </Transition>

@@ -42,7 +42,7 @@ const RemoveFromCart = ({ id, refetch }: Props) => {
         }`}
       >
         {mutation.isPending ? (
-          <div className="h-10 w-10 p-1 mx-auto">
+          <div className="h-8 w-8 p-1 mx-auto">
             <Loader color="#000" />
           </div>
         ) : (

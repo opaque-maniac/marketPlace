@@ -32,17 +32,27 @@ const SellersLayout = ({ seller }: Props) => {
           <ul className="flex flex-col gap-2">
             <li>
               <div className="flex justify-start items-center gap-4">
-                <div className="w-8 h-8 bg-black text-white rounded-full p-1">
-                  <EmailIcon />
-                </div>
+                <a href={`mailto:${seller.email}`} target="_blank">
+                  <div className="w-8 h-8 bg-black text-white rounded-full p-1">
+                    <EmailIcon />
+                  </div>
+                </a>
                 <p>Email</p>
               </div>
             </li>
             <li>
               <div className="flex justify-start items-center gap-4">
-                <div className="w-8 h-8 bg-black text-white rounded-full p-1">
-                  <PhoneIcon />
-                </div>
+                {seller.phone ? (
+                  <a href={`tel:${seller.phone}`} target="_blank">
+                    <div className="w-8 h-8 bg-black text-white rounded-full p-1">
+                      <PhoneIcon />
+                    </div>
+                  </a>
+                ) : (
+                  <div className="w-8 h-8 bg-black text-white rounded-full p-1">
+                    <PhoneIcon />
+                  </div>
+                )}
                 <p>Phone</p>
               </div>
             </li>

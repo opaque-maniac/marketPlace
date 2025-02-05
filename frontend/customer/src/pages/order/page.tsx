@@ -20,7 +20,7 @@ const Fallback = () => {
     <div>
       <button
         aria-label="Go back to order"
-        className="rounded flex justify-center items-center text-white bg-red-500 py-2"
+        className="rounded flex justify-center items-center text-white bg-red-500 py-2 w-40 h-10"
         disabled
       >
         <Loader color="#fff" />

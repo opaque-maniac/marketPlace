@@ -373,9 +373,18 @@ export const addToCart = async (
     );
 
     if (existingCartItem) {
+      const newCartItem = await prisma.cartItem.update({
+        where: {
+          id: existingCartItem.id,
+        },
+        data: {
+          quantity: quantity,
+        },
+      });
+
       res.status(200).json({
         message: "Item added to cart",
-        cartItem: existingCartItem,
+        cartItem: newCartItem,
         new: false,
       });
       return;

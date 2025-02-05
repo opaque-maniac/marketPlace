@@ -19,7 +19,7 @@ const SecondSection = ({ products, isLoading }: Props) => {
         className="w-full flex justify-center items-center"
       >
         {isLoading ? (
-          <div className="h-20 w-20">
+          <div className="h-10 w-10">
             <Loader color="#000000" />
           </div>
         ) : (

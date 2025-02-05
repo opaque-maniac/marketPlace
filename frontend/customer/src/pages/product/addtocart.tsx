@@ -45,7 +45,7 @@ const AddToCart = ({ id, color, text }: Props) => {
       className={`rounded h-10 w-40 bg-${color} text-${text} ${cursor}`}
     >
       {mutation.isPending ? (
-        <div className="h-10 w-10 pt-1 mx-auto py-1">
+        <div className="h-8 w-8 pt-1 mx-auto py-1">
           <Loader color={color === "white" ? "#000" : "#fff"} />
         </div>
       ) : (

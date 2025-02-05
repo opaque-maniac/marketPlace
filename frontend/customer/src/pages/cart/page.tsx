@@ -2,7 +2,7 @@ import { useQuery } from "@tanstack/react-query";
 import Transition from "../../components/transition";
 import Loader from "../../components/loader";
 import { useNavigate } from "react-router-dom";
-import { useCallback, useContext, useEffect } from "react";
+import { Suspense, useCallback, useContext, useEffect } from "react";
 import { ErrorContext, ShowErrorContext } from "../../utils/errorContext";
 import ArrowLeft from "../../components/icons/arrowleft";
 import ArrowRight from "../../components/icons/arrowright";
@@ -12,6 +12,20 @@ import EmptyCart from "../../components/cart/emptycart";
 import CartList from "../../components/cart/cartlist";
 import OrderCart from "../../components/cart/ordercart";
 import { errorHandler } from "../../utils/errorHandler";
+
+const Fallback = ({ background }: { background: string }) => {
+  return (
+    <button
+      aria-label="Order cart"
+      disabled
+      className={`block h-10 w-40 bg-${background}-400 text-white rounded-md`}
+    >
+      <div className="h-10 w-10 py-1 mx-auto">
+        <Loader color="#fff" />
+      </div>
+    </button>
+  );
+};
 
 const CartPage = () => {
   const [, setError] = useContext(ErrorContext);
@@ -82,14 +96,18 @@ const CartPage = () => {
       </Helmet>
       <main role="main">
         <div className="flex justify-between item-center md:mx-0 mx-2 pt-4 md:pb-0 pb-4">
-          <OrderCart
-            refetch={refetchCart}
-            disable={!data || data?.cartItems.length === 0}
-          />
-          <EmptyCart
-            refetch={refetchCart}
-            disable={!data || data?.cartItems.length === 0}
-          />
+          <Suspense fallback={<Fallback background="green" />}>
+            <OrderCart
+              refetch={refetchCart}
+              disable={!data || data?.cartItems.length === 0}
+            />
+          </Suspense>
+          <Suspense fallback={<Fallback background="red" />}>
+            <EmptyCart
+              refetch={refetchCart}
+              disable={!data || data?.cartItems.length === 0}
+            />
+          </Suspense>
         </div>
         <section
           className="px-2 py-2"

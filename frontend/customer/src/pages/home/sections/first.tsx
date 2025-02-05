@@ -91,7 +91,7 @@ const FirstSection = ({ products, isLoading }: Props) => {
         <div className="bg-black h-full px-2 pb-1">
           {isLoading ? (
             <div className="h-full w-full flex justify-center items-center">
-              <div className="h-20 w-20">
+              <div className="h-10 w-10">
                 <Loader color="#ffffff" />
               </div>
             </div>
