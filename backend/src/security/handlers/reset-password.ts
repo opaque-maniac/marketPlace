@@ -13,6 +13,7 @@ import {
 import prisma from "../../utils/db";
 import { generateTempToken, getSecurityTokenPayload } from "../../utils/token";
 import bcrypt from "bcrypt";
+import { sendResetPasswordEmail } from "../../utils/send_email/reset-password";
 
 export const requestPasswordResetEmail = async (
   req: ResetPasswordRequest,
@@ -23,6 +24,7 @@ export const requestPasswordResetEmail = async (
     const { email, role } = req.body;
 
     let profile: UserAllTypes | null = null;
+    let name: string;
 
     switch (role) {
       case "customer":
@@ -31,6 +33,7 @@ export const requestPasswordResetEmail = async (
             email,
           },
         });
+        name = `${profile?.firstName} ${profile?.lastName}`;
         break;
       case "seller":
         profile = await prisma.seller.findUnique({
@@ -38,6 +41,7 @@ export const requestPasswordResetEmail = async (
             email,
           },
         });
+        name = `${profile?.name}`;
         break;
       case "staff":
         profile = await prisma.staff.findUnique({
@@ -45,6 +49,7 @@ export const requestPasswordResetEmail = async (
             email,
           },
         });
+        name = `${profile?.firstName} ${profile?.lastName}`;
         break;
       default:
         throw serverError;
@@ -55,16 +60,22 @@ export const requestPasswordResetEmail = async (
     }
 
     const token = generateTempToken(profile.email, role);
-    const url = `${
+
+    const baseUrl =
       role === "customer"
         ? customerClientHost
         : role === "seller"
           ? sellerClientHost
-          : staffClientHost
-    }/reset-password/${token}`;
+          : staffClientHost;
+
+    if (!baseUrl) {
+      throw serverError;
+    }
+
+    const url = `${baseUrl}/reset-password/${token}`;
 
     // send email
-    console.log(url);
+    await sendResetPasswordEmail(url, name, baseUrl, profile.email);
 
     res.status(200).json({
       message: "Email sent successfully",
