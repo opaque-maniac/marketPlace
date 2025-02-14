@@ -1,7 +1,7 @@
-import type { Response, NextFunction } from "express";
+import { Response, NextFunction } from "express";
 import {
-  AuthenticatedRequest,
   ChangeEmailRequest,
+  ChangeEmailVerificationRequest,
   UserAllTypes,
 } from "../../types";
 import {
@@ -11,11 +11,14 @@ import {
   staffClientHost,
 } from "../../utils/globals";
 import prisma from "../../utils/db";
-import { generateTempToken, getSecurityTokenPayload } from "../../utils/token";
+import {
+  generateChangeEmailToken,
+  getEmailChangeTokenPayload,
+} from "../../utils/token";
 import { sendChangeEmailtokenEmail } from "../../utils/send_email/change-email";
 
-export const requestVerificationEmail = async (
-  req: AuthenticatedRequest,
+export const changeEmailRequest = async (
+  req: ChangeEmailRequest,
   res: Response,
   next: NextFunction,
 ): Promise<void> => {
@@ -26,12 +29,21 @@ export const requestVerificationEmail = async (
       throw new Error("User not found");
     }
 
+    const { email } = req.body;
     let profile: UserAllTypes | null = null;
-    let name: string;
+    let name: string = "";
 
     switch (user.userType) {
       case "customer":
         profile = await prisma.customer.findUnique({
+          where: {
+            id: user.id,
+          },
+        });
+        name = `${profile?.firstName} ${profile?.lastName}`;
+        break;
+      case "staff":
+        profile = await prisma.staff.findUnique({
           where: {
             id: user.id,
           },
@@ -46,14 +58,6 @@ export const requestVerificationEmail = async (
         });
         name = `${profile?.name}`;
         break;
-      case "staff":
-        profile = await prisma.staff.findUnique({
-          where: {
-            id: user.id,
-          },
-        });
-        name = `${profile?.firstName} ${profile?.lastName}`;
-        break;
       default:
         throw serverError;
     }
@@ -62,14 +66,48 @@ export const requestVerificationEmail = async (
       throw new Error("User profile not found");
     }
 
-    const { userType } = user;
+    // Update temp email
+    switch (user.userType) {
+      case "customer":
+        await prisma.customer.update({
+          where: {
+            id: user.id,
+          },
+          data: {
+            tempEmail: email,
+          },
+        });
+        break;
+      case "staff":
+        await prisma.customer.update({
+          where: {
+            id: user.id,
+          },
+          data: {
+            tempEmail: email,
+          },
+        });
+        break;
+      case "seller":
+        await prisma.customer.update({
+          where: {
+            id: user.id,
+          },
+          data: {
+            tempEmail: email,
+          },
+        });
+        break;
+      default:
+        throw serverError;
+    }
 
-    const token = generateTempToken(profile.id, userType);
+    const token = generateChangeEmailToken(profile.email, email, user.userType);
 
     const baseUrl =
-      userType === "customer"
+      user.userType === "customer"
         ? customerClientHost
-        : userType === "seller"
+        : user.userType === "seller"
           ? sellerClientHost
           : staffClientHost;
 
@@ -80,7 +118,7 @@ export const requestVerificationEmail = async (
     const url = `${baseUrl}/change-email/${token}`;
 
     // send email here
-    await sendChangeEmailtokenEmail(url, name, profile.email);
+    await sendChangeEmailtokenEmail(url, name, email, baseUrl);
 
     res.status(200).json({
       message: "Send verification email",
@@ -94,57 +132,53 @@ export const requestVerificationEmail = async (
   }
 };
 
-export const changeEmail = async (
-  req: ChangeEmailRequest,
+export const changeEmailVerification = async (
+  req: ChangeEmailVerificationRequest,
   res: Response,
   next: NextFunction,
 ): Promise<void> => {
   try {
-    const { user } = req;
-    const { email, token } = req.body;
+    const { token } = req.body;
 
-    if (!user) {
-      throw new Error("User not found");
-    }
-
-    const payload = getSecurityTokenPayload(token);
+    const payload = getEmailChangeTokenPayload(token);
 
     if (!payload) {
       throw new Error("Invalid security token");
     }
 
-    if (user.email != payload.email) {
-      throw new Error("Permission denied");
-    }
+    const { initialEmail, newEmail, userType } = payload;
 
-    switch (user.userType) {
+    switch (userType) {
       case "customer":
         await prisma.customer.update({
           where: {
-            id: user.id,
+            email: initialEmail,
           },
           data: {
-            email,
+            email: newEmail,
+            tempEmail: null,
           },
         });
         break;
       case "seller":
         await prisma.seller.update({
           where: {
-            id: user.id,
+            email: initialEmail,
           },
           data: {
-            email,
+            email: newEmail,
+            tempEmail: null,
           },
         });
         break;
       case "staff":
         await prisma.staff.update({
           where: {
-            id: user.id,
+            email: initialEmail,
           },
           data: {
-            email,
+            email: newEmail,
+            tempEmail: null,
           },
         });
         break;
@@ -153,7 +187,7 @@ export const changeEmail = async (
     }
 
     res.status(200).json({
-      message: "Email updated successfully",
+      message: "Email changed successfully",
     });
   } catch (e) {
     if (e instanceof Error) {

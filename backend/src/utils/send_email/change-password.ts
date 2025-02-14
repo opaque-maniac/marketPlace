@@ -14,7 +14,7 @@ export const sendChangePasswordEmail = async (
     support_link: `${clientHost}/contact`,
   });
 
-  const data = await sendEmail(email, template);
+  const data = await sendEmail(email, template, "Change Password");
 
   if (!data) {
     throw serverError;

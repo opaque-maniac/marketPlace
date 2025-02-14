@@ -14,24 +14,51 @@ export const verifyEmailToken = async (
   next: NextFunction,
 ): Promise<void> => {
   try {
-    const { user } = req;
     const { token } = req.body;
-
-    if (!user) {
-      throw new Error("User not found");
-    }
 
     const payload = getSecurityTokenPayload(token);
 
     if (!payload) {
       throw new Error("Invalid security token");
     }
+    const { email, userType } = payload;
+    let profile: UserAllTypes | null = null;
 
-    if (user.email != payload.email) {
+    switch (userType) {
+      case "customer":
+        profile = await prisma.customer.findUnique({
+          where: {
+            email,
+          },
+        });
+        break;
+      case "seller":
+        profile = await prisma.seller.findUnique({
+          where: {
+            email,
+          },
+        });
+        break;
+      case "staff":
+        profile = await prisma.staff.findUnique({
+          where: {
+            email,
+          },
+        });
+        break;
+      default:
+        throw serverError;
+    }
+
+    if (!profile) {
+      throw new Error("User profile not found");
+    }
+
+    if (profile.email != payload.email) {
       throw new Error("Permission denied");
     }
 
-    const dataToken = generateDataToken(user.email, user.role);
+    const dataToken = generateDataToken(profile.email, userType);
 
     res.status(200).json({
       message: "Verified email token",

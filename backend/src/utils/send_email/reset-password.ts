@@ -14,7 +14,7 @@ export const sendResetPasswordEmail = async (
     support_link: `${clientHost}/contact`,
   });
 
-  const data = await sendEmail(email, template);
+  const data = await sendEmail(email, template, "Reset Password");
 
   if (!data) {
     throw serverError;

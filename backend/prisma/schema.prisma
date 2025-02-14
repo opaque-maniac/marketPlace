@@ -16,11 +16,13 @@ datasource db {
 model Customer {
   id        String         @id @default(uuid())
   email     String         @unique
+  tempEmail String?
   firstName String
   lastName  String
   password  String
   address   String?
   phone     String?
+  verified  Boolean        @default(false)
   active    Boolean        @default(true)
   image     CustomerImage?
   wishlist  WishList?
@@ -42,11 +44,13 @@ model CustomerImage {
 model Seller {
   id        String       @id @default(uuid())
   email     String       @unique
+  tempEmail String?
   name      String
   password  String
   bio       String?
   address   String?
   phone     String?
+  verified  Boolean      @default(false)
   active    Boolean      @default(true)
   image     SellerImage?
   products  Product[]
@@ -72,9 +76,11 @@ enum STAFF_ROLE {
 model Staff {
   id         String      @id @default(uuid())
   email      String      @unique
+  tempEmail  String?
   firstName  String
   lastName   String
   password   String
+  verified   Boolean     @default(false)
   active     Boolean     @default(true)
   role       STAFF_ROLE
   image      StaffImage?

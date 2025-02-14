@@ -44,6 +44,16 @@ const errorHandler = async (
       message = "Profile is not active";
       status = 401;
       break;
+    case "User email not verified":
+      code = "A007";
+      message = error.message;
+      status = 401;
+      break;
+    case "Email already verified":
+      status = 400;
+      message = error.message;
+      code = "A008";
+      break;
     case "Cart not found":
       message = error.message;
       status = 500;

@@ -1,23 +1,17 @@
-import { getAccessToken } from "../../cookies";
-import { responseError, tokenError } from "../../errors";
+import { responseError } from "../../errors";
 import { apiHost, apiProtocol } from "../../generics";
-import { ErrorResponse, SuccessEmailResponse } from "../../types";
+import { ErrorResponse } from "../../types";
 
-export const passwordChangeTokenRequest = async () => {
+export const sendVerifyEmailToken = async (token: string) => {
   try {
-    const url = `${apiProtocol}://${apiHost}/security/change-password`;
-    const token = getAccessToken();
-
-    if (!token) {
-      throw tokenError;
-    }
+    const url = `${apiProtocol}://${apiHost}/security/verify-email/token`;
 
     const options = {
       method: "POST",
       headers: {
-        Authorization: `Bearer ${token}`,
         "Content-Type": "application/json",
       },
+      body: JSON.stringify({ token }),
     };
 
     const response = await fetch(url, options);
@@ -33,7 +27,7 @@ export const passwordChangeTokenRequest = async () => {
       }
     }
 
-    const data = (await response.json()) as SuccessEmailResponse;
+    const data = (await response.json()) as { message: string };
     return data;
   } catch (e) {
     if (e instanceof Error) {

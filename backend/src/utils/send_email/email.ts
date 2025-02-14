@@ -8,11 +8,15 @@ if (!apiKey) {
 
 const resend = new Resend(apiKey);
 
-export const sendEmail = async (email: string, template: string) => {
+export const sendEmail = async (
+  email: string,
+  template: string,
+  subject: string,
+) => {
   const { data, error } = await resend.emails.send({
     from: "Acme <onboarding@resend.dev>",
     to: email,
-    subject: "Welcome to Acme",
+    subject,
     html: template,
   });
 

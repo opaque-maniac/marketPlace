@@ -28,14 +28,13 @@ export const addToCart = async ({ productID, quantity }: AddToCartProps) => {
     const response = await fetch(url, options);
 
     if (!response.ok) {
+      let data: ErrorResponse | undefined;
       try {
-        const error = (await response.json()) as ErrorResponse;
-        throw new Error(JSON.stringify(error));
+        data = (await response.json()) as ErrorResponse;
       } catch (e) {
-        if (e instanceof Error) {
-          throw responseError();
-        }
+        throw responseError();
       }
+      throw new Error(JSON.stringify(data));
     }
 
     const data = (await response.json()) as SuccessAddToCartResponse;

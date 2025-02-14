@@ -11,6 +11,7 @@ import bcrypt from "bcrypt";
 import { LoginRequest, RegisterStaffRequest } from "../../types";
 import generateToken from "../../utils/token";
 import { serverError } from "../../utils/globals";
+import { sendVerificationEmail } from "../../utils/send_email/verify-email";
 
 // View for staff login
 export const login = async (
@@ -29,6 +30,10 @@ export const login = async (
 
     if (!staff) {
       throw new Error("Invalid email or password");
+    }
+
+    if (!staff.verified) {
+      throw new Error("User email not verified");
     }
 
     const match = await bcrypt.compare(password, staff.password);
@@ -82,8 +87,15 @@ export const registerStaff = async (
         lastName,
         role,
         password: hashedPassword,
+        verified: false,
       },
     });
+
+    await sendVerificationEmail(
+      staff,
+      "staff",
+      `${staff.firstName} ${staff.lastName}`,
+    );
 
     res.status(201).json({
       message: "Staff created successfully",

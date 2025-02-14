@@ -1,23 +1,17 @@
-import { getAccessToken } from "../../cookies";
-import { responseError, tokenError } from "../../errors";
+import { responseError } from "../../errors";
 import { apiHost, apiProtocol } from "../../generics";
-import { ErrorResponse, SuccessEmailResponse } from "../../types";
+import { ErrorResponse } from "../../types";
 
-export const emailChangeTokenRequest = async () => {
+export const sendResetPasswordEmailForm = async (email: string) => {
   try {
-    const url = `${apiProtocol}://${apiHost}/security/change-email`;
-    const token = getAccessToken();
-
-    if (!token) {
-      throw tokenError;
-    }
+    const url = `${apiProtocol}://${apiHost}/security/reset-password`;
 
     const options = {
       method: "POST",
       headers: {
-        Authorization: `Bearer ${token}`,
         "Content-Type": "application/json",
       },
+      body: JSON.stringify({ email, role: "customer" }),
     };
 
     const response = await fetch(url, options);
@@ -33,7 +27,7 @@ export const emailChangeTokenRequest = async () => {
       }
     }
 
-    const data = (await response.json()) as SuccessEmailResponse;
+    const data = (await response.json()) as { message: string };
     return data;
   } catch (e) {
     if (e instanceof Error) {

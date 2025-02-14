@@ -18,6 +18,12 @@ export interface DecodedToken extends JwtPayload {
   userType: UserRole;
 }
 
+export interface EmailChangeDecodedToken extends JwtPayload {
+  initialEmail: string;
+  newEmail: string;
+  userType: UserRole;
+}
+
 export interface SecurityDecodedToken extends JwtPayload {
   emai: string;
   userType: UserRole;
@@ -193,13 +199,6 @@ export interface VerifySecurityCodeRequest extends AuthenticatedRequest {
   };
 }
 
-export interface ChangeEmailRequest extends AuthenticatedRequest {
-  body: {
-    email: string;
-    token: string;
-  };
-}
-
 export interface ChangePasswordRequest extends AuthenticatedRequest {
   body: {
     password: string;
@@ -211,5 +210,30 @@ export interface ResetPasswordRequest extends Request {
   body: {
     email: string;
     role: UserRole;
+  };
+}
+
+export interface ChangeEmailRequest extends AuthenticatedRequest {
+  body: {
+    email: string;
+  };
+}
+
+export interface ChangeEmailVerificationRequest extends Request {
+  body: {
+    token: string;
+  };
+}
+
+export interface VerifyEmailRequest extends Request {
+  body: {
+    email: string;
+    role: UserRole;
+  };
+}
+
+export interface VerifyEmailTokenRequest extends Request {
+  body: {
+    token: string;
   };
 }

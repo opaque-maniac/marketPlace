@@ -11,6 +11,7 @@ import bcrypt from "bcrypt";
 import { LoginRequest, RegisterSellerRequest } from "../../types";
 import generateToken, { generateRefreshToken } from "../../utils/token";
 import { serverError } from "../../utils/globals";
+import { sendVerificationEmail } from "../../utils/send_email/verify-email";
 
 // Endpoint to register seller
 export const register = async (
@@ -37,8 +38,11 @@ export const register = async (
         email,
         name,
         password: hashedPassword,
+        verified: false,
       },
     });
+
+    await sendVerificationEmail(seller, "seller", seller.name);
 
     res.status(201).json({
       message: "Seller registered successfully",
@@ -74,6 +78,10 @@ export const login = async (
 
     if (!seller.active) {
       throw new Error("User is not active");
+    }
+
+    if (!seller.verified) {
+      throw new Error("User email not verified");
     }
 
     const isPasswordValid = await bcrypt.compare(password, seller.password);

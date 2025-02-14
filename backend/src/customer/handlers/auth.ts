@@ -11,6 +11,7 @@ import bcrypt from "bcrypt";
 import { LoginRequest, RegisterCustomerRequest } from "../../types";
 import generateToken, { generateRefreshToken } from "../../utils/token";
 import { serverError } from "../../utils/globals";
+import { sendVerificationEmail } from "../../utils/send_email/verify-email";
 
 // Function to authenticate customer
 export const register = async (
@@ -43,6 +44,7 @@ export const register = async (
             firstName,
             lastName,
             password: hashedPassword,
+            verified: false,
           },
         });
 
@@ -64,6 +66,12 @@ export const register = async (
         maxWait: 5000,
         timeout: 10000,
       },
+    );
+
+    await sendVerificationEmail(
+      customer,
+      "customer",
+      `${firstName} ${lastName}`,
     );
 
     res.status(201).json({
@@ -100,6 +108,10 @@ export const login = async (
 
     if (!customer.active) {
       throw new Error("User is not active");
+    }
+
+    if (!customer.verified) {
+      throw new Error("User email not verified");
     }
 
     const isPasswordValid = await bcrypt.compare(password, customer.password);

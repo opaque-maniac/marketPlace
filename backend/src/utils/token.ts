@@ -1,5 +1,9 @@
 import jwt from "jsonwebtoken";
-import { SecurityDecodedToken, UserRole } from "../types";
+import {
+  EmailChangeDecodedToken,
+  SecurityDecodedToken,
+  UserRole,
+} from "../types";
 
 const tokenSecret = process.env.JWT_SECRET || "somethingintheorange";
 
@@ -56,6 +60,28 @@ export const generateDataToken = (email: string, userType: UserRole) => {
   });
 
   return token as string;
+};
+
+export const generateChangeEmailToken = (
+  initialEmail: string,
+  newEmail: string,
+  userType: UserRole,
+) => {
+  const token = jwt.sign({ initialEmail, newEmail, userType }, tokenSecret, {
+    expiresIn: "10m",
+  });
+
+  return token as string;
+};
+
+export const getEmailChangeTokenPayload = (
+  token: string,
+): EmailChangeDecodedToken | null => {
+  try {
+    return jwt.verify(token, tokenSecret) as EmailChangeDecodedToken;
+  } catch (e) {
+    return null;
+  }
 };
 
 export default generateToken;

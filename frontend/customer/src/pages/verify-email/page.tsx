@@ -1,19 +1,19 @@
 import { Link } from "react-router-dom";
 import Transition from "../../components/transition";
-import ResetPasswordEmailForm from "../../components/security/reset-password-email-form";
+import VerifyEmailForm from "../../components/security/verify-email-form";
 
-export default function ResetPasswordPage() {
+export default function VerifyEmailPage() {
   return (
     <Transition>
       <main role="main" className="h-full pt-20 relative">
         <p className="absolute top-4 left-4">
           {" "}
-          Home / <span className="font-extrabold">Reset Passowrd</span>
+          Home / <span className="font-extrabold">Verify Email</span>
         </p>
 
-        <section className="md:w-8/12 w-full lg:mx-auto">
+        <section className="md:w-8/12 w-full md:mx-auto">
           <h2 className="text-2xl font-bold text-center">
-            Reset Profile Password
+            Verify Your Email Address
           </h2>
           <div className="pb-8 md:pl-0 pl-4">
             <p className="text-gray-600">
@@ -38,7 +38,7 @@ export default function ResetPasswordPage() {
           </div>
 
           <div>
-            <ResetPasswordEmailForm />
+            <VerifyEmailForm />
           </div>
         </section>
       </main>

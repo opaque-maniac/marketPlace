@@ -20,20 +20,30 @@ const errors404 = [
   "PR03",
 ];
 const errors500 = ["SE02", "W001", "S001"];
-const messageErrors = ["PR01", "I001", "I002", "C003", "OR02", "SEC0", "SEC2"];
+const messageErrors = [
+  "PR01",
+  "I001",
+  "I002",
+  "C003",
+  "OR02",
+  "SEC0",
+  "SEC2",
+  "A008",
+];
 const messageAnd500 = ["C001"];
 const refreshError = ["A004"];
+const logoutAndVerifyError = ["A007"];
 
 export function errorHandler(
   error: unknown,
   navigate: NavigateFunction,
   setErr: Dispatch<SetStateAction<string | null>>,
   setError: Dispatch<SetStateAction<boolean>>,
+  user?: string,
 ) {
   if (error instanceof Error) {
     try {
       const { errorCode, message } = JSON.parse(error.message) as ErrorResponse;
-
       switch (true) {
         case logout.includes(errorCode):
           logoutFunction(navigate);
@@ -59,6 +69,13 @@ export function errorHandler(
         case refreshError.includes(errorCode):
           navigate("/refresh");
           break;
+        case logoutAndVerifyError.includes(errorCode):
+          if (user) {
+            logoutFunction(navigate, false);
+          }
+          setErr("Your email has not been verified yet");
+          navigate("/verify-email", { replace: true });
+          break;
         default:
           setErr("Something unexpected happened");
           break;
@@ -68,6 +85,7 @@ export function errorHandler(
       navigate("/500", { replace: true });
     }
   } else {
-    setErr("Something unexpected happened");
+    setError(true);
+    navigate("/500", { replace: true });
   }
 }

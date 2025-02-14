@@ -3,7 +3,6 @@ import {
   AuthenticatedRequest,
   ChangePasswordRequest,
   UserAllTypes,
-  UserRole,
 } from "../../types";
 import {
   customerClientHost,

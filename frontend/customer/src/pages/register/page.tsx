@@ -24,7 +24,7 @@ const RegisterPage = () => {
     },
     onSuccess: (data) => {
       if (data && data.customer) {
-        navigate("/login");
+        navigate("/verify-confirm");
       } else {
         setErr("Something unexpected happened");
       }

@@ -6,13 +6,15 @@ export const sendChangeEmailtokenEmail = async (
   url: string,
   name: string,
   email: string,
+  baseUrl: string,
 ): Promise<void> => {
   const template = changeEmailTemplate({
     url,
     name,
+    baseUrl,
   });
 
-  const data = await sendEmail(email, template);
+  const data = await sendEmail(email, template, "Change Email");
 
   if (!data) {
     throw serverError;

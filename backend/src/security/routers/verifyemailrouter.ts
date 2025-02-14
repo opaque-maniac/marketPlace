@@ -1,26 +1,25 @@
 import { Router } from "express";
-import {
-  changeEmailRequest,
-  changeEmailVerification,
-} from "../handlers/change-email";
 import { body } from "express-validator";
-import { allowIfAuthenticated } from "../../middleware/auth-middleware";
+import {
+  verifyEmailRequest,
+  verifyEmailTokenCheck,
+} from "../handlers/verify-email";
 
 const router = Router();
 
 // request email
 router.post(
   "/",
-  allowIfAuthenticated,
   body("email").isEmail(),
-  changeEmailRequest,
+  body("role").isString().isIn(["customer", "staff", "seller"]),
+  verifyEmailRequest,
 );
 
 // verify token
 router.post(
-  "/verify",
+  "/token",
   body("token").isString().isLength({ min: 20 }),
-  changeEmailVerification,
+  verifyEmailTokenCheck,
 );
 
 export default router;
