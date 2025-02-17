@@ -54,11 +54,17 @@ const IndividualProductPage = () => {
     if (!id) {
       navigate("/500", { replace: true });
     }
+    const prefetch = async () => {
+      try {
+        await Promise.all([import("./addtocart"), import("./addtowishlist")]);
+      } catch (e) {
+        console.log("Error prefetching", e);
+        setError(true);
+        navigate("/500", { replace: true });
+      }
+    };
     // eslint-disable-next-line @typescript-eslint/no-floating-promises
-    import("./addtocart");
-    // eslint-disable-next-line @typescript-eslint/no-floating-promises
-    import("./addtowishlist");
-
+    prefetch();
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []);
 

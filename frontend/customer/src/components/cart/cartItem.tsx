@@ -1,27 +1,7 @@
-import { lazy, Suspense } from "react";
 import { CartItem } from "../../utils/types";
-import Loader from "../loader";
 import CartQuantity from "./cartQuantity";
-import OrderCart from "./ordercart";
 import OrderCartItem from "./ordercartitem";
-
-const RemoveFromCart = lazy(() => import("./removefromcart"));
-
-const Fallback = ({ background }: { background: string }) => {
-  return (
-    <div>
-      <button
-        disabled
-        aria-label="Loading"
-        className={`block h-10 w-20 bg-${background}-500 text-white rounded-lg`}
-      >
-        <div className="h-10 w-10 p-1 mx-auto">
-          <Loader color="#fff" />
-        </div>
-      </button>
-    </div>
-  );
-};
+import RemoveFromCart from "./removefromcart";
 
 interface Props {
   cartItem: CartItem;
@@ -55,12 +35,8 @@ const CartItemComponent = ({ cartItem, refetch }: Props) => {
           id={cartItem.product.id}
           inventory={cartItem.product.inventory}
         />
-        <Suspense fallback={<Fallback background="red" />}>
-          <RemoveFromCart refetch={refetch} id={cartItem.id} />
-        </Suspense>
-        <Suspense fallback={<Fallback background="green" />}>
-          <OrderCartItem refetch={refetch} id={cartItem.id} />
-        </Suspense>
+        <RemoveFromCart refetch={refetch} id={cartItem.id} />
+        <OrderCartItem refetch={refetch} id={cartItem.id} />
       </div>
     </div>
   );

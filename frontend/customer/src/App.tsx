@@ -37,6 +37,7 @@ const CategoriesPage = lazy(() => import("./pages/categories/page"));
 const RefreshTokenPage = lazy(() => import("./pages/refreshtoken/page"));
 const OrdersPage = lazy(() => import("./pages/orders/page"));
 const IndividualOrderPage = lazy(() => import("./pages/order/page"));
+const PayOrderPage = lazy(() => import("./pages/pay-order/page"));
 const SellerProfilePage = lazy(() => import("./pages/seller/page"));
 const SellerPRoductsPage = lazy(() => import("./pages/sellerproducts/page"));
 const SettingsPage = lazy(() => import("./pages/settings/page"));
@@ -139,6 +140,10 @@ const App = () => {
                         <Route
                           path="/orders/:id"
                           element={<IndividualOrderPage />}
+                        />
+                        <Route
+                          path="/orders/:id/pay"
+                          element={<PayOrderPage />}
                         />
                         <Route
                           path="/refresh-token"

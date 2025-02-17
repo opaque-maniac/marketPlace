@@ -39,7 +39,21 @@ const IndividualOrderPage = () => {
     if (!id) {
       setError(true);
       navigate("/500", { replace: true });
+      return;
     }
+
+    const prefetch = async () => {
+      try {
+        await import("../../components/orders/cancelorderbutton");
+      } catch (e) {
+        console.log("Error prefetching", e);
+        setError(true);
+        navigate("/500", { replace: true });
+      }
+    };
+    // eslint-disable-next-line @typescript-eslint/no-floating-promises
+    prefetch();
+
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []);
 
