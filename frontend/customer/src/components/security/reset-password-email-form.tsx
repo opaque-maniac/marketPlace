@@ -32,7 +32,7 @@ export default function ResetPasswordEmailForm() {
   };
 
   return (
-    <form ref={form} onSubmit={submitHandler}>
+    <form ref={form} onSubmit={submitHandler} className="w-64 mx-auto">
       <div>
         <label htmlFor="email" className="sr-only">
           Email
@@ -43,7 +43,7 @@ export default function ResetPasswordEmailForm() {
           name="email"
           placeholder="Email"
           required
-          className="block w-80 h-12 px-2 text-lg auth-input focus:auth-input focus:outline-none bg-white mx-auto"
+          className="block w-60 h-12 px-2 text-lg auth-input focus:auth-input focus:outline-none bg-white"
         />
       </div>
       <div>

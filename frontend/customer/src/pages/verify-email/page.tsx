@@ -1,6 +1,21 @@
 import { Link } from "react-router-dom";
 import Transition from "../../components/transition";
-import VerifyEmailForm from "../../components/security/verify-email-form";
+import { lazy, Suspense } from "react";
+import Loader from "../../components/loader";
+
+const VerifyEmailForm = lazy(
+  () => import("../../components/security/verify-email-form"),
+);
+
+const FormFallback = () => {
+  return (
+    <div className="w-[256px] h-[112px] flex justify-center items-center">
+      <div className="h-8 w-8">
+        <Loader color="#000" />
+      </div>
+    </div>
+  );
+};
 
 export default function VerifyEmailPage() {
   return (
@@ -38,7 +53,9 @@ export default function VerifyEmailPage() {
           </div>
 
           <div>
-            <VerifyEmailForm />
+            <Suspense fallback={<FormFallback />}>
+              <VerifyEmailForm />
+            </Suspense>
           </div>
         </section>
       </main>

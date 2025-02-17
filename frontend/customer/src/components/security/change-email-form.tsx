@@ -1,12 +1,12 @@
 import { useMutation } from "@tanstack/react-query";
 import { FormEventHandler, useContext, useRef } from "react";
-import { sendVerifyEmailForm } from "../../utils/mutations/security/sendverifyemailform";
 import { useNavigate } from "react-router-dom";
 import { ErrorContext, ShowErrorContext } from "../../utils/errorContext";
 import Loader from "../loader";
 import { errorHandler } from "../../utils/errorHandler";
+import { sendChangeEmailForm } from "../../utils/mutations/security/sendchangeemailform";
 
-export default function VerifyEmailForm() {
+export default function ChangeEmailForm() {
   const navigate = useNavigate();
   const [, setError] = useContext(ErrorContext);
   const [, setErr] = useContext(ShowErrorContext);
@@ -14,13 +14,13 @@ export default function VerifyEmailForm() {
   const form = useRef<HTMLFormElement | null>(null);
 
   const { mutate, isPending } = useMutation({
-    mutationFn: sendVerifyEmailForm,
+    mutationFn: sendChangeEmailForm,
     onError: (error) => {
       form.current?.reset();
       errorHandler(error, navigate, setErr, setError);
     },
     onSuccess: () => {
-      navigate("/verify-confirm");
+      navigate("/change-email-confirm");
     },
   });
 

@@ -1,11 +1,8 @@
 import { Link } from "react-router-dom";
 import Transition from "../../components/transition";
-import { lazy, Suspense } from "react";
 import Loader from "../../components/loader";
-
-const ResetPasswordEmailForm = lazy(
-  () => import("../../components/security/reset-password-email-form"),
-);
+import ChangeEmailForm from "../../components/security/change-email-form";
+import { Suspense } from "react";
 
 const FormFallback = () => {
   return (
@@ -17,25 +14,21 @@ const FormFallback = () => {
   );
 };
 
-export default function ResetPasswordPage() {
+export default function ChangeEmailPage() {
   return (
     <Transition>
       <main role="main" className="h-full pt-20 relative">
         <p className="absolute top-4 left-4">
           {" "}
-          Home / <span className="font-extrabold">Reset Passowrd</span>
+          Home / <span className="font-extrabold">Change Email</span>
         </p>
 
-        <section className="md:w-8/12 w-full lg:mx-auto">
-          <h2 className="text-2xl font-bold text-center">
-            Reset Profile Password
-          </h2>
+        <h2 className="text-2xl font-bold text-center">Change Email</h2>
+        <section className="md:w-8/12 w-full lg:mx-auto flex flex-col gap-2">
           <div className="pb-8 md:pl-0 pl-4">
             <p className="text-gray-600">
-              Enter your email address below to receive a verification link. If
-              you do not receive the email within a few minutes, please check
-              your spam folder. If you still do not receive the email, please
-              contact us{" "}
+              Enter your new email address below to receive a verification link
+              in the new email address.
             </p>
             <p className="text-gray-600">
               The link will expire in 10 minutes. If you do not verify your
@@ -54,7 +47,7 @@ export default function ResetPasswordPage() {
 
           <div>
             <Suspense fallback={<FormFallback />}>
-              <ResetPasswordEmailForm />
+              <ChangeEmailForm />
             </Suspense>
           </div>
         </section>

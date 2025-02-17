@@ -13,6 +13,7 @@ import PageLoader from "./components/pageloader";
 import ScrollToTop from "./utils/scrolltotop";
 import ProtectedRoute from "./components/protectedroute";
 import AuthRoute from "./components/authroute";
+import ServerErrorRoute from "./components/servererrorroute";
 
 const HomePage = lazy(() => import("./pages/home/page"));
 const LoginPage = lazy(() => import("./pages/login/page"));
@@ -52,6 +53,20 @@ const ResetPasswordTokenPage = lazy(
 );
 const PassswordResetConfirmationPage = lazy(
   () => import("./pages/reset-password-confirm/page"),
+);
+const ChangeEmailPage = lazy(() => import("./pages/change-email/page"));
+const ChangeEmailTokenPage = lazy(
+  () => import("./pages/change-email-token/page"),
+);
+const ChangeEmailConfirmationPage = lazy(
+  () => import("./pages/change-email-confirm/page"),
+);
+const ChangePasswordPage = lazy(() => import("./pages/change-password/page"));
+const ChangePasswordTokenPage = lazy(
+  () => import("./pages/change-password-token/page"),
+);
+const ChangePasswordConfirmationPage = lazy(
+  () => import("./pages/change-password-confirm/page"),
 );
 
 const queryClient = new QueryClient({
@@ -130,6 +145,32 @@ const App = () => {
                           element={<RefreshTokenPage />}
                         />
                         <Route path="/settings" element={<SettingsPage />} />
+
+                        {/* Change email */}
+                        <Route
+                          path="/change-email"
+                          element={<ChangeEmailPage />}
+                        />
+                        <Route
+                          path="/change-email/:token"
+                          element={<ChangeEmailTokenPage />}
+                        />
+                        <Route
+                          path="/change-email-confirm"
+                          element={<ChangeEmailConfirmationPage />}
+                        />
+                        <Route
+                          path="/change-password"
+                          element={<ChangePasswordPage />}
+                        />
+                        <Route
+                          path="/change-password/:token"
+                          element={<ChangePasswordTokenPage />}
+                        />
+                        <Route
+                          path="/change-password-confirm"
+                          element={<ChangePasswordConfirmationPage />}
+                        />
                       </Route>
                       <Route element={<AuthRoute />}>
                         <Route path="/login" element={<LoginPage />} />
@@ -161,7 +202,9 @@ const App = () => {
                           element={<PassswordResetConfirmationPage />}
                         />
                       </Route>
-                      <Route path="/500" element={<Error500 />} />
+                      <Route element={<ServerErrorRoute />}>
+                        <Route path="/500" element={<Error500 />} />
+                      </Route>
                       <Route path="*" element={<Error404 />} />
                     </Routes>
                   </Suspense>

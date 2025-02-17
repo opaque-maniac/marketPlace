@@ -1,22 +1,19 @@
-import { useContext, useLayoutEffect } from "react";
+import { useContext, useEffect } from "react";
 import { ErrorContext } from "../../utils/errorContext";
-import { Link, useNavigate } from "react-router-dom";
+import { Link } from "react-router-dom";
 import Transition from "../../components/transition";
 import { Helmet } from "react-helmet";
 
 const Error500 = () => {
-  const [error, setError] = useContext(ErrorContext);
-  const navigate = useNavigate();
+  const [, setError] = useContext(ErrorContext);
 
-  useLayoutEffect(() => {
-    if (!error) {
-      navigate("/404", { replace: true });
-    }
-
+  useEffect(() => {
     return () => {
       setError(false);
     };
-  });
+
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, []);
 
   return (
     <Transition>

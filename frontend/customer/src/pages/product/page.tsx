@@ -54,6 +54,11 @@ const IndividualProductPage = () => {
     if (!id) {
       navigate("/500", { replace: true });
     }
+    // eslint-disable-next-line @typescript-eslint/no-floating-promises
+    import("./addtocart");
+    // eslint-disable-next-line @typescript-eslint/no-floating-promises
+    import("./addtowishlist");
+
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []);
 
@@ -128,7 +133,7 @@ const IndividualProductPage = () => {
                   <>
                     <div className="flex justify-start items-center gap-6 xl:pt-0 pt-4">
                       <h3 className="text-2xl font-semibold">{product.name}</h3>
-                      <div className="w-10 h-10 bg-red-500 flex justify-center items-center rounded-tr-md rounded-bl-md shadow-md">
+                      <div className="min-w-10 h-10 bg-red-500 flex justify-center items-center rounded-tr-md rounded-bl-md shadow-md px-[2px]">
                         <span className="font-bold text-gray-100">
                           {discount}%
                         </span>

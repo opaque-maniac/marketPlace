@@ -18,7 +18,7 @@ router.post(
 
 // verify token
 router.post(
-  "/verify",
+  "/token",
   body("token").isString().isLength({ min: 20 }),
   changeEmailVerification,
 );

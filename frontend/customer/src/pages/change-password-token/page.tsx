@@ -3,12 +3,11 @@ import Transition from "../../components/transition";
 import { lazy, Suspense, useContext, useEffect, useState } from "react";
 import { useMutation } from "@tanstack/react-query";
 import Loader from "../../components/loader";
-import { ErrorContext, ShowErrorContext } from "../../utils/errorContext";
-import { errorHandler } from "../../utils/errorHandler";
-import { sendResetPasswordToken } from "../../utils/mutations/security/sendresetpasswordtoken";
+import { ShowErrorContext } from "../../utils/errorContext";
+import { sendChangePasswordToken } from "../../utils/mutations/security/sendchangepasswordtoken";
 
-const ResetPasswordNewPasswordForm = lazy(
-  () => import("../../components/security/reset-password-newpassword-form"),
+const PasswordForm = lazy(
+  () => import("../../components/security/change-password-newpassword-form"),
 );
 
 const FormFallback = () => {
@@ -21,29 +20,24 @@ const FormFallback = () => {
   );
 };
 
-export default function ResetPasswordTokenPage() {
+export default function ChangePasswordTokenPage() {
   const { token } = useParams();
   const navigate = useNavigate();
   const [, setErr] = useContext(ShowErrorContext);
-  const [, setError] = useContext(ErrorContext);
-  const [nToken, setNToken] = useState<string | null>(null);
   const [success, setSuccess] = useState<boolean>(false);
+  const [nToken, setNToken] = useState<string>("");
 
   const { mutate, isPending } = useMutation({
-    mutationFn: sendResetPasswordToken,
-    onError: (error) => {
-      errorHandler(error, navigate, setErr, setError);
+    mutationFn: sendChangePasswordToken,
+    onError: () => {
+      setErr("Failed to verify email address.");
       setSuccess(false);
     },
     onSuccess: (data) => {
-      setSuccess(true);
       setNToken(data.token);
+      setSuccess(true);
     },
   });
-
-  const setSuccessFalse = () => {
-    setSuccess(false);
-  };
 
   useEffect(() => {
     if (!token) {
@@ -53,6 +47,10 @@ export default function ResetPasswordTokenPage() {
     }
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []);
+
+  const handlError = () => {
+    setSuccess(false);
+  };
 
   return (
     <Transition>
@@ -72,12 +70,12 @@ export default function ResetPasswordTokenPage() {
           </div>
         ) : (
           <section className="md:w-8/12 w-full lg:mx-auto">
-            {success && token ? (
+            {success ? (
               <div>
                 <p className="text-gray-600">
-                  Please enter your new password in the form below. Due to
-                  security reasons, this form will expire in 20 minutes after
-                  which you will need to request a new password reset email.
+                  Your email has been verified successfully and has been
+                  updated. Please enter your new password into the form below to
+                  update the password in your account.
                 </p>
                 <p className="text-gray-600">
                   If you have any questions, please contact us from{" "}
@@ -90,18 +88,17 @@ export default function ResetPasswordTokenPage() {
                 <div>
                   {/* Form goes here */}
                   <Suspense fallback={<FormFallback />}>
-                    <ResetPasswordNewPasswordForm
-                      token={nToken as string}
-                      error={setSuccessFalse}
-                    />
+                    <PasswordForm token={nToken} error={handlError} />
                   </Suspense>
                 </div>
               </div>
             ) : (
               <div>
                 <p className="text-gray-600">
-                  Failed to reset your password. Click the button below to
-                  resend the verification email to you mail inbox.
+                  Failed to verify your new email address. You can click the
+                  button below to try again. If you continue to have problems,
+                  please contact us and we will get back to you as soon as
+                  possible.
                 </p>
 
                 <p className="text-gray-600">
@@ -114,10 +111,10 @@ export default function ResetPasswordTokenPage() {
 
                 <div>
                   <Link
-                    to={"/reset-password"}
-                    className="block min-w-40 h-12 bg-blue-500 text-white rounded-md text-center mt-4 mx-auto"
+                    to={"/change-password"}
+                    className="block w-52 h-12 bg-blue-500 text-white rounded-md text-center mt-4 mx-auto"
                   >
-                    Reset Password
+                    <span>Try Again</span>
                   </Link>
                 </div>
               </div>

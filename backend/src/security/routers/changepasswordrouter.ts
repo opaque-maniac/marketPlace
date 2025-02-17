@@ -10,11 +10,8 @@ import { passwordConfig } from "../../utils/globals";
 
 const router = Router();
 
-// middleware
-router.use(allowIfAuthenticated);
-
 // request email
-router.post("/", requestPasswordVerificationEmail);
+router.post("/", allowIfAuthenticated, requestPasswordVerificationEmail);
 
 // verify token
 router.post(

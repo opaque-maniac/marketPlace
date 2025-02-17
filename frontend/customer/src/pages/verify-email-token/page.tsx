@@ -42,10 +42,12 @@ export default function VerifyEmailTokenPage() {
           Home / <span className="font-extrabold">Verify Email</span>
         </p>
 
-        <h2 className="text-2xl font-bold">Verify Your Email Address</h2>
+        <h2 className="text-2xl font-bold text-center">
+          Verify Your Email Address
+        </h2>
 
         {isPending ? (
-          <div className="flex justify-center items-center md:min-h-[800px] min-h-[600px]">
+          <div className="flex justify-center items-center h-[400px]">
             <div className="w-10 h-10">
               <Loader color="#000" />
             </div>
@@ -54,11 +56,11 @@ export default function VerifyEmailTokenPage() {
           <section className="md:w-8/12 w-full lg:mx-auto">
             {success ? (
               <div>
-                <p className="text-gray-600">
+                <p className="text-gray-600 text-center">
                   Your email has been verified. You can now login to your
                   account.
                 </p>
-                <p className="text-gray-600">
+                <p className="text-gray-600 text-center">
                   If you have any questions, please contact us from{" "}
                   <Link to={"/contact"} className="undeline text-blue-500">
                     here
@@ -69,7 +71,7 @@ export default function VerifyEmailTokenPage() {
                 <div>
                   <Link
                     to={"/login"}
-                    className="block min-w-40 h-12 bg-blue-500 text-white rounded-md text-center mt-4 mx-auto"
+                    className="block w-40 h-12 bg-blue-500 text-white rounded-md text-center mt-4 pt-2 mx-auto"
                   >
                     Login
                   </Link>
@@ -93,7 +95,7 @@ export default function VerifyEmailTokenPage() {
                 <div>
                   <Link
                     to={"/verify-email"}
-                    className="block min-w-40 h-12 bg-blue-500 text-white rounded-md text-center mt-4 mx-auto"
+                    className="block w-40 h-12 bg-blue-500 text-white rounded-md text-center mt-4 mx-auto pt-2"
                   >
                     Verify Email
                   </Link>
