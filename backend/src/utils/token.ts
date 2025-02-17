@@ -5,7 +5,11 @@ import {
   UserRole,
 } from "../types";
 
-const tokenSecret = process.env.JWT_SECRET || "somethingintheorange";
+const tokenSecret = process.env.JWT_SECRET;
+
+if (typeof tokenSecret != "string") {
+  throw new Error("JWT_SECRET is not defined");
+}
 
 const generateToken = (id: string, email: string, userType: UserRole) => {
   const token = jwt.sign({ id, email, userType }, tokenSecret, {
