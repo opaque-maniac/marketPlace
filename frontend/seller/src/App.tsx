@@ -31,6 +31,35 @@ const DeleteProfilePage = lazy(() => import("./pages/deleteprofile/page"));
 const RefreshTokenPage = lazy(() => import("./pages/refreshtoken/page"));
 const OrdersPage = lazy(() => import("./pages/orders/page"));
 const IndividualOrderPage = lazy(() => import("./pages/order/page"));
+const SettingsPage = lazy(() => import("./pages/settings/page"));
+const EmailVerificationPage = lazy(() => import("./pages/verify-email/page"));
+const EmailVerificationTokenPage = lazy(
+  () => import("./pages/verify-email-token/page"),
+);
+const EmailVerificationConfirmationPage = lazy(
+  () => import("./pages/verify-email-confirm/page"),
+);
+const ResetPasswordPage = lazy(() => import("./pages/reset-password/page"));
+const ResetPasswordTokenPage = lazy(
+  () => import("./pages/reset-password-token/page"),
+);
+const PassswordResetConfirmationPage = lazy(
+  () => import("./pages/reset-password-confirm/page"),
+);
+const ChangeEmailPage = lazy(() => import("./pages/change-email/page"));
+const ChangeEmailTokenPage = lazy(
+  () => import("./pages/change-email-token/page"),
+);
+const ChangeEmailConfirmationPage = lazy(
+  () => import("./pages/change-email-confirm/page"),
+);
+const ChangePasswordPage = lazy(() => import("./pages/change-password/page"));
+const ChangePasswordTokenPage = lazy(
+  () => import("./pages/change-password-token/page"),
+);
+const ChangePasswordConfirmationPage = lazy(
+  () => import("./pages/change-password-confirm/page"),
+);
 
 const queryClient = new QueryClient({
   defaultOptions: {
@@ -85,10 +114,63 @@ const App = () => {
                           path="/refresh-token"
                           element={<RefreshTokenPage />}
                         />
+                        <Route path="/settings" element={<SettingsPage />} />
+
+                        {/* Change email */}
+                        <Route
+                          path="/change-email"
+                          element={<ChangeEmailPage />}
+                        />
+                        <Route
+                          path="/change-email/:token"
+                          element={<ChangeEmailTokenPage />}
+                        />
+                        <Route
+                          path="/change-email-confirm"
+                          element={<ChangeEmailConfirmationPage />}
+                        />
+                        <Route
+                          path="/change-password"
+                          element={<ChangePasswordPage />}
+                        />
+                        <Route
+                          path="/change-password/:token"
+                          element={<ChangePasswordTokenPage />}
+                        />
+                        <Route
+                          path="/change-password-confirm"
+                          element={<ChangePasswordConfirmationPage />}
+                        />
                       </Route>
                       <Route element={<AuthRoute />}>
                         <Route path="/login" element={<LoginPage />} />
                         <Route path="/register" element={<RegisterPage />} />
+
+                        {/* Email verification */}
+                        <Route
+                          path="/verify-email"
+                          element={<EmailVerificationPage />}
+                        />
+                        <Route
+                          path="/verify-email/:token"
+                          element={<EmailVerificationTokenPage />}
+                        />
+                        <Route
+                          path="/verify-confirm"
+                          element={<EmailVerificationConfirmationPage />}
+                        />
+                        <Route
+                          path="/reset-password"
+                          element={<ResetPasswordPage />}
+                        />
+                        <Route
+                          path="/reset-password/:token"
+                          element={<ResetPasswordTokenPage />}
+                        />
+                        <Route
+                          path="/reset-confirm"
+                          element={<PassswordResetConfirmationPage />}
+                        />
                       </Route>
                       <Route path="/contact" element={<ContactPage />} />
                       <Route path="/about" element={<AboutPage />} />
