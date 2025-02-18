@@ -1,4 +1,3 @@
-import { Helmet } from "react-helmet";
 import Transition from "../../components/transition";
 import { Link, useNavigate, useParams } from "react-router-dom";
 import { useEffect, useContext, useCallback, lazy, Suspense } from "react";
@@ -10,6 +9,7 @@ import PageLoader from "../../components/pageloader";
 import { apiHost, apiProtocol } from "../../utils/generics";
 import { errorHandler } from "../../utils/errorHandler";
 import Loader from "../../components/loader";
+import MetaTags from "../../components/metacomponent";
 
 const CancelOrderButtonComponent = lazy(
   () => import("../../components/orders/cancelorderbutton"),
@@ -81,13 +81,19 @@ const IndividualOrderPage = () => {
 
   return (
     <Transition>
-      <Helmet>
-        <title>{`Order ${id ?? ""}`}</title>
-        <meta name="description" content={`Page for individual order ${id}`} />
-        <meta name="robots" content="noindex, nofollow" />
-        <meta name="googlebot" content="noindex, nofollow" />
-        <meta name="google" content="nositelinkssearchbox" />
-      </Helmet>
+      <MetaTags
+        title="Order | Hazina"
+        description="View your order"
+        keywords={[
+          "order",
+          "view order",
+          "view my order",
+          "individual order",
+          `order ${id}`,
+        ]}
+        image="/images/logo.svg"
+        allowBots={false}
+      />
       <main role="main" style={{ minHeight: "calc(100vh - 1.4rem )" }}>
         {query.isLoading ? (
           <PageLoader />

@@ -1,8 +1,21 @@
+import MetaTags from "../../components/metacomponent";
 import Transition from "../../components/transition";
 
 const PrivacyPage = () => {
   return (
     <Transition>
+      <MetaTags
+        title="Privacy | Hazina"
+        description="Hazina Privacy Policy"
+        keywords={[
+          "privacy",
+          "privacy policy",
+          "data protection",
+          "data privacy",
+        ]}
+        image="/images/logo.svg"
+        allowBots={true}
+      />
       <main role="main" className="h-full pt-20 relative">
         <p className="absolute top-4 left-4">
           {" "}

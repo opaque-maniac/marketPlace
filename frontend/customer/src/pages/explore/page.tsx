@@ -5,11 +5,11 @@ import { useContext, useEffect } from "react";
 import { ErrorContext, ShowErrorContext } from "../../utils/errorContext";
 import ArrowLeft from "../../components/icons/arrowleft";
 import ArrowRight from "../../components/icons/arrowright";
-import { Helmet } from "react-helmet";
 import { fetchProducts } from "../../utils/queries/products/fetchproducts";
 import ProductList from "../../components/products/productlist";
 import PageLoader from "../../components/pageloader";
 import { errorHandler } from "../../utils/errorHandler";
+import MetaTags from "../../components/metacomponent";
 
 const ExplorePage = () => {
   const [, setError] = useContext(ErrorContext);
@@ -68,13 +68,18 @@ const ExplorePage = () => {
 
   return (
     <Transition>
-      <Helmet>
-        <title>Explore</title>
-        <meta name="description" content="Orders page for Hazina seller app" />
-        <meta name="robots" content="noindex, nofollow" />
-        <meta name="googlebot" content="noindex, nofollow" />
-        <meta name="google" content="nositelinkssearchbox" />
-      </Helmet>
+      <MetaTags
+        title="Explore | Hazina"
+        description="Explore and buy products in kenya"
+        keywords={[
+          "explore",
+          "explore products",
+          "explore hazina",
+          "buy products",
+        ]}
+        image="/images/logo.svg"
+        allowBots={true}
+      />
       <main role="main">
         <section
           className="px-2 py-2"

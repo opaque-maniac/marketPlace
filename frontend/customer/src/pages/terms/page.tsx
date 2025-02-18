@@ -1,9 +1,22 @@
 import { Link } from "react-router-dom";
 import Transition from "../../components/transition";
+import MetaTags from "../../components/metacomponent";
 
 const TermsPage = () => {
   return (
     <Transition>
+      <MetaTags
+        title="Terms & Conditions | Hazina"
+        description="Hazina's Terms and Conditions"
+        keywords={[
+          "terms",
+          "terms and conditions",
+          "terms of service",
+          "terms of use",
+        ]}
+        image="/images/logo.svg"
+        allowBots={true}
+      />
       <main role="main" className="h-full pt-20 relative">
         <p className="absolute top-4 left-4">
           {" "}

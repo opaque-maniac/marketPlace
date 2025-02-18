@@ -11,6 +11,7 @@ import { fetchWishlist } from "../../utils/queries/wishlist";
 import EmptyWishlist from "../../components/wishlist/emptywishlist";
 import Wishlist from "../../components/wishlist/wishlistlist";
 import { errorHandler } from "../../utils/errorHandler";
+import MetaTags from "../../components/metacomponent";
 
 const WishlistPage = () => {
   const [, setError] = useContext(ErrorContext);
@@ -66,16 +67,19 @@ const WishlistPage = () => {
 
   return (
     <Transition>
-      <Helmet>
-        <title>Wishlist</title>
-        <meta
-          name="description"
-          content="Wishlist page for Hazina marketplace app"
-        />
-        <meta name="robots" content="noindex, nofollow" />
-        <meta name="googlebot" content="noindex, nofollow" />
-        <meta name="google" content="nositelinkssearchbox" />
-      </Helmet>
+      <MetaTags
+        title="Wishlist | Hazina"
+        description="Your wishlist page"
+        keywords={[
+          "wishlist",
+          "wishlist page",
+          "my wishlist",
+          "saved items",
+          "items to buy",
+        ]}
+        image="/images/logo.svg"
+        allowBots={false}
+      />
       <main role="main">
         <div className="flex justify-end items-center pr-4 py-4">
           <EmptyWishlist

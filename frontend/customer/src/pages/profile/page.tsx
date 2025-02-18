@@ -6,13 +6,13 @@ import { ErrorContext, ShowErrorContext } from "../../utils/errorContext";
 import { useQuery } from "@tanstack/react-query";
 import { fetchProfile } from "../../utils/queries/profile";
 import Loader from "../../components/loader";
-import { Helmet } from "react-helmet";
 import { errorHandler } from "../../utils/errorHandler";
 import { formatDate } from "../../utils/date";
 import PhoneIcon from "../../components/icons/phone";
 import EmailIcon from "../../components/icons/email";
 import LocationPinIcon from "../../components/icons/pin";
 import GearIcon from "../../components/icons/gear";
+import MetaTags from "../../components/metacomponent";
 
 const ProfilePage = () => {
   const user = useUserStore((state) => state.user);
@@ -41,13 +41,19 @@ const ProfilePage = () => {
 
   return (
     <Transition>
-      <Helmet>
-        <title>Profile</title>
-        <meta name="description" content="Hazina seller app profile page" />
-        <meta name="bots" content="noindex, nofollow" />
-        <meta name="googlebot" content="noindex, nofollow" />
-        <meta name="google" content="nositelinkssearchbox" />
-      </Helmet>
+      <MetaTags
+        title="Profile | Hazina"
+        description="Your profile page"
+        keywords={[
+          "profile",
+          "profile page",
+          "account",
+          "hazina profile",
+          "hazina account",
+        ]}
+        image="/images/logo.svg"
+        allowBots={false}
+      />
       <main role="main" className="h-full pt-20 relative pb-6">
         <p className="absolute top-4 left-4">
           {" "}

@@ -5,11 +5,11 @@ import { useContext, useEffect } from "react";
 import { ErrorContext, ShowErrorContext } from "../../utils/errorContext";
 import ArrowLeft from "../../components/icons/arrowleft";
 import ArrowRight from "../../components/icons/arrowright";
-import { Helmet } from "react-helmet";
 import { fetchCategoryProducts } from "../../utils/queries/products/fetchcategoryproducts";
 import ProductList from "../../components/products/productlist";
 import PageLoader from "../../components/pageloader";
 import { errorHandler } from "../../utils/errorHandler";
+import MetaTags from "../../components/metacomponent";
 
 const CategoriesPage = () => {
   const { category } = useParams();
@@ -61,13 +61,19 @@ const CategoriesPage = () => {
 
   return (
     <Transition>
-      <Helmet>
-        <title>Explore</title>
-        <meta name="description" content="Orders page for Hazina seller app" />
-        <meta name="robots" content="noindex, nofollow" />
-        <meta name="googlebot" content="noindex, nofollow" />
-        <meta name="google" content="nositelinkssearchbox" />
-      </Helmet>
+      <MetaTags
+        title={`${category} | Hazina`}
+        description={`Hazina marketplace category page for ${category} products`}
+        keywords={[
+          "category",
+          `${category}`,
+          "products",
+          `${category} products`,
+          `Hazina ${category} products`,
+        ]}
+        image="/images/logo.svg"
+        allowBots={true}
+      />
       <main role="main">
         <section
           className="px-2 py-2"

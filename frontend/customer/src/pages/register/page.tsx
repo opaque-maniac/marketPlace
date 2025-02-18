@@ -1,6 +1,6 @@
 import { Link, useNavigate } from "react-router-dom";
 import Transition from "../../components/transition";
-import AuthLayout from "../login/layout";
+import AuthLayout from "../../components/authlayout";
 import { FormEventHandler, useContext, useState } from "react";
 import { useMutation } from "@tanstack/react-query";
 import EyeClosed from "../../components/icons/hide";
@@ -10,6 +10,7 @@ import { ShowErrorContext, ErrorContext } from "../../utils/errorContext";
 import { Helmet } from "react-helmet";
 import { sendRegister } from "../../utils/mutations/auth/register";
 import { errorHandler } from "../../utils/errorHandler";
+import MetaTags from "../../components/metacomponent";
 
 const RegisterPage = () => {
   const navigate = useNavigate();
@@ -43,13 +44,20 @@ const RegisterPage = () => {
 
   return (
     <Transition>
-      <Helmet>
-        <title>Sign Up</title>
-        <meta name="description" content="Sign up to the Hazina seller app" />
-        <meta name="robots" content="nofollow" />
-        <meta name="googlebot" content="nofollow" />
-        <meta name="google" content="nositelinkssearchbox" />
-      </Helmet>
+      <MetaTags
+        title="Sign Up | Hazina"
+        description="Create an account with Hazina"
+        keywords={[
+          "sign up",
+          "sign up hazina",
+          "sign up account",
+          "register",
+          "register hazina",
+          "register account",
+        ]}
+        image="/images/logo.svg"
+        allowBots={true}
+      />
       <AuthLayout page="Sign Up">
         <div className="mb-4">
           <h3 className="text-4xl mb-4">Create an account</h3>

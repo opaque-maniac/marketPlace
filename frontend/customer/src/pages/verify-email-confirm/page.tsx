@@ -1,9 +1,22 @@
 import { Link } from "react-router-dom";
 import Transition from "../../components/transition";
+import MetaTags from "../../components/metacomponent";
 
 export default function VerifyEmailConfirmationPage() {
   return (
     <Transition>
+      <MetaTags
+        title="Verify Email | Hazina"
+        description="Verify your email address confirmation on Hazina"
+        keywords={[
+          "verify email confirmation",
+          "verify email hazina confirmation",
+          "verify email account confirmation",
+          "verify email address confirmation",
+        ]}
+        image="/images/logo.svg"
+        allowBots={false}
+      />
       <main role="main" className="h-full pt-20 relative">
         <p className="absolute top-4 left-4">
           {" "}

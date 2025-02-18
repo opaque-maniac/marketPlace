@@ -2,6 +2,7 @@ import { Link } from "react-router-dom";
 import Transition from "../../components/transition";
 import { lazy, Suspense } from "react";
 import Loader from "../../components/loader";
+import MetaTags from "../../components/metacomponent";
 
 const ChangePasswordEmailForm = lazy(
   () => import("../../components/security/change-password-email-form"),
@@ -20,6 +21,18 @@ const FormFallback = () => {
 export default function ChangePasswordPage() {
   return (
     <Transition>
+      <MetaTags
+        title="Change Password | Hazina"
+        description="Change profile password request page"
+        keywords={[
+          "change password",
+          "change password request",
+          "request change password",
+          "request change password email",
+        ]}
+        image="/images/logo.svg"
+        allowBots={false}
+      />
       <main role="main" className="h-full pt-20 relative">
         <p className="absolute top-4 left-4">
           {" "}

@@ -5,6 +5,7 @@ import { useMutation } from "@tanstack/react-query";
 import Loader from "../../components/loader";
 import { ShowErrorContext } from "../../utils/errorContext";
 import { sendChangeEmailToken } from "../../utils/mutations/security/sendchangeemailtoken";
+import MetaTags from "../../components/metacomponent";
 
 export default function ResetPasswordTokenPage() {
   const { token } = useParams();
@@ -34,6 +35,17 @@ export default function ResetPasswordTokenPage() {
 
   return (
     <Transition>
+      <MetaTags
+        title="Change Email | Hazina"
+        description="Change email address temporary page"
+        keywords={[
+          "change email",
+          "change email address token",
+          "change email hazina link",
+        ]}
+        image="/images/logo.svg"
+        allowBots={false}
+      />
       <main role="main" className="h-full pt-20 relative">
         <p className="absolute top-4 left-4">
           {" "}

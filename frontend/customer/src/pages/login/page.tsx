@@ -1,6 +1,6 @@
 import { Link, useNavigate } from "react-router-dom";
 import Transition from "../../components/transition";
-import AuthLayout from "./layout";
+import AuthLayout from "../../components/authlayout";
 import { useMutation } from "@tanstack/react-query";
 import { FormEventHandler, useContext, useState } from "react";
 import Loader from "../../components/loader";
@@ -9,9 +9,9 @@ import { setAccessToken, setRefreshToken } from "../../utils/cookies";
 import userStore from "../../utils/store";
 import EyeClosed from "../../components/icons/hide";
 import EyeOpen from "../../components/icons/show";
-import { Helmet } from "react-helmet";
 import { sendLogin } from "../../utils/mutations/auth/login";
 import { errorHandler } from "../../utils/errorHandler";
+import MetaTags from "../../components/metacomponent";
 
 const LoginPage = () => {
   const navigate = useNavigate();
@@ -47,13 +47,20 @@ const LoginPage = () => {
 
   return (
     <Transition>
-      <Helmet>
-        <title>Log In</title>
-        <meta name="description" content="Log in to the Hazina seller app" />
-        <meta name="robots" content="nofollow" />
-        <meta name="googlebots" content="nofollow" />
-        <meta name="google" content="nositelinkssearchbox" />
-      </Helmet>
+      <MetaTags
+        title="Log In | Hazina"
+        description="Log in to Hazina"
+        keywords={[
+          "log in",
+          "log in hazina",
+          "log in account",
+          "sign in",
+          "sign in hazina",
+          "sign in account",
+        ]}
+        image="/images/logo.svg"
+        allowBots={true}
+      />
       <AuthLayout page={"Log In"}>
         <div className="mb-4">
           <h3 className="text-4xl mb-4">Log in to Hazina</h3>

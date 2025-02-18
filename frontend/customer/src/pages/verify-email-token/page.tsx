@@ -6,6 +6,7 @@ import { sendVerifyEmailToken } from "../../utils/mutations/security/sendverifye
 import Loader from "../../components/loader";
 import { ErrorContext, ShowErrorContext } from "../../utils/errorContext";
 import { errorHandler } from "../../utils/errorHandler";
+import MetaTags from "../../components/metacomponent";
 
 export default function VerifyEmailTokenPage() {
   const { token } = useParams();
@@ -36,6 +37,18 @@ export default function VerifyEmailTokenPage() {
 
   return (
     <Transition>
+      <MetaTags
+        title="Verify Email | Hazina"
+        description="Verify your email address token page"
+        keywords={[
+          "verify email",
+          "verify email token",
+          "verify email address",
+          "verify email address token",
+        ]}
+        image="/images/logo.svg"
+        allowBots={false}
+      />
       <main role="main" className="h-full pt-20 relative">
         <p className="absolute top-4 left-4">
           {" "}

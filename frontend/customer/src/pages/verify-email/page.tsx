@@ -2,6 +2,7 @@ import { Link } from "react-router-dom";
 import Transition from "../../components/transition";
 import { lazy, Suspense } from "react";
 import Loader from "../../components/loader";
+import MetaTags from "../../components/metacomponent";
 
 const VerifyEmailForm = lazy(
   () => import("../../components/security/verify-email-form"),
@@ -20,6 +21,18 @@ const FormFallback = () => {
 export default function VerifyEmailPage() {
   return (
     <Transition>
+      <MetaTags
+        title="Verify Email | Hazina"
+        description="Verify your email address on Hazina"
+        keywords={[
+          "verify email",
+          "verify email hazina",
+          "verify email account",
+          "verify email address",
+        ]}
+        image="/images/logo.svg"
+        allowBots={true}
+      />
       <main role="main" className="h-full pt-20 relative">
         <p className="absolute top-4 left-4">
           {" "}

@@ -5,8 +5,10 @@ import { fetchSeller } from "../../utils/queries/sellers/fetchseller";
 import { useContext, useEffect } from "react";
 import { useNavigate, useParams } from "react-router-dom";
 import Transition from "../../components/transition";
-import SellersLayout from "./layout";
+import SellersLayout from "../../components/sellers/layout";
 import Loader from "../../components/loader";
+import MetaTags from "../../components/metacomponent";
+import { apiHost, apiProtocol } from "../../utils/generics";
 
 const SellerPage = () => {
   const { id } = useParams();
@@ -35,6 +37,24 @@ const SellerPage = () => {
 
   return (
     <Transition>
+      <MetaTags
+        title={seller ? `Seller ${seller.name}` : "Seller | Hazina"}
+        description={
+          seller ? `Seller ${seller.name}` : "Individual seller page"
+        }
+        keywords={[
+          `${seller ? `Seller ${seller.name}` : "seller"}`,
+          "individual seller",
+          "seller page",
+          "individual seller page",
+        ]}
+        image={
+          seller?.image
+            ? `${apiProtocol}://${apiHost}/${seller.image.url}`
+            : "/images/logo.svg"
+        }
+        allowBots={true}
+      />
       <div>
         {isLoading ? (
           <div className="min-h-screen min-w-screen flex justify-center items-center">

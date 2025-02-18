@@ -1,9 +1,22 @@
 import { Link } from "react-router-dom";
 import Transition from "../../components/transition";
+import MetaTags from "../../components/metacomponent";
 
 const FaqPage = () => {
   return (
     <Transition>
+      <MetaTags
+        title="FAQs | Hazina"
+        description="Frequently asked questions about Hazina marketplace"
+        keywords={[
+          "faq",
+          "frequently asked questions",
+          "hazina faq",
+          "hazina frequently asked questions",
+        ]}
+        image="/images/logo.svg"
+        allowBots={true}
+      />
       <main role="main" className="h-full pt-20 relative">
         <p className="absolute top-4 left-4">
           {" "}

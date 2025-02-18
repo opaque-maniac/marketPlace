@@ -4,10 +4,24 @@ import KeyIcon from "../../components/icons/key";
 import EmailIcon from "../../components/icons/email";
 import EditIcon from "../../components/icons/editicon";
 import ProfileIcon from "../../components/icons/profileIcon";
+import MetaTags from "../../components/metacomponent";
 
 export default function SettingsPage() {
   return (
     <Transition>
+      <MetaTags
+        title="Settings | Hazina"
+        description="Profile settings for Hazina"
+        keywords={[
+          "settings",
+          "settings page",
+          "account settings",
+          "hazina settings",
+          "hazina account settings",
+        ]}
+        image="/images/logo.svg"
+        allowBots={false}
+      />
       <main role="main" className="h-full pt-20 relative pb-6">
         <p className="absolute top-4 left-4">
           {" "}

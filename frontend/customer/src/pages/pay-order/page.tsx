@@ -1,4 +1,3 @@
-import { Helmet } from "react-helmet";
 import Transition from "../../components/transition";
 import { Link, useNavigate, useParams } from "react-router-dom";
 import { useEffect, useContext } from "react";
@@ -8,6 +7,7 @@ import { fetchIndividualOrder } from "../../utils/queries/orders/fetchindividual
 import PageLoader from "../../components/pageloader";
 import { apiHost, apiProtocol } from "../../utils/generics";
 import { errorHandler } from "../../utils/errorHandler";
+import MetaTags from "../../components/metacomponent";
 
 const IndividualOrderPage = () => {
   const { id } = useParams();
@@ -43,13 +43,18 @@ const IndividualOrderPage = () => {
 
   return (
     <Transition>
-      <Helmet>
-        <title>{`Order ${id ?? ""}`}</title>
-        <meta name="description" content={`Page for individual order ${id}`} />
-        <meta name="robots" content="noindex, nofollow" />
-        <meta name="googlebot" content="noindex, nofollow" />
-        <meta name="google" content="nositelinkssearchbox" />
-      </Helmet>
+      <MetaTags
+        title="Pay | Hazina"
+        description="Pay for your order"
+        keywords={[
+          "pay",
+          "pay for order",
+          "pay for product",
+          "pay for service",
+        ]}
+        image="/images/logo.svg"
+        allowBots={false}
+      />
       <main role="main" style={{ minHeight: "calc(100vh - 1.4rem )" }}>
         {query.isLoading ? (
           <PageLoader />

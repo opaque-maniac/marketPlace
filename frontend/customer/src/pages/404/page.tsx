@@ -1,17 +1,16 @@
 import { Link } from "react-router-dom";
 import Transition from "../../components/transition";
-import { Helmet } from "react-helmet";
+import MetaTags from "../../components/metacomponent";
 
 const Error404 = () => {
   return (
     <Transition>
-      <Helmet>
-        <title>404 Not Found</title>
-        <meta name="description" content="404 Not Found" />
-        <meta name="robots" content="noindex, nofollow" />
-        <meta name="googlebot" content="noindex, nofollow" />
-        <meta name="google" content="nositelinkssearchbox" />
-      </Helmet>
+      <MetaTags
+        title="404 - Not found"
+        description="404 - Page not found"
+        image="/images/logo.svg"
+        allowBots={false}
+      />
       <main role="main" className="h-full pt-20 relative pb-4">
         <p className="absolute top-4 left-4">
           {" "}

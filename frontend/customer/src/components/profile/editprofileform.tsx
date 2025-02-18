@@ -1,7 +1,7 @@
 import { FormEventHandler, useContext } from "react";
 import Transition from "../../components/transition";
 import { Customer } from "../../utils/types";
-import useProfileForm from "./useProfileForm";
+import useProfileForm from "../../utils/reducers/useProfileForm";
 import Loader from "../../components/loader";
 import { useMutation } from "@tanstack/react-query";
 import { sendUpdateProfile } from "../../utils/mutations/profile/updateprofile";

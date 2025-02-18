@@ -2,6 +2,7 @@ import { Link } from "react-router-dom";
 import Transition from "../../components/transition";
 import { lazy, Suspense } from "react";
 import Loader from "../../components/loader";
+import MetaTags from "../../components/metacomponent";
 
 const ResetPasswordEmailForm = lazy(
   () => import("../../components/security/reset-password-email-form"),
@@ -20,6 +21,20 @@ const FormFallback = () => {
 export default function ResetPasswordPage() {
   return (
     <Transition>
+      <MetaTags
+        title="Reset Password | Hazina"
+        description="Reset your password on Hazina"
+        keywords={[
+          "reset password",
+          "reset password hazina",
+          "reset password account",
+          "forgot password",
+          "forgot password hazina",
+          "forgot password account",
+        ]}
+        image="/images/logo.svg"
+        allowBots={true}
+      />
       <main role="main" className="h-full pt-20 relative">
         <p className="absolute top-4 left-4">
           {" "}

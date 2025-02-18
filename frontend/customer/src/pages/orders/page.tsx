@@ -5,12 +5,12 @@ import { lazy, Suspense, useContext, useEffect, useState } from "react";
 import { ErrorContext, ShowErrorContext } from "../../utils/errorContext";
 import ArrowLeft from "../../components/icons/arrowleft";
 import ArrowRight from "../../components/icons/arrowright";
-import { Helmet } from "react-helmet";
 import PageLoader from "../../components/pageloader";
 import { fetchOrders } from "../../utils/queries/orders/fetchorders";
 import { errorHandler } from "../../utils/errorHandler";
 import OrderSearchForm from "../../components/ordersearchform";
 import Loader from "../../components/loader";
+import MetaTags from "../../components/metacomponent";
 
 const OrderItem = lazy(() => import("../../components/orders/orderitem"));
 
@@ -85,13 +85,19 @@ const OrdersPage = () => {
 
   return (
     <Transition>
-      <Helmet>
-        <title>Orders</title>
-        <meta name="description" content="Orders page for Hazina seller app" />
-        <meta name="robots" content="noindex, nofollow" />
-        <meta name="googlebot" content="noindex, nofollow" />
-        <meta name="google" content="nositelinkssearchbox" />
-      </Helmet>
+      <MetaTags
+        title="Orders | Hazina"
+        description="View all of your orders"
+        keywords={[
+          "orders",
+          "view orders",
+          "view all orders",
+          "my orders",
+          "order history",
+        ]}
+        image="/images/logo.svg"
+        allowBots={false}
+      />
       <main role="main">
         <div>
           <h2 className="text-xl md:text-start text-center font-semibold">

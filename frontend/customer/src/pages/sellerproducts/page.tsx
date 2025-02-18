@@ -6,9 +6,13 @@ import { lazy, Suspense, useContext, useEffect } from "react";
 import { useNavigate, useParams } from "react-router-dom";
 import Transition from "../../components/transition";
 import Loader from "../../components/loader";
-import SellersLayout from "../seller/layout";
+import SellersLayout from "../../components/sellers/layout";
+import MetaTags from "../../components/metacomponent";
+import { apiHost, apiProtocol } from "../../utils/generics";
 
-const SellerProducts = lazy(() => import("./sellerproducts"));
+const SellerProducts = lazy(
+  () => import("../../components/sellers/sellerproducts"),
+);
 
 const Fallback = () => {
   return (
@@ -47,6 +51,28 @@ const SellerPage = () => {
 
   return (
     <Transition>
+      <MetaTags
+        title={
+          seller ? `Seller ${seller.name} products` : "Seller Products | Hazina"
+        }
+        description={
+          seller
+            ? `Seller ${seller.name} products`
+            : "Individual seller products page"
+        }
+        keywords={[
+          `${seller ? `Seller ${seller.name} products` : "seller product"}`,
+          "individual seller products",
+          "seller products page",
+          "individual seller products page",
+        ]}
+        image={
+          seller?.image
+            ? `${apiProtocol}://${apiHost}/${seller.image.url}`
+            : "/images/logo.svg"
+        }
+        allowBots={true}
+      />
       <div>
         {isLoading ? (
           <div className="min-h-screen min-w-screen flex justify-center items-center">

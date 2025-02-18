@@ -2,11 +2,12 @@ import { useContext, useEffect } from "react";
 import PageLoader from "../../components/pageloader";
 import { useMutation } from "@tanstack/react-query";
 import { sendRefreshToken } from "../../utils/mutations/token";
-import { ErrorResponse } from "../../utils/types";
 import { ErrorContext, ShowErrorContext } from "../../utils/errorContext";
 import { useNavigate } from "react-router-dom";
 import { setAccessToken } from "../../utils/cookies";
 import { errorHandler } from "../../utils/errorHandler";
+import Transition from "../../components/transition";
+import MetaTags from "../../components/metacomponent";
 
 const RefreshTokenPage = () => {
   const [, setErr] = useContext(ShowErrorContext);
@@ -29,7 +30,23 @@ const RefreshTokenPage = () => {
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []);
 
-  return <PageLoader />;
+  return (
+    <Transition>
+      <MetaTags
+        title="Authenticating | Hazina"
+        description="Re-Authenticating user"
+        keywords={[
+          "refresh token",
+          "re-authenticating",
+          "re-authenticating user",
+          "re-authenticating hazina",
+        ]}
+        image="/images/logo.svg"
+        allowBots={false}
+      />
+      <PageLoader />
+    </Transition>
+  );
 };
 
 export default RefreshTokenPage;

@@ -1,19 +1,24 @@
-import { Helmet } from "react-helmet";
 import EmailIcon from "../../components/icons/email";
 import PhoneIcon from "../../components/icons/phone";
 import Transition from "../../components/transition";
 import ContactForm from "./form";
+import MetaTags from "../../components/metacomponent";
 
 const ContactPage = () => {
   return (
     <Transition>
-      <Helmet>
-        <title>Contact</title>
-        <meta name="description" content="Contact Hazina" />
-        <meta name="robots" content="nofollow" />
-        <meta name="googlebot" content="nofollow" />
-        <meta name="google" content="nositelinkssearchbox" />
-      </Helmet>
+      <MetaTags
+        title="Contact | Hazina"
+        description="Contact Hazina marketplace"
+        keywords={[
+          "contact",
+          "complaints page",
+          "contact hazina",
+          "hazina contact",
+        ]}
+        image="/images/logo.svg"
+        allowBots={true}
+      />
       <main role="main" className="h-full pt-20 relative md:pb-0 pb-6">
         <p className="absolute top-4 left-4">
           {" "}

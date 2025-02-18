@@ -1,9 +1,22 @@
 import { Link } from "react-router-dom";
 import Transition from "../../components/transition";
+import MetaTags from "../../components/metacomponent";
 
 export default function ChangePasswordConfirmationPage() {
   return (
     <Transition>
+      <MetaTags
+        title="Change Password | Hazina"
+        description="Change profile password confrimation page"
+        keywords={[
+          "change password",
+          "change password confirmation",
+          "confirmation change password",
+          "confirm change password email",
+        ]}
+        image="/images/logo.svg"
+        allowBots={false}
+      />
       <main role="main" className="h-full pt-20 relative">
         <p className="absolute top-4 left-4">
           {" "}

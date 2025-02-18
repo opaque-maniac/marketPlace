@@ -5,11 +5,13 @@ import { Link, useNavigate } from "react-router-dom";
 import { useQuery } from "@tanstack/react-query";
 import { fetchProfile } from "../../utils/queries/profile";
 import { ErrorContext, ShowErrorContext } from "../../utils/errorContext";
-import { Helmet } from "react-helmet";
 import Loader from "../../components/loader";
 import { errorHandler } from "../../utils/errorHandler";
+import MetaTags from "../../components/metacomponent";
 
-const ProfileForm = lazy(() => import("./form"));
+const ProfileForm = lazy(
+  () => import("../../components/profile/editprofileform"),
+);
 
 const Fallback = () => {
   return (
@@ -45,16 +47,17 @@ const UpdateProfilePage = () => {
 
   return (
     <Transition>
-      <Helmet>
-        <title>Update Profile</title>
-        <meta
-          name="description"
-          content="Hazina seller app profile update page"
-        />
-        <meta name="bots" content="noindex, nofollow" />
-        <meta name="googlebot" content="noindex, nofollow" />
-        <meta name="google" content="nositelinkssearchbox" />
-      </Helmet>
+      <MetaTags
+        title="Update Profile | Hazina"
+        description="Update your profile information"
+        keywords={[
+          "update profile",
+          "update profile information",
+          "update profile hazina",
+        ]}
+        image="/images/logo.svg"
+        allowBots={false}
+      />
       <main role="main" className="h-full pt-20 relative pb-6">
         <p className="absolute top-4 left-4">
           {" "}

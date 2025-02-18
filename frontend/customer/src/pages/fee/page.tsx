@@ -1,8 +1,22 @@
+import MetaTags from "../../components/metacomponent";
 import Transition from "../../components/transition";
 
 const FeePage = () => {
   return (
     <Transition>
+      <MetaTags
+        title="Fee | Hazina"
+        description="Hazina marketplace fee structure"
+        keywords={[
+          "fees",
+          "fee structure",
+          "fees page",
+          "fee hazina",
+          "hazina fees",
+        ]}
+        image="/images/logo.svg"
+        allowBots={true}
+      />
       <main role="main" className="h-full pt-20 relative">
         <p className="absolute top-4 left-4">
           {" "}

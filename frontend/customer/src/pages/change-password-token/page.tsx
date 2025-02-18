@@ -5,6 +5,7 @@ import { useMutation } from "@tanstack/react-query";
 import Loader from "../../components/loader";
 import { ShowErrorContext } from "../../utils/errorContext";
 import { sendChangePasswordToken } from "../../utils/mutations/security/sendchangepasswordtoken";
+import MetaTags from "../../components/metacomponent";
 
 const PasswordForm = lazy(
   () => import("../../components/security/change-password-newpassword-form"),
@@ -54,6 +55,18 @@ export default function ChangePasswordTokenPage() {
 
   return (
     <Transition>
+      <MetaTags
+        title="Change Password | Hazina"
+        description="Change profile password token link page"
+        keywords={[
+          "change password",
+          "change password token",
+          "change password hazina link",
+          "change password link",
+        ]}
+        image="/images/logo.svg"
+        allowBots={false}
+      />
       <main role="main" className="h-full pt-20 relative">
         <p className="absolute top-4 left-4">
           {" "}

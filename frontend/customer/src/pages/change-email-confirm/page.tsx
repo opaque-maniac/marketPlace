@@ -1,9 +1,22 @@
 import { Link } from "react-router-dom";
 import Transition from "../../components/transition";
+import MetaTags from "../../components/metacomponent";
 
 export default function ChangeEmailConfirmationPage() {
   return (
     <Transition>
+      <MetaTags
+        title="Change Email | Hazina"
+        description="Change email address confirmation page"
+        keywords={[
+          "change email confirmation",
+          "change email address confirmation",
+          "change email hazina confirmation",
+          "hazina change email confirmation",
+        ]}
+        image="/images/logo.svg"
+        allowBots={false}
+      />
       <main role="main" className="h-full pt-20 relative">
         <p className="absolute top-4 left-4">
           {" "}

@@ -1,4 +1,3 @@
-import { Helmet } from "react-helmet";
 import Transition from "../../components/transition";
 import { useNavigate } from "react-router-dom";
 import { useQuery } from "@tanstack/react-query";
@@ -16,6 +15,7 @@ import EighthSection from "./sections/eight";
 import NinethSection from "./sections/nineth";
 import TenthSection from "./sections/tenth";
 import { errorHandler } from "../../utils/errorHandler";
+import MetaTags from "../../components/metacomponent";
 
 const HomePage = () => {
   const [, setError] = useContext(ErrorContext);
@@ -36,16 +36,18 @@ const HomePage = () => {
 
   return (
     <Transition>
-      <Helmet>
-        <title>Hazina</title>
-        <meta
-          name="description"
-          content="Hazina marketplace home page, explore an buy products in kenya"
-        />
-        <meta name="robots" content="index, follow" />
-        <meta name="googlebot" content="index, follow" />
-        <meta name="google" content="nositelinkssearchbox" />
-      </Helmet>
+      <MetaTags
+        title="Hazina"
+        description="Hazina is a platform that allows you to buy and sell products online"
+        keywords={[
+          "buy products",
+          "sell products",
+          "buy and sell products",
+          "hazina",
+        ]}
+        image="/images/logo.svg"
+        allowBots={true}
+      />
       <main role="main" className="px-2">
         <FirstSection
           products={data ? data.slice(0, 6) : []}

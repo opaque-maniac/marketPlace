@@ -4,7 +4,6 @@ import { fetchProduct } from "../../utils/queries/products/fetchindividualproduc
 import { Link, useNavigate, useParams } from "react-router-dom";
 import { lazy, Suspense, useContext, useEffect, useState } from "react";
 import { ErrorContext, ShowErrorContext } from "../../utils/errorContext";
-import { Helmet } from "react-helmet";
 import TickIcon from "../../components/icons/tick";
 import CloseIcon from "../../components/icons/closeIcon";
 import TruckIcon from "../../components/icons/truck";
@@ -14,11 +13,14 @@ import { apiHost, apiProtocol } from "../../utils/generics";
 import { errorHandler } from "../../utils/errorHandler";
 import Loader from "../../components/loader";
 import { calculateDiscount } from "../../utils/price";
+import MetaTags from "../../components/metacomponent";
 
-const Related = lazy(() => import("./related"));
-const CommentList = lazy(() => import("./comments"));
-const AddToCart = lazy(() => import("./addtocart"));
-const AddToWishlist = lazy(() => import("./addtowishlist"));
+const Related = lazy(() => import("../../components/product/related"));
+const CommentList = lazy(() => import("../../components/product/comments"));
+const AddToCart = lazy(() => import("../../components/product/addtocart"));
+const AddToWishlist = lazy(
+  () => import("../../components/product/addtowishlist"),
+);
 
 const ButtonFallback = ({ background }: { background: string }) => {
   return (
@@ -56,7 +58,10 @@ const IndividualProductPage = () => {
     }
     const prefetch = async () => {
       try {
-        await Promise.all([import("./addtocart"), import("./addtowishlist")]);
+        await Promise.all([
+          import("../../components/product/addtocart"),
+          import("../../components/product/addtowishlist"),
+        ]);
       } catch (e) {
         console.log("Error prefetching", e);
         setError(true);
@@ -90,16 +95,23 @@ const IndividualProductPage = () => {
 
   return (
     <Transition>
-      <Helmet>
-        <title>{product ? product.name : "Product"}</title>
-        <meta
-          name="description"
-          content={product ? product.description : "Product description"}
-        />
-        <meta name="robots" content="index, follow" />
-        <meta name="googlebot" content="index, follow" />
-        <meta name="google" content="nositelinksearchbox" />
-      </Helmet>
+      <MetaTags
+        title={product ? `${product.name}` : "Product | Hazina"}
+        description={product ? product.description : `Product ${id}`}
+        keywords={[
+          "product",
+          "product details",
+          "product description",
+          "product image",
+          `${product ? product.name : `Product ${id}`}`,
+        ]}
+        image={
+          product
+            ? `${apiProtocol}://${apiHost}/${product.images[0].url}`
+            : "/images/logo.svg"
+        }
+        allowBots={true}
+      />
       <main role="main" className="h-full w-full">
         {query.isLoading ? (
           <PageLoader />
@@ -112,7 +124,7 @@ const IndividualProductPage = () => {
                     {product &&
                       product.images.map((img, index) => {
                         if (index === 0) {
-                          return;
+                          return null;
                         }
                         return (
                           <img
@@ -127,7 +139,7 @@ const IndividualProductPage = () => {
                 )}
                 <div className="md:order-2 order-1">
                   <img
-                    src={`http://localhost:3020/${product ? product.images[0].url : ""}`}
+                    src={`${apiProtocol}://${apiHost}/${product ? product.images[0].url : ""}`}
                     alt={product ? product.name : "Product Image"}
                     className="border md:h-600 h-500 md:w-500 w-350"
                   />

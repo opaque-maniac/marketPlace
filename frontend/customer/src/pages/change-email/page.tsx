@@ -3,6 +3,7 @@ import Transition from "../../components/transition";
 import Loader from "../../components/loader";
 import ChangeEmailForm from "../../components/security/change-email-form";
 import { Suspense } from "react";
+import MetaTags from "../../components/metacomponent";
 
 const FormFallback = () => {
   return (
@@ -17,6 +18,18 @@ const FormFallback = () => {
 export default function ChangeEmailPage() {
   return (
     <Transition>
+      <MetaTags
+        title="Change Email | Hazina"
+        description="Change email address"
+        keywords={[
+          "change email",
+          "change email address",
+          "change email hazina",
+          "hazina change email",
+        ]}
+        image="/images/logo.svg"
+        allowBots={false}
+      />
       <main role="main" className="h-full pt-20 relative">
         <p className="absolute top-4 left-4">
           {" "}

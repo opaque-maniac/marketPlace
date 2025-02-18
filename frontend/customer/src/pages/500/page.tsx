@@ -2,7 +2,7 @@ import { useContext, useEffect } from "react";
 import { ErrorContext } from "../../utils/errorContext";
 import { Link } from "react-router-dom";
 import Transition from "../../components/transition";
-import { Helmet } from "react-helmet";
+import MetaTags from "../../components/metacomponent";
 
 const Error500 = () => {
   const [, setError] = useContext(ErrorContext);
@@ -17,13 +17,12 @@ const Error500 = () => {
 
   return (
     <Transition>
-      <Helmet>
-        <title>500 Server Error</title>
-        <meta name="description" content="404 Not Found" />
-        <meta name="robots" content="noindex" />
-        <meta name="googlebot" content="noindex" />
-        <meta name="google" content="nositelinkssearchbox" />
-      </Helmet>
+      <MetaTags
+        title="500 - Server Error"
+        description="500 - Internal Server Error"
+        image="/images/logo.svg"
+        allowBots={false}
+      />
       <main role="main" className="h-full pt-20 relative">
         <p className="absolute top-4 left-4">
           {" "}

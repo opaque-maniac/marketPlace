@@ -6,6 +6,7 @@ import Loader from "../../components/loader";
 import { ErrorContext, ShowErrorContext } from "../../utils/errorContext";
 import { errorHandler } from "../../utils/errorHandler";
 import { sendResetPasswordToken } from "../../utils/mutations/security/sendresetpasswordtoken";
+import MetaTags from "../../components/metacomponent";
 
 const ResetPasswordNewPasswordForm = lazy(
   () => import("../../components/security/reset-password-newpassword-form"),
@@ -56,6 +57,20 @@ export default function ResetPasswordTokenPage() {
 
   return (
     <Transition>
+      <MetaTags
+        title="Reset Password | Hazina"
+        description="Reset password token page on Hazina"
+        keywords={[
+          "reset password",
+          "reset password hazina",
+          "reset password token",
+          "forgot password",
+          "forgot password hazina",
+          "forgot password token",
+        ]}
+        image="/images/logo.svg"
+        allowBots={false}
+      />
       <main role="main" className="h-full pt-20 relative">
         <p className="absolute top-4 left-4">
           {" "}

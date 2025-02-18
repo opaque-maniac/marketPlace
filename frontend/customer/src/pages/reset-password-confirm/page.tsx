@@ -1,9 +1,24 @@
 import { Link } from "react-router-dom";
 import Transition from "../../components/transition";
+import MetaTags from "../../components/metacomponent";
 
 export default function VerifyEmailConfirmationPage() {
   return (
     <Transition>
+      <MetaTags
+        title="Reset Password | Hazina"
+        description="Reset password confirmation page on Hazina"
+        keywords={[
+          "reset password",
+          "reset password hazina",
+          "reset password confirmation",
+          "forgot password",
+          "forgot password hazina",
+          "forgot password confirmation",
+        ]}
+        image="/images/logo.svg"
+        allowBots={false}
+      />
       <main role="main" className="h-full pt-20 relative">
         <p className="absolute top-4 left-4">
           {" "}

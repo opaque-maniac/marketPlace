@@ -1,16 +1,22 @@
-import { Helmet } from "react-helmet";
+import MetaTags from "../../components/metacomponent";
 import Transition from "../../components/transition";
 
 const AboutPage = () => {
   return (
     <Transition>
-      <Helmet>
-        <title>About</title>
-        <meta name="description" content="About Hazina" />
-        <meta name="robots" content="nofollow" />
-        <meta name="googlebot" content="nofollow" />
-        <meta name="google" content="nositelinkssearchbox" />
-      </Helmet>
+      <MetaTags
+        title="About | Hazina"
+        description="Hazina marketplace about page, learn more about us"
+        keywords={[
+          "about",
+          "about us",
+          "about hazina",
+          "hazina",
+          "hazina about",
+        ]}
+        image="/images/logo.svg"
+        allowBots={true}
+      />
       <main role="main" className="h-full pt-20 relative pb-6">
         <p className="absolute top-4 left-4">
           {" "}

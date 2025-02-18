@@ -1,4 +1,3 @@
-import { Helmet } from "react-helmet";
 import Transition from "../../components/transition";
 import { MouseEventHandler, useContext } from "react";
 import { Link, useNavigate } from "react-router-dom";
@@ -9,6 +8,7 @@ import { errorHandler } from "../../utils/errorHandler";
 import { removeAccessToken, removeRefreshToken } from "../../utils/cookies";
 import useUserStore from "../../utils/store";
 import Loader from "../../components/loader";
+import MetaTags from "../../components/metacomponent";
 
 const DeleteProfilePage = () => {
   const navigate = useNavigate();
@@ -39,13 +39,18 @@ const DeleteProfilePage = () => {
 
   return (
     <Transition>
-      <Helmet>
-        <title>Delete Profile</title>
-        <meta name="description" content="Delete a product" />
-        <meta name="robots" content="noindex, nofollow" />
-        <meta name="googlebot" content="noindex, nofollow" />
-        <meta name="google" content="nositelinkssearchbox" />
-      </Helmet>
+      <MetaTags
+        title="Delete Profile | Hazina"
+        description="Delete profile page"
+        keywords={[
+          "delete profile",
+          "delete profile hazina",
+          "delete profile account",
+          "delete profile link",
+        ]}
+        image="/images/logo.svg"
+        allowBots={false}
+      />
       <main role="main" className="h-full pt-20 relative pb-6">
         <p className="absolute top-4 left-4">
           {" "}

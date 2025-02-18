@@ -6,12 +6,12 @@ import { Suspense, useCallback, useContext, useEffect } from "react";
 import { ErrorContext, ShowErrorContext } from "../../utils/errorContext";
 import ArrowLeft from "../../components/icons/arrowleft";
 import ArrowRight from "../../components/icons/arrowright";
-import { Helmet } from "react-helmet";
 import { fetchCart } from "../../utils/queries/cart/cart";
 import EmptyCart from "../../components/cart/emptycart";
 import CartList from "../../components/cart/cartlist";
 import OrderCart from "../../components/cart/ordercart";
 import { errorHandler } from "../../utils/errorHandler";
+import MetaTags from "../../components/metacomponent";
 
 const Fallback = ({ background }: { background: string }) => {
   return (
@@ -84,16 +84,19 @@ const CartPage = () => {
 
   return (
     <Transition>
-      <Helmet>
-        <title>Cart</title>
-        <meta
-          name="description"
-          content="Cart page for Hazina marketplace app"
-        />
-        <meta name="robots" content="noindex, nofollow" />
-        <meta name="googlebot" content="noindex, nofollow" />
-        <meta name="google" content="nositelinkssearchbox" />
-      </Helmet>
+      <MetaTags
+        title="Cart | Hazina"
+        description="Hazina marketplace cart page, view and manage your cart"
+        keywords={[
+          "cart",
+          "view cart",
+          "manage cart",
+          "cart hazina",
+          "hazina cart",
+        ]}
+        image="/images/logo.svg"
+        allowBots={false}
+      />
       <main role="main">
         <div className="flex justify-between item-center md:mx-0 mx-2 pt-4 md:pb-0 pb-4">
           <Suspense fallback={<Fallback background="green" />}>
