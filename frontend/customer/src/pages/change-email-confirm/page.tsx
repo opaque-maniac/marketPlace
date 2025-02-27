@@ -1,6 +1,7 @@
 import { Link } from "react-router-dom";
 import Transition from "../../components/transition";
 import MetaTags from "../../components/metacomponent";
+import GearIcon from "../../components/icons/gear";
 
 export default function ChangeEmailConfirmationPage() {
   return (
@@ -22,6 +23,16 @@ export default function ChangeEmailConfirmationPage() {
           {" "}
           Home / <span className="font-extrabold">Change Email</span>
         </p>
+
+        <div className="absolute top-4 right-4">
+          <Link
+            aria-label="Go to settings"
+            to={"/settings"}
+            className="block w-7 h-7"
+          >
+            <GearIcon />
+          </Link>
+        </div>
 
         <section className="md:w-8/12 w-full lg:mx-auto">
           <div className="pb-8 md:pl-0 pl-4">

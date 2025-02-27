@@ -10,6 +10,18 @@ export interface ErrorResponse {
   errorCode: string;
 }
 
+export interface Complaint {
+  id: string;
+  phone: string | undefined;
+  email: string;
+  name: string;
+  createdAt: string;
+  updatedAt: string;
+  resolved: boolean;
+  staffID?: string;
+  staff?: Staff;
+}
+
 export interface Customer {
   id: string;
   firstName: string;
@@ -52,7 +64,8 @@ export interface Product {
   id: string;
   name: string;
   description: string;
-  price: number;
+  buyingPrice: number;
+  sellingPrice: number;
   inventory: number;
   category: Categories;
   discountPercentage: number;
@@ -102,6 +115,8 @@ export interface Order {
   totalAmount: number;
   status: OrderStatus;
   customerID: string;
+  quantity: number;
+  product: Product;
   createdAt: string;
   updatedAt: string;
 }
@@ -144,6 +159,7 @@ export interface WishlistItem {
   wishlistID: string;
   product: Product;
   createdAt: string;
+  updatedAt: string;
 }
 
 export type ROLE = "STAFF" | "ADMIN" | "MANAGER";
@@ -283,5 +299,29 @@ export interface SuccessCustomerResponse {
 export interface SuccessSellersListResponse {
   message: string;
   sellers: Seller[];
+  hasNext: boolean;
+}
+
+export interface SuccessCustomerCartResponse {
+  message: string;
+  cartItems: CartItem[];
+  hasNext: boolean;
+}
+
+export interface SuccessCustomerOrdersResponse {
+  message: string;
+  orders: Order[];
+  hasNext: boolean;
+}
+
+export interface SuccessCustomerWishlistResponse {
+  message: string;
+  wishlistItems: WishlistItem[];
+  hasNext: boolean;
+}
+
+export interface SuccessComplaintsResponse {
+  messaeg: string;
+  complaints: Complaint[];
   hasNext: boolean;
 }

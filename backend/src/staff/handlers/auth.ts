@@ -69,9 +69,11 @@ export const registerStaff = async (
   try {
     const { email, firstName, lastName, role, password } = req.body;
 
-    const staffExists = await prisma.customer.findUnique({
+    const staffExists = await prisma.staff.findUnique({
       where: { email },
     });
+
+    console.log(staffExists);
 
     if (staffExists) {
       throw new Error("User already exists");

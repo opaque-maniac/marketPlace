@@ -1,7 +1,11 @@
 import CloseIcon from "./icons/closeIcon";
 import userStore from "../utils/store";
-import NoAuthNav from "./noAuthNav";
 import AuthNavigation from "./authNav";
+import NoAuthNavigation from "./noAuthNav";
+import { memo } from "react";
+
+const MemoizedAuthNav = memo(AuthNavigation);
+const NoAuthNav = memo(NoAuthNavigation);
 
 interface Props {
   callback: () => void;
@@ -18,15 +22,15 @@ const Navigation = ({ callback }: Props) => {
           e.preventDefault();
           callback();
         }}
-        className="h-8 w-8 fixed top-4 left-4 z-40 bg-white rounded-lg border border-black flex items-center justify-center"
+        className="h-8 w-8 fixed top-4 left-4 z-40 bg-white rounded-full border border-black flex items-center justify-center p-[4px]"
       >
         <CloseIcon />
       </button>
-      <div className="fixed h-screen md:w-96 w-52 top-0 right-0 z-40 bg-white">
+      <div className="fixed h-screen md:w-72 w-52 top-0 right-0 z-40 bg-white">
         <nav role="navigation">
           {user ? (
             <div>
-              <AuthNavigation callback={callback} />
+              <MemoizedAuthNav callback={callback} />
             </div>
           ) : (
             <div className="flex flex-col justify-center items-center gap-4 md:h-600 h-400 px-2">

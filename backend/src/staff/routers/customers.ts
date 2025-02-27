@@ -9,6 +9,7 @@ import {
   deleteCustomer,
   disableCustomer,
   enableCustomer,
+  fetchCustomerOrders,
   fetchCustomers,
   fetchIndividualCustomer,
   updateCustomer,
@@ -44,6 +45,9 @@ router.put(
 // disable and enable customer
 router.post("/:id/disable", disableCustomer);
 router.post("/:id/enable", enableCustomer);
+
+// orders
+router.get("/:id/orders", fetchCustomerOrders);
 
 // delete customer
 router.delete("/:id", deleteCustomer);

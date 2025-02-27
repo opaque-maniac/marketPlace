@@ -267,3 +267,70 @@ export const deleteCustomer = async (
     next(serverError);
   }
 };
+
+export const fetchCustomerOrders = async (
+  req: AuthenticatedRequest,
+  res: Response,
+  next: NextFunction,
+): Promise<void> => {
+  try {
+    const page = req.query.page ? parseInt(req.query.page as string) : 1;
+    const limit = req.query.limit ? parseInt(req.query.limit as string) : 10;
+    const query = req.query.query ? (req.query.query as string) : "";
+    const { id } = req.params;
+
+    const exists = await prisma.customer.findUnique({
+      where: { id },
+    });
+
+    if (!exists) {
+      throw new Error("Customer not found");
+    }
+
+    const orders = await prisma.order.findMany({
+      where: {
+        customerID: exists.id,
+        OR: [
+          {
+            product: {
+              name: {
+                contains: query,
+                mode: "insensitive",
+              },
+            },
+          },
+          {
+            productID: query,
+          },
+        ],
+      },
+      include: {
+        product: {
+          include: {
+            images: true,
+          },
+        },
+      },
+      take: limit + 1,
+      skip: (page - 1) * limit,
+    });
+
+    const hasNext = orders.length > limit;
+
+    if (hasNext) {
+      orders.pop();
+    }
+
+    res.status(200).json({
+      message: "Fetched customer orders",
+      orders,
+      hasNext,
+    });
+  } catch (e) {
+    if (e instanceof Error) {
+      next(e);
+      return;
+    }
+    next(serverError);
+  }
+};

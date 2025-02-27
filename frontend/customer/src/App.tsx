@@ -66,9 +66,6 @@ const ChangePasswordPage = lazy(() => import("./pages/change-password/page"));
 const ChangePasswordTokenPage = lazy(
   () => import("./pages/change-password-token/page"),
 );
-const ChangePasswordConfirmationPage = lazy(
-  () => import("./pages/change-password-confirm/page"),
-);
 
 const queryClient = new QueryClient({
   defaultOptions: {
@@ -171,10 +168,6 @@ const App = () => {
                         <Route
                           path="/change-password/:token"
                           element={<ChangePasswordTokenPage />}
-                        />
-                        <Route
-                          path="/change-password-confirm"
-                          element={<ChangePasswordConfirmationPage />}
                         />
                       </Route>
                       <Route element={<AuthRoute />}>

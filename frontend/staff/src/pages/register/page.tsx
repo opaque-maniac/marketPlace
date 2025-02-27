@@ -1,4 +1,4 @@
-import { useNavigate } from "react-router-dom";
+import { Link, useNavigate } from "react-router-dom";
 import Transition from "../../components/transition";
 import AuthLayout from "../login/layout";
 import { FormEventHandler, useContext, useState } from "react";
@@ -25,7 +25,7 @@ const RegisterPage = () => {
     },
     onSuccess: (data) => {
       if (data && data.staff) {
-        navigate("/login");
+        navigate("/verify-confirm");
       } else {
         setErr("Something unexpected happened");
       }
@@ -54,7 +54,7 @@ const RegisterPage = () => {
       </Helmet>
       <AuthLayout page="Sign Up">
         <div className="mb-4">
-          <h3 className="text-4xl mb-4">Create a staff account</h3>
+          <h3 className="text-3xl mb-4">Create a staff account</h3>
           <p>Enter your details below</p>
         </div>
         <form
@@ -110,7 +110,7 @@ const RegisterPage = () => {
               required
               className="block w-80 h-12 px-2 text-lg auth-input focus:auth-input focus:outline-none bg-white"
             >
-              <option value="" disabled selected>
+              <option value="" disabled>
                 Select Role
               </option>
               <option value="ADMIN">Admin</option>
@@ -141,16 +141,46 @@ const RegisterPage = () => {
               {show ? <EyeClosed /> : <EyeOpen />}
             </button>
           </div>
+          <div className="w-80 mx-auto pt-4">
+            <p className="text-xs">
+              By clicking <span className="font-semibold">Sign Up</span>, you
+              have agreed to all of our{" "}
+              <Link to={"/terms"} target="_blank" className="text-blue-500">
+                Terms & Conditions
+              </Link>
+              .
+            </p>
+          </div>
           <div className="pt-4 flex justify-center gap-4 items-center">
             <button
               aria-label="Send Login Details"
-              className="block bg-red-400 rounded-lg w-40 h-10"
+              className="flex justify-center items-center text-white bg-red-400 rounded-lg w-40 h-10"
               type="submit"
             >
-              {mutation.isIdle ? "Sign Up" : <Loader color="#ffffff" />}
+              {mutation.isIdle ? (
+                <span>Sign Up</span>
+              ) : (
+                <div className="w-6 h-6">
+                  <Loader color="#ffffff" />{" "}
+                </div>
+              )}
             </button>
           </div>
         </form>
+        <div className="flex justify-center">
+          <Link
+            className="inline-block mt-8 font-semibold underline"
+            to={"/login"}
+          >
+            Sign In if you already have an account.
+          </Link>
+        </div>
+        <div className="w-80 mx-auto mt-4 md:pb-0 pb-10">
+          <span className="text-xs">
+            Note that once you do, an email will be sent to an admin who will
+            approve your account before you are able to use it
+          </span>
+        </div>
       </AuthLayout>
     </Transition>
   );

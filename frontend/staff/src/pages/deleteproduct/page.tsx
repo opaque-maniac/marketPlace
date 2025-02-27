@@ -21,16 +21,6 @@ const DeleteProductPage = () => {
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []);
 
-  const mutation = useMutation({
-    mutationFn: sendDeleteProduct,
-    onSuccess: () => {
-      navigate("/products", { replace: true });
-    },
-    onError: (error) => {
-      errorHandler(error, navigate, setErr, setError);
-    },
-  });
-
   const handleAccept: MouseEventHandler<HTMLButtonElement> = (e) => {
     e.preventDefault();
     mutation.mutate(id as string);

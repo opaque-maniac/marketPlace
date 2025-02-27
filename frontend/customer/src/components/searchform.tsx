@@ -8,8 +8,8 @@ const SearchForm = () => {
 
   const submitHandler: FormEventHandler<HTMLFormElement> = (e) => {
     e.preventDefault();
-    const formDate = new FormData(e.currentTarget);
-    const query = formDate.get("query") as string;
+    const formData = new FormData(e.currentTarget);
+    const query = formData.get("query") as string;
     const encoded = encodeURIComponent(query);
     navigate(`/explore?page=1&query=${encoded}`);
     form.current?.reset();

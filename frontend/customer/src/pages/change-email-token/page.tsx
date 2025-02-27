@@ -6,6 +6,7 @@ import Loader from "../../components/loader";
 import { ShowErrorContext } from "../../utils/errorContext";
 import { sendChangeEmailToken } from "../../utils/mutations/security/sendchangeemailtoken";
 import MetaTags from "../../components/metacomponent";
+import GearIcon from "../../components/icons/gear";
 
 export default function ResetPasswordTokenPage() {
   const { token } = useParams();
@@ -51,6 +52,15 @@ export default function ResetPasswordTokenPage() {
           {" "}
           Home / <span className="font-extrabold">Verify Email</span>
         </p>
+        <div className="absolute top-4 right-4">
+          <Link
+            aria-label="Go to settings"
+            to={"/settings"}
+            className="block w-7 h-7"
+          >
+            <GearIcon />
+          </Link>
+        </div>
 
         <h2 className="text-2xl font-bold">Verify Your Email Address</h2>
 

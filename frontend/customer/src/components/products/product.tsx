@@ -1,6 +1,6 @@
 import { Link } from "react-router-dom";
 import { Product } from "../../utils/types";
-import AddToCart from "../../pages/product/addtocart";
+import AddToCart from "../product/addtocart";
 import { apiHost, apiProtocol } from "../../utils/generics";
 import ProductWishlistButton from "./productwishlitbutton";
 import { calculateDiscount } from "../../utils/price";

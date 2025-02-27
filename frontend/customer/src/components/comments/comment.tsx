@@ -3,7 +3,7 @@ import { Comment } from "../../utils/types";
 import ProfileIcon from "../icons/profileIcon";
 import Transition from "../transition";
 import EllipseIcon from "../icons/ellipse";
-import DeleteComment from "../../pages/product/deletecomment";
+import DeleteComment from "./deletecomment";
 import useUserStore from "../../utils/store";
 import { formatDate } from "../../utils/date";
 

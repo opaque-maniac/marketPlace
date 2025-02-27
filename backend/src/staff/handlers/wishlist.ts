@@ -19,6 +19,7 @@ export const fetchUserWishlist = async (
     const { id } = req.params;
     const page = req.query.page ? parseInt(req.query.page as string) : 1;
     const limit = req.query.limit ? parseInt(req.query.limit as string) : 10;
+    const query = req.query.query ? (req.query.query as string) : undefined;
 
     const customer = await prisma.customer.findUnique({
       where: {
@@ -32,12 +33,17 @@ export const fetchUserWishlist = async (
 
     const wishlistItems = await prisma.wishListItem.findMany({
       where: {
+        OR: [],
         wishlist: {
           customerID: customer.id,
         },
       },
       include: {
-        product: true,
+        product: {
+          include: {
+            images: true,
+          },
+        },
       },
       take: limit + 1,
       skip: (page - 1) * limit,

@@ -1,7 +1,6 @@
-import { Link } from "react-router-dom";
+import { Link, useNavigate } from "react-router-dom";
 import NavItem from "./navitem";
-import HomeIcon from "./icons/home";
-import LogoutLink from "./logoutlink";
+import LogoutIcon from "./icons/logout";
 
 type Data = {
   placeholder: string;
@@ -31,34 +30,9 @@ const data: Data[] = [
     url: "/staff",
   },
   {
-    placeholder: "Cart ID or email",
-    label: "Cart",
-    url: "/carts",
-  },
-  {
-    placeholder: "Cart Item ID",
-    label: "Cart Items",
-    url: "/cartitems",
-  },
-  {
-    placeholder: "Wishlist ID or email",
-    label: "Wishlists",
-    url: "/wishlists",
-  },
-  {
-    placeholder: "Wishlist Item ID",
-    label: "Wishliste Items",
-    url: "/wishlistitems",
-  },
-  {
     placeholder: "Order ID",
     label: "Order",
     url: "/orders",
-  },
-  {
-    placeholder: "Order Item ID",
-    label: "Order Items",
-    url: "/orderitems",
   },
   {
     placeholder: "Find Complaint",
@@ -71,37 +45,51 @@ interface Props {
   callback: () => void;
 }
 
-const AuthNavigaton = ({ callback }: Props) => {
+const AuthNavigation = ({ callback }: Props) => {
+  const navigate = useNavigate();
+
   return (
-    <nav className="h-screen overflow-y-scroll scroll-v-mod">
-      <div className="flex justify-evenly items-center py-4">
-        <Link
-          to={"/"}
-          onClick={() => {
+    <div>
+      <div className="flex justify-end pr-4 pt-4 pb-4">
+        <button
+          aria-label="Logout"
+          onClick={(e) => {
+            e.preventDefault();
             setTimeout(() => {
               callback();
-            }, 100);
+            }, 300);
           }}
-          className="block h-10 w-10 border text-black/50 hover:text-black focus:text-black border-black/50 hover:border-black focus:border-black p-1 rounded-full"
+          className="w-7 h-7 p-1"
         >
-          <HomeIcon />
-        </Link>
-        <LogoutLink callback={callback} />
+          <LogoutIcon />
+        </button>
       </div>
-      <ul>
-        {data.map((item) => (
-          <li key={item.label} className="mb-4">
-            <NavItem
-              placeholder={item.placeholder}
-              url={item.url}
-              label={item.label}
-              callback={callback}
-            />
+      <nav>
+        <ul>
+          {data.map((item, idx) => (
+            <li key={idx}>
+              <NavItem
+                callback={callback}
+                placeholder={item.placeholder}
+                url={item.url}
+                label={item.label}
+              />
+            </li>
+          ))}
+          <li>
+            <button
+              onClick={(e) => {
+                e.preventDefault();
+              }}
+              className="block bg-gray-100 h-9 mb-2 pl-2 w-full text-start"
+            >
+              Log Out
+            </button>
           </li>
-        ))}
-      </ul>
-    </nav>
+        </ul>
+      </nav>
+    </div>
   );
 };
 
-export default AuthNavigaton;
+export default AuthNavigation;

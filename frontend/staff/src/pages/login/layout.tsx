@@ -10,7 +10,7 @@ const AuthLayout = ({ children, page }: Props) => {
         {" "}
         Home / <span className="font-extrabold">{page}</span>
       </p>
-      <section className="flex justify-center items-center gap-4 lg:pb-16 lg:flex-row flex-col">
+      <section className="flex justify-center items-center gap-4 lg:pb-16 xl:gap-0 xl:flex-row flex-col">
         <div className="md:block hidden">
           <img
             src="/images/auth-image.svg"

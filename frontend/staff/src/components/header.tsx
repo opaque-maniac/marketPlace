@@ -49,7 +49,7 @@ const Header = () => {
         </div>
         <button
           onClick={handleMenuToggle}
-          className="h-7 w-7 border border-black rounded-lg flex items-center justify-center"
+          className="h-7 w-7 border border-black/25 rounded-sm flex items-center justify-center"
           aria-label="Open menu"
         >
           <MenuIcon />

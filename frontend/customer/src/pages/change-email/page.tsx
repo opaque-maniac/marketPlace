@@ -4,6 +4,7 @@ import Loader from "../../components/loader";
 import ChangeEmailForm from "../../components/security/change-email-form";
 import { Suspense } from "react";
 import MetaTags from "../../components/metacomponent";
+import GearIcon from "../../components/icons/gear";
 
 const FormFallback = () => {
   return (
@@ -35,6 +36,16 @@ export default function ChangeEmailPage() {
           {" "}
           Home / <span className="font-extrabold">Change Email</span>
         </p>
+
+        <div className="absolute top-4 right-4">
+          <Link
+            aria-label="Go to settings"
+            to={"/settings"}
+            className="block w-7 h-7"
+          >
+            <GearIcon />
+          </Link>
+        </div>
 
         <h2 className="text-2xl font-bold text-center">Change Email</h2>
         <section className="md:w-8/12 w-full lg:mx-auto flex flex-col gap-2">

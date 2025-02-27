@@ -202,8 +202,18 @@ model Order {
   customer    Customer     @relation(fields: [customerID], references: [id], onDelete: Cascade)
   sellerID    String
   seller      Seller       @relation(fields: [sellerID], references: [id], onDelete: Cascade)
+  payment     Payment?
   createdAt   DateTime     @default(now())
   updatedAt   DateTime     @updatedAt
+}
+
+model Payment {
+  id        String   @id @default(uuid())
+  orderID   String   @unique
+  order     Order    @relation(fields: [orderID], references: [id], onDelete: Cascade)
+  amount    Float
+  status    String
+  createdAt DateTime @default(now())
 }
 
 model Complaint {

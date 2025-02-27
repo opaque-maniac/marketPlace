@@ -3,6 +3,7 @@ import { WishlistItem } from "../../utils/types";
 import { Link } from "react-router-dom";
 import WishlistAddToCart from "./wishlistaddtocart";
 import { calculateDiscount } from "../../utils/price";
+import { apiHost, apiProtocol } from "../../utils/generics";
 
 interface Props {
   item: WishlistItem;
@@ -15,7 +16,7 @@ const WishlistItemComponent = ({ item, refetch }: Props) => {
       <Link to={`/products/${item.product.id}`}>
         <div className="h-[250px] w-[270px] flex items-end justify-center pb-4">
           <img
-            src={`http://localhost:3020/${item.product.images[0].url}`}
+            src={`${apiProtocol}://${apiHost}/${item.product.images[0].url}`}
             alt={item.product.name}
             className="h-[220px] w-[230px]"
             loading="lazy"

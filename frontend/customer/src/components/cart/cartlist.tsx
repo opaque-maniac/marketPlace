@@ -1,4 +1,4 @@
-import { lazy, Suspense} from "react";
+import { lazy, Suspense } from "react";
 import { CartItem } from "../../utils/types";
 import Loader from "../loader";
 

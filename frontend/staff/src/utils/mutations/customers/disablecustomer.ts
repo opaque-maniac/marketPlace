@@ -1,25 +1,22 @@
 import { getAccessToken } from "../../cookies";
 import { responseError, tokenError } from "../../errors";
 import { apiHost, apiProtocol } from "../../generics";
-import { ErrorResponse } from "../../types";
+import { Customer, ErrorResponse } from "../../types";
 
-export const sendChangePasswordEmailForm = async (email: string) => {
+export const disableCustomer = async (id: string) => {
   try {
-    const url = `${apiProtocol}://${apiHost}/security/change-password`;
+    const url = `${apiProtocol}://${apiHost}/staff/comments/${id}/disable`;
+    const token = getAccessToken();
 
-    const bearer = getAccessToken();
-
-    if (!bearer) {
-      throw tokenError;
+    if (!token) {
+      throw tokenError();
     }
 
     const options = {
-      method: "POST",
+      method: "DELETE",
       headers: {
-        "Content-Type": "application/json",
-        Authorization: `Bearer ${bearer}`,
+        Authorization: `Bearer ${token}`,
       },
-      body: JSON.stringify({ email, role: "customer" }),
     };
 
     const response = await fetch(url, options);
@@ -35,12 +32,15 @@ export const sendChangePasswordEmailForm = async (email: string) => {
       }
     }
 
-    const data = (await response.json()) as { message: string };
+    const data = (await response.json()) as {
+      message: string;
+      customer: Customer;
+    };
     return data;
   } catch (e) {
     if (e instanceof Error) {
-      throw e;
+      throw new Error(e.message);
     }
-    throw responseError;
+    throw e;
   }
 };

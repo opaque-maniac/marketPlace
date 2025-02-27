@@ -4,6 +4,7 @@ import EyeOpen from "../icons/show";
 import { useState } from "react";
 import Modal from "../modal";
 import CloseIcon from "../icons/closeIcon";
+import { formatDate } from "../../utils/date";
 
 interface Props {
   product: Product;
@@ -12,33 +13,30 @@ interface Props {
 const ProductItem = ({ product }: Props) => {
   const [clicked, setClicked] = useState<boolean>(false);
 
-  const calculateOriginalPrice = (
-    price: number,
-    discountPercentage: number,
-  ): number => {
-    const discountAmount = price * (discountPercentage / 100);
-    const originalPrice = price + discountAmount;
-    return originalPrice;
-  };
-
   return (
-    <div className="h-350 w-270 border-l border-b">
-      <Link to={`/products/${product.id}`}>
-        <div className="h-250 w-270 relative pt-1">
+    <>
+      <Link
+        className="block min-h-[350px] w-[270px] border p-2 relative rounded-tr-md"
+        to={`/products/${product.id}`}
+      >
+        <div className="h-250 w-270 pt-1">
           <img
             src={`http://localhost:3020/${product.images[0].url}`}
             alt={product.name}
-            className="h-full w-full"
+            className="h-full w-[240px] mx-auto"
             loading="lazy"
           />
-          <div className="absolute top-4 right-4">
+          <div className="absolute top-0 -right-[2px] h-10 w-10 bg-red-500 text-white flex justify-center items-center rounded-tr-md rounded-bl-md">
+            <span className="font-semibold">0%</span>
+          </div>
+          <div className="absolute top-12 right-2">
             <button
               onClick={(e) => {
                 e.preventDefault();
-                setClicked(true);
+                setClicked((prev) => !prev);
               }}
               aria-label="Add To Wishlist"
-              className="h-8 w-8 bg-white rounded-full pl-1 pr-1"
+              className="block h-7 w-7 text-gray-600 bg-white border border-black/50 rounded-full p-[2px]"
             >
               <EyeOpen />
             </button>
@@ -47,17 +45,30 @@ const ProductItem = ({ product }: Props) => {
         <div>
           <p className={`text-black text-xl text-center`}>{product.name}</p>
         </div>
-        <div className="flex justify-around items-center py-1">
-          <span className="text-red-400">${product.price.toFixed(2)}</span>
-          <span className="text-gray-200 line-through">
-            $
-            {calculateOriginalPrice(
-              product.price,
-              product.discountPercentage,
-            ).toFixed(2)}
+        <div className="flex justify-between items-center px-6 py-2">
+          <span className="text-red-400">
+            {product.buyingPrice.toLocaleString("en-US", {
+              currency: "USD",
+              style: "currency",
+              minimumFractionDigits: 2,
+              maximumFractionDigits: 2,
+            })}
+          </span>
+          <span className="text-gray-300 line-through">
+            {product.sellingPrice.toLocaleString("en-US", {
+              currency: "USD",
+              style: "currency",
+              minimumFractionDigits: 2,
+              maximumFractionDigits: 2,
+            })}
           </span>
         </div>
-        <div className="flex justify-center items-center"></div>
+        <div className="flex justify-between px-6">
+          <p>
+            <span className="font-semibold">{product.inventory}</span> left
+          </p>
+          <p>{formatDate(product.createdAt)}</p>
+        </div>
       </Link>
       {clicked && (
         <Modal callback={() => setClicked(false)}>
@@ -67,7 +78,7 @@ const ProductItem = ({ product }: Props) => {
                 e.preventDefault();
                 setClicked(false);
               }}
-              className="absolute md:-left-20 md:top-10 top-2 left-0 h-8 w-8 bg-white border border-black rounded-sm"
+              className="absolute md:-left-20 md:top-10 top-2 left-0 h-8 w-8 bg-white border border-black rounded-full p-[2px]"
             >
               <CloseIcon />
             </button>
@@ -80,7 +91,7 @@ const ProductItem = ({ product }: Props) => {
           </div>
         </Modal>
       )}
-    </div>
+    </>
   );
 };
 

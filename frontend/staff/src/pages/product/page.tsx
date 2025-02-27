@@ -1,25 +1,70 @@
-import { useNavigate, useParams } from "react-router-dom";
+import { Link, useNavigate, useParams } from "react-router-dom";
 import Transition from "../../components/transition";
 import { useQuery } from "@tanstack/react-query";
-import { useContext, useEffect, useState } from "react";
+import { lazy, Suspense, useContext, useEffect } from "react";
 import Loader from "../../components/loader";
-import CommentList from "./comments";
 import { ErrorContext, ShowErrorContext } from "../../utils/errorContext";
 import { Helmet } from "react-helmet";
 import { fetchIndividualProduct } from "../../utils/queries/products/fetchindividualproducts";
 import { errorHandler } from "../../utils/errorHandler";
+import { formatDate } from "../../utils/date";
+import ProductDescription from "../../components/product/description";
+import ImageComponent from "../../components/product/image";
+import { apiHost, apiProtocol } from "../../utils/generics";
+
+const DeleteProductButton = lazy(
+  () => import("../../components/product/deleteproductbutton"),
+);
+const CommentList = lazy(() => import("../../components/product/comments"));
+
+const CommentsFallback = () => {
+  return (
+    <div
+      aria-label="loading"
+      role="banner"
+      className="flex justify-center items-center md:w-11/12 w-10/12 border md:mx-0 mx-auto h-64"
+    >
+      <div className="h-8 w-8">
+        <Loader color="#000" />
+      </div>
+    </div>
+  );
+};
+
+const ButtonFallback = () => {
+  return (
+    <button
+      className="bg-red-500 flex justify-center items-center text-white w-40 h-10 rounded-lg text-center"
+      disabled
+    >
+      <div className="h-6 w-6">
+        <Loader color="#fff" />
+      </div>
+    </button>
+  );
+};
 
 const ProductPage = () => {
   const { id } = useParams();
   const navigate = useNavigate();
   const [, setErr] = useContext(ShowErrorContext);
   const [, setError] = useContext(ErrorContext);
-  const [show, setShow] = useState<boolean>(false);
 
   useEffect(() => {
     if (!id) {
       navigate("/404");
     }
+    const prefetch = async () => {
+      try {
+        await import("../../components/product/deleteproductbutton");
+      } catch (e) {
+        console.log("error prefetching", e);
+      }
+    };
+
+    // eslint-disable-next-line @typescript-eslint/no-floating-promises
+    prefetch();
+
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []);
 
@@ -32,10 +77,6 @@ const ProductPage = () => {
     errorHandler(query.error, navigate, setErr, setError);
   }
 
-  const calclulateOriginal = (price: number, discount: number) => {
-    return price - (price * discount) / 100;
-  };
-
   const { data } = query;
 
   return (
@@ -47,13 +88,13 @@ const ProductPage = () => {
         <meta name="googlebot" content="noindex, nofollow" />
         <meta name="google" content="nositelinkssearchbox" />
       </Helmet>
-      <main role="main">
+      <main role="main" className="pb-6">
         {query.isLoading && (
           <div
             style={{ width: "screen", height: "calc(100vh - 10.8rem)" }}
             className="flex justify-center items-center"
           >
-            <div className="h-20 w-20">
+            <div className="h-10 w-10">
               <Loader color="#000000" />
             </div>
           </div>
@@ -62,11 +103,11 @@ const ProductPage = () => {
           <>
             {data && data.product ? (
               <>
-                <div>
-                  <section className="flex justify-center items-center md:flex-row flex-col md:gap-6">
+                <div className="flex xl:flex-row flex-col xl:justify-center xl:items-start gap-6">
+                  <section className="flex justify-center items-center md:flex-row flex-col md:gap-2">
                     <div className="md:mb-0 mb-6">
                       <img
-                        src={`http://localhost:3020/${data.product.images[0].url}`}
+                        src={`${apiProtocol}://${apiHost}/${data.product.images[0].url}`}
                         alt={data.product.name}
                         className="md:w-600 w-80 md:h-600 h-300 mx-auto"
                       />
@@ -80,10 +121,10 @@ const ProductPage = () => {
                             }
                             return (
                               <li key={image.id}>
-                                <img
-                                  src={`http://localhost:3020/${image.url}`}
+                                <ImageComponent
+                                  image={image.url}
                                   alt={data.product.name}
-                                  className="w-32 h-32"
+                                  idx={index}
                                 />
                               </li>
                             );
@@ -92,86 +133,66 @@ const ProductPage = () => {
                       ) : null}
                     </div>
                   </section>
-                  <section className="md:w-8/12 w-11/12 mx-auto border shadow-xl rounded-lg mt-8 p-2">
-                    <h3 className="font-semibold text-center text-xl py-4">
-                      {data.product.name}
-                    </h3>
-                    <div className="flex justify-center items-center gap-20">
-                      <span className="text-red-400">
-                        ${data.product.price.toFixed(2)}
+                  <section className="xl:w-6/12 md:w-8/12 w-11/12 mx-auto mt-8 pl-2">
+                    <div className="flex justify-between items-center">
+                      <h3 className="font-semibold text-center text-xl py-4">
+                        {data.product.name}
+                      </h3>
+                    </div>
+                    <div className="flex justify-between items-center w-5/12">
+                      <span className="text-red-500">
+                        {data.product.sellingPrice.toLocaleString("en-US", {
+                          currency: "USD",
+                          style: "currency",
+                          minimumFractionDigits: 2,
+                          maximumFractionDigits: 2,
+                        })}
                       </span>
                       <span className="line-through">
-                        $
-                        {calclulateOriginal(
-                          data.product.price,
-                          data.product.discountPercentage,
-                        ).toFixed(2)}
+                        {data.product.buyingPrice.toLocaleString("en-US", {
+                          currency: "USD",
+                          style: "currency",
+                          minimumFractionDigits: 2,
+                          maximumFractionDigits: 2,
+                        })}
                       </span>
                     </div>
-                    <div className="md:w-10/12 mx-auto w-11/12">
+                    <div className="flex justify-between items-center w-6/12 pt-2 pb-2">
                       <p>
-                        {show
-                          ? data.product.description
-                          : `${data.product.description.slice(0, 100)}...`}
+                        <span className="font-semibold">
+                          {data.product.inventory}
+                        </span>{" "}
+                        left
                       </p>
-                      <a
-                        href="clkdcslcnsls"
-                        role="button"
-                        aria-label={show ? "Show Less" : "Show More"}
-                        className="underline"
-                        onClick={(e) => {
-                          e.preventDefault();
-                          setShow(() => !show);
-                        }}
-                      >
-                        {show ? "Show Less" : "Show More"}
-                      </a>
+                      <p>{formatDate(data.product.createdAt)}</p>
                     </div>
-                    <div className="flex justify-center items-center flex-col">
-                      <p>
-                        Created: <span>{data.product.createdAt}</span>
-                      </p>
-                      <p>
-                        Stock: <span>{data.product.inventory}</span>
-                      </p>
+                    <ProductDescription
+                      description={data.product.description}
+                    />
+                    <div className="mt-4 flex justify-start items-center gap-20 mb-8">
+                      <Link
+                        className="bg-green-500 flex justify-center items-center text-white w-40 h-10 rounded-lg text-center"
+                        to={`/products/${data.product.id}/edit`}
+                        aria-label="Update Product"
+                      >
+                        Update
+                      </Link>
+                      <Suspense fallback={<ButtonFallback />}>
+                        <DeleteProductButton
+                          id={data.product.id}
+                          name={data.product.name}
+                        />
+                      </Suspense>
+                    </div>
+                    <div>
+                      <Suspense fallback={<CommentsFallback />}>
+                        <Transition>
+                          <CommentList id={data.product.id} />
+                        </Transition>
+                      </Suspense>
                     </div>
                   </section>
                 </div>
-                <section className="md:w-8/12 w-11/12 mx-auto border shadow-xl rounded-lg mt-8 p-2 flex justify-center items-center md:flex-row flex-col md:gap-14 gap-8">
-                  <div>
-                    <button
-                      className="bg-green-400 w-40 h-10 rounded-lg text-center"
-                      onClick={(e) => {
-                        e.preventDefault();
-                        navigate(`/products/${data.product.id}/edit`);
-                      }}
-                      aria-label="Update Product"
-                    >
-                      Update
-                    </button>
-                  </div>
-                  <div>
-                    <button
-                      className="bg-red-400 w-40 h-10 rounded-lg text-center"
-                      onClick={(e) => {
-                        e.preventDefault();
-                        navigate(`/products/${data.product.id}/delete`);
-                      }}
-                      aria-label="Delete Product"
-                    >
-                      Delete
-                    </button>
-                  </div>
-                </section>
-                <section className="my-8">
-                  {data.product ? (
-                    <div>
-                      <Transition>
-                        <CommentList id={data.product.id} />
-                      </Transition>
-                    </div>
-                  ) : null}
-                </section>
               </>
             ) : null}
           </>

@@ -23,9 +23,11 @@ const FAQPage = lazy(() => import("./pages/faq/page"));
 const TermsPage = lazy(() => import("./pages/terms/page"));
 const ProductsPage = lazy(() => import("./pages/products/page"));
 const CustomersPage = lazy(() => import("./pages/customers/page"));
+const CustomerPage = lazy(() => import("./pages/customer/page"));
+const CustomerCartPage = lazy(() => import("./pages/customer-cart/page"));
+const CustomerOrdersPage = lazy(() => import("./pages/customer-orders/page"));
 const IndividualProductPage = lazy(() => import("./pages/product/page"));
 const EditProductPage = lazy(() => import("./pages/editproduct/page"));
-const DeleteProductPage = lazy(() => import("./pages/deleteproduct/page"));
 const SettingsPage = lazy(() => import("./pages/settings/page"));
 const EmailVerificationPage = lazy(() => import("./pages/verify-email/page"));
 const EmailVerificationTokenPage = lazy(
@@ -96,11 +98,19 @@ const App = () => {
                           path="/products/:id/edit"
                           element={<EditProductPage />}
                         />
-                        <Route
-                          path="/products/:id/delete"
-                          element={<DeleteProductPage />}
-                        />
                         <Route path="/customers" element={<CustomersPage />} />
+                        <Route
+                          path="/customers/:id"
+                          element={<CustomerPage />}
+                        />
+                        <Route
+                          path="/customers/:id/cart"
+                          element={<CustomerCartPage />}
+                        />
+                        <Route
+                          path="/customers/:id/orders"
+                          element={<CustomerOrdersPage />}
+                        />
 
                         <Route path="/settings" element={<SettingsPage />} />
 

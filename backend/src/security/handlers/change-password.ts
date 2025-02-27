@@ -6,6 +6,7 @@ import {
 } from "../../types";
 import {
   customerClientHost,
+  maskEmail,
   sellerClientHost,
   serverError,
   staffClientHost,
@@ -85,6 +86,7 @@ export const requestPasswordVerificationEmail = async (
 
     res.status(200).json({
       message: "Send verification email",
+      email: maskEmail(profile.email),
     });
   } catch (e) {
     if (e instanceof Error) {

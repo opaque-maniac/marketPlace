@@ -1,15 +1,30 @@
 import { useQuery } from "@tanstack/react-query";
 import Transition from "../../components/transition";
 import { useNavigate } from "react-router-dom";
-import { useContext, useEffect } from "react";
+import { lazy, Suspense, useContext, useEffect } from "react";
 import { ErrorContext, ShowErrorContext } from "../../utils/errorContext";
 import ArrowLeft from "../../components/icons/arrowleft";
 import ArrowRight from "../../components/icons/arrowright";
 import { Helmet } from "react-helmet";
 import PageLoader from "../../components/pageloader";
-import Customer from "../../components/customers/customer";
 import { fetchCustomers } from "../../utils/queries/customers/fetchcustomers";
 import { errorHandler } from "../../utils/errorHandler";
+import Loader from "../../components/loader";
+
+const Customer = lazy(() => import("../../components/customers/customer"));
+
+const Fallback = () => {
+  return (
+    <div
+      role="banner"
+      className="flex justify-center items-center h-350 w-270 border pt-1"
+    >
+      <div className="h-8 w-8">
+        <Loader color="#000" />
+      </div>
+    </div>
+  );
+};
 
 const CustomersPage = () => {
   const [, setError] = useContext(ErrorContext);
@@ -100,10 +115,12 @@ const CustomersPage = () => {
                   style={{ minHeight: "calc(100vh - 1.4rem )" }}
                   className="h-full"
                 >
-                  <ul className="flex md:justify-evenly justify-center items-center md:flex-row flex-col md:gap-0 gap-4">
+                  <ul className="grid xl:grid-cols-4 lg:grid-cols-3 md:grid-cols-2 grid-cols-1">
                     {customers.map((customer) => (
-                      <li key={customer.id}>
-                        <Customer customer={customer} />
+                      <li key={customer.id} className="mx-auto md:mb-8 mb-6">
+                        <Suspense fallback={<Fallback />}>
+                          <Customer customer={customer} />
+                        </Suspense>
                       </li>
                     ))}
                   </ul>

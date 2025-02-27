@@ -11,7 +11,7 @@ const Error404 = () => {
         image="/images/logo.svg"
         allowBots={false}
       />
-      <main role="main" className="h-full pt-20 relative pb-4">
+      <main role="main" className="h-full pt-20 relative md:pt-4 pb-20">
         <p className="absolute top-4 left-4">
           {" "}
           Home / <span className="font-extrabold">404</span>

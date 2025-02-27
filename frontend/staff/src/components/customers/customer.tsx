@@ -1,5 +1,9 @@
 import { Link } from "react-router-dom";
 import { Customer } from "../../utils/types";
+import TickIcon from "../icons/tick";
+import CloseIcon from "../icons/closeIcon";
+import { formatDate } from "../../utils/date";
+import { apiHost, apiProtocol } from "../../utils/generics";
 
 interface Props {
   customer: Customer;
@@ -16,7 +20,7 @@ const CustomerItem = ({ customer }: Props) => {
           <img
             src={
               customer.image
-                ? `http://localhost:3020/${customer.image.url}`
+                ? `${apiProtocol}://${apiHost}/${customer.image.url}`
                 : "/images/profile.svg"
             }
             alt={`${customer.firstName} ${customer.lastName}`}
@@ -24,16 +28,21 @@ const CustomerItem = ({ customer }: Props) => {
           />
         </div>
         <div className="w-full text-center pt-4">
+          <p className="font-semibold">{customer.email}</p>
           <p>
             {customer.firstName} {customer.lastName}
           </p>
-          <p>{customer.email}</p>
-          <p>
-            Active:{" "}
-            <span className="font-semibold">
-              {customer.active ? "Yes" : "No"}
-            </span>
-          </p>
+          <div className="flex justify-center items-center gap-[5px]">
+            <p>Active: </p>
+            <div
+              className={`w-5 h-5 border rounded-full p-[2px] ${customer.active ? "text-green-500 border-green-500" : "text-red-500 border-red-500"}`}
+            >
+              {customer.active ? <TickIcon /> : <CloseIcon />}
+            </div>
+          </div>
+          <div>
+            <p>{formatDate(customer.createdAt)}</p>
+          </div>
         </div>
       </div>
     </Link>

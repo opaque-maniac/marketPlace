@@ -23,13 +23,16 @@ const Error500 = () => {
         image="/images/logo.svg"
         allowBots={false}
       />
-      <main role="main" className="h-full pt-20 relative">
+      <main role="main" className="h-full pt-20 relative md:pb-0 pb-20">
         <p className="absolute top-4 left-4">
           {" "}
           Home / <span className="font-extrabold">500</span>
         </p>
         <div className="flex justify-center items-center">
-          <h3 className="mx-auto" style={{ fontSize: "110px" }}>
+          <h3
+            className="mx-auto md:text-start text-center"
+            style={{ fontSize: "110px" }}
+          >
             500 Server Error
           </h3>
         </div>
