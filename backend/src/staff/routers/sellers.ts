@@ -15,6 +15,11 @@ import {
   fetchSellers,
   updateSeller,
 } from "../handlers/sellers";
+import {
+  createSellerMisconduct,
+  fetchSellerMisconducts,
+} from "../handlers/misconducts";
+import { RESPONSE } from "@prisma/client";
 
 const router = Router();
 
@@ -51,6 +56,16 @@ router.put(
 // disable and enable seller
 router.post("/:id/enable", enableSeller);
 router.post("/:id/disable", disableSeller);
+router.get("/:id/misconducts", fetchSellerMisconducts);
+router.post(
+  "/:id/misconducts",
+  body("misconduct").isString().isLength({ min: 2, max: 225 }),
+  body("description").isString().isLength({ min: 2, max: 500 }),
+  body("response")
+    .isString()
+    .isIn(["WARN_USER", "DISABLE_PROFILE", "DELETE_PROFILE"]),
+  createSellerMisconduct,
+);
 
 // delete seller
 router.delete("/:id", deleteSeller);

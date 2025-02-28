@@ -1,17 +1,18 @@
-import { getAccessToken } from "../../cookies";
+import { QueryFunction } from "@tanstack/react-query";
+import { ErrorResponse, SuccessIndividualSellerResponse } from "../../types";
 import { responseError, tokenError } from "../../errors";
+import { getAccessToken } from "../../cookies";
 import { apiHost, apiProtocol } from "../../generics";
-import { Customer, ErrorResponse } from "../../types";
 
-export const disableCustomer = async ({
-  id,
-  misconductId,
-}: {
-  id: string;
-  misconductId: string;
-}) => {
+// Fetch many products
+export const fetchSeller: QueryFunction<
+  SuccessIndividualSellerResponse,
+  ["seller", string]
+> = async ({ queryKey }) => {
   try {
-    const url = `${apiProtocol}://${apiHost}/staff/comments/${id}/disable?misconduct=${misconductId}`;
+    const [, id] = queryKey;
+    const url = `${apiProtocol}://${apiHost}/staff/sellers/${id}`;
+
     const token = getAccessToken();
 
     if (!token) {
@@ -19,9 +20,10 @@ export const disableCustomer = async ({
     }
 
     const options = {
-      method: "DELETE",
+      method: "GET",
       headers: {
         Authorization: `Bearer ${token}`,
+        "Content-Type": "application/json",
       },
     };
 
@@ -38,10 +40,7 @@ export const disableCustomer = async ({
       }
     }
 
-    const data = (await response.json()) as {
-      message: string;
-    };
-    return data;
+    return response.json() as Promise<SuccessIndividualSellerResponse>;
   } catch (e) {
     if (e instanceof Error) {
       throw new Error(e.message);

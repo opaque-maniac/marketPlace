@@ -1,3 +1,11 @@
+export type DeleteDisableMutationFN = ({
+  id,
+  misconductId,
+}: {
+  id: string;
+  misconductId: string;
+}) => Promise<{ message: string }>;
+
 export interface CompaintData {
   email: string;
   name: string;
@@ -97,6 +105,7 @@ export interface Seller {
   email: string;
   address?: string;
   phone?: string;
+  active: boolean;
   createdAt: string;
   updatedAt: string | null;
   image?: SellerImage;
@@ -190,7 +199,7 @@ export interface Complaint {
   email: string;
   name: string;
   message: string;
-  phone: string;
+  phone: string | undefined;
   createdAt: string;
   resolved: boolean;
   staffID?: string;
@@ -205,6 +214,7 @@ export interface SuccessLoginRespose {
   message: string;
   token: string;
   refreshToken: string;
+  role: ROLE;
   staff: Staff;
 }
 
@@ -324,4 +334,14 @@ export interface SuccessComplaintsResponse {
   messaeg: string;
   complaints: Complaint[];
   hasNext: boolean;
+}
+
+export interface SuccessIndividualSellerResponse {
+  message: string;
+  seller: Seller;
+}
+
+export interface SuccessIndividualStaffResponse {
+  message: string;
+  staff: Staff;
 }

@@ -16,6 +16,10 @@ import {
   fetchStaff,
   updateStaff,
 } from "../handlers/staff";
+import {
+  createCustomerMisconduct,
+  fetchCustomerMisconducts,
+} from "../handlers/misconducts";
 
 const router = Router();
 
@@ -47,6 +51,16 @@ router.put(
 // delete staff
 router.post("/:id/enable", isAdmin, enableStaff);
 router.post("/:id/disable", isAdmin, disableStaff);
+router.get("/:id/misconducts", fetchCustomerMisconducts);
+router.post(
+  "/:id/misconducts",
+  body("misconduct").isString().isLength({ min: 2, max: 225 }),
+  body("description").isString().isLength({ min: 2, max: 500 }),
+  body("response")
+    .isString()
+    .isIn(["WARN_USER", "DISABLE_PROFILE", "DELETE_PROFILE"]),
+  createCustomerMisconduct,
+);
 
 // delete staff
 router.delete("/:id", isAdminOrProfileOwner, deleteStaff);

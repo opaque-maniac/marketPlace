@@ -3,7 +3,7 @@ import { responseError, tokenError } from "../../errors";
 import { apiHost, apiProtocol } from "../../generics";
 import { Customer, ErrorResponse } from "../../types";
 
-export const disableCustomer = async ({
+export const deleteStaff = async ({
   id,
   misconductId,
 }: {
@@ -40,6 +40,7 @@ export const disableCustomer = async ({
 
     const data = (await response.json()) as {
       message: string;
+      customer: Customer;
     };
     return data;
   } catch (e) {

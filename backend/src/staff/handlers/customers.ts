@@ -124,6 +124,14 @@ export const updateCustomer = async (
       filename = undefined;
     }
 
+    const exists = await prisma.customer.findUnique({
+      where: { id },
+    });
+
+    if (!exists) {
+      throw new Error("Customer not found");
+    }
+
     const customer = await prisma.$transaction(
       async (txl) => {
         const updatedCustomer = await txl.customer.update({
@@ -182,7 +190,35 @@ export const disableCustomer = async (
 ): Promise<void> => {
   try {
     const { id } = req.params;
+    const { user } = req;
+    const misconductID = req.query.misconduct
+      ? (req.query.misconduct as string)
+      : undefined;
 
+    if (!user) {
+      throw new Error("User not found");
+    }
+
+    const exists = await prisma.customer.findUnique({
+      where: { id },
+    });
+
+    if (!exists) {
+      throw new Error("Customer not found");
+    }
+
+    const misconduct = await prisma.misconduct.findUnique({
+      where: {
+        id: misconductID,
+        customerID: exists.id,
+        personelID: user.id,
+        response: "DELETE_PROFILE",
+      },
+    });
+
+    if (!misconduct) {
+      throw new Error("Misconduct not found");
+    }
     const customer = await prisma.customer.update({
       where: { id },
       data: {
@@ -212,6 +248,14 @@ export const enableCustomer = async (
   try {
     const { id } = req.params;
 
+    const exists = await prisma.customer.findUnique({
+      where: { id },
+    });
+
+    if (!exists) {
+      throw new Error("Customer not found");
+    }
+
     const customer = await prisma.customer.update({
       where: { id },
       data: {
@@ -240,6 +284,14 @@ export const deleteCustomer = async (
 ): Promise<void> => {
   try {
     const { id } = req.params;
+    const { user } = req;
+    const misconductID = req.query.misconduct
+      ? (req.query.misconduct as string)
+      : undefined;
+
+    if (!user) {
+      throw new Error("User not found");
+    }
 
     const exists = await prisma.customer.findUnique({
       where: { id },
@@ -249,7 +301,20 @@ export const deleteCustomer = async (
       throw new Error("Customer not found");
     }
 
-    const customer = await prisma.customer.delete({
+    const misconduct = await prisma.misconduct.findUnique({
+      where: {
+        id: misconductID,
+        customerID: exists.id,
+        personelID: user.id,
+        response: "DELETE_PROFILE",
+      },
+    });
+
+    if (!misconduct) {
+      throw new Error("Misconduct not found");
+    }
+
+    await prisma.customer.delete({
       where: {
         id,
       },
@@ -257,7 +322,6 @@ export const deleteCustomer = async (
 
     res.status(200).json({
       message: "Customer deleted successfully",
-      customer,
     });
   } catch (e) {
     if (e instanceof Error) {

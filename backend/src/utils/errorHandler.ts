@@ -119,6 +119,11 @@ const errorHandler = async (
       status = 401;
       code = "A003";
       break;
+    case "Misconduct not found":
+      message = error.message;
+      status = 404;
+      code = "CU01";
+      break;
     case "Customer not found":
       message = error.message;
       status = 404;

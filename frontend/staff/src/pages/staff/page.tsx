@@ -1,17 +1,16 @@
 import { useQuery } from "@tanstack/react-query";
 import Transition from "../../components/transition";
 import { useNavigate } from "react-router-dom";
-import { lazy, Suspense, useContext, useEffect } from "react";
+import { Suspense, useContext, useEffect } from "react";
 import { ErrorContext, ShowErrorContext } from "../../utils/errorContext";
 import ArrowLeft from "../../components/icons/arrowleft";
 import ArrowRight from "../../components/icons/arrowright";
 import { Helmet } from "react-helmet";
 import PageLoader from "../../components/pageloader";
-import { fetchSellers } from "../../utils/queries/sellers/fetchsellers";
 import { errorHandler } from "../../utils/errorHandler";
+import { fetchStaff } from "../../utils/queries/staff/fetchstaff";
+import StaffItem from "../../components/staff/staff";
 import Loader from "../../components/loader";
-
-const SellerItem = lazy(() => import("../../components/sellers/seller"));
 
 const Fallback = () => {
   return (
@@ -26,7 +25,7 @@ const Fallback = () => {
   );
 };
 
-export default function SellersPage() {
+export default function StaffPage() {
   const navigate = useNavigate();
   const [, setError] = useContext(ErrorContext);
   const [, setErr] = useContext(ShowErrorContext);
@@ -50,8 +49,8 @@ export default function SellersPage() {
   const queryStr = String(_query) || "";
 
   const query = useQuery({
-    queryKey: ["sellers", page, 20, queryStr],
-    queryFn: fetchSellers,
+    queryKey: ["staff", page, 20, queryStr],
+    queryFn: fetchStaff,
   });
 
   if (query.isError) {
@@ -77,7 +76,7 @@ export default function SellersPage() {
   };
 
   const data = query.data;
-  const sellers = data?.sellers || [];
+  const staff = data?.staff || [];
 
   return (
     <Transition>
@@ -100,13 +99,13 @@ export default function SellersPage() {
             <PageLoader />
           ) : (
             <div className="h-full w-full">
-              {sellers.length === 0 ? (
+              {staff.length === 0 ? (
                 <section
                   style={{ minHeight: "calc(100vh - 1.4rem )" }}
                   className="h-full flex justify-center items-center"
                 >
                   <div>
-                    <p className="text-xl font-semibold">No Customers Found</p>
+                    <p className="text-xl font-semibold">No Staff Found</p>
                   </div>
                 </section>
               ) : (
@@ -114,11 +113,11 @@ export default function SellersPage() {
                   style={{ minHeight: "calc(100vh - 1.4rem )" }}
                   className="h-full"
                 >
-                  <ul className="grid xl:grid-cols-4 lg:grid-cols-3 md:grid-cols-2 grid-cols-1">
-                    {sellers.map((seller) => (
-                      <li key={seller.id} className="mx-auto md:mb-8 mb-6">
+                  <ul className="flex md:justify-evenly justify-center items-center md:flex-row flex-col md:gap-0 gap-4">
+                    {staff.map((staff) => (
+                      <li key={staff.id}>
                         <Suspense fallback={<Fallback />}>
-                          <SellerItem seller={seller} />
+                          <StaffItem staff={staff} />
                         </Suspense>
                       </li>
                     ))}

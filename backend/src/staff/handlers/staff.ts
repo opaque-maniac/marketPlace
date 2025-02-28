@@ -227,6 +227,15 @@ export const disableStaff = async (
 ): Promise<void> => {
   try {
     const { id } = req.params;
+    const { user } = req;
+
+    const misconductID = req.query.misconduct
+      ? (req.query.misconduct as string)
+      : undefined;
+
+    if (!user) {
+      throw new Error("User not found");
+    }
 
     const exists = await prisma.staff.findUnique({
       where: { id },
@@ -234,6 +243,18 @@ export const disableStaff = async (
 
     if (!exists) {
       throw new Error("Staff not found");
+    }
+    const misconduct = await prisma.misconduct.findUnique({
+      where: {
+        id: misconductID,
+        personelID: user.id,
+        sellerID: exists.id,
+        response: "DISABLE_PROFILE",
+      },
+    });
+
+    if (!misconduct) {
+      throw new Error("Misconduct does not exists");
     }
 
     const staff = await prisma.staff.update({
@@ -264,6 +285,15 @@ export const deleteStaff = async (
 ): Promise<void> => {
   try {
     const { id } = req.params;
+    const { user } = req;
+
+    if (!user) {
+      throw new Error("User not found");
+    }
+
+    const misconductID = req.query.misconduct
+      ? (req.query.misconduct as string)
+      : undefined;
 
     const exists = await prisma.staff.findUnique({
       where: { id },
@@ -273,13 +303,25 @@ export const deleteStaff = async (
       throw new Error("Staff not found");
     }
 
-    const staff = await prisma.staff.delete({
+    const misconduct = await prisma.misconduct.findUnique({
+      where: {
+        id: misconductID,
+        personelID: user.id,
+        staffID: exists.id,
+        response: "DELETE_PROFILE",
+      },
+    });
+
+    if (!misconduct) {
+      throw new Error("Misconduct not found");
+    }
+
+    await prisma.staff.delete({
       where: { id },
     });
 
     res.status(203).json({
       message: "Staff deleted successfully",
-      staff,
     });
   } catch (e) {
     if (e instanceof Error) {

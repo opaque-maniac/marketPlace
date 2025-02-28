@@ -1,5 +1,3 @@
-import { createRoot } from "react-dom/client";
-import { BrowserRouter, Route, Routes } from "react-router-dom";
 import { QueryClient, QueryClientProvider } from "@tanstack/react-query";
 import { lazy, Suspense, useState } from "react";
 import { ErrorContext, ShowErrorContext } from "./utils/errorContext";
@@ -9,6 +7,9 @@ import PageLoader from "./components/pageloader";
 import AuthRoute from "./components/routes/authroutes";
 import ProtectedRoute from "./components/routes/protectedroute";
 import ScrollToTopRoute from "./components/routes/scrolltotop";
+import { BrowserRouter, Route, Routes } from "react-router-dom";
+import AdminOnlyRoutes from "./components/routes/adminonlyroutes";
+import { createRoot } from "react-dom/client";
 
 const HomePage = lazy(() => import("./pages/home/page"));
 const LoginPage = lazy(() => import("./pages/login/page"));
@@ -22,12 +23,25 @@ const PrivacyPage = lazy(() => import("./pages/privacy/page"));
 const FAQPage = lazy(() => import("./pages/faq/page"));
 const TermsPage = lazy(() => import("./pages/terms/page"));
 const ProductsPage = lazy(() => import("./pages/products/page"));
+const IndividualProductPage = lazy(() => import("./pages/product/page"));
+const EditProductPage = lazy(() => import("./pages/editproduct/page"));
 const CustomersPage = lazy(() => import("./pages/customers/page"));
 const CustomerPage = lazy(() => import("./pages/customer/page"));
 const CustomerCartPage = lazy(() => import("./pages/customer-cart/page"));
 const CustomerOrdersPage = lazy(() => import("./pages/customer-orders/page"));
-const IndividualProductPage = lazy(() => import("./pages/product/page"));
-const EditProductPage = lazy(() => import("./pages/editproduct/page"));
+const CustomerEditPage = lazy(() => import("./pages/customer-edit/page"));
+const CustomerDeletePage = lazy(() => import("./pages/customer-delete/page"));
+const CustomerDisablePage = lazy(() => import("./pages/customer-disable/page"));
+const SellersPage = lazy(() => import("./pages/sellers/page"));
+const SellerPage = lazy(() => import("./pages/seller/page"));
+const SellerEditPage = lazy(() => import("./pages/seller-edit/page"));
+const SellerDeletePage = lazy(() => import("./pages/seller-delete/page"));
+const SellerDisablePage = lazy(() => import("./pages/seller-disable/page"));
+const StaffPage = lazy(() => import("./pages/staff/page"));
+const StaffProfilePage = lazy(() => import("./pages/staff-profile/page"));
+const StaffEditPage = lazy(() => import("./pages/staff-edit/page"));
+const StaffDisablePage = lazy(() => import("./pages/staff-disable/page"));
+const StaffDeletePage = lazy(() => import("./pages/staff-delete/page"));
 const SettingsPage = lazy(() => import("./pages/settings/page"));
 const EmailVerificationPage = lazy(() => import("./pages/verify-email/page"));
 const EmailVerificationTokenPage = lazy(
@@ -99,6 +113,7 @@ const App = () => {
                           element={<EditProductPage />}
                         />
                         <Route path="/customers" element={<CustomersPage />} />
+                        {/* Customers */}
                         <Route
                           path="/customers/:id"
                           element={<CustomerPage />}
@@ -111,7 +126,62 @@ const App = () => {
                           path="/customers/:id/orders"
                           element={<CustomerOrdersPage />}
                         />
+                        <Route
+                          path="/customers/:id/edit"
+                          element={<CustomerEditPage />}
+                        />
+                        <Route
+                          path="/customers/:id/disable"
+                          element={<CustomerDisablePage />}
+                        />
+                        <Route element={<AdminOnlyRoutes />}>
+                          <Route
+                            path="/customers/:id/delete"
+                            element={<CustomerDeletePage />}
+                          />
+                        </Route>
 
+                        {/* Settings */}
+                        <Route path="/sellers" element={<SellersPage />} />
+                        <Route path="/sellers/:id" element={<SellerPage />} />
+                        <Route
+                          path="/sellers/:id/edit"
+                          element={<SellerEditPage />}
+                        />
+                        <Route
+                          path="/sellers/:id/disable"
+                          element={<SellerDisablePage />}
+                        />
+
+                        <Route element={<AdminOnlyRoutes />}>
+                          <Route
+                            path="/sellers/:id/delete"
+                            element={<SellerDeletePage />}
+                          />
+                        </Route>
+
+                        {/* Staff */}
+                        <Route path="/staff" element={<StaffPage />} />
+                        <Route
+                          path="/staff/:id/"
+                          element={<StaffProfilePage />}
+                        />
+                        <Route
+                          path="/staff/:id/edit"
+                          element={<StaffEditPage />}
+                        />
+                        <Route
+                          path="/staff/:id/disable"
+                          element={<StaffDisablePage />}
+                        />
+                        <Route element={<AdminOnlyRoutes />}>
+                          <Route
+                            path="/staff/:id/delete"
+                            element={<StaffDeletePage />}
+                          />
+                        </Route>
+
+                        {/* Settings */}
                         <Route path="/settings" element={<SettingsPage />} />
 
                         {/* Change email */}

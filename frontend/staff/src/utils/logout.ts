@@ -1,5 +1,5 @@
 import { NavigateFunction } from "react-router-dom";
-import { removeAccessToken, removeRefreshToken, removeUserID } from "./cookies";
+import { removeAccessToken, removeRefreshToken } from "./cookies";
 import useUserStore from "./store";
 
 export const logoutFunction = (
@@ -7,10 +7,12 @@ export const logoutFunction = (
   redirect?: boolean,
 ) => {
   const removeUser = useUserStore((state) => state.removeUser);
+  const removeRole = useUserStore((state) => state.removeRole);
+
   removeAccessToken();
   removeRefreshToken();
+  removeRole();
   removeUser();
-  removeUserID();
   if (redirect) {
     navigate("/", { replace: true });
   }

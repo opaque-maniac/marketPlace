@@ -1,5 +1,5 @@
 import { Response, NextFunction } from "express";
-import jwt, { JwtPayload } from "jsonwebtoken";
+import jwt from "jsonwebtoken";
 import { AuthenticatedRequest, DecodedToken } from "../types";
 import prisma from "../utils/db";
 import { serverError } from "../utils/globals";
@@ -278,6 +278,50 @@ export const isAdmin = async (
       throw new Error("Unauthorized");
     }
 
+    next();
+  } catch (e) {
+    if (e instanceof Error) {
+      next(e);
+      return;
+    }
+    next(serverError);
+  }
+};
+
+export const isNotOwnMisconduct = async (
+  req: AuthenticatedRequest,
+  res: Response,
+  next: NextFunction,
+): Promise<void> => {
+  try {
+    const { id } = req.params;
+    const { user } = req;
+
+    if (!user) {
+      throw new Error("User not found");
+    }
+
+    const misconduct = await prisma.misconduct.findUnique({
+      where: { id },
+    });
+
+    if (!misconduct) {
+      throw new Error("Misconduct not found");
+    }
+
+    const personel = await prisma.staff.findUnique({
+      where: { id: user.id },
+    });
+
+    if (!personel) {
+      throw new Error("User not found");
+    }
+
+    if (misconduct.staffID === user.id) {
+      throw new Error("Unauthorized");
+    }
+
+    // next
     next();
   } catch (e) {
     if (e instanceof Error) {

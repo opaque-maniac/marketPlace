@@ -111,19 +111,19 @@ export const fetchSellerProducts = async (
     const page = req.query.page ? parseInt(req.query.page as string) : 1;
     const limit = req.query.limit ? parseInt(req.query.limit as string) : 10;
 
-    const seller = await prisma.seller.findUnique({
+    const exists = await prisma.seller.findUnique({
       where: {
         id,
       },
     });
 
-    if (!seller) {
+    if (!exists) {
       throw new Error("Seller not found");
     }
 
     const products = await prisma.product.findMany({
       where: {
-        sellerID: seller.id,
+        sellerID: exists.id,
       },
       include: {
         images: true,
@@ -169,6 +169,14 @@ export const updateSeller = async (
       filename = req.files["image"][0].filename || undefined;
     } else {
       filename = undefined;
+    }
+
+    const exists = await prisma.seller.findUnique({
+      where: { id },
+    });
+
+    if (!exists) {
+      throw new Error("Seller not found");
     }
 
     const seller = await prisma.$transaction(
@@ -230,6 +238,16 @@ export const enableSeller = async (
   try {
     const { id } = req.params;
 
+    const exists = await prisma.seller.findUnique({
+      where: {
+        id,
+      },
+    });
+
+    if (!exists) {
+      throw new Error("Seller not found");
+    }
+
     const seller = await prisma.seller.update({
       where: { id },
       data: {
@@ -258,6 +276,37 @@ export const disableSeller = async (
 ): Promise<void> => {
   try {
     const { id } = req.params;
+    const { user } = req;
+    const misconductID = req.query.misconduct
+      ? (req.query.misconduct as string)
+      : undefined;
+
+    if (!user) {
+      throw new Error("User not found");
+    }
+
+    const exists = await prisma.seller.findUnique({
+      where: {
+        id,
+      },
+    });
+
+    if (!exists) {
+      throw new Error("Seller not found");
+    }
+
+    const misconduct = await prisma.misconduct.findUnique({
+      where: {
+        id: misconductID,
+        sellerID: exists.id,
+        personelID: user.id,
+        response: "DISABLE_PROFILE",
+      },
+    });
+
+    if (!misconduct) {
+      throw new Error("Misconduct not found");
+    }
 
     const seller = await prisma.seller.update({
       where: { id },
@@ -287,6 +336,38 @@ export const deleteSeller = async (
 ): Promise<void> => {
   try {
     const { id } = req.params;
+
+    const { user } = req;
+    const misconductID = req.query.misconduct
+      ? (req.query.misconduct as string)
+      : undefined;
+
+    if (!user) {
+      throw new Error("User not found");
+    }
+
+    const exists = await prisma.seller.findUnique({
+      where: {
+        id,
+      },
+    });
+
+    if (!exists) {
+      throw new Error("Seller not found");
+    }
+
+    const misconduct = await prisma.misconduct.findUnique({
+      where: {
+        id: misconductID,
+        sellerID: exists.id,
+        personelID: user.id,
+        response: "DELETE_PROFILE",
+      },
+    });
+
+    if (!misconduct) {
+      throw new Error("Misconduct not found");
+    }
 
     const seller = await prisma.seller.delete({
       where: {

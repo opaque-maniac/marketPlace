@@ -14,23 +14,24 @@ datasource db {
 }
 
 model Customer {
-  id        String         @id @default(uuid())
-  email     String         @unique
-  tempEmail String?
-  firstName String
-  lastName  String
-  password  String
-  address   String?
-  phone     String?
-  verified  Boolean        @default(false)
-  active    Boolean        @default(true)
-  image     CustomerImage?
-  wishlist  WishList?
-  cart      Cart?
-  orders    Order[]
-  comments  Comment[]
-  createdAt DateTime       @default(now())
-  updatedAt DateTime       @updatedAt
+  id          String         @id @default(uuid())
+  email       String         @unique
+  tempEmail   String?
+  firstName   String
+  lastName    String
+  password    String
+  address     String?
+  phone       String?
+  verified    Boolean        @default(false)
+  active      Boolean        @default(true)
+  image       CustomerImage?
+  wishlist    WishList?
+  cart        Cart?
+  orders      Order[]
+  comments    Comment[]
+  misconducts Misconduct[]
+  createdAt   DateTime       @default(now())
+  updatedAt   DateTime       @updatedAt
 }
 
 model CustomerImage {
@@ -42,21 +43,22 @@ model CustomerImage {
 }
 
 model Seller {
-  id        String       @id @default(uuid())
-  email     String       @unique
-  tempEmail String?
-  name      String
-  password  String
-  bio       String?
-  address   String?
-  phone     String?
-  verified  Boolean      @default(false)
-  active    Boolean      @default(true)
-  image     SellerImage?
-  products  Product[]
-  orders    Order[]
-  createdAt DateTime     @default(now())
-  updatedAt DateTime     @updatedAt
+  id          String       @id @default(uuid())
+  email       String       @unique
+  tempEmail   String?
+  name        String
+  password    String
+  bio         String?
+  address     String?
+  phone       String?
+  verified    Boolean      @default(false)
+  active      Boolean      @default(true)
+  image       SellerImage?
+  products    Product[]
+  orders      Order[]
+  misconducts Misconduct[]
+  createdAt   DateTime     @default(now())
+  updatedAt   DateTime     @updatedAt
 }
 
 model SellerImage {
@@ -74,19 +76,21 @@ enum STAFF_ROLE {
 }
 
 model Staff {
-  id         String      @id @default(uuid())
-  email      String      @unique
-  tempEmail  String?
-  firstName  String
-  lastName   String
-  password   String
-  verified   Boolean     @default(false)
-  active     Boolean     @default(true)
-  role       STAFF_ROLE
-  image      StaffImage?
-  complaints Complaint[]
-  createdAt  DateTime    @default(now())
-  updatedAt  DateTime    @updatedAt
+  id          String       @id @default(uuid())
+  email       String       @unique
+  tempEmail   String?
+  firstName   String
+  lastName    String
+  password    String
+  verified    Boolean      @default(false)
+  active      Boolean      @default(true)
+  role        STAFF_ROLE
+  image       StaffImage?
+  complaints  Complaint[]
+  misconducts Misconduct[]
+  filedmisconducts Misconduct[] @relation("Personel")
+  createdAt   DateTime     @default(now())
+  updatedAt   DateTime     @updatedAt
 }
 
 model StaffImage {
@@ -226,4 +230,27 @@ model Complaint {
   resolved  Boolean  @default(false)
   staffID   String?
   staff     Staff?   @relation(fields: [staffID], references: [id], onDelete: NoAction)
+}
+
+enum RESPONSE {
+  WARN_USER
+  DISABLE_PROFILE
+  DELETE_PROFILE
+}
+
+model Misconduct {
+  id          String    @id @default(uuid())
+  personelID  String
+  personel    Staff     @relation("Personel", fields: [personelID], references: [id])
+  response    RESPONSE @default(WARN_USER)
+  customerID  String?
+  customer    Customer? @relation(fields: [customerID], references: [id])
+  sellerID    String?
+  seller      Seller?   @relation(fields: [sellerID], references: [id])
+  staffID String?
+  staff Staff? @relation(fields: [staffID], references: [id])
+  misconduct  String
+  description String
+  createdAt   DateTime  @default(now())
+  updatedAt   DateTime  @default(now())
 }

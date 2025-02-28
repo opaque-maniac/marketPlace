@@ -1,6 +1,7 @@
 import {
   Customer,
   ORDER_STATUS,
+  RESPONSE,
   Seller,
   Staff,
   STAFF_ROLE,
@@ -235,5 +236,13 @@ export interface VerifyEmailRequest extends Request {
 export interface VerifyEmailTokenRequest extends Request {
   body: {
     token: string;
+  };
+}
+
+export interface NewMisconductRequest extends AuthenticatedRequest {
+  body: {
+    misconduct: string;
+    description: string;
+    response: RESPONSE;
   };
 }

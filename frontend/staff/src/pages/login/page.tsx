@@ -19,6 +19,7 @@ const LoginPage = () => {
   const [show, setShow] = useState<boolean>(false);
   const [, setError] = useContext(ErrorContext);
   const setUser = userStore((state) => state.setUser);
+  const setRole = userStore((state) => state.setRole);
 
   const mutation = useMutation({
     mutationFn: sendLogin,
@@ -30,6 +31,7 @@ const LoginPage = () => {
         setAccessToken(data.token);
         setRefreshToken(data.refreshToken);
         setUser(data.staff.id);
+        setRole(data.role);
         navigate("/", { replace: true });
       } else {
         setErr("Something unexpected happened");

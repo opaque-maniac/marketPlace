@@ -1,7 +1,7 @@
 import { useQuery } from "@tanstack/react-query";
 import Transition from "../../components/transition";
 import { Link, useNavigate, useParams } from "react-router-dom";
-import { lazy, Suspense, useContext, useEffect } from "react";
+import { useCallback, useContext, useEffect } from "react";
 import { ErrorContext, ShowErrorContext } from "../../utils/errorContext";
 import { Helmet } from "react-helmet";
 import PageLoader from "../../components/pageloader";
@@ -17,7 +17,6 @@ import CloseIcon from "../../components/icons/closeIcon";
 import CartIcon from "../../components/icons/cart";
 import CardIcon from "../../components/icons/card";
 import HeartIcon from "../../components/icons/heart";
-import DisableCustomer from "../../components/customer/disablecustomer";
 
 const CustomerPage = () => {
   const { id } = useParams();
@@ -34,7 +33,7 @@ const CustomerPage = () => {
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []);
 
-  const { isLoading, isError, isSuccess, data, error } = useQuery({
+  const { isLoading, refetch, isError, isSuccess, data, error } = useQuery({
     queryFn: fetchCustomer,
     queryKey: ["customer", id as string],
   });
@@ -188,11 +187,12 @@ const CustomerPage = () => {
                 >
                   Edit Profile
                 </Link>
-                <DisableCustomer
-                  id={customer.id}
-                  firstName={customer.firstName}
-                  lastName={customer.lastName}
-                />
+                <Link
+                  to={`/customers/${customer.id}/disable`}
+                  className="flex justify-center items-center w-40 h-10 bg-red-500 text-white rounded"
+                >
+                  Disable
+                </Link>
               </div>
             </section>
           </div>
