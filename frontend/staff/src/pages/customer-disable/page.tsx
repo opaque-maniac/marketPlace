@@ -76,12 +76,16 @@ export default function CustomerDeletePage() {
               />
             </section>
             <section className="md:w-5/12">
-              <div className="mb-2">
+              <div className="md:w-[400px] w-[340px] mx-auto mb-2">
                 <h3 className="text-lg font-semibold">
-                  {customer.firstName} {customer.lastName}
+                  Disable customer{" "}
+                  <span className="font-bold">
+                    {customer.firstName} {customer.lastName}
+                  </span>
+                  ?
                 </h3>
               </div>
-              <div>
+              <div className="md:w-[400px] w-[340px] mx-auto">
                 <p>
                   Are your sure you want to disable the profile of this
                   customer, if you are, you need to make sure you file a
@@ -96,7 +100,7 @@ export default function CustomerDeletePage() {
                   below to file a misconduct.
                 </p>
               </div>
-              <div>
+              <div className="mt-6 mb-10">
                 <MisconductsInputForm
                   success={() => {
                     navigate(`/customers/${id}`);

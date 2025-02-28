@@ -8,7 +8,7 @@ interface Props {
 
 const CartItemComponent = ({ cartItem, refetch }: Props) => {
   return (
-    <div className="cart-item flex md:flex-row flex-col md:justify-evenly justify-center items-center gap-4 border border-black/25 pl-1 md:w-500 w-[250px] md:h-180 h-auto md:pb-0 py-2">
+    <div className="cart-item flex md:flex-row flex-col md:justify-evenly justify-center items-center gap-4 border border-black/25 pl-1 md:w-[450px] w-[250px] md:h-180 h-auto md:pb-0 py-2">
       <div>
         <img
           src={`http://localhost:3020/${cartItem.product.images[0].url}`}

@@ -1,7 +1,7 @@
 import { getAccessToken } from "../../cookies";
 import { responseError, tokenError } from "../../errors";
 import { apiHost, apiProtocol } from "../../generics";
-import { Customer, ErrorResponse } from "../../types";
+import { ErrorResponse } from "../../types";
 
 export const disableCustomer = async ({
   id,

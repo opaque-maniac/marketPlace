@@ -1,18 +1,17 @@
-import { QueryFunction } from "@tanstack/react-query";
-import { ErrorResponse, SuccessCustomerCartResponse } from "../../types";
-import { responseError, tokenError } from "../../errors";
 import { getAccessToken } from "../../cookies";
+import { responseError, tokenError } from "../../errors";
 import { apiHost, apiProtocol } from "../../generics";
+import { ErrorResponse } from "../../types";
 
-// Fetch many products
-export const fetchCustomerCart: QueryFunction<
-  SuccessCustomerCartResponse,
-  ["customer-cart", string, number, number, string]
-> = async ({ queryKey }) => {
+export const updateCustomer = async ({
+  data,
+  id,
+}: {
+  id: string;
+  data: FormData;
+}) => {
   try {
-    const [, id, page, limit, query] = queryKey;
-    const url = `${apiProtocol}://${apiHost}/staff/customers/${id}/cart?page=${page}&query=${query}&limit=${limit}`;
-
+    const url = `${apiProtocol}://${apiHost}/staff/customers/${id}`;
     const token = getAccessToken();
 
     if (!token) {
@@ -20,11 +19,11 @@ export const fetchCustomerCart: QueryFunction<
     }
 
     const options = {
-      method: "GET",
+      method: "PUT",
       headers: {
         Authorization: `Bearer ${token}`,
-        "Content-Type": "application/json",
       },
+      body: data,
     };
 
     const response = await fetch(url, options);
@@ -40,7 +39,10 @@ export const fetchCustomerCart: QueryFunction<
       }
     }
 
-    return response.json() as Promise<SuccessCustomerCartResponse>;
+    const returnData = (await response.json()) as {
+      message: string;
+    };
+    return returnData;
   } catch (e) {
     if (e instanceof Error) {
       throw new Error(e.message);

@@ -21,7 +21,7 @@ export default function PageSearchForm({ placeholder }: Props) {
   return (
     <form
       onSubmit={submitHandler}
-      className="border border-black/20 flex items-center w-11/12 mx-auto pr-[5px]"
+      className="border border-black/20 flex items-center w-full mx-auto pr-[5px]"
     >
       <div className="w-11/12">
         <label htmlFor="search" className="sr-only">

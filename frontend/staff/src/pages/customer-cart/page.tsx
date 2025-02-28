@@ -1,6 +1,6 @@
 import { useQuery } from "@tanstack/react-query";
 import Transition from "../../components/transition";
-import { useNavigate, useParams } from "react-router-dom";
+import { Link, useNavigate, useParams } from "react-router-dom";
 import { useContext, useEffect } from "react";
 import { ErrorContext, ShowErrorContext } from "../../utils/errorContext";
 import { Helmet } from "react-helmet";
@@ -71,14 +71,17 @@ const CustomerCartPage = () => {
           <PageLoader />
         ) : (
           <div>
-            <div>
-              <h3 className="text-lg">
-                <span className="font-bold">
+            <div className="flex md:flex-row flex-col md:justify-between justify-start md:items-start items-center md:gap-0 gap-4 mt-2">
+              <h3>
+                <Link
+                  to={`/customers/${customer.id}`}
+                  className="font-bold text-lg xl:no-underline underline xl:hover:underline"
+                >
                   {customer.firstName} {customer.lastName}{" "}
-                </span>{" "}
+                </Link>{" "}
                 Cart Page
               </h3>
-              <div>
+              <div className="h-10 w-[200px]">
                 <PageSearchForm
                   placeholder="Search Cart"
                   label="Search cart for a specific product"

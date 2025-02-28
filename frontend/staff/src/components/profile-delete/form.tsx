@@ -46,8 +46,8 @@ export default function MisconductsInputForm({
 
   return (
     <form onSubmit={submitHandler}>
-      <div className="max-h-[200px] border border-black/20"></div>
-      <div className="flex md:flex-row flex-col justify-center items-center md:gap-10 gap-6">
+      <div className="h-[300px] md:w-[400px] w-[340px] mx-auto border border-black/20"></div>
+      <div className="flex md:flex-row flex-col justify-center items-center md:gap-10 gap-6 pt-4">
         <button
           aria-label={`Confirm ${disable ? "disable" : "deletion"}`}
           type="submit"

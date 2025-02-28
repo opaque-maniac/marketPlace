@@ -4,10 +4,11 @@ import useProfileForm from "../../utils/reducers/customerProfileForm";
 import Loader from "../../components/loader";
 import { useMutation } from "@tanstack/react-query";
 import { ErrorContext, ShowErrorContext } from "../../utils/errorContext";
-import { useNavigate } from "react-router-dom";
+import { Link, useNavigate } from "react-router-dom";
 import { errorHandler } from "../../utils/errorHandler";
 import useUserStore from "../../utils/store";
 import { FormEventHandler, useContext } from "react";
+import { updateCustomer } from "../../utils/mutations/customers/updatecustomer";
 
 interface Props {
   profile: Customer;
@@ -22,7 +23,7 @@ const ProfileForm = ({ profile }: Props) => {
   const { state, dispatch, ActionType } = useProfileForm(profile);
 
   const { isPending, mutate } = useMutation({
-    mutationFn: sendUpdateProfile,
+    mutationFn: updateCustomer,
     onSuccess: (data) => {
       if (data) {
         navigate("/profile", { replace: true });
@@ -46,7 +47,7 @@ const ProfileForm = ({ profile }: Props) => {
     <Transition>
       <form
         onSubmit={submitHandler}
-        className="shadow-lg border pt-4 xl:w-5/12 md:w-7/12 w-11/12 mx-auto md:flex flex-col md:gap-2 md:p-4"
+        className="shadow-lg border pt-4 xl:w-full md:w-7/12 w-11/12 mx-auto md:flex flex-col md:gap-2 md:p-4"
       >
         <div className="flex flex-col justify-center items-center gap-4">
           <div>
@@ -216,7 +217,7 @@ const ProfileForm = ({ profile }: Props) => {
             >
               {isPending ? (
                 <div className="w-6 h-6">
-                  <Loader color="#000000" />{" "}
+                  <Loader color="#fff" />{" "}
                 </div>
               ) : (
                 <span>Submit</span>
@@ -225,6 +226,11 @@ const ProfileForm = ({ profile }: Props) => {
           </div>
         </div>
       </form>
+      <div className="flex justify-center items-center pt-6 md:pb-0 xl:pb-10 pb-10">
+        <Link to={`/customers/${profile.id}`} className="text-black underline">
+          Go back to customer profile
+        </Link>
+      </div>
     </Transition>
   );
 };

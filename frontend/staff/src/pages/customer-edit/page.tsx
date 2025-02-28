@@ -1,20 +1,20 @@
 import { useQuery } from "@tanstack/react-query";
 import Transition from "../../components/transition";
 import { Link, useNavigate, useParams } from "react-router-dom";
-import { useCallback, useContext, useEffect } from "react";
+import { useContext, useEffect, Suspense, lazy } from "react";
 import { ErrorContext, ShowErrorContext } from "../../utils/errorContext";
 import { Helmet } from "react-helmet";
 import PageLoader from "../../components/pageloader";
 import { errorHandler } from "../../utils/errorHandler";
 import { fetchCustomer } from "../../utils/queries/customers/fetchcustomer";
 import { apiHost, apiProtocol } from "../../utils/generics";
-import MisconductsInputForm from "../../components/customer-delete/form";
-import { disableCustomer } from "../../utils/mutations/customers/disablecustomer";
 import Loader from "../../components/loader";
+
+const CustomerForm = lazy(() => import("../../components/customer-edit/form"));
 
 const Fallback = () => {
   return (
-    <div className="xl:h-[290px] xl:w-[758px] lg:w-[592px] md:h-[495px] md:w-[473px] h-[472px] w-[344px] flex justify-center items-center">
+    <div className="xl:h-[3100px] xl:w-[758px] lg:w-[592px] md:h-[515px] md:w-[473px] h-[492px] w-[344px] flex justify-center items-center mx-auto">
       <div className="h-8 w-8">
         <Loader color="#000" />
       </div>
@@ -65,22 +65,19 @@ export default function CustomerEditPage() {
         <meta name="google" content="nositelinkssearchbox" />
       </Helmet>
       <main role="main">
+        <div className="flex justify-center pt-10 pb-4">
+          <h3 className="text-xl font-semibold">Edit Customer profile</h3>
+        </div>
         {isLoading || !customer ? (
           <PageLoader />
         ) : (
           <div className="h-full w-full flex justify-start xl:justify-center items-center md:items-start xl:flex-row flex-col gap-4 pt-4">
-            <section className="w-[300px] h-[300px] md:w-6/12">
-              <img
-                src={
-                  customer.image
-                    ? `${apiProtocol}://${apiHost}/${customer.image.url}`
-                    : "/images/profile.svg"
-                }
-                alt={`${customer.firstName} ${customer.lastName}`}
-                className="h-full w-full"
-              />
+            <section className="xl:w-5/12 w-full">
+              {/* Form goes here */}
+              <Suspense fallback={<Fallback />}>
+                <CustomerForm profile={customer} />
+              </Suspense>
             </section>
-            <section className="md:w-5/12">{/* Form goes here */}</section>
           </div>
         )}
       </main>

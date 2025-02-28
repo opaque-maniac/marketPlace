@@ -37,7 +37,11 @@ export const fetchUserCart = async (
         },
       },
       include: {
-        product: true,
+        product: {
+          include: {
+            images: true,
+          },
+        },
       },
       take: limit + 1,
       skip: (page - 1) * limit,

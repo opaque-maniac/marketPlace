@@ -11,7 +11,7 @@ export const deleteCustomer = async ({
   misconductId: string;
 }) => {
   try {
-    const url = `${apiProtocol}://${apiHost}/staff/comments/${id}/disable?misconduct=${misconductId}`;
+    const url = `${apiProtocol}://${apiHost}/staff/customers/${id}/disable?misconduct=${misconductId}`;
     const token = getAccessToken();
 
     if (!token) {

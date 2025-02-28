@@ -35,13 +35,11 @@ export default function SellersPage() {
 
   useEffect(() => {
     if (!_page && !_query) {
-      navigate(`?page=1&query=`, { replace: true });
+      navigate("?page=1&query=", { replace: true });
     } else if (!_page) {
-      navigate(`?page=1&query=${_query}`, { replace: true });
+      navigate(`?page=1&query=${_query || ""}`, { replace: true });
     } else if (!_query) {
-      navigate(`?page=${page}&query=`, { replace: true });
-    } else {
-      navigate(`?page=1&query=`, { replace: true });
+      navigate(`?page=${_page}&query=`, { replace: true });
     }
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []);
@@ -82,7 +80,7 @@ export default function SellersPage() {
   return (
     <Transition>
       <Helmet>
-        <title>Customers</title>
+        <title>Sellers</title>
         <meta
           name="description"
           content="Customers page for Hazina staff app"
@@ -91,7 +89,11 @@ export default function SellersPage() {
         <meta name="googlebot" content="noindex, nofollow" />
         <meta name="google" content="nositelinkssearchbox" />
       </Helmet>
-      <main role="main">
+      <main role="main" className="pt-12 relative">
+        <p className="absolute top-4 left-4">
+          {" "}
+          Home / <span className="font-extrabold">Sellers</span>
+        </p>
         <section
           className="px-2 py-2"
           style={{ minHeight: "calc(100vh - 1.4rem )" }}

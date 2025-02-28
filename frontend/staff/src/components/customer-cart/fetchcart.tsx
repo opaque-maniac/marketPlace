@@ -68,23 +68,27 @@ export default function FetchCart({ id, page, query }: Props) {
   };
 
   const cartItems = data?.cartItems || [];
+  console.log(data);
 
   return (
     <div>
       <section
-        style={{ minHeight: "calc(100vh - 7rem)" }}
-        className={
-          cartItems.length === 0 || !isLoading
+        style={{
+          minHeight: "calc(100vh - 150px)",
+          paddingTop: "15px",
+        }}
+        className={`${
+          cartItems.length === 0 || isLoading
             ? "flex justify-center items-center"
             : ""
-        }
+        }`}
       >
         {isLoading ? (
           <div className="w-8 h-8">
             <Loader color="#000" />
           </div>
         ) : cartItems.length === 0 ? (
-          <div className="w-10/12">
+          <div className="max-w-6/12 h-[30px]">
             <p className="font-semibold text-lg">This cart is empty.</p>
           </div>
         ) : (

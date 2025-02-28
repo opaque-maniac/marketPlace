@@ -72,7 +72,11 @@ const ProductsPage = () => {
         <meta name="googlebot" content="noindex, nofollow" />
         <meta name="google" content="nositelinkssearchbox" />
       </Helmet>
-      <main role="main">
+      <main role="main" className="pt-12 relative">
+        <p className="absolute top-4 left-4">
+          {" "}
+          Home / <span className="font-extrabold">Products</span>
+        </p>
         <section
           className="px-2 py-2"
           style={{ minHeight: "calc(100vh - 1.4rem )" }}
