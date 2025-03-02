@@ -1,4 +1,4 @@
-import { Suspense, useCallback, useContext } from "react";
+import { Suspense, useCallback, useContext, useEffect } from "react";
 import { useNavigate } from "react-router-dom";
 import { ErrorContext, ShowErrorContext } from "../../utils/errorContext";
 import ArrowLeft from "../icons/arrowleft";
@@ -8,11 +8,10 @@ import ArrowRight from "../icons/arrowright";
 import Loader from "../loader";
 import { errorHandler } from "../../utils/errorHandler";
 import CartItemComponent from "./cartitem";
+import ManageQueryStr from "../../utils/querystr";
 
 interface Props {
   id: string;
-  page: number;
-  query: string;
 }
 
 const Fallback = () => {
@@ -25,10 +24,27 @@ const Fallback = () => {
   );
 };
 
-export default function FetchCart({ id, page, query }: Props) {
+export default function FetchCart({ id }: Props) {
   const navigate = useNavigate();
   const [, setErr] = useContext(ShowErrorContext);
   const [, setError] = useContext(ErrorContext);
+
+  const params = new URLSearchParams(window.location.search);
+  const _page = params.get("page");
+  const _query = params.get("query");
+
+  useEffect(() => {
+    if (!id) {
+      navigate("/404", { replace: true });
+      return;
+    }
+
+    ManageQueryStr(navigate, _page, _query);
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, []);
+
+  const page = Number(_page) || 1;
+  const query = String(_page) || "";
 
   const { isLoading, isError, isSuccess, error, data, refetch } = useQuery({
     queryFn: fetchCustomerCart,

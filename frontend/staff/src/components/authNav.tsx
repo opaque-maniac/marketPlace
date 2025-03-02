@@ -6,6 +6,7 @@ type Data = {
   placeholder: string;
   label: string;
   url: string;
+  other?: string;
 };
 
 const data: Data[] = [
@@ -18,26 +19,36 @@ const data: Data[] = [
     placeholder: "Find Customer",
     label: "Customers",
     url: "/customers",
+    other: "acitve",
   },
   {
     placeholder: "Find Seller",
     label: "Seller",
     url: "/sellers",
+    other: "acitve",
   },
   {
     placeholder: "Find Staff",
     label: "Staff",
     url: "/staff",
+    other: "acitve",
   },
   {
     placeholder: "Order ID",
-    label: "Order",
+    label: "Orders",
     url: "/orders",
+    other: "status",
   },
   {
     placeholder: "Find Complaint",
     label: "Complaints",
     url: "/complaints",
+    other: "resolved",
+  },
+  {
+    placeholder: "Find Misconduct",
+    label: "Misconducts",
+    url: "/misconducts",
   },
 ];
 
@@ -73,18 +84,54 @@ const AuthNavigation = ({ callback }: Props) => {
                 placeholder={item.placeholder}
                 url={item.url}
                 label={item.label}
+                other={item.other ?? undefined}
               />
             </li>
           ))}
           <li>
-            <button
+            <Link
               onClick={(e) => {
                 e.preventDefault();
+                setTimeout(() => {
+                  callback();
+                }, 10);
+                navigate("/new-misconduct");
               }}
-              className="block bg-gray-100 h-9 mb-2 pl-2 w-full text-start"
+              to={"/new-misconduct"}
+              className="flex items-center bg-gray-100 h-9 mb-2 pl-2 w-full text-start mt-2"
             >
-              Log Out
-            </button>
+              <span>New Misconduct</span>
+            </Link>
+          </li>
+          <li>
+            <Link
+              onClick={(e) => {
+                e.preventDefault();
+                setTimeout(() => {
+                  callback();
+                }, 10);
+                navigate("/profile");
+              }}
+              to={"/profile"}
+              className="flex items-center bg-gray-100 h-9 mb-2 pl-2 w-full text-start mt-2"
+            >
+              <span>Profile</span>
+            </Link>
+          </li>
+          <li>
+            <Link
+              onClick={(e) => {
+                e.preventDefault();
+                setTimeout(() => {
+                  callback();
+                }, 10);
+                navigate("/settings");
+              }}
+              to={"/settings"}
+              className="flex items-center bg-gray-100 h-9 mb-2 pl-2 w-full text-start mt-2"
+            >
+              <span>Settings</span>
+            </Link>
           </li>
         </ul>
       </nav>

@@ -62,9 +62,10 @@ router.get("/:id/wishlist", fetchUserWishlist);
 router.get("/:id/misconducts", fetchCustomerMisconducts);
 router.post(
   "/:id/misconducts",
+  body("email").isEmail(),
   body("misconduct").isString().isLength({ min: 2, max: 225 }),
   body("description").isString().isLength({ min: 2, max: 500 }),
-  body("response")
+  body("action")
     .isString()
     .isIn(["WARN_USER", "DISABLE_PROFILE", "DELETE_PROFILE"]),
   createCustomerMisconduct,

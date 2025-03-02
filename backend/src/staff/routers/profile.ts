@@ -3,7 +3,6 @@ import { body } from "express-validator";
 import { stringConfig, createStorage } from "../../utils/globals";
 import {
   allowIfAuthenticated,
-  isProfileOwner,
   isStaff,
 } from "../../middleware/auth-middleware";
 import multer from "multer";
@@ -17,8 +16,6 @@ const router = Router();
 
 // middleware
 router.use(allowIfAuthenticated);
-router.use(isProfileOwner);
-router.use(isStaff);
 
 // File upload
 const staffStorage = createStorage("uploads/staff");

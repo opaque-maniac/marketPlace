@@ -11,10 +11,7 @@ interface Props {
 
 export default function StaffItem({ staff }: Props) {
   return (
-    <Link
-      to={`/customers/${staff.id}`}
-      className="block h-350 w-270 border pt-1"
-    >
+    <Link to={`/staff/${staff.id}`} className="block h-350 w-270 border pt-1">
       <div>
         <div className="h-200 w-170 bg-gray-500 mx-auto">
           <img

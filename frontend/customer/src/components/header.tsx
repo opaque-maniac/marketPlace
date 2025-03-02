@@ -1,12 +1,42 @@
 import Logo from "./icons/logo";
-import { Link } from "react-router-dom";
+import { Link, useNavigate } from "react-router-dom";
 import Navbar from "./navbart";
 import Action from "./action";
-import MobileButton from "./mobileButton";
 import ErrorMessageComponent from "./errorMessage";
 import GeneralMessageComponent from "./successMessage";
+import MenuIcon from "./icons/menuIcon";
+import { lazy, Suspense, useContext, useEffect } from "react";
+import { ShowErrorContext } from "../utils/errorContext";
+
+const MobileButton = lazy(() => import("./mobileButton"));
+
+const Fallback = () => {
+  return (
+    <button aria-label="Open menu" disabled className="w-6 h-6 md:hidden block">
+      <MenuIcon />
+    </button>
+  );
+};
 
 const Header = () => {
+  const navigate = useNavigate();
+  const [, setError] = useContext(ShowErrorContext);
+
+  useEffect(() => {
+    const prefetch = async () => {
+      try {
+        await import("./mobileButton");
+      } catch (e) {
+        console.log("Error prefetching", e);
+        setError(true);
+        navigate("/500", { replace: true });
+      }
+    };
+    // eslint-disable-next-line @typescript-eslint/no-floating-promises
+    prefetch();
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, []);
+
   return (
     <>
       <header
@@ -26,7 +56,9 @@ const Header = () => {
             <Action />
           </div>
           <div className="h-14 flex justify-center items-center">
-            <MobileButton />
+            <Suspense fallback={<Fallback />}>
+              <MobileButton />
+            </Suspense>
           </div>
         </div>
       </header>

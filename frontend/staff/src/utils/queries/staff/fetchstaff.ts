@@ -6,11 +6,15 @@ import { apiHost, apiProtocol } from "../../generics";
 
 export const fetchStaff: QueryFunction<
   SuccessStaffResponse,
-  ["staff", number, number, string]
+  ["staff", number, number, string, string]
 > = async ({ queryKey }) => {
   try {
-    const [, page, limit, query] = queryKey;
-    const url = `${apiProtocol}://${apiHost}/staff/staff?page=${page}&limit=${limit}&query=${query}`;
+    const [, page, limit, query, active] = queryKey;
+    let url = `${apiProtocol}://${apiHost}/staff/staff?page=${page}&limit=${limit}&query=${query}`;
+
+    if (active) {
+      url += `&active=${active}`;
+    }
 
     const token = getAccessToken();
 

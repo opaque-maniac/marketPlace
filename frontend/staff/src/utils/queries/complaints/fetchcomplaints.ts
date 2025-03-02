@@ -6,12 +6,16 @@ import { apiHost, apiProtocol } from "../../generics";
 
 export const fetchComplaints: QueryFunction<
   SuccessComplaintsResponse,
-  ["complaints", number, number, string]
+  ["complaints", number, number, string, string]
 > = async ({ queryKey }) => {
   try {
-    const [, page, limit, query] = queryKey;
+    const [, page, limit, query, resolved] = queryKey;
 
-    const url = `${apiProtocol}://${apiHost}/staff/complaints?page=${page}&query=${query}&limit=${limit}`;
+    let url = `${apiProtocol}://${apiHost}/staff/complaints?page=${page}&query=${query}&limit=${limit}`;
+
+    if (resolved) {
+      url += `&resolved=${resolved}`;
+    }
 
     const token = getAccessToken();
 

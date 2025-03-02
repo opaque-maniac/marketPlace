@@ -23,11 +23,34 @@ export interface Complaint {
   phone: string | undefined;
   email: string;
   name: string;
+  resolved: boolean;
+  staffid?: string;
+  staff?: Staff;
+  createdat: string;
+  updatedat: string | null;
+}
+
+export type MisconductResponse =
+  | "WARN_USER"
+  | "DISABLE_PROFILE"
+  | "DELETE_PROFILE";
+
+export interface Misconduct {
+  id: string;
+  personelID: string;
+  personel: Staff;
+  userEmail: string;
+  response: MisconductResponse;
+  misconduct: string;
+  description: string;
+  customerID: string | null;
+  customer: Customer | null;
+  sellerID: string | null;
+  seller: Seller | null;
+  staffID: string | null;
+  staff: Staff | null;
   createdAt: string;
   updatedAt: string;
-  resolved: boolean;
-  staffID?: string;
-  staff?: Staff;
 }
 
 export interface Customer {
@@ -344,4 +367,10 @@ export interface SuccessIndividualSellerResponse {
 export interface SuccessIndividualStaffResponse {
   message: string;
   staff: Staff;
+}
+
+export interface SuccessMisconductsResponse {
+  message: string;
+  misconducts: Misconduct[];
+  hasNext: boolean;
 }

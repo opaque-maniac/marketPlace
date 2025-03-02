@@ -243,6 +243,7 @@ export interface NewMisconductRequest extends AuthenticatedRequest {
   body: {
     misconduct: string;
     description: string;
-    response: RESPONSE;
+    action: RESPONSE;
+    email: string;
   };
 }

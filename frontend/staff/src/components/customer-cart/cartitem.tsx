@@ -1,3 +1,4 @@
+import { apiHost, apiProtocol } from "../../utils/generics";
 import { CartItem } from "../../utils/types";
 import BinIcon from "../icons/bin";
 
@@ -11,7 +12,7 @@ const CartItemComponent = ({ cartItem, refetch }: Props) => {
     <div className="cart-item flex md:flex-row flex-col md:justify-evenly justify-center items-center gap-4 border border-black/25 pl-1 md:w-[450px] w-[250px] md:h-180 h-auto md:pb-0 py-2">
       <div>
         <img
-          src={`http://localhost:3020/${cartItem.product.images[0].url}`}
+          src={`${apiProtocol}://${apiHost}/${cartItem.product.images[0].url}`}
           alt={cartItem.product.name}
           className="h-32 w-32"
         />

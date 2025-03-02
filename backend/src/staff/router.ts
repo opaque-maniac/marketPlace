@@ -11,6 +11,8 @@ import sellerRouter from "./routers/sellers";
 import staffRouter from "./routers/staff";
 import wishlistRouter from "./routers/wishlist";
 import wishlistitemRouter from "./routers/wishlistitems";
+import complaintsRouter from "./routers/complaints";
+import misconductRouter from "./routers/misconducts";
 
 const router = Router();
 
@@ -26,5 +28,7 @@ router.use("/sellers", sellerRouter);
 router.use("/staff", staffRouter);
 router.use("/wishlist", wishlistRouter);
 router.use("/wishlistitems", wishlistitemRouter);
+router.use("/complaints", complaintsRouter);
+router.use("/misconducts", misconductRouter);
 
 export default router;

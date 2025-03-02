@@ -11,7 +11,10 @@ interface Props {
 
 export default function SellerItem({ seller }: Props) {
   return (
-    <Link to={`/seller/${seller.id}`} className="block h-350 w-270 border pt-1">
+    <Link
+      to={`/sellers/${seller.id}`}
+      className="block h-350 w-270 border pt-1"
+    >
       <div>
         <div className="h-200 w-170 bg-gray-500 mx-auto">
           <img

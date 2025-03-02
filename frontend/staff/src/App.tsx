@@ -42,6 +42,11 @@ const StaffProfilePage = lazy(() => import("./pages/staff-profile/page"));
 const StaffEditPage = lazy(() => import("./pages/staff-edit/page"));
 const StaffDisablePage = lazy(() => import("./pages/staff-disable/page"));
 const StaffDeletePage = lazy(() => import("./pages/staff-delete/page"));
+const OrdersPage = lazy(() => import("./pages/orders/page"));
+const ComplaintsPage = lazy(() => import("./pages/complaints/page"));
+const MisconductsPage = lazy(() => import("./pages/misconducts/page"));
+const MisconductNewPage = lazy(() => import("./pages/misconducts-new/page"));
+const ProfilePage = lazy(() => import("./pages/profile/page"));
 const SettingsPage = lazy(() => import("./pages/settings/page"));
 const EmailVerificationPage = lazy(() => import("./pages/verify-email/page"));
 const EmailVerificationTokenPage = lazy(
@@ -141,7 +146,7 @@ const App = () => {
                           />
                         </Route>
 
-                        {/* Settings */}
+                        {/* Sellers */}
                         <Route path="/sellers" element={<SellersPage />} />
                         <Route path="/sellers/:id" element={<SellerPage />} />
                         <Route
@@ -181,8 +186,30 @@ const App = () => {
                           />
                         </Route>
 
+                        {/* Orders */}
+                        <Route path="/orders" element={<OrdersPage />} />
+
+                        {/* Complaints */}
+                        <Route
+                          path="/complaints"
+                          element={<ComplaintsPage />}
+                        />
+
+                        {/* Misconducts */}
+                        <Route
+                          path="/misconducts"
+                          element={<MisconductsPage />}
+                        />
+                        <Route
+                          path="/new-misconduct"
+                          element={<MisconductNewPage />}
+                        />
+
                         {/* Settings */}
                         <Route path="/settings" element={<SettingsPage />} />
+
+                        {/* Profile */}
+                        <Route path="/profile" element={<ProfilePage />} />
 
                         {/* Change email */}
                         <Route

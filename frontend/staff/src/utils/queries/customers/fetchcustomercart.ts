@@ -11,7 +11,7 @@ export const fetchCustomerCart: QueryFunction<
 > = async ({ queryKey }) => {
   try {
     const [, id, page, limit, query] = queryKey;
-    const url = `${apiProtocol}://${apiHost}/staff/customers/${id}/cart?page=${page}&query=${query}&limit=${limit}`;
+    const url = `${apiProtocol}://${apiHost}/staff/customers/${id}/cart?page=${page}&query=${query || ""}&limit=${limit}`;
 
     const token = getAccessToken();
 

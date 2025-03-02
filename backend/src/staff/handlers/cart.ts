@@ -19,6 +19,7 @@ export const fetchUserCart = async (
     const { id } = req.params;
     const page = req.query.page ? parseInt(req.query.page as string) : 1;
     const limit = req.query.limit ? parseInt(req.query.limit as string) : 10;
+    const query = req.query.query ? (req.query.query as string) : undefined;
 
     const customer = await prisma.customer.findUnique({
       where: {
@@ -31,11 +32,27 @@ export const fetchUserCart = async (
     }
 
     const cartItems = await prisma.cartItem.findMany({
-      where: {
-        cart: {
-          customerID: customer.id,
-        },
-      },
+      where: query
+        ? {
+            OR: [
+              {
+                product: {
+                  name: {
+                    contains: query,
+                    mode: "insensitive",
+                  },
+                },
+              },
+            ],
+            cart: {
+              customerID: customer.id,
+            },
+          }
+        : {
+            cart: {
+              customerID: customer.id,
+            },
+          },
       include: {
         product: {
           include: {

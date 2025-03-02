@@ -7,16 +7,21 @@ interface Props {
   url: string;
   label: string;
   callback: () => void;
+  other?: string;
 }
 
-const NavItem = ({ placeholder, url, label, callback }: Props) => {
+const NavItem = ({ placeholder, url, label, callback, other }: Props) => {
   const navigate = useNavigate();
   const [clicked, setClicked] = useState<boolean>(false);
 
   const clickHandler: MouseEventHandler<HTMLButtonElement> = (e) => {
     e.preventDefault();
     if (e.target instanceof HTMLAnchorElement) {
-      navigate(`${url}?page=1&query=`);
+      let path = `${url}?page=1&query=`;
+      if (other) {
+        path += `&${other}=`;
+      }
+      navigate(path);
       setTimeout(() => {
         callback();
       }, 100);
@@ -34,7 +39,14 @@ const NavItem = ({ placeholder, url, label, callback }: Props) => {
       callback();
       window.scrollTo(0, 0);
     }, 10);
-    navigate(`${url}?page=1&query=${encoded}`);
+
+    let path = `${url}?page=1&query=${encoded}`;
+
+    if (other) {
+      path += `&${other}=`;
+    }
+
+    navigate(path);
   };
 
   return (
@@ -45,7 +57,7 @@ const NavItem = ({ placeholder, url, label, callback }: Props) => {
         className="bg-gray-100 w-full h-9 mt-2"
       >
         <Link
-          to={url}
+          to={`${url}?page=1&query=${other ? `&${other}=` : ""}`}
           onClick={(e) => e.preventDefault()}
           style={{ fontSize: "16px" }}
           className="block h-8 w-[100px] text-black text-start pl-2"

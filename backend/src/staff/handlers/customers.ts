@@ -20,6 +20,7 @@ export const fetchCustomers = async (
     const page = req.query.page ? parseInt(req.query.page as string) : 1;
     const limit = req.query.limit ? parseInt(req.query.limit as string) : 10;
     const query = req.query.query ? (req.query.query as string) : "";
+    const active = req.query.active ? req.query.active === "true" : undefined;
 
     const customers = await prisma.customer.findMany({
       where: query
@@ -41,8 +42,11 @@ export const fetchCustomers = async (
                 email: query,
               },
             ],
+            active,
           }
-        : {},
+        : {
+            active,
+          },
       include: {
         image: true,
       },
@@ -352,22 +356,26 @@ export const fetchCustomerOrders = async (
     }
 
     const orders = await prisma.order.findMany({
-      where: {
-        customerID: exists.id,
-        OR: [
-          {
-            product: {
-              name: {
-                contains: query,
-                mode: "insensitive",
+      where: query
+        ? {
+            customerID: exists.id,
+            OR: [
+              {
+                product: {
+                  name: {
+                    contains: query,
+                    mode: "insensitive",
+                  },
+                },
               },
-            },
+              {
+                productID: query,
+              },
+            ],
+          }
+        : {
+            customerID: exists.id,
           },
-          {
-            productID: query,
-          },
-        ],
-      },
       include: {
         product: {
           include: {

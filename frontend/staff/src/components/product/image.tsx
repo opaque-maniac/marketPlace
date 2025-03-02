@@ -45,9 +45,9 @@ export default function ImageComponent({ image, alt, idx }: Props) {
               </div>
 
               <img
-                src={`http://localhost:3020/${image}`}
+                src={`${apiProtocol}://${apiHost}/${image}`}
                 alt={alt}
-                className="md:w-9/12 w-full h-[400px]"
+                className="md:w-9/12 w-full h-[400px] mx-auto"
               />
               <div className="md:h-[50px] h-[40px] w-full bg-black flex items-center justify-center">
                 <p className="text-center text-white xl:text-xl md:text-2xl text-base font-semibold">

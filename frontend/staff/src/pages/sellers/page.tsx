@@ -10,6 +10,8 @@ import PageLoader from "../../components/pageloader";
 import { fetchSellers } from "../../utils/queries/sellers/fetchsellers";
 import { errorHandler } from "../../utils/errorHandler";
 import Loader from "../../components/loader";
+import ManageQueryStr from "../../utils/querystr";
+import ProfileActiveSelectForm from "../../components/activequeryform";
 
 const SellerItem = lazy(() => import("../../components/sellers/seller"));
 
@@ -30,25 +32,22 @@ export default function SellersPage() {
   const navigate = useNavigate();
   const [, setError] = useContext(ErrorContext);
   const [, setErr] = useContext(ShowErrorContext);
-  const _page = new URLSearchParams(window.location.search).get("page");
-  const _query = new URLSearchParams(window.location.search).get("query");
+  const params = new URLSearchParams(window.location.search);
+  const _page = params.get("page");
+  const _query = params.get("query");
+  const _active = params.get("active");
 
   useEffect(() => {
-    if (!_page && !_query) {
-      navigate("?page=1&query=", { replace: true });
-    } else if (!_page) {
-      navigate(`?page=1&query=${_query || ""}`, { replace: true });
-    } else if (!_query) {
-      navigate(`?page=${_page}&query=`, { replace: true });
-    }
+    ManageQueryStr(navigate, _page, _query, _active, "active");
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []);
 
   const page = Number(_page) || 1;
-  const queryStr = String(_query) || "";
+  const queryStr = _query || "";
+  const activeStr = _active || "";
 
   const query = useQuery({
-    queryKey: ["sellers", page, 20, queryStr],
+    queryKey: ["sellers", page, 20, queryStr, activeStr],
     queryFn: fetchSellers,
   });
 
@@ -94,6 +93,13 @@ export default function SellersPage() {
           {" "}
           Home / <span className="font-extrabold">Sellers</span>
         </p>
+        <div className="md:absolute md:top-2 md:right-4">
+          <ProfileActiveSelectForm
+            initial={activeStr}
+            queryStr={queryStr}
+            label="staff"
+          />
+        </div>
         <section
           className="px-2 py-2"
           style={{ minHeight: "calc(100vh - 1.4rem )" }}
@@ -108,7 +114,11 @@ export default function SellersPage() {
                   className="h-full flex justify-center items-center"
                 >
                   <div>
-                    <p className="text-xl font-semibold">No Customers Found</p>
+                    <p className="text-xl font-semibold">
+                      No Sellers Found {queryStr && `For ${queryStr}`}
+                      {activeStr &&
+                        `Who Are ${activeStr == "true" ? "Active" : "Not Active"}`}
+                    </p>
                   </div>
                 </section>
               ) : (

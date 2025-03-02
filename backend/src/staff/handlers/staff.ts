@@ -20,6 +20,7 @@ export const fetchStaff = async (
     const page = req.query.page ? parseInt(req.query.page as string) : 1;
     const limit = req.query.limit ? parseInt(req.query.limit as string) : 10;
     const query = req.query.query ? (req.query.query as string) : "";
+    const active = req.query.active ? req.query.active === "true" : undefined;
 
     const staff = await prisma.staff.findMany({
       where: query
@@ -41,8 +42,11 @@ export const fetchStaff = async (
                 email: query,
               },
             ],
+            active,
           }
-        : {},
+        : {
+            active,
+          },
       include: {
         image: true,
       },

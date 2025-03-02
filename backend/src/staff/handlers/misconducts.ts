@@ -3,6 +3,7 @@ import { AuthenticatedRequest, NewMisconductRequest } from "../../types";
 import { serverError } from "../../utils/globals";
 import prisma from "../../utils/db";
 import { RESPONSE } from "@prisma/client";
+import { addToWishlist } from "../../customer/handlers/wishlist";
 
 const parseResponse = (resp: string) => {
   switch (resp) {
@@ -74,6 +75,12 @@ export const fetchMisconducts = async (
                     contains: query,
                     mode: "insensitive",
                   },
+                },
+              },
+              {
+                userEmail: {
+                  contains: query,
+                  mode: "insensitive",
                 },
               },
             ],
@@ -181,14 +188,14 @@ export const updateMisconduct = async (
 ): Promise<void> => {
   try {
     const { id } = req.params;
-    const { misconduct, description, response } = req.body;
+    const { misconduct, description, action } = req.body;
 
     const newMisconduct = await prisma.misconduct.update({
       where: { id },
       data: {
         misconduct,
         description,
-        response,
+        response: action,
       },
     });
 
@@ -237,7 +244,7 @@ export const createCustomerMisconduct = async (
   try {
     const { user } = req;
     const { id } = req.params;
-    const { misconduct, description, response } = req.body;
+    const { misconduct, description, action } = req.body;
 
     if (!user) {
       throw new Error("User not found");
@@ -268,8 +275,9 @@ export const createCustomerMisconduct = async (
         personelID: personel.id,
         misconduct,
         description,
-        response,
+        response: action,
         customerID: customer.id,
+        userEmail: customer.email,
       },
     });
 
@@ -381,7 +389,7 @@ export const createSellerMisconduct = async (
   try {
     const { user } = req;
     const { id } = req.params;
-    const { misconduct, description, response } = req.body;
+    const { misconduct, description, action } = req.body;
 
     if (!user) {
       throw new Error("User not found");
@@ -412,8 +420,9 @@ export const createSellerMisconduct = async (
         personelID: personel.id,
         misconduct,
         description,
-        response,
+        response: action,
         sellerID: seller.id,
+        userEmail: seller.email,
       },
     });
 
@@ -525,7 +534,7 @@ export const createStaffMisconduct = async (
   try {
     const { user } = req;
     const { id } = req.params;
-    const { misconduct, description, response } = req.body;
+    const { misconduct, description, action } = req.body;
 
     if (!user) {
       throw new Error("User not found");
@@ -564,8 +573,9 @@ export const createStaffMisconduct = async (
         personelID: personel.id,
         misconduct,
         description,
-        response,
+        response: action,
         staffID: staff.id,
+        userEmail: staff.email,
       },
     });
 
@@ -659,6 +669,63 @@ export const fetchStaffMisconducts = async (
       message: "Misconducts found",
       misconducts,
       hasNext,
+    });
+  } catch (e) {
+    if (e instanceof Error) {
+      next(e);
+      return;
+    }
+    next(serverError);
+  }
+};
+
+export const newMisconduct = async (
+  req: NewMisconductRequest,
+  res: Response,
+  next: NextFunction,
+): Promise<void> => {
+  try {
+    const { email, misconduct, description, action } = req.body;
+    const { user } = req;
+
+    if (!user) {
+      throw new Error("User not found");
+    }
+
+    const seller = await prisma.seller.findUnique({
+      where: {
+        email,
+      },
+    });
+
+    const customer = await prisma.customer.findUnique({
+      where: {
+        email,
+      },
+    });
+
+    const staff = await prisma.customer.findUnique({
+      where: {
+        email,
+      },
+    });
+
+    const _misconduct = await prisma.misconduct.create({
+      data: {
+        staffID: staff?.id,
+        customerID: customer?.id,
+        sellerID: seller?.id,
+        misconduct,
+        description,
+        response: action,
+        personelID: user.id,
+        userEmail: email,
+      },
+    });
+
+    res.status(200).json({
+      message: "Created misconduct",
+      misconduct: _misconduct,
     });
   } catch (e) {
     if (e instanceof Error) {

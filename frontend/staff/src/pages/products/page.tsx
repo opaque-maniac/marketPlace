@@ -10,22 +10,18 @@ import PageLoader from "../../components/pageloader";
 import { fetchProducts } from "../../utils/queries/products/fetchproducts";
 import { errorHandler } from "../../utils/errorHandler";
 import ProductItem from "../../components/products/product";
+import ManageQueryStr from "../../utils/querystr";
 
 const ProductsPage = () => {
   const [, setError] = useContext(ErrorContext);
   const navigate = useNavigate();
   const [, setErr] = useContext(ShowErrorContext);
-  const _page = new URLSearchParams(window.location.search).get("page");
-  const _query = new URLSearchParams(window.location.search).get("query");
+  const params = new URLSearchParams(window.location.search);
+  const _page = params.get("page");
+  const _query = params.get("query");
 
   useEffect(() => {
-    if (!_page && !_query) {
-      navigate("?page=1&query=", { replace: true });
-    } else if (!_page) {
-      navigate(`?page=1&query=${_query || ""}`, { replace: true });
-    } else if (!_query) {
-      navigate(`?page=${_page}&query=`, { replace: true });
-    }
+    ManageQueryStr(navigate, _page, _query);
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []);
 
@@ -90,7 +86,7 @@ const ProductsPage = () => {
                   <section className="w-full flex justify-center items-center md:min-h-[600px] min-h-[400px]">
                     <div>
                       <p className="text-xl font-semibold">
-                        No Products Found{_query ? ` For ${_query}` : null}
+                        No Products Found {_query ? `For ${_query}` : null}
                       </p>
                     </div>
                   </section>

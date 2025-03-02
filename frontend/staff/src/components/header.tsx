@@ -1,39 +1,43 @@
-import { MouseEventHandler, useCallback, useEffect, useState } from "react";
-import MenuIcon from "./icons/menuIcon";
 import Logo from "./icons/logo";
 import userStore from "../utils/store";
-import { Link } from "react-router-dom";
-import Modal from "./modal";
-import Navigation from "./navigation";
+import { Link, useNavigate } from "react-router-dom";
 import ErrorDisplay from "./errordisplay";
+import MenuIcon from "./icons/menuIcon";
+import { lazy, Suspense, useContext, useEffect } from "react";
+import { ErrorContext } from "../utils/errorContext";
+
+const HeaderMenuButton = lazy(() => import("./headermenu"));
+
+const Fallback = () => {
+  return (
+    <button
+      disabled
+      className="h-7 w-7 border border-black/25 rounded-sm flex items-center justify-center"
+      aria-label="Fetching menu"
+    >
+      <MenuIcon />
+    </button>
+  );
+};
 
 const Header = () => {
-  const [isMenuOpen, setIsMenuOpen] = useState<boolean>(false);
   const user = userStore((state) => state.user);
+  const navigate = useNavigate();
+  const [, setError] = useContext(ErrorContext);
 
   useEffect(() => {
-    document.addEventListener("keydown", (e) => {
-      if (e.shiftKey && e.key === "ArrowLeft") {
-        setIsMenuOpen(() => true);
+    const prefetch = async () => {
+      try {
+        await import("./headermenu");
+      } catch (e) {
+        console.log("Error prefetching", e);
+        setError(true);
+        navigate("/500", { replace: true });
       }
-    });
-
-    return () => {
-      document.removeEventListener("keydown", (e) => {
-        if (e.shiftKey && e.key === "ArrowLeft") {
-          setIsMenuOpen(() => true);
-        }
-      });
     };
-  }, []);
-
-  const handleMenuToggle: MouseEventHandler<HTMLButtonElement> = (e) => {
-    e.preventDefault();
-    setIsMenuOpen(() => true);
-  };
-
-  const closeCallback = useCallback(() => {
-    setIsMenuOpen(() => false);
+    // eslint-disable-next-line @typescript-eslint/no-floating-promises
+    prefetch();
+    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []);
 
   return (
@@ -47,18 +51,9 @@ const Header = () => {
             <Logo />
           </Link>
         </div>
-        <button
-          onClick={handleMenuToggle}
-          className="h-7 w-7 border border-black/25 rounded-sm flex items-center justify-center"
-          aria-label="Open menu"
-        >
-          <MenuIcon />
-        </button>
-        {isMenuOpen === true ? (
-          <Modal callback={closeCallback}>
-            <Navigation callback={closeCallback} />
-          </Modal>
-        ) : null}
+        <Suspense fallback={<Fallback />}>
+          <HeaderMenuButton />
+        </Suspense>
       </header>
       <ErrorDisplay />
     </>

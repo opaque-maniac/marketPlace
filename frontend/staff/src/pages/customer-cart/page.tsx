@@ -16,29 +16,6 @@ const CustomerCartPage = () => {
   const [, setErr] = useContext(ShowErrorContext);
   const [, setError] = useContext(ErrorContext);
 
-  const _page = new URLSearchParams(window.location.search).get("page");
-  const _query = new URLSearchParams(window.location.search).get("query");
-
-  useEffect(() => {
-    if (!id) {
-      navigate("/404", { replace: true });
-      return;
-    }
-
-    if (!_page && !_query) {
-      navigate("?page=1&query=", { replace: true });
-    } else if (!_page) {
-      navigate(`?page=1&query=${_query || ""}`, { replace: true });
-    } else if (!_query) {
-      navigate(`?page=${_page}&query=`, { replace: true });
-    }
-
-    // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, []);
-
-  const page = Number(_page) || 1;
-  const query = String(_page) || "";
-
   const { isLoading, isError, isSuccess, data, error } = useQuery({
     queryFn: fetchCustomer,
     queryKey: ["customer", id as string],
@@ -88,7 +65,7 @@ const CustomerCartPage = () => {
                 />
               </div>
             </div>
-            <FetchCart id={customer.id} page={page} query={query} />
+            <FetchCart id={customer.id} />
           </div>
         )}
       </main>

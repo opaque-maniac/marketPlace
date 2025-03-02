@@ -11,6 +11,8 @@ import { errorHandler } from "../../utils/errorHandler";
 import { fetchStaff } from "../../utils/queries/staff/fetchstaff";
 import StaffItem from "../../components/staff/staff";
 import Loader from "../../components/loader";
+import ManageQueryStr from "../../utils/querystr";
+import ProfileActiveSelectForm from "../../components/activequeryform";
 
 const Fallback = () => {
   return (
@@ -29,27 +31,22 @@ export default function StaffPage() {
   const navigate = useNavigate();
   const [, setError] = useContext(ErrorContext);
   const [, setErr] = useContext(ShowErrorContext);
-  const _page = new URLSearchParams(window.location.search).get("page");
-  const _query = new URLSearchParams(window.location.search).get("query");
+  const params = new URLSearchParams(window.location.search);
+  const _page = params.get("page");
+  const _query = params.get("query");
+  const _active = params.get("active");
 
   useEffect(() => {
-    if (!_page && !_query) {
-      navigate(`?page=1&query=`, { replace: true });
-    } else if (!_page) {
-      navigate(`?page=1&query=${_query}`, { replace: true });
-    } else if (!_query) {
-      navigate(`?page=${page}&query=`, { replace: true });
-    } else {
-      navigate(`?page=1&query=`, { replace: true });
-    }
+    ManageQueryStr(navigate, _page, _query, _active, "active");
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []);
 
   const page = Number(_page) || 1;
-  const queryStr = String(_query) || "";
+  const queryStr = _query || "";
+  const activeStr = _active || "";
 
   const query = useQuery({
-    queryKey: ["staff", page, 20, queryStr],
+    queryKey: ["staff", page, 20, queryStr, activeStr],
     queryFn: fetchStaff,
   });
 
@@ -90,7 +87,18 @@ export default function StaffPage() {
         <meta name="googlebot" content="noindex, nofollow" />
         <meta name="google" content="nositelinkssearchbox" />
       </Helmet>
-      <main role="main">
+      <main role="main" className="pt-12 relative">
+        <p className="absolute top-4 left-4">
+          {" "}
+          Home / <span className="font-extrabold">Staff</span>
+        </p>
+        <div className="md:absolute md:top-2 md:right-4">
+          <ProfileActiveSelectForm
+            initial={activeStr}
+            queryStr={queryStr}
+            label="customer"
+          />
+        </div>
         <section
           className="px-2 py-2"
           style={{ minHeight: "calc(100vh - 1.4rem )" }}
@@ -105,7 +113,11 @@ export default function StaffPage() {
                   className="h-full flex justify-center items-center"
                 >
                   <div>
-                    <p className="text-xl font-semibold">No Staff Found</p>
+                    <p className="text-xl font-semibold">
+                      No Staff Found{queryStr && ` For ${queryStr}`}
+                      {activeStr &&
+                        ` Who Are ${activeStr == "true" ? "Active" : "Not Active"}`}
+                    </p>
                   </div>
                 </section>
               ) : (
@@ -113,9 +125,9 @@ export default function StaffPage() {
                   style={{ minHeight: "calc(100vh - 1.4rem )" }}
                   className="h-full"
                 >
-                  <ul className="flex md:justify-evenly justify-center items-center md:flex-row flex-col md:gap-0 gap-4">
+                  <ul className="grid xl:grid-cols-4 lg:grid-cols-3 md:grid-cols-2 grid-cols-1">
                     {staff.map((staff) => (
-                      <li key={staff.id}>
+                      <li key={staff.id} className="mx-auto md:mb-8 mb-6">
                         <Suspense fallback={<Fallback />}>
                           <StaffItem staff={staff} />
                         </Suspense>

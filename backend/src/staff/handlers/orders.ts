@@ -23,9 +23,9 @@ export const fetchAllOrders = async (
     const status = req.query.status
       ? (req.query.status as ORDER_STATUS)
       : undefined;
-    const query = req.query.query ? (req.query.query as string) : "";
+    const query = req.query.query ? (req.query.query as string) : undefined;
 
-    const order = await prisma.order.findMany({
+    const orders = await prisma.order.findMany({
       where: query
         ? {
             OR: [
@@ -67,15 +67,17 @@ export const fetchAllOrders = async (
       take: limit + 1,
     });
 
-    const hasNext = order.length > limit;
+    console.log(`Orders found\n${orders}`);
+
+    const hasNext = orders.length > limit;
 
     if (hasNext) {
-      order.pop();
+      orders.pop();
     }
 
     res.status(200).json({
       message: "Orders fetched successfully",
-      order,
+      orders,
       hasNext,
     });
   } catch (e) {

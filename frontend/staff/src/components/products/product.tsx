@@ -1,10 +1,10 @@
 import { Link } from "react-router-dom";
 import { Product } from "../../utils/types";
-import EyeOpen from "../icons/show";
 import { useState } from "react";
 import Modal from "../modal";
 import CloseIcon from "../icons/closeIcon";
 import { formatDate } from "../../utils/date";
+import { apiHost, apiProtocol } from "../../utils/generics";
 
 interface Props {
   product: Product;
@@ -21,25 +21,13 @@ const ProductItem = ({ product }: Props) => {
       >
         <div className="h-250 w-270 pt-1">
           <img
-            src={`http://localhost:3020/${product.images[0].url}`}
+            src={`${apiProtocol}://${apiHost}/${product.images[0].url}`}
             alt={product.name}
             className="h-full w-[240px] mx-auto"
             loading="lazy"
           />
           <div className="absolute top-0 -right-[2px] h-10 w-10 bg-red-500 text-white flex justify-center items-center rounded-tr-md rounded-bl-md">
             <span className="font-semibold">0%</span>
-          </div>
-          <div className="absolute top-12 right-2">
-            <button
-              onClick={(e) => {
-                e.preventDefault();
-                setClicked((prev) => !prev);
-              }}
-              aria-label="Add To Wishlist"
-              className="block h-7 w-7 text-gray-600 bg-white border border-black/50 rounded-full p-[2px]"
-            >
-              <EyeOpen />
-            </button>
           </div>
         </div>
         <div>

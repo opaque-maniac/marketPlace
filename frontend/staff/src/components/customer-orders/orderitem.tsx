@@ -1,6 +1,7 @@
 import { Link } from "react-router-dom";
 import { Order } from "../../utils/types";
 import { formatDate } from "../../utils/date";
+import { apiHost, apiProtocol } from "../../utils/generics";
 
 interface Props {
   order: Order;
@@ -14,7 +15,7 @@ const OrderItem = ({ order }: Props) => {
     >
       <div>
         <img
-          src={`http://localhost:3020/${order.product.images[0].url}`}
+          src={`${apiHost}://${apiProtocol}/${order.product.images[0].url}`}
           alt={order.product.name}
           className="h-32 w-32"
         />
