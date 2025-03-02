@@ -6,7 +6,7 @@ import ErrorMessageComponent from "./errorMessage";
 import GeneralMessageComponent from "./successMessage";
 import MenuIcon from "./icons/menuIcon";
 import { lazy, Suspense, useContext, useEffect } from "react";
-import { ShowErrorContext } from "../utils/errorContext";
+import { ErrorContext } from "../utils/errorContext";
 
 const MobileButton = lazy(() => import("./mobileButton"));
 
@@ -20,7 +20,7 @@ const Fallback = () => {
 
 const Header = () => {
   const navigate = useNavigate();
-  const [, setError] = useContext(ShowErrorContext);
+  const [, setError] = useContext(ErrorContext);
 
   useEffect(() => {
     const prefetch = async () => {
