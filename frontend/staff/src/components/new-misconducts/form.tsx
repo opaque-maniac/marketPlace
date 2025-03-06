@@ -6,7 +6,11 @@ import { useNavigate } from "react-router-dom";
 import { ErrorContext, ShowErrorContext } from "../../utils/errorContext";
 import { errorHandler } from "../../utils/errorHandler";
 
-export default function NewMisconductForm() {
+interface Props {
+  email: string;
+}
+
+export default function NewMisconductForm({ email }: Props) {
   const navigate = useNavigate();
   const [, setErr] = useContext(ShowErrorContext);
   const [, setError] = useContext(ErrorContext);
@@ -41,6 +45,7 @@ export default function NewMisconductForm() {
           type="email"
           name="email"
           id="email"
+          value={email}
           placeholder="User Email"
           className="block mx-auto border-b border-black/50 focus:ring-0 focus:outline-none h-10 w-72 p-[5px]"
           required

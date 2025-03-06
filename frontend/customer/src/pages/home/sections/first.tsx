@@ -97,13 +97,7 @@ const FirstSection = ({ products, isLoading }: Props) => {
             </div>
           ) : (
             <>
-              <ProductList
-                products={products}
-                color="white"
-                overflow={true}
-                full={false}
-                center={true}
-              />
+              <ProductList products={products} color="white" overflow={true} />
             </>
           )}
         </div>

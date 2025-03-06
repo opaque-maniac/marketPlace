@@ -23,13 +23,7 @@ const SecondSection = ({ products, isLoading }: Props) => {
             <Loader color="#000000" />
           </div>
         ) : (
-          <ProductList
-            products={products}
-            color="black"
-            overflow={true}
-            full={false}
-            center={true}
-          />
+          <ProductList products={products} color="black" overflow={true} />
         )}
       </div>
     </section>

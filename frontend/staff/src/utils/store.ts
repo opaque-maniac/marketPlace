@@ -40,24 +40,18 @@ const useUserStore = create<UserStore>((set) => {
     user: initialUser,
     role: initialRole,
     setUser(newUser: string) {
-      if (newUser !== null) {
-        setUserID(newUser);
-        set({ user: newUser, role: getStaffRole() || null });
-      }
+      set({ user: newUser, role: getStaffRole() || null });
     },
     setRole(newRole) {
       if (newRole) {
-        setStaffRole(newRole);
         set({ user: getUserID() || null, role: getStaffRole() || null });
       }
     },
     removeUser() {
-      removeUserID();
       this.removeRole();
       set({ user: null, role: null });
     },
     removeRole() {
-      removeStaffRole();
       set({ user: getUserID() || null, role: getStaffRole() || null });
     },
   };

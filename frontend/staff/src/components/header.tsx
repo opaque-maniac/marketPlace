@@ -44,7 +44,7 @@ const Header = () => {
     <>
       <header
         role="banner"
-        className="flex justify-between items-center px-10 border-b border-black/50 h-14 fixed top-0 left-0 right-0 bg-white z-10"
+        className="flex justify-between items-center md:px-10 px-2 border-b border-black/50 h-14 fixed top-0 left-0 right-0 bg-white z-10"
       >
         <div className="h-10 w-10">
           <Link to={user ? "/" : "/login"}>

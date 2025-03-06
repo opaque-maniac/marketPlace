@@ -1,4 +1,4 @@
-import { useContext, useEffect } from "react";
+import { Suspense, useContext, useEffect } from "react";
 import Transition from "../../components/transition";
 import useUserStore from "../../utils/store";
 import { Link, useNavigate } from "react-router-dom";
@@ -13,6 +13,17 @@ import EmailIcon from "../../components/icons/email";
 import LocationPinIcon from "../../components/icons/pin";
 import GearIcon from "../../components/icons/gear";
 import MetaTags from "../../components/metacomponent";
+import ProfileImageButton from "../../components/profile/profileimagebutton";
+
+const Fallback = () => {
+  return (
+    <button disabled className="block w-80 h-80" aria-label="Loading">
+      <div className="w-8 h-8">
+        <Loader color="#000" />
+      </div>
+    </button>
+  );
+};
 
 const ProfilePage = () => {
   const user = useUserStore((state) => state.user);
@@ -72,7 +83,7 @@ const ProfilePage = () => {
           <section
             className="flex justify-center items-center"
             style={{
-              minHeight: "calc(100vh - 13.8rem)",
+              minHeight: "calc(100vh - 6.5rem)",
             }}
           >
             <div className="h-10 w-10">
@@ -85,15 +96,12 @@ const ProfilePage = () => {
             {customer ? (
               <section className="flex lg:flex-row flex-col justify-center items-center md:gap-14 gap-6">
                 <div>
-                  <img
-                    src={
-                      customer.image
-                        ? `http://localhost:3000/uploads/seller/${customer.image.url}`
-                        : "/images/profile.svg"
-                    }
-                    alt={`${customer.firstName} ${customer.lastName}`}
-                    className="w-80 h-80"
-                  />
+                  <Suspense fallback={<Fallback />}>
+                    <ProfileImageButton
+                      image={customer.image}
+                      name={`${customer.firstName} ${customer.lastName}`}
+                    />
+                  </Suspense>
                 </div>
                 <div>
                   <div className="pb-4">

@@ -32,7 +32,7 @@ export interface ProductImages {
   createdAt: string;
 }
 
-type Categories =
+export type Categories =
   | "ELECTRONICS"
   | "FASHION"
   | "HOME"

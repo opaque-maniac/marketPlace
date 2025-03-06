@@ -8,7 +8,7 @@ import { Helmet } from "react-helmet";
 import Loader from "../../components/loader";
 import { errorHandler } from "../../utils/errorHandler";
 
-const ProfileForm = lazy(() => import("./form"));
+const ProfileForm = lazy(() => import("../../components/edit-profile/form"));
 
 const Fallback = () => {
   return (

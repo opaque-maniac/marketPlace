@@ -20,41 +20,50 @@ const NoAuthNav = ({ callback }: Props) => {
   };
 
   return (
-    <ul className="flex flex-col justify-center items-center gap-6">
+    <ul>
       <li>
         <Link
-          className={path === "/about" ? "underline" : ""}
+          className="block text-black text-start pl-2 bg-gray-100 md:w-72 w-52 h-8 mt-2"
           to="/about"
           onClick={(e) => clickHandler(e, "/about")}
         >
-          About
+          <span>About</span>
         </Link>
       </li>
       <li>
         <Link
-          className={path === "/terms" ? "underline" : ""}
+          className="block text-black text-start pl-2 bg-gray-100 md:w-72 w-52 h-8 mt-2"
           to="/terms"
           onClick={(e) => clickHandler(e, "/terms")}
         >
-          Terms & Conditions
+          <span>Terms & Conditions</span>
         </Link>
       </li>
       <li>
         <Link
-          className={path === "/privacy" ? "underline" : ""}
+          className="block text-black text-start pl-2 bg-gray-100 md:w-72 w-52 h-8 mt-2"
           to="/privacy"
           onClick={(e) => clickHandler(e, "/privacy")}
         >
-          Privacy
+          <span>Privacy</span>
         </Link>
       </li>
       <li>
         <Link
-          className={path === "/login" ? "underline" : ""}
+          className="block text-black text-start pl-2 bg-gray-100 md:w-72 w-52 h-8 mt-2"
           to="/login"
           onClick={(e) => clickHandler(e, "/login")}
         >
-          Log In
+          <span>Log In</span>
+        </Link>
+      </li>
+      <li>
+        <Link
+          className="block text-black text-start pl-2 bg-gray-100 md:w-72 w-52 h-8 mt-2"
+          to="/register"
+          onClick={(e) => clickHandler(e, "/register")}
+        >
+          <span>Sign Up</span>
         </Link>
       </li>
     </ul>

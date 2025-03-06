@@ -1,6 +1,6 @@
 import { useQuery } from "@tanstack/react-query";
 import Transition from "../../components/transition";
-import { useNavigate } from "react-router-dom";
+import { Link, useNavigate } from "react-router-dom";
 import { lazy, Suspense, useContext, useEffect } from "react";
 import { ErrorContext, ShowErrorContext } from "../../utils/errorContext";
 import ArrowLeft from "../../components/icons/arrowleft";
@@ -14,13 +14,16 @@ import Loader from "../../components/loader";
 
 const ProductItem = lazy(() => import("../../components/products/product"));
 
-const Fallback = ({ color }: { color: string }) => {
+const Fallback = ({ color, url }: { color: string; url: string }) => {
   return (
-    <div className="w-[270px] h-[350px] flex justify-center items-center">
+    <Link
+      to={url}
+      className="w-[270px] h-[350px] flex justify-center items-center border border-black"
+    >
       <div className="w-10 h-10">
         <Loader color={color} />
       </div>
-    </div>
+    </Link>
   );
 };
 
@@ -108,8 +111,15 @@ const ExplorePage = () => {
               {products.length === 0 ? null : (
                 <ul className="h-full grid xl:grid-cols-4 lg:grid-cols-3 md:grid-cols-2 grid-cols-1">
                   {products.map((product) => (
-                    <li key={product.id} className="mx-auto">
-                      <Suspense fallback={<Fallback color="#fff" />}>
+                    <li key={product.id} className="mx-auto md:mb-8 mb-6">
+                      <Suspense
+                        fallback={
+                          <Fallback
+                            url={`/products/${product.id}`}
+                            color="#000"
+                          />
+                        }
+                      >
                         <ProductItem product={product} color="black" />
                       </Suspense>
                     </li>

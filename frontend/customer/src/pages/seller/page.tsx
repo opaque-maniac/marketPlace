@@ -6,9 +6,9 @@ import { useContext, useEffect } from "react";
 import { useNavigate, useParams } from "react-router-dom";
 import Transition from "../../components/transition";
 import SellersLayout from "../../components/sellers/layout";
-import Loader from "../../components/loader";
 import MetaTags from "../../components/metacomponent";
 import { apiHost, apiProtocol } from "../../utils/generics";
+import PageLoader from "../../components/pageloader";
 
 const SellerPage = () => {
   const { id } = useParams();
@@ -29,7 +29,6 @@ const SellerPage = () => {
   });
 
   if (isError && error) {
-    console.log("Layout error\n\n", error);
     errorHandler(error, navigate, setErr, setError);
   }
 
@@ -55,34 +54,32 @@ const SellerPage = () => {
         }
         allowBots={true}
       />
-      <div>
-        {isLoading ? (
-          <div className="min-h-screen min-w-screen flex justify-center items-center">
-            <div className="w-10 h-10">
-              <Loader color="#fff" />
+      {isLoading ? (
+        <PageLoader />
+      ) : (
+        <main role="main">
+          <div>
+            <div>
+              {seller && (
+                <>
+                  <SellersLayout seller={seller} />{" "}
+                  <section
+                    className={`min-h-[200px] ${
+                      !seller.bio ? "flex justify-center items-center" : "pl-2"
+                    }`}
+                  >
+                    {seller.bio ? (
+                      <p>{seller.bio}</p>
+                    ) : (
+                      <p className="text-xl font-semibold">No bio found</p>
+                    )}
+                  </section>
+                </>
+              )}
             </div>
           </div>
-        ) : (
-          <div>
-            {seller && (
-              <>
-                <SellersLayout seller={seller} />{" "}
-                <section
-                  className={`min-h-[200px] ${
-                    !seller.bio ? "flex justify-center items-center" : "pl-2"
-                  }`}
-                >
-                  {seller.bio ? (
-                    <p>{seller.bio}</p>
-                  ) : (
-                    <p className="text-xl font-semibold">No bio found</p>
-                  )}
-                </section>
-              </>
-            )}
-          </div>
-        )}
-      </div>
+        </main>
+      )}
     </Transition>
   );
 };

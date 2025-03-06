@@ -14,9 +14,9 @@ export default function ProductDescription({ description }: Props) {
 
   return (
     <div className="xl:w-10/12 w-auto">
-      {description.length > 200 ? (
+      {description.length > 300 ? (
         <>
-          <p>{show ? description : `${description.slice(0, 200)}...`}</p>
+          <p>{show ? description : `${description.slice(0, 300)}...`}</p>
           <button
             aria-label={show ? "Show Less" : "Show More"}
             className="underline text-sm"

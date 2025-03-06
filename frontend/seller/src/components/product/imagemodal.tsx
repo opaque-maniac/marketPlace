@@ -2,6 +2,7 @@ import { MouseEventHandler } from "react";
 import CloseIcon from "../../components/icons/closeIcon";
 import Modal from "../../components/modal";
 import { ProductImages } from "../../utils/types";
+import { apiHost, apiProtocol } from "../../utils/generics";
 
 interface Props {
   image: ProductImages;
@@ -29,7 +30,7 @@ export default function ImageModal({ image, callback, name }: Props) {
             </button>
           </div>
           <img
-            src={`http://localhost:3020/${image.url}`}
+            src={`${apiProtocol}://${apiHost}/${image.url}`}
             alt={name}
             className="md:w-600 w-80 md:h-600 h-300 mx-auto"
           />

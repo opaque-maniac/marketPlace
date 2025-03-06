@@ -16,7 +16,7 @@ const Navbar = () => {
         <li>
           <Link
             className={pathname === "/explore" ? "underline" : ""}
-            to={"/explore"}
+            to={"/explore?page=1&query="}
           >
             Explore
           </Link>

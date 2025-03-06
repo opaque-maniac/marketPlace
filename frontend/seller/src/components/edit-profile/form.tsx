@@ -1,7 +1,7 @@
 import { FormEventHandler, useContext } from "react";
 import Transition from "../../components/transition";
 import { Seller } from "../../utils/types";
-import useProfileForm from "./useProfileForm";
+import useProfileForm from "../../utils/reducers/useProfileForm";
 import Loader from "../../components/loader";
 import { useMutation } from "@tanstack/react-query";
 import { sendUpdateProfile } from "../../utils/mutations/profile/updateprofile";
@@ -44,7 +44,7 @@ const ProfileForm = ({ profile }: Props) => {
       <form
         onSubmit={submitHandler}
         id="PRDF"
-        className="border shadow-lg md:w-8/12 w-11/12 mx-auto py-4 px-2 flex xl:flex-row flex-col xl:justify-around justify-center xl:gap-0 gap-2"
+        className="xl:w-7/12 lg:w-8/12 md:w-10/12 w-11/12 mx-auto shadow-xl border rounded-lg py-2 xl:px-8 lg:px-6 md:px-4"
       >
         <div className="md:w-auto w-10/12 xl:mx-0 mx-auto flex flex-col gap-2">
           <div>

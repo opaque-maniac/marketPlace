@@ -26,68 +26,62 @@ const NinethSection = ({ products, isLoading }: Props) => {
               </div>
             </div>
           ) : (
-            <div className="md:min-h-[770px] min-h-[370px]">
-              {/* lg: screen */}
-              <div className="lg:block hidden">
-                <ProductList
-                  products={products.slice(0, 4)}
-                  color="white"
-                  overflow={false}
-                  full={false}
-                  zeroHeight="770px"
-                />
-              </div>
-
-              {/* md: screen */}
-              <div className="lg:hidden md:block hidden">
-                {products.slice(0, 4).length === 0 ? (
+            <div className="md:min-h-[770px] min-h-[370px] md:flex flex-col justify-between">
+              {products.slice(0, 4).length == 0 ? (
+                <div>
                   <ProductList
-                    products={products.slice(0, 4)}
+                    products={[]}
                     color="white"
                     overflow={false}
-                    full={false}
                     zeroHeight="770px"
                   />
-                ) : (
-                  <div className="flex-col justify-between items-center">
-                    <div>
+                </div>
+              ) : (
+                <>
+                  <div>
+                    <div className="md:block hidden">
                       <ProductList
-                        products={products.slice(0, 4)}
+                        products={products.slice(0, 2)}
                         color="white"
                         overflow={true}
-                        full={false}
                         zeroHeight="370px"
                       />
                     </div>
-                    <div>
+                    <div className="md:hidden block">
                       <ProductList
-                        products={products.slice(0, 4)}
+                        products={products.slice(0, 2)}
                         color="white"
-                        overflow={true}
-                        full={false}
+                        overflow={false}
                         zeroHeight="370px"
                       />
                     </div>
                   </div>
-                )}
-              </div>
-
-              {/* sm: screen */}
-              <div className="md:hidden block">
-                <ProductList
-                  products={products.slice(0, 4)}
-                  color="white"
-                  overflow={false}
-                  full={false}
-                  zeroHeight="370px"
-                />
-              </div>
+                  <div>
+                    <div className="md:block hidden">
+                      <ProductList
+                        products={products.slice(2, 4)}
+                        color="white"
+                        overflow={true}
+                        zeroHeight="370px"
+                      />
+                    </div>
+                    <div className="md:hidden block">
+                      <ProductList
+                        products={products.slice(2, 4)}
+                        color="white"
+                        overflow={false}
+                        zeroHeight="370px"
+                      />
+                    </div>
+                  </div>
+                </>
+              )}
             </div>
           )}
         </div>
 
+        {/* second section */}
         <div className="md:w-6/12">
-          {/* second section */}
           <div
             className="bg-black mb-4 md:mt-0 mt-4 p-2"
             style={{ minHeight: "390px" }}
@@ -108,7 +102,6 @@ const NinethSection = ({ products, isLoading }: Props) => {
                     products={products.slice(4, 6)}
                     color="white"
                     overflow={true}
-                    full={false}
                     zeroHeight="370px"
                   />
                 </div>
@@ -117,7 +110,6 @@ const NinethSection = ({ products, isLoading }: Props) => {
                     products={products.slice(4, 6)}
                     color="white"
                     overflow={false}
-                    full={false}
                     zeroHeight="370px"
                   />
                 </div>
@@ -147,7 +139,7 @@ const NinethSection = ({ products, isLoading }: Props) => {
                       products={products.slice(6, 8)}
                       color="white"
                       overflow={true}
-                      full={false}
+                      zeroHeight="370px"
                     />
                   </div>
                   <div className="md:hidden block">
@@ -155,7 +147,6 @@ const NinethSection = ({ products, isLoading }: Props) => {
                       products={products.slice(6, 8)}
                       color="white"
                       overflow={false}
-                      full={false}
                       zeroHeight="370px"
                     />
                   </div>

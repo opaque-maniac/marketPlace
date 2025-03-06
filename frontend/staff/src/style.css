@@ -84,6 +84,6 @@ select {
   padding: 10px;
 }
 
-select option[disabled] {
-  color: #555; /* Lighter color to mimic a placeholder */
+.page-loader-height {
+    min-height: calc(100vh - 6.5rem)
 }

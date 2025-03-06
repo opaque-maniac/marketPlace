@@ -12,7 +12,11 @@ const MobileButton = lazy(() => import("./mobileButton"));
 
 const Fallback = () => {
   return (
-    <button aria-label="Open menu" disabled className="w-6 h-6 md:hidden block">
+    <button
+      aria-label="Open menu"
+      disabled
+      className="w-6 h-6 md:hidden block border"
+    >
       <MenuIcon />
     </button>
   );

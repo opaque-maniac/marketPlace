@@ -1,6 +1,6 @@
 import { Link, useNavigate } from "react-router-dom";
 import Transition from "../../components/transition";
-import AuthLayout from "./layout";
+import AuthLayout from "../../components/authlayout";
 import { useMutation } from "@tanstack/react-query";
 import { sendLogin } from "../../utils/mutations/auth/login";
 import { FormEventHandler, useContext, useState } from "react";
@@ -104,14 +104,16 @@ const LoginPage = () => {
           <div className="pt-4 flex justify-center gap-4 items-center">
             <button
               aria-label="Send Register Details"
-              className="bg-red-400 rounded-lg w-40 h-10 py-3 flex justify-center items-center text-white"
+              className="bg-red-400 rounded-lg w-40 h-10 flex justify-center items-center text-white"
               disabled={mutation.isPending}
               type="submit"
             >
               {mutation.isIdle ? (
                 <span>Log In</span>
               ) : (
-                <Loader color="#ffffff" />
+                <div className="w-6 h-6">
+                  <Loader color="#fff" />
+                </div>
               )}
             </button>
             <Link to={"/forgot-password"} className="text-red-400">

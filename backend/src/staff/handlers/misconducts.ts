@@ -712,9 +712,9 @@ export const newMisconduct = async (
 
     const _misconduct = await prisma.misconduct.create({
       data: {
-        staffID: staff?.id,
-        customerID: customer?.id,
-        sellerID: seller?.id,
+        staffID: staff?.id || undefined,
+        customerID: customer?.id || undefined,
+        sellerID: seller?.id || undefined,
         misconduct,
         description,
         response: action,

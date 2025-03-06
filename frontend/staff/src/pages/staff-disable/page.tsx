@@ -86,7 +86,7 @@ export default function StaffDisablePage() {
                   for the user. If none exists then you will not be able to
                   proceed. Click{" "}
                   <Link
-                    to={"/new-misconduct"}
+                    to={`/staff/${id}/misconducts/new`}
                     className="font-semibold underline text-lg"
                   >
                     here

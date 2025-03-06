@@ -31,7 +31,6 @@ const SixthSection = ({ products, isLoading }: Props) => {
             products={products}
             color="white"
             overflow={false}
-            full={false}
             zeroHeight="500px"
           />
         </div>

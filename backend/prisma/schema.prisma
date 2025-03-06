@@ -85,6 +85,8 @@ model Staff {
   verified         Boolean      @default(false)
   active           Boolean      @default(true)
   role             STAFF_ROLE
+  phone            String?
+  address          String?
   image            StaffImage?
   complaints       Complaint[]
   misconducts      Misconduct[]

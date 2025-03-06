@@ -1,6 +1,6 @@
 import { Link, useNavigate } from "react-router-dom";
 import Transition from "../../components/transition";
-import AuthLayout from "../login/layout";
+import AuthLayout from "../../components/authlayout";
 import { FormEventHandler, useContext, useState } from "react";
 import { useMutation } from "@tanstack/react-query";
 import { sendRegister } from "../../utils/mutations/auth/register";
@@ -104,10 +104,16 @@ const RegisterPage = () => {
           <div className="pt-4 flex justify-center gap-4 items-center">
             <button
               aria-label="Send Login Details"
-              className="flex py-3 justify-center items-center text-white bg-red-400 rounded-lg w-40 h-10"
+              className="flex justify-center items-center text-white bg-red-400 rounded-lg w-40 h-10"
               type="submit"
             >
-              {mutation.isIdle ? <span>Sign Up</span> : <Loader color="#000" />}
+              {mutation.isIdle ? (
+                <span>Sign Up</span>
+              ) : (
+                <div className="w-6 h-6">
+                  <Loader color="#fff" />{" "}
+                </div>
+              )}
             </button>
           </div>
         </form>

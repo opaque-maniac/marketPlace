@@ -9,6 +9,7 @@ import { errorHandler } from "../../utils/errorHandler";
 import { fetchCustomer } from "../../utils/queries/customers/fetchcustomer";
 import FetchCart from "../../components/customer-cart/fetchcart";
 import PageSearchForm from "../../components/customer-cart/searchform";
+import ManageQueryStr from "../../utils/querystr";
 
 const CustomerOrdersPage = () => {
   const { id } = useParams();
@@ -16,8 +17,9 @@ const CustomerOrdersPage = () => {
   const [, setErr] = useContext(ShowErrorContext);
   const [, setError] = useContext(ErrorContext);
 
-  const _page = new URLSearchParams(window.location.search).get("page");
-  const _query = new URLSearchParams(window.location.search).get("query");
+  const params = new URLSearchParams(window.location.search);
+  const _page = params.get("page");
+  const _query = params.get("query");
 
   useEffect(() => {
     if (!id) {
@@ -25,19 +27,13 @@ const CustomerOrdersPage = () => {
       return;
     }
 
-    if (!_page && !_query) {
-      navigate("?page=1&query=", { replace: true });
-    } else if (!_page) {
-      navigate(`?page=1&query=${_query || ""}`, { replace: true });
-    } else if (!_query) {
-      navigate(`?page=${_page}&query=`, { replace: true });
-    }
+    ManageQueryStr(navigate, _page, _query);
 
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []);
 
   const page = Number(_page) || 1;
-  const query = String(_page) || "";
+  const query = _page || "";
 
   const { isLoading, isError, isSuccess, data, error } = useQuery({
     queryFn: fetchCustomer,

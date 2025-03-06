@@ -1,11 +1,11 @@
 import { getAccessToken } from "../../cookies";
 import { responseError, tokenError } from "../../errors";
 import { apiHost, apiProtocol } from "../../generics";
-import { ErrorResponse, SuccessSellerResponse } from "../../types";
+import { ErrorResponse } from "../../types";
 
-export const sendDeleteProfile = async (id: string) => {
+export const sendDeleteProfile = async () => {
   try {
-    const url = `${apiProtocol}://${apiHost}/seller/profile/${id}`;
+    const url = `${apiProtocol}://${apiHost}/seller/profile`;
 
     const token = getAccessToken();
 
@@ -33,7 +33,7 @@ export const sendDeleteProfile = async (id: string) => {
       }
     }
 
-    const json = (await response.json()) as SuccessSellerResponse;
+    const json = (await response.json()) as { message: string };
     return json;
   } catch (e) {
     if (e instanceof Error) {

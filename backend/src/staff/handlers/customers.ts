@@ -9,6 +9,7 @@ import { Response, NextFunction } from "express";
 import prisma from "../../utils/db";
 import { AuthenticatedRequest, CustomerUpdateRequest } from "../../types";
 import { serverError } from "../../utils/globals";
+import { ORDER_STATUS } from "@prisma/client";
 
 // Function to fetch customers
 export const fetchCustomers = async (
@@ -370,6 +371,9 @@ export const fetchCustomerOrders = async (
               },
               {
                 productID: query,
+              },
+              {
+                status: query as ORDER_STATUS,
               },
             ],
           }

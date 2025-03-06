@@ -1,6 +1,6 @@
 import { Link } from "react-router-dom";
-import { Product } from "../utils/types";
-import { calculateDiscount } from "../utils/discount";
+import { Product } from "../../utils/types";
+import { calculateDiscount } from "../../utils/discount";
 
 interface Props {
   product: Product;

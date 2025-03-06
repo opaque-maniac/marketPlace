@@ -1,6 +1,7 @@
 import { MouseEventHandler, useState } from "react";
 import { ProductImages } from "../../utils/types";
 import ImageModal from "./imagemodal";
+import { apiHost, apiProtocol } from "../../utils/generics";
 
 interface Props {
   image: ProductImages;
@@ -23,7 +24,7 @@ export default function LivelyImage({ image, name }: Props) {
     <>
       <button onClick={clickHanlder}>
         <img
-          src={`http://localhost:3020/${image.url}`}
+          src={`${apiProtocol}://${apiHost}/${image.url}`}
           alt={name}
           className="w-32 h-32"
         />

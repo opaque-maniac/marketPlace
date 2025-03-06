@@ -9,6 +9,7 @@ import Loader from "../../components/loader";
 import SellersLayout from "../../components/sellers/layout";
 import MetaTags from "../../components/metacomponent";
 import { apiHost, apiProtocol } from "../../utils/generics";
+import PageLoader from "../../components/pageloader";
 
 const SellerProducts = lazy(
   () => import("../../components/sellers/sellerproducts"),
@@ -73,26 +74,24 @@ const SellerPage = () => {
         }
         allowBots={true}
       />
-      <div>
-        {isLoading ? (
-          <div className="min-h-screen min-w-screen flex justify-center items-center">
-            <div className="w-10 h-10">
-              <Loader color="#fff" />
+      {isLoading ? (
+        <PageLoader />
+      ) : (
+        <main role="main">
+          <div>
+            <div>
+              {seller && (
+                <>
+                  <SellersLayout seller={seller} />{" "}
+                  <Suspense fallback={<Fallback />}>
+                    <SellerProducts seller={seller} />
+                  </Suspense>
+                </>
+              )}
             </div>
           </div>
-        ) : (
-          <div>
-            {seller && (
-              <>
-                <SellersLayout seller={seller} />{" "}
-                <Suspense fallback={<Fallback />}>
-                  <SellerProducts seller={seller} />
-                </Suspense>
-              </>
-            )}
-          </div>
-        )}
-      </div>
+        </main>
+      )}
     </Transition>
   );
 };

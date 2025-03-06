@@ -108,7 +108,7 @@ const RegisterPage = () => {
               name="role"
               id="role"
               required
-              className="block w-80 h-12 px-2 text-lg auth-input focus:auth-input focus:outline-none bg-white"
+              className="block w-80 h-12 px-2 text-lg auth-input focus:auth-input focus:outline-none bg-white focus:text-black text-gray-200"
             >
               <option value="" disabled>
                 Select Role

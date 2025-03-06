@@ -1,6 +1,7 @@
 import { Link, useNavigate } from "react-router-dom";
 import NavItem from "./navitem";
 import LogoutIcon from "./icons/logout";
+import { logoutFunction } from "../utils/logout";
 
 type Data = {
   placeholder: string;
@@ -69,6 +70,7 @@ const AuthNavigation = ({ callback }: Props) => {
             setTimeout(() => {
               callback();
             }, 300);
+            logoutFunction(navigate, true);
           }}
           className="w-7 h-7 p-1"
         >
@@ -116,21 +118,6 @@ const AuthNavigation = ({ callback }: Props) => {
               className="flex items-center bg-gray-100 h-9 mb-2 pl-2 w-full text-start mt-2"
             >
               <span>Profile</span>
-            </Link>
-          </li>
-          <li>
-            <Link
-              onClick={(e) => {
-                e.preventDefault();
-                setTimeout(() => {
-                  callback();
-                }, 10);
-                navigate("/settings");
-              }}
-              to={"/settings"}
-              className="flex items-center bg-gray-100 h-9 mb-2 pl-2 w-full text-start mt-2"
-            >
-              <span>Settings</span>
             </Link>
           </li>
         </ul>

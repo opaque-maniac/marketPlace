@@ -17,12 +17,11 @@ const Error500 = lazy(() => import("./pages/500/page"));
 const ContactPage = lazy(() => import("./pages/contact/page"));
 const AboutPage = lazy(() => import("./pages/about/page"));
 const RegisterPage = lazy(() => import("./pages/register/page"));
-const ProductPage = lazy(() => import("./pages/product/page"));
-const NewProductPage = lazy(() => import("./pages/new/page"));
 const ProfilePage = lazy(() => import("./pages/profile/page"));
 const UpdateProfilePage = lazy(() => import("./pages/editprofile/page"));
-const DeleteProductPage = lazy(() => import("./pages/delete/page"));
-const EditProductPage = lazy(() => import("./pages/edit/page"));
+const ProductPage = lazy(() => import("./pages/product/page"));
+const NewProductPage = lazy(() => import("./pages/new/page"));
+const EditProductPage = lazy(() => import("./pages/product-update/page"));
 const FeePage = lazy(() => import("./pages/fee/page"));
 const PrivacyPage = lazy(() => import("./pages/privacy/page"));
 const FAQPage = lazy(() => import("./pages/faq/page"));
@@ -87,15 +86,11 @@ const App = () => {
                       <Route element={<ProtectedRoute />}>
                         <Route path="/" element={<HomePage />} />
                         <Route path="/products/:id" element={<ProductPage />} />
-                        <Route
-                          path="/products/:id/delete"
-                          element={<DeleteProductPage />}
-                        />
+                        <Route path="/new" element={<NewProductPage />} />
                         <Route
                           path="/products/:id/edit"
                           element={<EditProductPage />}
                         />
-                        <Route path="/new" element={<NewProductPage />} />
                         <Route path="/profile" element={<ProfilePage />} />
                         <Route
                           path="/profile/update"

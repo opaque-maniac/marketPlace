@@ -40,12 +40,7 @@ const FifthSection = ({ products, isLoading }: Props) => {
           style={{ minHeight: "calc(518px - 7.6rem)" }}
           className="w-full flex justify-center items-center px-2"
         >
-          <ProductList
-            products={products}
-            color="black"
-            overflow={false}
-            full={false}
-          />
+          <ProductList products={products} color="black" overflow={false} />
         </div>
       )}
     </section>

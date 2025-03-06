@@ -204,6 +204,8 @@ export interface Staff {
   password: string;
   active: boolean;
   role: ROLE;
+  phone?: string;
+  address?: string;
   image?: StaffImage;
   complaints: Complaint[];
   createdAt: string;

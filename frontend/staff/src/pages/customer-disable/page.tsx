@@ -92,7 +92,7 @@ export default function CustomerDeletePage() {
                   misconduct log for the user. If none exists then you will not
                   be able to proceed. Click{" "}
                   <Link
-                    to={"/new-misconduct"}
+                    to={`customers/${id}/misconducts/new`}
                     className="font-semibold underline text-lg"
                   >
                     here

@@ -45,8 +45,9 @@ const StaffDeletePage = lazy(() => import("./pages/staff-delete/page"));
 const OrdersPage = lazy(() => import("./pages/orders/page"));
 const ComplaintsPage = lazy(() => import("./pages/complaints/page"));
 const MisconductsPage = lazy(() => import("./pages/misconducts/page"));
-const MisconductNewPage = lazy(() => import("./pages/misconducts-new/page"));
 const ProfilePage = lazy(() => import("./pages/profile/page"));
+const ProfileUpdatePage = lazy(() => import("./pages/profile-update/page"));
+const ProfileDeletePage = lazy(() => import("./pages/profile-delete/page"));
 const SettingsPage = lazy(() => import("./pages/settings/page"));
 const EmailVerificationPage = lazy(() => import("./pages/verify-email/page"));
 const EmailVerificationTokenPage = lazy(
@@ -200,16 +201,20 @@ const App = () => {
                           path="/misconducts"
                           element={<MisconductsPage />}
                         />
-                        <Route
-                          path="/new-misconduct"
-                          element={<MisconductNewPage />}
-                        />
 
                         {/* Settings */}
                         <Route path="/settings" element={<SettingsPage />} />
 
                         {/* Profile */}
                         <Route path="/profile" element={<ProfilePage />} />
+                        <Route
+                          path="/profile/update"
+                          element={<ProfileUpdatePage />}
+                        />
+                        <Route
+                          path="/profile/delete"
+                          element={<ProfileDeletePage />}
+                        />
 
                         {/* Change email */}
                         <Route

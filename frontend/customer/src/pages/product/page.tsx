@@ -15,6 +15,9 @@ import Loader from "../../components/loader";
 import { calculateDiscount } from "../../utils/price";
 import MetaTags from "../../components/metacomponent";
 
+const ProductImageButton = lazy(
+  () => import("../../components/product/productimagebutton"),
+);
 const Related = lazy(() => import("../../components/product/related"));
 const CommentList = lazy(() => import("../../components/product/comments"));
 const AddToCart = lazy(() => import("../../components/product/addtocart"));
@@ -42,6 +45,20 @@ const Fallback = () => {
         <Loader color="#000" />
       </div>
     </div>
+  );
+};
+
+const ImageButtonFallback = () => {
+  return (
+    <button
+      disabled
+      aria-label="Loading"
+      className="border w-170 h-138 flex justify-center items-center"
+    >
+      <div className="w-6 h-6">
+        <Loader color="#000" />
+      </div>
+    </button>
   );
 };
 
@@ -120,19 +137,20 @@ const IndividualProductPage = () => {
             <div className="flex pb-8 xl:flex-row flex-col xl:items-start items-center pt-8 lg:justify-evenly">
               <section className="flex justify-start items-center gap-4 md:flex-row flex-col xl:border-none lg:border lg:border-red-500">
                 {product && product.images.length > 1 && (
-                  <div className="flex md:flex-col flex-row flex-wrap gap-4 justify-center items-center md:order-1 order-2">
+                  <div className="flex md:flex-col flex-row flex-wrap gap-4 justify-center items-center md:order-1 order-2 md:h-600">
                     {product &&
                       product.images.map((img, index) => {
                         if (index === 0) {
                           return null;
                         }
                         return (
-                          <img
-                            key={index}
-                            src={`${apiProtocol}://${apiHost}/${img.url}`}
-                            alt={product.name}
-                            className="border w-170 h-138"
-                          />
+                          <Suspense fallback={<ImageButtonFallback />}>
+                            <ProductImageButton
+                              idx={index}
+                              image={img}
+                              name={product.name}
+                            />
+                          </Suspense>
                         );
                       })}
                   </div>

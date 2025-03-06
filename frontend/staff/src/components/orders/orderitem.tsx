@@ -5,9 +5,10 @@ import { apiHost, apiProtocol } from "../../utils/generics";
 
 interface Props {
   order: Order;
+  refetch: () => void;
 }
 
-export default function OrderItem({ order }: Props) {
+export default function OrderItem({ order, refetch }: Props) {
   return (
     <Link
       to={`/orders/${order.id}`}

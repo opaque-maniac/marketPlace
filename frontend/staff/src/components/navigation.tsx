@@ -33,7 +33,7 @@ const Navigation = ({ callback }: Props) => {
               <MemoizedAuthNav callback={callback} />
             </div>
           ) : (
-            <div className="flex flex-col justify-center items-center gap-4 md:h-600 h-400 px-2">
+            <div className="mt-10">
               <NoAuthNav callback={callback} />
             </div>
           )}

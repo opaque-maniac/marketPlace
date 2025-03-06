@@ -5,9 +5,10 @@ import { useNavigate } from "react-router-dom";
 interface Props {
   placeholder: string;
   label: string;
+  other?: string;
 }
 
-export default function PageSearchForm({ placeholder }: Props) {
+export default function PageSearchForm({ placeholder, label, other }: Props) {
   const navigate = useNavigate();
 
   const submitHandler: FormEventHandler<HTMLFormElement> = (e) => {
@@ -15,7 +16,13 @@ export default function PageSearchForm({ placeholder }: Props) {
     const formData = new FormData(e.currentTarget);
     const query = formData.get("query") as string;
     const encoded = encodeURIComponent(query);
-    navigate(`?page=1&query=${encoded}`);
+    let url = `?page=1&query=${encoded}`;
+    if (other) {
+      const otherVal =
+        new URLSearchParams(window.location.search).get(other) || "";
+      url += `&${other}=${otherVal}`;
+    }
+    navigate(url);
   };
 
   return (
@@ -25,7 +32,7 @@ export default function PageSearchForm({ placeholder }: Props) {
     >
       <div className="w-11/12">
         <label htmlFor="search" className="sr-only">
-          {placeholder}
+          {label}
         </label>
         <input
           type="search"

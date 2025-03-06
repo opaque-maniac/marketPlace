@@ -27,7 +27,7 @@ const Header = () => {
         className="flex justify-between items-center h-14 mx-auto max-w-1300 xl:px-0 px-2"
       >
         <div className="h-10 w-10">
-          <Link to={user ? "/" : "/login"}>
+          <Link to={user ? "/?page=1&query=" : "/login"}>
             <Logo />
           </Link>
         </div>

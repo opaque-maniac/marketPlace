@@ -11,3 +11,7 @@ svg,
 button {
   user-select: none;
 }
+
+.page-loader-height {
+    min-height: calc(100vh - 6.5rem)
+}

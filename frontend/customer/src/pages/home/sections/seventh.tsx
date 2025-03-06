@@ -23,7 +23,6 @@ const SeventhSection = ({ products, isLoading }: Props) => {
               products={products}
               color="black"
               overflow={false}
-              full={false}
               zeroHeight="900px"
             />
           </div>
@@ -32,7 +31,6 @@ const SeventhSection = ({ products, isLoading }: Props) => {
               products={products}
               color="black"
               overflow={false}
-              full={false}
               zeroHeight="370px"
             />
           </div>

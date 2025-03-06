@@ -8,13 +8,13 @@ import { ErrorContext, ShowErrorContext } from "../../utils/errorContext";
 import { Helmet } from "react-helmet";
 import { errorHandler } from "../../utils/errorHandler";
 import { calculateDiscount } from "../../utils/discount";
-import ProductDescription from "./description";
+import ProductDescription from "../../components/product/description";
 import { formatDate } from "../../utils/date";
 import TickIcon from "../../components/icons/tick";
 import CloseIcon from "../../components/icons/closeIcon";
-import ProductImagesComponent from "./images";
+import ProductImagesComponent from "../../components/product/images";
 
-const CommentList = lazy(() => import("./comments"));
+const CommentList = lazy(() => import("../../components/product/comments"));
 
 const CommentFallback = () => {
   return (
@@ -59,7 +59,7 @@ const ProductPage = () => {
         <meta name="googlebot" content="noindex, nofollow" />
         <meta name="google" content="nositelinkssearchbox" />
       </Helmet>
-      <main role="main">
+      <main role="main" className="pt-4">
         {query.isLoading && (
           <div className="flex justify-center items-center w-screen h-screen">
             <div className="h-10 w-10">
@@ -71,7 +71,7 @@ const ProductPage = () => {
           <>
             {data && data.product ? (
               <>
-                <div className="flex lg:justify-around justify-center lg:items-start items-center lg:flex-row flex-col gap-8">
+                <div className="flex xl:justify-around justify-start xl:items-start items-center xl:flex-row flex-col gap-8">
                   <ProductImagesComponent
                     images={data.product.images}
                     name={data.product.name}

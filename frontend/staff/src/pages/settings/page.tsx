@@ -3,6 +3,7 @@ import Transition from "../../components/transition";
 import KeyIcon from "../../components/icons/key";
 import EmailIcon from "../../components/icons/email";
 import EditIcon from "../../components/icons/editicon";
+import ProfileIcon from "../../components/icons/profileIcon";
 
 export default function SettingsPage() {
   return (
@@ -12,6 +13,15 @@ export default function SettingsPage() {
           {" "}
           Home / <span className="font-extrabold">Settings</span>
         </p>
+        <div className="absolute top-4 right-4">
+          <Link
+            aria-label="Back to profile"
+            to={"/profile"}
+            className="block w-6 h-6 p-[2px] xl:border-0 xl:hover:border border border-black/50 rounded-full"
+          >
+            <ProfileIcon />
+          </Link>
+        </div>
         <section className="xl:w-4/12 md:w-6/12 w-11/12 mx-auto shadow-md px-4 py-8 border rounded">
           <ul className="flex flex-col gap-8">
             <li>

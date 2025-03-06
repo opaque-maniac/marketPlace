@@ -44,18 +44,18 @@ const Navigation = ({ callback }: Props) => {
           e.preventDefault();
           callback();
         }}
-        className="h-8 w-8 fixed top-4 left-4 z-40 bg-white rounded-lg border border-black flex items-center justify-center"
+        className="h-8 w-8 fixed top-4 left-4 z-40 bg-white rounded-full border border-black flex items-center justify-center"
       >
         <CloseIcon />
       </button>
-      <div className="fixed h-screen md:w-96 w-52 top-0 right-0 z-40 bg-white px-2 pt-10">
+      <div className="fixed h-screen md:w-96 w-52 top-0 right-0 z-40 bg-white pt-10">
         {user ? (
-          <div className="h-20 w-11/12 pl-8">
+          <div className="md:block hidden h-12 md:w-9/12 w-full md:pl-8 pl-2 mb-2">
             <SearchForm callback={callback} />
           </div>
         ) : null}
         <nav role="navigation">
-          <ul className="flex flex-col justify-start items-start gap-4 pl-8">
+          <ul className="flex flex-col justify-start items-start gap-4 md:pl-8 pl-2">
             {user ? (
               <li>
                 <Link
@@ -107,23 +107,23 @@ const Navigation = ({ callback }: Props) => {
                 <li>
                   <Link
                     onClick={(e) => {
-                      clickHanlder(e, "/new");
-                    }}
-                    to={"/new"}
-                    className={path === "/new" ? "underline" : ""}
-                  >
-                    New Product
-                  </Link>
-                </li>
-                <li>
-                  <Link
-                    onClick={(e) => {
                       clickHanlder(e, "/orders");
                     }}
                     to={"/orders"}
                     className={path === "/orders" ? "underline" : ""}
                   >
                     Orders
+                  </Link>
+                </li>
+                <li>
+                  <Link
+                    onClick={(e) => {
+                      clickHanlder(e, "/new");
+                    }}
+                    to={"/new"}
+                    className={path === "/new" ? "underline" : ""}
+                  >
+                    New Product
                   </Link>
                 </li>
                 <li>

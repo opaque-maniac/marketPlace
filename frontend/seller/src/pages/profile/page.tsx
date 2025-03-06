@@ -1,4 +1,4 @@
-import { Suspense, useContext } from "react";
+import { lazy, Suspense, useContext, useEffect } from "react";
 import Transition from "../../components/transition";
 import { Link, useNavigate } from "react-router-dom";
 import { ErrorContext, ShowErrorContext } from "../../utils/errorContext";
@@ -11,15 +11,23 @@ import { formatDate } from "../../utils/date";
 import EmailIcon from "../../components/icons/email";
 import PhoneIcon from "../../components/icons/phone";
 import LocationPinIcon from "../../components/icons/pin";
-import ProfileBio from "./bio";
+import ProfileBio from "../../components/profile/bio";
+
+const ProfileDeleteButton = lazy(
+  () => import("../../components/profile/deleteprofilebutton"),
+);
 
 const Fallback = () => {
   return (
-    <div className="flex justify-center items-center min-h-[250px] w-full">
-      <div className="w-8 h-8">
-        <Loader color="#000" />
+    <button
+      aria-label="Loading"
+      disabled
+      className="flex justify-center items-center h-10 w-40 rounded-lg bg-red-500 text-white"
+    >
+      <div className="w-6 h-6">
+        <Loader color="#fff" />
       </div>
-    </div>
+    </button>
   );
 };
 
@@ -27,6 +35,22 @@ const ProfilePage = () => {
   const navigate = useNavigate();
   const [, setError] = useContext(ErrorContext);
   const [, setErr] = useContext(ShowErrorContext);
+
+  useEffect(() => {
+    const prefetch = async () => {
+      try {
+        await import("../../components/profile/deleteprofilebutton");
+      } catch (e) {
+        console.log("Error prefetching", e);
+        setError(true);
+        navigate("/500");
+      }
+    };
+
+    // eslint-disable-next-line @typescript-eslint/no-floating-promises
+    prefetch();
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, []);
 
   const query = useQuery({
     queryFn: fetchProfile,
@@ -121,12 +145,9 @@ const ProfilePage = () => {
                       >
                         <span>Update Profile</span>
                       </Link>
-                      <Link
-                        to={"/profile/delete"}
-                        className="flex justify-center items-center h-10 w-40 rounded-lg bg-red-500 text-white"
-                      >
-                        <span>Delete Profile</span>
-                      </Link>
+                      <Suspense fallback={<Fallback />}>
+                        <ProfileDeleteButton />
+                      </Suspense>
                     </div>
                   </div>
                 </section>
@@ -138,9 +159,7 @@ const ProfilePage = () => {
                   </div>
                   <div>
                     {query.data.seller.bio ? (
-                      <Suspense fallback={<Fallback />}>
-                        <ProfileBio bio={query.data.seller.bio} />
-                      </Suspense>
+                      <ProfileBio bio={query.data.seller.bio} />
                     ) : (
                       <div className="h-[250px] w-full flex justify-center items-center">
                         <p className="text-center text-lg font-semibold">

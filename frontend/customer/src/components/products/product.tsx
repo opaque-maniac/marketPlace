@@ -7,17 +7,24 @@ import { calculateDiscount } from "../../utils/price";
 
 interface Props {
   product: Product;
+  border?: "white" | "black";
   color: string;
 }
 
-const ProductItem = ({ product, color }: Props) => {
+const ProductItem = ({ product, color, border }: Props) => {
   const discount = calculateDiscount(product.buyingPrice, product.sellingPrice);
 
   return (
     <div>
       <Link
         to={`/products/${product.id}`}
-        className="block min-h-[350px] relative w-[270px]"
+        className={`block min-h-[350px] relative w-[270px] rounded-tr-md ${
+          border === "white"
+            ? "border border-white"
+            : border === "black"
+              ? "border border-black"
+              : ""
+        }`}
       >
         <div>
           <div className="h-[250px] w-[270px] flex items-end justify-center pb-4">
