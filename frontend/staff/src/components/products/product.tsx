@@ -8,15 +8,17 @@ import { apiHost, apiProtocol } from "../../utils/generics";
 
 interface Props {
   product: Product;
+  blank?: boolean;
 }
 
-const ProductItem = ({ product }: Props) => {
+const ProductItem = ({ product, blank = false }: Props) => {
   const [clicked, setClicked] = useState<boolean>(false);
 
   return (
     <>
       <Link
-        className="block min-h-[350px] w-[270px] border p-2 relative rounded-tr-md"
+        className="block h-[350px] w-[270px] border p-2 relative rounded-tr-md"
+        target={blank ? "_blank" : "_parent"}
         to={`/products/${product.id}`}
       >
         <div className="h-250 w-270 pt-1">
@@ -24,7 +26,6 @@ const ProductItem = ({ product }: Props) => {
             src={`${apiProtocol}://${apiHost}/${product.images[0].url}`}
             alt={product.name}
             className="h-full w-[240px] mx-auto"
-            loading="lazy"
           />
           <div className="absolute top-0 -right-[2px] h-10 w-10 bg-red-500 text-white flex justify-center items-center rounded-tr-md rounded-bl-md">
             <span className="font-semibold">0%</span>

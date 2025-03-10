@@ -9,6 +9,10 @@ import PageSearchForm from "../../components/customer-cart/searchform";
 import ManageQueryStr from "../../utils/querystr";
 import Loader from "../../components/loader";
 import { fetchCustomerMisconducts } from "../../utils/queries/customers/fetchcustomermisconducts";
+import Pagination from "../../components/pagination";
+import { fetchSellerMisconducts } from "../../utils/queries/sellers/fetchsellermisconducts";
+import MisconductsFilterForm from "../../components/misconducts/filterform";
+import OrdersStatusForm from "../../components/orders/statusform";
 
 const MisconductItem = lazy(
   () => import("../../components/misconducts/misconduct"),
@@ -27,7 +31,7 @@ const Fallback = ({ misconductID }: { misconductID: string }) => {
   );
 };
 
-export default function CustomerMisconductsPage() {
+export default function SellerMisconductsPage() {
   const { id } = useParams();
   const navigate = useNavigate();
   const [, setError] = useContext(ErrorContext);
@@ -36,6 +40,7 @@ export default function CustomerMisconductsPage() {
   const params = new URLSearchParams(window.location.search);
   const _page = params.get("page");
   const _query = params.get("query");
+  const _status = params.get("status");
 
   useEffect(() => {
     if (!id) {
@@ -43,16 +48,17 @@ export default function CustomerMisconductsPage() {
       return;
     }
 
-    ManageQueryStr(navigate, _page, _query);
+    ManageQueryStr(navigate, _page, _query, _status, "status");
 
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []);
 
   const page = Number(_page) || 1;
   const query = _query || "";
+  const status = _status || "";
 
   const { isLoading, isError, error, data, isSuccess } = useQuery({
-    queryFn: fetchCustomerMisconducts,
+    queryFn: fetchSellerMisconducts,
     queryKey: ["customer-misconducts", id || "", page, 16, query],
   });
 
@@ -82,12 +88,7 @@ export default function CustomerMisconductsPage() {
         <p className="absolute top-4 left-4">
           Home / <span className="font-bold">Customer's Misconducts</span>
         </p>
-        <div className="w-52 h-12 absolute top-2 right-4">
-          <PageSearchForm
-            placeholder="Search misconducts"
-            label="Search customer orders"
-          />
-        </div>
+        <div></div>
         {isLoading ? (
           <section className="page-loader-height flex justify-center items-center">
             <div className="h-10 w-10">
@@ -118,6 +119,12 @@ export default function CustomerMisconductsPage() {
                 </ul>
               </section>
             )}
+            <Pagination
+              page={page}
+              data={data}
+              setPage={(n) => navigate(`?page=${n}&query=${query}`)}
+              to={0}
+            />
           </>
         )}
       </main>

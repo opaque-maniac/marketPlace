@@ -8,14 +8,18 @@ export const sendNewMisconduct = async ({
   misconduct,
   action,
   description,
+  id,
+  role,
 }: {
   email: string;
   misconduct: string;
   action: string;
   description: string;
+  id: string;
+  role: "staff" | "customer" | "seller";
 }) => {
   try {
-    const url = `${apiProtocol}://${apiHost}/staff/misconducts`;
+    const url = `${apiProtocol}://${apiHost}/staff/${role}${role != "staff" ? "s" : ""}/${id}/misconducts`;
     const token = getAccessToken();
 
     if (!token) {
@@ -48,6 +52,7 @@ export const sendNewMisconduct = async ({
       message: string;
       misconduct: Misconduct;
     };
+    console.log("New Misconduct:\n ", data);
     return data;
   } catch (e) {
     if (e instanceof Error) {

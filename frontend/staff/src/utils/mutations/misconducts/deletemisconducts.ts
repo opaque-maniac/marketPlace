@@ -1,18 +1,11 @@
-import { QueryFunction } from "@tanstack/react-query";
-import { ErrorResponse, SuccessCustomerCartResponse } from "../../types";
-import { responseError, tokenError } from "../../errors";
 import { getAccessToken } from "../../cookies";
+import { responseError, tokenError } from "../../errors";
 import { apiHost, apiProtocol } from "../../generics";
+import { ErrorResponse } from "../../types";
 
-// Fetch many products
-export const fetchCustomerCart: QueryFunction<
-  SuccessCustomerCartResponse,
-  ["customer-cart", string, number, number]
-> = async ({ queryKey }) => {
+export const deleteMisconduct = async (id: string) => {
   try {
-    const [, id, page, limit] = queryKey;
-    const url = `${apiProtocol}://${apiHost}/staff/customers/${id}/cart?page=${page}&limit=${limit}`;
-
+    const url = `${apiProtocol}://${apiHost}/staff/misconducts/${id}`;
     const token = getAccessToken();
 
     if (!token) {
@@ -20,7 +13,7 @@ export const fetchCustomerCart: QueryFunction<
     }
 
     const options = {
-      method: "GET",
+      method: "DELETE",
       headers: {
         Authorization: `Bearer ${token}`,
         "Content-Type": "application/json",
@@ -40,7 +33,11 @@ export const fetchCustomerCart: QueryFunction<
       }
     }
 
-    return response.json() as Promise<SuccessCustomerCartResponse>;
+    const data = (await response.json()) as {
+      message: string;
+    };
+    console.log("New Misconduct:\n ", data);
+    return data;
   } catch (e) {
     if (e instanceof Error) {
       throw new Error(e.message);

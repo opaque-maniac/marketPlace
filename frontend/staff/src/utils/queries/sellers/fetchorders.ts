@@ -1,17 +1,21 @@
 import { QueryFunction } from "@tanstack/react-query";
-import { ErrorResponse, SuccessCustomerCartResponse } from "../../types";
-import { responseError, tokenError } from "../../errors";
+import { SuccessOrdersResponse } from "../../types";
 import { getAccessToken } from "../../cookies";
+import { responseError, tokenError } from "../../errors";
+import { ErrorResponse } from "react-router-dom";
 import { apiHost, apiProtocol } from "../../generics";
 
-// Fetch many products
-export const fetchCustomerCart: QueryFunction<
-  SuccessCustomerCartResponse,
-  ["customer-cart", string, number, number]
+export const fetchSellerOrders: QueryFunction<
+  SuccessOrdersResponse,
+  ["seller-orders", string, number, number, string, string]
 > = async ({ queryKey }) => {
   try {
-    const [, id, page, limit] = queryKey;
-    const url = `${apiProtocol}://${apiHost}/staff/customers/${id}/cart?page=${page}&limit=${limit}`;
+    const [, id, page, limit, query, status] = queryKey;
+    let url = `${apiProtocol}://${apiHost}/staff/sellers/${id}/orders?page=${page}&limit=${limit}&query=${query}`;
+
+    if (status) {
+      url += `&status=${status}`;
+    }
 
     const token = getAccessToken();
 
@@ -23,7 +27,6 @@ export const fetchCustomerCart: QueryFunction<
       method: "GET",
       headers: {
         Authorization: `Bearer ${token}`,
-        "Content-Type": "application/json",
       },
     };
 
@@ -40,7 +43,7 @@ export const fetchCustomerCart: QueryFunction<
       }
     }
 
-    return response.json() as Promise<SuccessCustomerCartResponse>;
+    return response.json() as Promise<SuccessOrdersResponse>;
   } catch (e) {
     if (e instanceof Error) {
       throw new Error(e.message);

@@ -10,6 +10,7 @@ import { Response, NextFunction } from "express";
 import prisma from "../../utils/db";
 import { AuthenticatedRequest, SellerUpdateStaffRequest } from "../../types";
 import { serverError } from "../../utils/globals";
+import { ORDER_STATUS } from "@prisma/client";
 
 // Function to fetch sellers
 export const fetchSellers = async (
@@ -382,6 +383,81 @@ export const deleteSeller = async (
     res.status(203).json({
       message: "Seller deleted successfully",
       seller,
+    });
+  } catch (e) {
+    if (e instanceof Error) {
+      next(e);
+      return;
+    }
+    next(serverError);
+  }
+};
+
+export const fetchSellerOrders = async (
+  req: AuthenticatedRequest,
+  res: Response,
+  next: NextFunction,
+): Promise<void> => {
+  try {
+    const { id } = req.params;
+    const page = req.query.page ? parseInt(req.query.page as string) : 1;
+    const limit = req.query.limit ? parseInt(req.query.limit as string) : 10;
+    const query = req.query.query ? (req.query.query as string) : "";
+    const status = req.query.status
+      ? (req.query.status as ORDER_STATUS)
+      : undefined;
+
+    const seller = await prisma.seller.findUnique({
+      where: {
+        id,
+      },
+    });
+
+    if (!seller) {
+      throw new Error("Seller not found");
+    }
+
+    const orders = await prisma.order.findMany({
+      where: query
+        ? {
+            status,
+            sellerID: seller.id,
+            OR: [
+              {
+                product: {
+                  name: {
+                    contains: query,
+                    mode: "insensitive",
+                  },
+                },
+              },
+            ],
+          }
+        : {
+            status,
+            sellerID: seller.id,
+          },
+      include: {
+        product: {
+          include: {
+            images: true,
+          },
+        },
+      },
+      take: limit + 1,
+      skip: (page - 1) * limit,
+    });
+
+    const hasNext = orders.length > limit;
+
+    if (hasNext) {
+      orders.pop();
+    }
+
+    res.status(200).json({
+      message: "Fetched seller orders",
+      orders,
+      hasNext,
     });
   } catch (e) {
     if (e instanceof Error) {

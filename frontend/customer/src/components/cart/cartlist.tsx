@@ -25,10 +25,10 @@ const CartList = ({ cartItems, color, refetch }: Props) => {
     <div className="h-full w-full">
       {cartItems.length > 0 ? (
         <ul
-          className={`flex h-full flex-wrap md:flex-row flex-col gap-10 md:pl-10 lg:p-0 justify-evenly items-center`}
+            className="grid xl:grid-cols-2 grid-cols-1"
         >
           {cartItems.map((item) => (
-            <li key={item.id}>
+              <li key={item.id} className="mx-auto md:mb-8 mb-6">
               <Suspense fallback={<Fallback />}>
                 <CartItemComponent cartItem={item} refetch={refetch} />
               </Suspense>

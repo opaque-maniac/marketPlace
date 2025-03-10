@@ -1,24 +1,20 @@
 import { useQuery } from "@tanstack/react-query";
 import Transition from "../../components/transition";
-import { useNavigate, useParams } from "react-router-dom";
+import { Link, useNavigate, useParams } from "react-router-dom";
 import { useContext, useEffect } from "react";
 import { ErrorContext, ShowErrorContext } from "../../utils/errorContext";
 import { Helmet } from "react-helmet";
 import PageLoader from "../../components/pageloader";
 import { errorHandler } from "../../utils/errorHandler";
 import { fetchCustomer } from "../../utils/queries/customers/fetchcustomer";
-import PageSearchForm from "../../components/customer-cart/searchform";
-import ManageQueryStr from "../../utils/querystr";
+import NewMisconductForm from "../../components/new-misconducts/form";
+import NewMisconductPageWraper from "../../components/misconductwrapper";
 
-const CustomerOrdersPage = () => {
+function CustomerNewMisconductPage() {
   const { id } = useParams();
   const navigate = useNavigate();
   const [, setErr] = useContext(ShowErrorContext);
   const [, setError] = useContext(ErrorContext);
-
-  const params = new URLSearchParams(window.location.search);
-  const _page = params.get("page");
-  const _query = params.get("query");
 
   useEffect(() => {
     if (!id) {
@@ -26,13 +22,8 @@ const CustomerOrdersPage = () => {
       return;
     }
 
-    ManageQueryStr(navigate, _page, _query);
-
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []);
-
-  const page = Number(_page) || 1;
-  const query = _page || "";
 
   const { isLoading, isError, isSuccess, data, error } = useQuery({
     queryFn: fetchCustomer,
@@ -61,31 +52,43 @@ const CustomerOrdersPage = () => {
         <meta name="googlebot" content="noindex, nofollow" />
         <meta name="google" content="nositelinkssearchbox" />
       </Helmet>
-      <main role="main">
-        {isLoading || !customer ? (
-          <PageLoader />
-        ) : (
-          <div>
-            <div>
-              <h3 className="text-lg">
-                <span className="font-bold">
-                  {customer.firstName} {customer.lastName}{" "}
-                </span>{" "}
-                Cart Page
-              </h3>
-              <div>
-                <PageSearchForm
-                  placeholder="Search Order"
-                  label="Search orders for a specific product"
-                />
-              </div>
-            </div>
-            <FetchCart id={customer.id} page={page} query={query} />
+      {isLoading || !customer ? (
+        <PageLoader />
+      ) : (
+        <main role="main" className="relative pt-12">
+          <p className="absolute top-4 left-4">
+            Home / <span className="font-bold">New Misconduct</span>
+          </p>
+          <div className="pt-4 pb-4">
+            <h3 className="text-center">
+              New Misconduct for customer{" "}
+              <span className="font-bold">
+                {customer.firstName} {customer.lastName}
+              </span>
+            </h3>
           </div>
-        )}
-      </main>
+          <section className="border md:w-[420px] w-[350px] py-4 mx-auto">
+            <NewMisconductForm
+              email={customer.email}
+              id={customer.id}
+              type="customer"
+            />
+          </section>
+          <div className="flex justify-center pt-4">
+            <Link to={`/customers/${customer.id}`} className="underline">
+              Go back to profile
+            </Link>
+          </div>
+        </main>
+      )}
     </Transition>
   );
-};
+}
 
-export default CustomerOrdersPage;
+export default function CustomerNewMisconductPageWrapper() {
+  return (
+    <NewMisconductPageWraper>
+      <CustomerNewMisconductPage />
+    </NewMisconductPageWraper>
+  );
+}

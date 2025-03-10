@@ -17,8 +17,8 @@ import {
   updateStaff,
 } from "../handlers/staff";
 import {
-  createCustomerMisconduct,
   fetchCustomerMisconducts,
+  newMisconduct,
 } from "../handlers/misconducts";
 
 const router = Router();
@@ -60,7 +60,7 @@ router.post(
   body("action")
     .isString()
     .isIn(["WARN_USER", "DISABLE_PROFILE", "DELETE_PROFILE"]),
-  createCustomerMisconduct,
+  newMisconduct,
 );
 
 // delete staff

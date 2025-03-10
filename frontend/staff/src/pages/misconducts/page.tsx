@@ -1,7 +1,7 @@
 import { useQuery } from "@tanstack/react-query";
 import Transition from "../../components/transition";
-import { useNavigate } from "react-router-dom";
-import { Suspense, useContext, useEffect } from "react";
+import { Link, useNavigate } from "react-router-dom";
+import { lazy, Suspense, useContext, useEffect } from "react";
 import { ErrorContext, ShowErrorContext } from "../../utils/errorContext";
 import ArrowLeft from "../../components/icons/arrowleft";
 import ArrowRight from "../../components/icons/arrowright";
@@ -12,21 +12,26 @@ import Loader from "../../components/loader";
 import { fetchMisconducts } from "../../utils/queries/misconducts/fetchmisconducts";
 import ManageQueryStr from "../../utils/querystr";
 import MisconductsFilterForm from "../../components/misconducts/filterform";
+import RegularrefetchQueryclient from "../../components/regularrefetchQueryclient";
 
-const Fallback = () => {
+const MisconductItem = lazy(
+  () => import("../../components/misconducts/misconduct"),
+);
+
+const Fallback = ({ misconductID }: { misconductID: string }) => {
   return (
-    <div
-      role="banner"
-      className="flex justify-center items-center h-350 w-270 border pt-1"
+    <Link
+      className="md:h-[140px] h-[320px] md:w-[450px] w-[200px] border border-black flex justify-center items-center"
+      to={`/misconducts/${misconductID}`}
     >
-      <div className="h-8 w-8">
+      <div className="w-8 h-8">
         <Loader color="#000" />
       </div>
-    </div>
+    </Link>
   );
 };
 
-export default function MisconductsPage() {
+function MisconductsPage() {
   const [, setError] = useContext(ErrorContext);
   const navigate = useNavigate();
   const [, setErr] = useContext(ShowErrorContext);
@@ -108,7 +113,7 @@ export default function MisconductsPage() {
                   className="h-full flex justify-center items-center"
                 >
                   <div>
-                    <p className="text-xl font-semibold">
+                    <p className="text-xl font-semibold text-center">
                       No Misconducts Found {queryStr && `For ${queryStr}`}{" "}
                       {action && `With Action ${action}`}
                     </p>
@@ -119,11 +124,13 @@ export default function MisconductsPage() {
                   style={{ minHeight: "calc(100vh - 1.4rem )" }}
                   className="h-full"
                 >
-                  <ul className="grid xl:grid-cols-4 lg:grid-cols-3 md:grid-cols-2 grid-cols-1">
+                  <ul className="grid md:grid-cols-2 grid-cols-1">
                     {misconducts.map((misconduct) => (
                       <li key={misconduct.id} className="mx-auto md:mb-8 mb-6">
-                        <Suspense fallback={<Fallback />}>
-                          {misconduct.id}
+                        <Suspense
+                          fallback={<Fallback misconductID={misconduct.id} />}
+                        >
+                          <MisconductItem misconduct={misconduct} />
                         </Suspense>
                       </li>
                     ))}
@@ -156,5 +163,13 @@ export default function MisconductsPage() {
         </section>
       </main>
     </Transition>
+  );
+}
+
+export default function MisconductsPageWrapper() {
+  return (
+    <RegularrefetchQueryclient>
+      <MisconductsPage />
+    </RegularrefetchQueryclient>
   );
 }

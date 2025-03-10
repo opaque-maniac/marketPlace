@@ -7,20 +7,36 @@ interface Props {
   url: string;
   label: string;
   callback: () => void;
-  other?: string;
 }
 
-const NavItem = ({ placeholder, url, label, callback, other }: Props) => {
+const NavItem = ({ placeholder, url, label, callback }: Props) => {
   const navigate = useNavigate();
   const [clicked, setClicked] = useState<boolean>(false);
+  let other: undefined | string;
+
+  if (url.substring(0, 7) === "/orders") {
+    other = "status";
+  } else if (url.substring(0, 10) === "/customers") {
+    other = "active";
+  } else if (url.substring(0, 8) === "/sellers") {
+    other = "active";
+  } else if (url.substring(0, 6) === "/staff") {
+    other = "active";
+  } else if (url.substring(0, 11) === "/complaints") {
+    other = "resolved";
+  } else if (url.substring(0, 12) === "/misconducts") {
+    other = "action";
+  }
 
   const clickHandler: MouseEventHandler<HTMLButtonElement> = (e) => {
     e.preventDefault();
     if (e.target instanceof HTMLAnchorElement) {
       let path = `${url}?page=1&query=`;
+
       if (other) {
         path += `&${other}=`;
       }
+
       navigate(path);
       setTimeout(() => {
         callback();
@@ -43,7 +59,9 @@ const NavItem = ({ placeholder, url, label, callback, other }: Props) => {
     let path = `${url}?page=1&query=${encoded}`;
 
     if (other) {
-      path += `&${other}=`;
+      const otherValue =
+        new URLSearchParams(window.location.search).get(other) || "";
+      path += `&${other}=${otherValue}`;
     }
 
     navigate(path);

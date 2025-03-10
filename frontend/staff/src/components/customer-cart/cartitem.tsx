@@ -1,10 +1,28 @@
 import { apiHost, apiProtocol } from "../../utils/generics";
 import { CartItem } from "../../utils/types";
-import BinIcon from "../icons/bin";
+import { MouseEventHandler } from "react";
+import DeleteCartItemButton from "./deletecartitembutton";
 
 interface Props {
   cartItem: CartItem;
   refetch: () => void;
+}
+
+function ProductName({ name, id }: { name: string; id: string }) {
+  const handleClick: MouseEventHandler<HTMLButtonElement> = (e) => {
+    e.preventDefault();
+    window.open(`${window.location.origin}/products/${id}`, "_blank");
+  };
+
+  return (
+    <button
+      aria-label="Visit product"
+      onClick={handleClick}
+      className="font-semibold underline"
+    >
+      {name}
+    </button>
+  );
 }
 
 const CartItemComponent = ({ cartItem, refetch }: Props) => {
@@ -17,23 +35,20 @@ const CartItemComponent = ({ cartItem, refetch }: Props) => {
           className="h-32 w-32"
         />
       </div>
-      <div className="md:w-auto w-20">
-        <h2 className="font-semibold">{cartItem.product.name}</h2>
-        <p>
-          {cartItem.product.sellingPrice.toLocaleString("en-US", {
-            style: "currency",
-            currency: "USD",
-            maximumFractionDigits: 2,
-          })}
-        </p>
-        <p>Quantity: {cartItem.quantity}</p>
+      <div className="md:w-auto w-20 h-32 flex flex-col justify-between items-start">
         <div>
-          <button className="flex justify-start items-center gap-[2px] w-20 h-10 bg-red-500 text-white px-2">
-            <div className="h-8 w-8">
-              <BinIcon />
-            </div>
-            <p>Delete</p>
-          </button>
+          <ProductName name={cartItem.product.name} id={cartItem.productID} />
+          <p>
+            {cartItem.product.sellingPrice.toLocaleString("en-US", {
+              style: "currency",
+              currency: "USD",
+              maximumFractionDigits: 2,
+            })}
+          </p>
+          <p>Quantity: {cartItem.quantity}</p>
+        </div>
+        <div className="pt-2">
+          <DeleteCartItemButton id={cartItem.id} refetch={refetch} />
         </div>
       </div>
     </div>

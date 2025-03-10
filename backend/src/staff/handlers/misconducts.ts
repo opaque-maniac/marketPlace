@@ -2,8 +2,7 @@ import { Response, NextFunction } from "express";
 import { AuthenticatedRequest, NewMisconductRequest } from "../../types";
 import { serverError } from "../../utils/globals";
 import prisma from "../../utils/db";
-import { RESPONSE } from "@prisma/client";
-import { addToWishlist } from "../../customer/handlers/wishlist";
+import { Customer, Misconduct, RESPONSE, Seller, Staff } from "@prisma/client";
 
 const parseResponse = (resp: string) => {
   switch (resp) {
@@ -83,23 +82,29 @@ export const fetchMisconducts = async (
                   mode: "insensitive",
                 },
               },
+              {
+                personel: {
+                  firstName: {
+                    contains: query,
+                    mode: "insensitive",
+                  },
+                },
+              },
+              {
+                personel: {
+                  firstName: {
+                    contains: query,
+                    mode: "insensitive",
+                  },
+                },
+              },
             ],
           }
         : {
             response,
           },
       include: {
-        seller: {
-          include: {
-            image: true,
-          },
-        },
-        staff: {
-          include: {
-            image: true,
-          },
-        },
-        customer: {
+        personel: {
           include: {
             image: true,
           },
@@ -236,64 +241,6 @@ export const deleteMisconduct = async (
   }
 };
 
-export const createCustomerMisconduct = async (
-  req: NewMisconductRequest,
-  res: Response,
-  next: NextFunction,
-): Promise<void> => {
-  try {
-    const { user } = req;
-    const { id } = req.params;
-    const { misconduct, description, action } = req.body;
-
-    if (!user) {
-      throw new Error("User not found");
-    }
-
-    const personel = await prisma.staff.findUnique({
-      where: {
-        id: user.id,
-      },
-    });
-
-    if (!personel) {
-      throw new Error("User not found");
-    }
-
-    const customer = await prisma.customer.findUnique({
-      where: {
-        id,
-      },
-    });
-
-    if (!customer) {
-      throw new Error("Customer not found");
-    }
-
-    const newMisconduct = await prisma.misconduct.create({
-      data: {
-        personelID: personel.id,
-        misconduct,
-        description,
-        response: action,
-        customerID: customer.id,
-        userEmail: customer.email,
-      },
-    });
-
-    res.status(201).json({
-      message: "Created customer misconduct",
-      newMisconduct,
-    });
-  } catch (e) {
-    if (e instanceof Error) {
-      next(e);
-      return;
-    }
-    next(serverError);
-  }
-};
-
 export const fetchCustomerMisconducts = async (
   req: AuthenticatedRequest,
   res: Response,
@@ -303,10 +250,7 @@ export const fetchCustomerMisconducts = async (
     const { id } = req.params;
     const page = req.query.page ? parseInt(req.query.page as string) : 1;
     const limit = req.query.limit ? parseInt(req.query.limit as string) : 10;
-    const query = req.query.query ? (req.query.query as string) : "";
-    const response = req.query.response
-      ? parseResponse(req.query.status as string)
-      : undefined;
+    const query = req.query.query ? (req.query.query as string) : undefined;
 
     const customer = await prisma.customer.findUnique({
       where: {
@@ -318,48 +262,54 @@ export const fetchCustomerMisconducts = async (
       throw new Error("Customer not found");
     }
 
-    const misconducts = await prisma.misconduct.findMany({
-      where: {
-        response,
-        customerID: customer.id,
-        OR: [
-          {
-            id: query,
-          },
-          {
-            misconduct: {
-              contains: query,
-              mode: "insensitive",
+    let misconducts: Misconduct[] = [];
+
+    if (!query) {
+      misconducts = await prisma.misconduct.findMany({
+        where: {
+          customerID: customer.id,
+        },
+        include: {
+          personel: {
+            include: {
+              image: true,
             },
-          },
-          {
-            personel: {
-              firstName: {
-                contains: query,
-                mode: "insensitive",
-              },
-            },
-          },
-          {
-            personel: {
-              lastName: {
-                contains: query,
-                mode: "insensitive",
-              },
-            },
-          },
-        ],
-      },
-      include: {
-        customer: {
-          include: {
-            image: true,
           },
         },
-      },
-      take: limit + 1,
-      skip: (page - 1) * limit,
-    });
+        take: limit + 1,
+        skip: (page - 1) * limit,
+      });
+    } else {
+      misconducts = await prisma.misconduct.findMany({
+        where: {
+          customerID: customer.id,
+          OR: [
+            {
+              personel: {
+                firstName: {
+                  contains: query,
+                  mode: "insensitive",
+                },
+              },
+            },
+            {
+              personel: {
+                lastName: query,
+              },
+            },
+          ],
+        },
+        include: {
+          personel: {
+            include: {
+              image: true,
+            },
+          },
+        },
+        take: limit + 1,
+        skip: (page - 1) * limit,
+      });
+    }
 
     const hasNext = misconducts.length > limit;
 
@@ -371,64 +321,6 @@ export const fetchCustomerMisconducts = async (
       message: "Misconducts found",
       misconducts,
       hasNext,
-    });
-  } catch (e) {
-    if (e instanceof Error) {
-      next(e);
-      return;
-    }
-    next(serverError);
-  }
-};
-
-export const createSellerMisconduct = async (
-  req: NewMisconductRequest,
-  res: Response,
-  next: NextFunction,
-): Promise<void> => {
-  try {
-    const { user } = req;
-    const { id } = req.params;
-    const { misconduct, description, action } = req.body;
-
-    if (!user) {
-      throw new Error("User not found");
-    }
-
-    const personel = await prisma.staff.findUnique({
-      where: {
-        id: user.id,
-      },
-    });
-
-    if (!personel) {
-      throw new Error("User not found");
-    }
-
-    const seller = await prisma.customer.findUnique({
-      where: {
-        id,
-      },
-    });
-
-    if (!seller) {
-      throw new Error("Seller not found");
-    }
-
-    const newMisconduct = await prisma.misconduct.create({
-      data: {
-        personelID: personel.id,
-        misconduct,
-        description,
-        response: action,
-        sellerID: seller.id,
-        userEmail: seller.email,
-      },
-    });
-
-    res.status(201).json({
-      message: "Created seller misconduct",
-      newMisconduct,
     });
   } catch (e) {
     if (e instanceof Error) {
@@ -501,6 +393,11 @@ export const fetchSellerMisconducts = async (
             image: true,
           },
         },
+        personel: {
+          include: {
+            image: true,
+          },
+        },
       },
       take: limit + 1,
       skip: (page - 1) * limit,
@@ -516,72 +413,6 @@ export const fetchSellerMisconducts = async (
       message: "Misconducts found",
       misconducts,
       hasNext,
-    });
-  } catch (e) {
-    if (e instanceof Error) {
-      next(e);
-      return;
-    }
-    next(serverError);
-  }
-};
-
-export const createStaffMisconduct = async (
-  req: NewMisconductRequest,
-  res: Response,
-  next: NextFunction,
-): Promise<void> => {
-  try {
-    const { user } = req;
-    const { id } = req.params;
-    const { misconduct, description, action } = req.body;
-
-    if (!user) {
-      throw new Error("User not found");
-    }
-
-    const personel = await prisma.staff.findUnique({
-      where: {
-        id: user.id,
-      },
-    });
-
-    if (!personel) {
-      throw new Error("User not found");
-    }
-
-    if (personel.id === id) {
-      throw new Error("Unauthorized");
-    }
-
-    const staff = await prisma.staff.findUnique({
-      where: {
-        id,
-      },
-    });
-
-    if (!staff) {
-      throw new Error("Staff not found");
-    }
-
-    if (staff.id === personel.id) {
-      throw new Error("Unauthorized");
-    }
-
-    const newMisconduct = await prisma.misconduct.create({
-      data: {
-        personelID: personel.id,
-        misconduct,
-        description,
-        response: action,
-        staffID: staff.id,
-        userEmail: staff.email,
-      },
-    });
-
-    res.status(201).json({
-      message: "Created staff misconduct",
-      newMisconduct,
     });
   } catch (e) {
     if (e instanceof Error) {
@@ -687,34 +518,51 @@ export const newMisconduct = async (
   try {
     const { email, misconduct, description, action } = req.body;
     const { user } = req;
+    const profileType = req.query.profile
+      ? (req.query.profile as string)
+      : undefined;
 
     if (!user) {
       throw new Error("User not found");
     }
 
-    const seller = await prisma.seller.findUnique({
-      where: {
-        email,
-      },
-    });
+      const sellers = await prisma.seller.findMany({
+          where: {}
+      })
 
-    const customer = await prisma.customer.findUnique({
-      where: {
-        email,
-      },
-    });
+    let seller: Seller | null = null;
+    let customer: Customer | null = null;
+    let staff: Staff | null = null;
 
-    const staff = await prisma.customer.findUnique({
-      where: {
-        email,
-      },
-    });
+    if (profileType === "seller" || typeof profileType === undefined) {
+      seller = await prisma.seller.findUnique({
+        where: {
+          email,
+        },
+      });
+    }
+
+    if (profileType === "customer" || typeof profileType === "undefined") {
+      customer = await prisma.customer.findUnique({
+        where: {
+          email,
+        },
+      });
+    }
+
+    if (profileType === "staff" || typeof profileType === "undefined") {
+      staff = await prisma.staff.findUnique({
+        where: {
+          email,
+        },
+      });
+    }
 
     const _misconduct = await prisma.misconduct.create({
       data: {
-        staffID: staff?.id || undefined,
-        customerID: customer?.id || undefined,
-        sellerID: seller?.id || undefined,
+        staffID: staff?.id,
+        customerID: customer?.id,
+        sellerID: seller?.id,
         misconduct,
         description,
         response: action,

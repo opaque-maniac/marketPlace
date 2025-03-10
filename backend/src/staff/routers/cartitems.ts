@@ -3,7 +3,7 @@ import {
   allowIfAuthenticated,
   isStaff,
 } from "../../middleware/auth-middleware";
-import { fetchCartItem, updateCartItem } from "../handlers/cart";
+import { deleteCartItem, fetchCartItem } from "../handlers/cart";
 
 const router = Router();
 
@@ -14,7 +14,7 @@ router.use(isStaff);
 // fetch cart item
 router.get("/:id", fetchCartItem);
 
-// update cart item
-router.put("/:id", updateCartItem);
+// delete cart item
+router.delete("/:id", deleteCartItem);
 
 export default router;

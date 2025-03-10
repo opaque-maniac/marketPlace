@@ -39,11 +39,11 @@ export default function HeaderMenuButton() {
       >
         <MenuIcon />
       </button>
-      {isMenuOpen === true ? (
+      {isMenuOpen && (
         <Modal callback={closeCallback}>
           <Navigation callback={closeCallback} />
         </Modal>
-      ) : null}
+      )}
     </>
   );
 }

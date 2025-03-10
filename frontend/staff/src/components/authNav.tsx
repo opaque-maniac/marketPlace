@@ -7,7 +7,6 @@ type Data = {
   placeholder: string;
   label: string;
   url: string;
-  other?: string;
 };
 
 const data: Data[] = [
@@ -20,31 +19,26 @@ const data: Data[] = [
     placeholder: "Find Customer",
     label: "Customers",
     url: "/customers",
-    other: "acitve",
   },
   {
     placeholder: "Find Seller",
-    label: "Seller",
+    label: "Sellers",
     url: "/sellers",
-    other: "acitve",
   },
   {
     placeholder: "Find Staff",
     label: "Staff",
     url: "/staff",
-    other: "acitve",
   },
   {
     placeholder: "Order ID",
     label: "Orders",
     url: "/orders",
-    other: "status",
   },
   {
     placeholder: "Find Complaint",
     label: "Complaints",
     url: "/complaints",
-    other: "resolved",
   },
   {
     placeholder: "Find Misconduct",
@@ -79,17 +73,6 @@ const AuthNavigation = ({ callback }: Props) => {
       </div>
       <nav>
         <ul>
-          {data.map((item, idx) => (
-            <li key={idx}>
-              <NavItem
-                callback={callback}
-                placeholder={item.placeholder}
-                url={item.url}
-                label={item.label}
-                other={item.other ?? undefined}
-              />
-            </li>
-          ))}
           <li>
             <Link
               onClick={(e) => {
@@ -97,14 +80,24 @@ const AuthNavigation = ({ callback }: Props) => {
                 setTimeout(() => {
                   callback();
                 }, 10);
-                navigate("/new-misconduct");
+                navigate("/");
               }}
-              to={"/new-misconduct"}
-              className="flex items-center bg-gray-100 h-9 mb-2 pl-2 w-full text-start mt-2"
+              to={"/"}
+              className="flex items-center bg-gray-100 h-9 mt-2 pl-2 w-full text-start"
             >
-              <span>New Misconduct</span>
+              <span>Home</span>
             </Link>
           </li>
+          {data.map((item, idx) => (
+            <li key={idx}>
+              <NavItem
+                callback={callback}
+                placeholder={item.placeholder}
+                url={item.url}
+                label={item.label}
+              />
+            </li>
+          ))}
           <li>
             <Link
               onClick={(e) => {

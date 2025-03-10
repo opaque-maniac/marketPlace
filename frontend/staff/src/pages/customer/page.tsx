@@ -17,6 +17,8 @@ import CloseIcon from "../../components/icons/closeIcon";
 import CartIcon from "../../components/icons/cart";
 import CardIcon from "../../components/icons/card";
 import HeartIcon from "../../components/icons/heart";
+import NotAllowedIcon from "../../components/icons/notallowed";
+import PenIcon from "../../components/icons/pen";
 
 const CustomerPage = () => {
   const { id } = useParams();
@@ -33,7 +35,7 @@ const CustomerPage = () => {
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []);
 
-  const { isLoading, refetch, isError, isSuccess, data, error } = useQuery({
+  const { isLoading, isError, isSuccess, data, error } = useQuery({
     queryFn: fetchCustomer,
     queryKey: ["customer", id as string],
   });
@@ -60,11 +62,14 @@ const CustomerPage = () => {
         <meta name="googlebot" content="noindex, nofollow" />
         <meta name="google" content="nositelinkssearchbox" />
       </Helmet>
-      <main role="main">
-        {isLoading || !customer ? (
-          <PageLoader />
-        ) : (
-          <div className="h-full w-full flex justify-start xl:justify-center items-center md:items-start xl:flex-row flex-col gap-4 pt-4">
+      {isLoading || !customer ? (
+        <PageLoader />
+      ) : (
+        <main role="main" className="relative pt-12">
+          <p className="absolute top-4 left-4">
+            Home / <span className="font-bold">Customer Profile</span>
+          </p>
+          <div className="h-full w-full flex justify-start xl:justify-center items-center xl:items-start xl:flex-row flex-col gap-4 pt-4">
             <section className="w-[300px] h-[300px] md:w-6/12">
               <img
                 src={
@@ -146,6 +151,15 @@ const CustomerPage = () => {
                       </div>
                       <p>{customer.phone ?? "Not provided"}</p>{" "}
                     </li>
+                    <li className="flex justify-start items-center gap-2">
+                      <Link
+                        to={`/customers/${customer.id}/misconducts`}
+                        className="block w-7 h-7 bg-black text-white rounded p-[2px]"
+                      >
+                        <NotAllowedIcon />
+                      </Link>
+                      <p>Misconducts</p>{" "}
+                    </li>
                   </ul>
                 </div>
                 <div>
@@ -177,6 +191,15 @@ const CustomerPage = () => {
                       </Link>
                       <p>Wishlist</p>{" "}
                     </li>
+                    <li className="flex justify-start items-center gap-2">
+                      <Link
+                        to={`/customers/${customer.id}/misconducts/new`}
+                        className="block w-7 h-7 bg-black text-white rounded p-[2px]"
+                      >
+                        <PenIcon />
+                      </Link>
+                      <p>New Misconduct</p>{" "}
+                    </li>
                   </ul>
                 </div>
               </div>
@@ -196,8 +219,8 @@ const CustomerPage = () => {
               </div>
             </section>
           </div>
-        )}
-      </main>
+        </main>
+      )}
     </Transition>
   );
 };

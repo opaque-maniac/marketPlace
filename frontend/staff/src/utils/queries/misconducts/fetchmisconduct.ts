@@ -1,17 +1,17 @@
 import { QueryFunction } from "@tanstack/react-query";
-import { ErrorResponse, SuccessCustomerCartResponse } from "../../types";
+import { ErrorResponse, SuccessMisconductResponse } from "../../types";
 import { responseError, tokenError } from "../../errors";
 import { getAccessToken } from "../../cookies";
 import { apiHost, apiProtocol } from "../../generics";
 
-// Fetch many products
-export const fetchCustomerCart: QueryFunction<
-  SuccessCustomerCartResponse,
-  ["customer-cart", string, number, number]
+export const fetchMisconduct: QueryFunction<
+  SuccessMisconductResponse,
+  ["misconduct", string]
 > = async ({ queryKey }) => {
   try {
-    const [, id, page, limit] = queryKey;
-    const url = `${apiProtocol}://${apiHost}/staff/customers/${id}/cart?page=${page}&limit=${limit}`;
+    const [, id] = queryKey;
+
+    let url = `${apiProtocol}://${apiHost}/staff/misconducts/${id}`;
 
     const token = getAccessToken();
 
@@ -40,7 +40,7 @@ export const fetchCustomerCart: QueryFunction<
       }
     }
 
-    return response.json() as Promise<SuccessCustomerCartResponse>;
+    return response.json() as Promise<SuccessMisconductResponse>;
   } catch (e) {
     if (e instanceof Error) {
       throw new Error(e.message);

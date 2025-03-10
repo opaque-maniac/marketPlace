@@ -376,3 +376,14 @@ export interface SuccessMisconductsResponse {
   misconducts: Misconduct[];
   hasNext: boolean;
 }
+
+export interface SuccessMisconductResponse {
+  message: string;
+  misconduct: Misconduct;
+}
+
+export interface SuccessSellersProductsResponse {
+  message: string;
+  products: Product[];
+  hasNext: boolean;
+}

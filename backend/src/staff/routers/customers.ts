@@ -17,8 +17,8 @@ import {
 import { fetchUserCart } from "../handlers/cart";
 import { fetchUserWishlist } from "../handlers/wishlist";
 import {
-  createCustomerMisconduct,
   fetchCustomerMisconducts,
+  newMisconduct,
 } from "../handlers/misconducts";
 
 const router = Router();
@@ -68,7 +68,7 @@ router.post(
   body("action")
     .isString()
     .isIn(["WARN_USER", "DISABLE_PROFILE", "DELETE_PROFILE"]),
-  createCustomerMisconduct,
+  newMisconduct,
 );
 
 export default router;

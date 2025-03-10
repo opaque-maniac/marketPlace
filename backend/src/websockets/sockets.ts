@@ -7,7 +7,7 @@ let io: Server;
 export const initializeSocketServer = (server: any) => {
   io = new Server(server, {
     cors: {
-      origin: process.env.CLIENT_URL || "http://localhost:5173",
+      origin: ["http://localhost:5173", "http://localhost:5174"],
     },
   });
 
@@ -59,6 +59,7 @@ export const newCartItemSocket = async (userID: string) => {
 
     getIO().to(userID).emit("cartCount", { count });
   } catch (e) {
+    console.log("Error sending cart count", e);
     getIO().to(userID).emit("error", { message: "Error happened" });
   }
 };

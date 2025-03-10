@@ -12,6 +12,7 @@ import { errorHandler } from "../../utils/errorHandler";
 import Loader from "../../components/loader";
 import ManageQueryStr from "../../utils/querystr";
 import ProfileActiveSelectForm from "../../components/activequeryform";
+import RegularrefetchQueryclient from "../../components/regularrefetchQueryclient";
 
 const Customer = lazy(() => import("../../components/customers/customer"));
 
@@ -28,7 +29,7 @@ const Fallback = () => {
   );
 };
 
-const CustomersPage = () => {
+function CustomersPage() {
   const [, setError] = useContext(ErrorContext);
   const navigate = useNavigate();
   const [, setErr] = useContext(ShowErrorContext);
@@ -165,6 +166,12 @@ const CustomersPage = () => {
       </main>
     </Transition>
   );
-};
+}
 
-export default CustomersPage;
+export default function CustomersPageWrapper() {
+  return (
+    <RegularrefetchQueryclient>
+      <CustomersPage />
+    </RegularrefetchQueryclient>
+  );
+}

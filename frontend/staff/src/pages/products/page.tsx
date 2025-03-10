@@ -1,7 +1,7 @@
 import { useQuery } from "@tanstack/react-query";
 import Transition from "../../components/transition";
-import { useNavigate } from "react-router-dom";
-import { useContext, useEffect } from "react";
+import { Link, useNavigate } from "react-router-dom";
+import { lazy, Suspense, useContext, useEffect } from "react";
 import { ErrorContext, ShowErrorContext } from "../../utils/errorContext";
 import ArrowLeft from "../../components/icons/arrowleft";
 import ArrowRight from "../../components/icons/arrowright";
@@ -9,8 +9,23 @@ import { Helmet } from "react-helmet";
 import PageLoader from "../../components/pageloader";
 import { fetchProducts } from "../../utils/queries/products/fetchproducts";
 import { errorHandler } from "../../utils/errorHandler";
-import ProductItem from "../../components/products/product";
 import ManageQueryStr from "../../utils/querystr";
+import Loader from "../../components/loader";
+
+const ProductItem = lazy(() => import("../../components/products/product"));
+
+const Fallback = ({ url }: { url: string }) => {
+  return (
+    <Link
+      to={url}
+      className="h-[350px] w-[270px] flex justify-center items-center"
+    >
+      <div className="w-6 h-6">
+        <Loader color="#000" />
+      </div>
+    </Link>
+  );
+};
 
 const ProductsPage = () => {
   const [, setError] = useContext(ErrorContext);
@@ -26,9 +41,10 @@ const ProductsPage = () => {
   }, []);
 
   const page = Number(_page) || 1;
+  const queryStr = _query || "";
 
   const query = useQuery({
-    queryKey: ["products", page, 16, String(_query) || ""],
+    queryKey: ["products", page, 16, queryStr],
     queryFn: fetchProducts,
   });
 
@@ -40,7 +56,7 @@ const ProductsPage = () => {
     e.preventDefault();
     if (page > 1) {
       const newPage = page - 1;
-      navigate(`?page=${newPage}`);
+      navigate(`?page=${newPage}&query=${queryStr}`);
       window.scrollTo(0, 0);
     }
   };
@@ -49,7 +65,7 @@ const ProductsPage = () => {
     e.preventDefault();
     if (query.data?.hasNext) {
       const newPage = page + 1;
-      navigate(`?page=${newPage}`);
+      navigate(`?page=${newPage}&query=${queryStr}`);
       window.scrollTo(0, 0);
     }
   };
@@ -97,7 +113,13 @@ const ProductsPage = () => {
                   >
                     {products.map((product) => (
                       <li key={product.id} className="mx-auto md:mb-8 mb-6">
-                        <ProductItem product={product} />
+                        <Suspense
+                          fallback={
+                            <Fallback url={`/products/${product.id}`} />
+                          }
+                        >
+                          <ProductItem product={product} />
+                        </Suspense>
                       </li>
                     ))}
                   </ul>
@@ -119,7 +141,7 @@ const ProductsPage = () => {
           <div>{page}</div>
           <div>
             <button
-              disabled={!query.data || query.data?.hasNext === false}
+              disabled={!query.data || !query.data?.hasNext}
               className="w-8 h-8 p-1 rounded-full border border-black"
               onClick={handleNext}
             >

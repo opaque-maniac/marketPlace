@@ -32,8 +32,21 @@ const CustomerOrdersPage = lazy(() => import("./pages/customer-orders/page"));
 const CustomerEditPage = lazy(() => import("./pages/customer-edit/page"));
 const CustomerDeletePage = lazy(() => import("./pages/customer-delete/page"));
 const CustomerDisablePage = lazy(() => import("./pages/customer-disable/page"));
+const CustomerMisconductsPage = lazy(
+  () => import("./pages/customer-misconducts/page"),
+);
+const CustomerNewMisconductPage = lazy(
+  () => import("./pages/customer-new-misconduct/page"),
+);
 const SellersPage = lazy(() => import("./pages/sellers/page"));
 const SellerPage = lazy(() => import("./pages/seller/page"));
+const SellerOrdersPage = lazy(() => import("./pages/seller-orders/page"));
+const SellerMisconductsPage = lazy(
+  () => import("./pages/seller-misconducts/page"),
+);
+const SellerNewMisconductPage = lazy(
+  () => import("./pages/seller-new-misconduct/page"),
+);
 const SellerEditPage = lazy(() => import("./pages/seller-edit/page"));
 const SellerDeletePage = lazy(() => import("./pages/seller-delete/page"));
 const SellerDisablePage = lazy(() => import("./pages/seller-disable/page"));
@@ -45,6 +58,7 @@ const StaffDeletePage = lazy(() => import("./pages/staff-delete/page"));
 const OrdersPage = lazy(() => import("./pages/orders/page"));
 const ComplaintsPage = lazy(() => import("./pages/complaints/page"));
 const MisconductsPage = lazy(() => import("./pages/misconducts/page"));
+const MisconductPage = lazy(() => import("./pages/misconduct/page"));
 const ProfilePage = lazy(() => import("./pages/profile/page"));
 const ProfileUpdatePage = lazy(() => import("./pages/profile-update/page"));
 const ProfileDeletePage = lazy(() => import("./pages/profile-delete/page"));
@@ -140,6 +154,14 @@ const App = () => {
                           path="/customers/:id/disable"
                           element={<CustomerDisablePage />}
                         />
+                        <Route
+                          path="/customers/:id/misconducts"
+                          element={<CustomerMisconductsPage />}
+                        />
+                        <Route
+                          path="/customers/:id/misconducts/new"
+                          element={<CustomerNewMisconductPage />}
+                        />
                         <Route element={<AdminOnlyRoutes />}>
                           <Route
                             path="/customers/:id/delete"
@@ -150,6 +172,18 @@ const App = () => {
                         {/* Sellers */}
                         <Route path="/sellers" element={<SellersPage />} />
                         <Route path="/sellers/:id" element={<SellerPage />} />
+                        <Route
+                          path="/sellers/:id/orders"
+                          element={<SellerOrdersPage />}
+                        />
+                        <Route
+                          path="/sellers/:id/misconducts"
+                          element={<SellerMisconductsPage />}
+                        />
+                        <Route
+                          path="/sellers/:id/misconducts/new"
+                          element={<SellerNewMisconductPage />}
+                        />
                         <Route
                           path="/sellers/:id/edit"
                           element={<SellerEditPage />}
@@ -200,6 +234,10 @@ const App = () => {
                         <Route
                           path="/misconducts"
                           element={<MisconductsPage />}
+                        />
+                        <Route
+                          path="/misconducts/:id"
+                          element={<MisconductPage />}
                         />
 
                         {/* Settings */}

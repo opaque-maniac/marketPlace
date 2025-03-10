@@ -34,7 +34,6 @@ const CustomerCartPage = () => {
 
   const params = new URLSearchParams(window.location.search);
   const _page = params.get("page");
-  const _query = params.get("query");
 
   useEffect(() => {
     if (!id) {
@@ -42,16 +41,17 @@ const CustomerCartPage = () => {
       return;
     }
 
-    ManageQueryStr(navigate, _page, _query);
+    if (_page === null || Number.isNaN(_page)) {
+      navigate("?page=1", { replace: true });
+    }
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []);
 
   const page = Number(_page) || 1;
-  const query = _page || "";
 
   const { isLoading, isError, isSuccess, error, data, refetch } = useQuery({
     queryFn: fetchCustomerCart,
-    queryKey: ["customer-cart", id || "", page, 12, query],
+    queryKey: ["customer-cart", id || "", page, 12],
   });
 
   if (isError && error) {
@@ -105,12 +105,6 @@ const CustomerCartPage = () => {
           {" "}
           Home / <span className="font-extrabold">Customer Cart</span>
         </p>
-        <div className="md:absolute md:mx-0 mx-auto top-2 right-4 w-56 h-12">
-          <PageSearchForm
-            placeholder="Search customer"
-            label="Search customer"
-          />
-        </div>
         <div>
           <section
             style={{

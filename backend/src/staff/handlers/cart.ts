@@ -9,6 +9,7 @@ import { NextFunction, Response } from "express";
 import { AuthenticatedRequest } from "../../types";
 import prisma from "../../utils/db";
 import { serverError } from "../../utils/globals";
+import { newCartItemSocket } from "../../websockets/sockets";
 
 export const fetchUserCart = async (
   req: AuthenticatedRequest,
@@ -19,7 +20,6 @@ export const fetchUserCart = async (
     const { id } = req.params;
     const page = req.query.page ? parseInt(req.query.page as string) : 1;
     const limit = req.query.limit ? parseInt(req.query.limit as string) : 10;
-    const query = req.query.query ? (req.query.query as string) : undefined;
 
     const customer = await prisma.customer.findUnique({
       where: {
@@ -31,28 +31,20 @@ export const fetchUserCart = async (
       throw new Error("Customer not found");
     }
 
+    const cart = await prisma.cart.findUnique({
+      where: {
+        customerID: customer.id,
+      },
+    });
+
+    if (!cart) {
+      throw new Error("Cart not found");
+    }
+
     const cartItems = await prisma.cartItem.findMany({
-      where: query
-        ? {
-            OR: [
-              {
-                product: {
-                  name: {
-                    contains: query,
-                    mode: "insensitive",
-                  },
-                },
-              },
-            ],
-            cart: {
-              customerID: customer.id,
-            },
-          }
-        : {
-            cart: {
-              customerID: customer.id,
-            },
-          },
+      where: {
+        cartID: cart.id,
+      },
       include: {
         product: {
           include: {
@@ -158,49 +150,6 @@ export const fetchCartItem = async (
   }
 };
 
-export const updateCartItem = async (
-  req: AuthenticatedRequest,
-  res: Response,
-  next: NextFunction,
-): Promise<void> => {
-  try {
-    const { id } = req.params;
-    const quatity = req.query.quatity
-      ? parseInt(req.query.quatity as string)
-      : 1;
-
-    const cartItem = await prisma.cartItem.findUnique({
-      where: {
-        id,
-      },
-    });
-
-    if (!cartItem) {
-      throw new Error("Cart item not found");
-    }
-
-    const updatedCartItem = await prisma.cartItem.update({
-      where: {
-        id,
-      },
-      data: {
-        quantity: quatity,
-      },
-    });
-
-    res.status(200).json({
-      message: "Cart item updated successfully",
-      cartItem: updatedCartItem,
-    });
-  } catch (e) {
-    if (e instanceof Error) {
-      next(e);
-      return;
-    }
-    next(serverError);
-  }
-};
-
 export const deleteCartItem = async (
   req: AuthenticatedRequest,
   res: Response,
@@ -211,6 +160,9 @@ export const deleteCartItem = async (
 
     const item = await prisma.cartItem.findUnique({
       where: { id },
+      include: {
+        cart: true,
+      },
     });
 
     if (!item) {
@@ -220,6 +172,8 @@ export const deleteCartItem = async (
     await prisma.cartItem.delete({
       where: { id },
     });
+
+    await newCartItemSocket(item.cart.customerID);
 
     res.status(203).json({
       message: "Cart item deleted successfully",

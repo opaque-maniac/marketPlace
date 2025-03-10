@@ -23,6 +23,7 @@ export default function PageSearchForm({ placeholder, label, other }: Props) {
       url += `&${other}=${otherVal}`;
     }
     navigate(url);
+    window.scrollTo(0, 0);
   };
 
   return (

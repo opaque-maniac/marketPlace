@@ -110,6 +110,7 @@ const ProductPage = () => {
                         src={`${apiProtocol}://${apiHost}/${data.product.images[0].url}`}
                         alt={data.product.name}
                         className="md:w-600 w-80 md:h-600 h-300 mx-auto"
+                        loading="eager"
                       />
                     </div>
                     <div>
