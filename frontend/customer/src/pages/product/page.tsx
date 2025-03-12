@@ -144,13 +144,15 @@ const IndividualProductPage = () => {
                           return null;
                         }
                         return (
-                          <Suspense fallback={<ImageButtonFallback />}>
-                            <ProductImageButton
-                              idx={index}
-                              image={img}
-                              name={product.name}
-                            />
-                          </Suspense>
+                          <div key={index} className="border w-170 h-138">
+                            <Suspense fallback={<ImageButtonFallback />}>
+                              <ProductImageButton
+                                idx={index}
+                                image={img}
+                                name={product.name}
+                              />
+                            </Suspense>
+                          </div>
                         );
                       })}
                   </div>
@@ -298,10 +300,7 @@ const IndividualProductPage = () => {
                 </div>
               </section>
             </div>
-            <section
-              id="weee"
-              className="md:w-8/12 md:pb-0 pb-4 w-11/12 mx-auto rounded min-h-80 mt-8"
-            >
+            <section>
               {product && (
                 <Suspense fallback={<Fallback />}>
                   <CommentList id={product.id} />{" "}

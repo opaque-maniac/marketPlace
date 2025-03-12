@@ -1,5 +1,5 @@
 import { FormEventHandler } from "react";
-import SearchIcon from "../icons/searchIcon";
+import SearchIcon from "./icons/searchIcon";
 import { useNavigate } from "react-router-dom";
 
 interface Props {

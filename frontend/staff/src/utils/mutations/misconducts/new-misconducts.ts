@@ -8,18 +8,16 @@ export const sendNewMisconduct = async ({
   misconduct,
   action,
   description,
-  id,
   role,
 }: {
   email: string;
   misconduct: string;
   action: string;
   description: string;
-  id: string;
-  role: "staff" | "customer" | "seller";
+  role: "staff" | "customer" | "seller" | "";
 }) => {
   try {
-    const url = `${apiProtocol}://${apiHost}/staff/${role}${role != "staff" ? "s" : ""}/${id}/misconducts`;
+    const url = `${apiProtocol}://${apiHost}/staff/misconducts`;
     const token = getAccessToken();
 
     if (!token) {
@@ -32,7 +30,7 @@ export const sendNewMisconduct = async ({
         Authorization: `Bearer ${token}`,
         "Content-Type": "application/json",
       },
-      body: JSON.stringify({ email, misconduct, action, description }),
+      body: JSON.stringify({ email, misconduct, action, description, role }),
     };
 
     const response = await fetch(url, options);

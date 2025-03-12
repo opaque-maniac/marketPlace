@@ -1,6 +1,6 @@
 import { useQuery } from "@tanstack/react-query";
 import Transition from "../../components/transition";
-import { useNavigate, useParams } from "react-router-dom";
+import { Link, useNavigate, useParams } from "react-router-dom";
 import { lazy, Suspense, useCallback, useContext, useEffect } from "react";
 import { ErrorContext, ShowErrorContext } from "../../utils/errorContext";
 import { Helmet } from "react-helmet";
@@ -8,9 +8,8 @@ import { errorHandler } from "../../utils/errorHandler";
 import ManageQueryStr from "../../utils/querystr";
 import { fetchCustomerCart } from "../../utils/queries/customers/fetchcustomercart";
 import Loader from "../../components/loader";
-import ArrowLeft from "../../components/icons/arrowleft";
-import ArrowRight from "../../components/icons/arrowright";
-import PageSearchForm from "../../components/customer-cart/searchform";
+import PageSearchForm from "../../components/pagesearchform";
+import Pagination from "../../components/pagination";
 
 const CartItemComponent = lazy(
   () => import("../../components/customer-cart/cartitem"),
@@ -34,6 +33,7 @@ const CustomerCartPage = () => {
 
   const params = new URLSearchParams(window.location.search);
   const _page = params.get("page");
+  const _query = params.get("query");
 
   useEffect(() => {
     if (!id) {
@@ -41,17 +41,16 @@ const CustomerCartPage = () => {
       return;
     }
 
-    if (_page === null || Number.isNaN(_page)) {
-      navigate("?page=1", { replace: true });
-    }
+    ManageQueryStr(navigate, _page, _query);
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []);
 
   const page = Number(_page) || 1;
+  const query = _query || "";
 
   const { isLoading, isError, isSuccess, error, data, refetch } = useQuery({
     queryFn: fetchCustomerCart,
-    queryKey: ["customer-cart", id || "", page, 12],
+    queryKey: ["customer-cart", id || "", page, 12, query],
   });
 
   if (isError && error) {
@@ -68,24 +67,6 @@ const CustomerCartPage = () => {
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []);
 
-  const handlePrev = (e: React.MouseEvent) => {
-    e.preventDefault();
-    if (page > 1) {
-      const newPage = page - 1;
-      navigate(`?page=${newPage}`);
-      window.scrollTo(0, 0);
-    }
-  };
-
-  const handleNext = (e: React.MouseEvent) => {
-    e.preventDefault();
-    if (data?.hasNext) {
-      const newPage = page + 1;
-      navigate(`?page=${newPage}`);
-      window.scrollTo(0, 0);
-    }
-  };
-
   const cartItems = data?.cartItems || [];
 
   return (
@@ -100,18 +81,23 @@ const CustomerCartPage = () => {
         <meta name="googlebot" content="noindex, nofollow" />
         <meta name="google" content="nositelinkssearchbox" />
       </Helmet>
-      <main role="main" className="h-full md:pt-20 pt-12 relative pb-4">
+      <main role="main" className="h-full md:pt-16 pt-12 relative pb-4">
         <p className="absolute top-4 left-4">
           {" "}
-          Home / <span className="font-extrabold">Customer Cart</span>
+          <Link
+            to={`/customers/${id}`}
+            className="xl:no-underline xl:hover:underline underline"
+          >
+            Customer
+          </Link>{" "}
+          / <span className="font-extrabold">Cart</span>
         </p>
+        <div className="md:absolute top-2 right-4 md:mx-0 mx-auto md:w-60 w-72 md:mb-0 mb-4">
+          <PageSearchForm placeholder="Search cart" />
+        </div>
         <div>
           <section
-            style={{
-              minHeight: "calc(100vh - 150px)",
-              paddingTop: "15px",
-            }}
-            className={`${
+            className={`page-loader-height ${
               cartItems.length === 0 || isLoading
                 ? "flex justify-center items-center"
                 : ""
@@ -140,25 +126,26 @@ const CustomerCartPage = () => {
               </ul>
             )}
           </section>
-          <section className="flex justify-center items-center gap-6 py-4">
-            <div>
-              <button
-                disabled={!data || page == 1}
-                className="w-8 h-8 p-1 rounded-full border border-black"
-                onClick={handlePrev}
-              >
-                <ArrowLeft />
-              </button>
+          <section>
+            <div className="md:block hidden">
+              <Pagination
+                data={data}
+                page={page}
+                setPage={(n) => {
+                  navigate(`?page=${n}&query=${query}`);
+                }}
+                to={50}
+              />
             </div>
-            <div>{page}</div>
-            <div>
-              <button
-                disabled={!data || !data?.hasNext}
-                className="w-8 h-8 p-1 rounded-full border border-black"
-                onClick={handleNext}
-              >
-                <ArrowRight />
-              </button>
+            <div className="block md:hidden">
+              <Pagination
+                data={data}
+                page={page}
+                setPage={(n) => {
+                  navigate(`?page=${n}&query=${query}`);
+                }}
+                to={90}
+              />
             </div>
           </section>
         </div>

@@ -65,3 +65,7 @@ body::-webkit-scrollbar-thumb:hover {
 .no-scrollbar::-webkit-scrollbar {
   display: none;
 }
+
+.page-loader-height {
+    min-height: calc(100vh - 6.5rem)
+}

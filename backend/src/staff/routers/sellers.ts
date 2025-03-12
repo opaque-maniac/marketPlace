@@ -16,7 +16,7 @@ import {
   fetchSellers,
   updateSeller,
 } from "../handlers/sellers";
-import { fetchSellerMisconducts, newMisconduct } from "../handlers/misconducts";
+import { fetchSellerMisconducts } from "../handlers/misconducts";
 
 const router = Router();
 
@@ -57,16 +57,6 @@ router.put(
 router.post("/:id/enable", enableSeller);
 router.post("/:id/disable", disableSeller);
 router.get("/:id/misconducts", fetchSellerMisconducts);
-router.post(
-  "/:id/misconducts",
-  body("email").isEmail(),
-  body("misconduct").isString().isLength({ min: 2, max: 225 }),
-  body("description").isString().isLength({ min: 2, max: 500 }),
-  body("action")
-    .isString()
-    .isIn(["WARN_USER", "DISABLE_PROFILE", "DELETE_PROFILE"]),
-  newMisconduct,
-);
 
 // delete seller
 router.delete("/:id", deleteSeller);

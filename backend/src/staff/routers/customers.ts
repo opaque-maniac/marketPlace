@@ -16,10 +16,7 @@ import {
 } from "../handlers/customers";
 import { fetchUserCart } from "../handlers/cart";
 import { fetchUserWishlist } from "../handlers/wishlist";
-import {
-  fetchCustomerMisconducts,
-  newMisconduct,
-} from "../handlers/misconducts";
+import { fetchCustomerMisconducts } from "../handlers/misconducts";
 
 const router = Router();
 
@@ -60,15 +57,5 @@ router.delete("/:id", deleteCustomer);
 router.get("/:id/cart", fetchUserCart);
 router.get("/:id/wishlist", fetchUserWishlist);
 router.get("/:id/misconducts", fetchCustomerMisconducts);
-router.post(
-  "/:id/misconducts",
-  body("email").isEmail(),
-  body("misconduct").isString().isLength({ min: 2, max: 225 }),
-  body("description").isString().isLength({ min: 2, max: 500 }),
-  body("action")
-    .isString()
-    .isIn(["WARN_USER", "DISABLE_PROFILE", "DELETE_PROFILE"]),
-  newMisconduct,
-);
 
 export default router;

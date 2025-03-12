@@ -12,7 +12,7 @@ interface Props {
 
 const WishlistItemComponent = ({ item, refetch }: Props) => {
   return (
-    <div className="h-350 relative wishes">
+    <div className="h-350 wishes">
       <Link to={`/products/${item.product.id}`}>
         <div className="h-[250px] w-[270px] flex items-end justify-center pb-4">
           <img

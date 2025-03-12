@@ -214,11 +214,6 @@ export default function SellerPage() {
                   </div>
                 </section>
               </div>
-              <div className="flex justify-between lg:px-8 md:px-16 px-14">
-                <h3 className="underline text-lg font-semibold mt-4 mb-6">
-                  Products:
-                </h3>
-              </div>
               <Suspense fallback={<Fallback />}>
                 <SellerProducts id={seller.id} name={seller.name} />
               </Suspense>

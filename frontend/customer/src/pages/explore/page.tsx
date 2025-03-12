@@ -18,7 +18,7 @@ const Fallback = ({ color, url }: { color: string; url: string }) => {
   return (
     <Link
       to={url}
-      className="w-[270px] h-[350px] flex justify-center items-center border border-black"
+      className="w-[270px] h-[350px] flex justify-center items-center border"
     >
       <div className="w-10 h-10">
         <Loader color={color} />
@@ -120,7 +120,11 @@ const ExplorePage = () => {
                           />
                         }
                       >
-                        <ProductItem product={product} color="black" />
+                        <ProductItem
+                          border="black"
+                          product={product}
+                          color="black"
+                        />
                       </Suspense>
                     </li>
                   ))}

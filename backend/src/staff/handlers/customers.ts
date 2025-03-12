@@ -343,10 +343,13 @@ export const fetchCustomerOrders = async (
   next: NextFunction,
 ): Promise<void> => {
   try {
+    const { id } = req.params;
     const page = req.query.page ? parseInt(req.query.page as string) : 1;
     const limit = req.query.limit ? parseInt(req.query.limit as string) : 10;
     const query = req.query.query ? (req.query.query as string) : "";
-    const { id } = req.params;
+    const status = req.query.status
+      ? (req.query.status as ORDER_STATUS)
+      : undefined;
 
     const exists = await prisma.customer.findUnique({
       where: { id },
@@ -356,11 +359,17 @@ export const fetchCustomerOrders = async (
       throw new Error("Customer not found");
     }
 
+    console.log(`Query ${query}`);
+
     const orders = await prisma.order.findMany({
       where: query
         ? {
             customerID: exists.id,
+            status,
             OR: [
+              {
+                id: query,
+              },
               {
                 product: {
                   name: {
@@ -369,16 +378,11 @@ export const fetchCustomerOrders = async (
                   },
                 },
               },
-              {
-                productID: query,
-              },
-              {
-                status: query as ORDER_STATUS,
-              },
             ],
           }
         : {
             customerID: exists.id,
+            status,
           },
       include: {
         product: {

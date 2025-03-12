@@ -27,6 +27,7 @@ router.post(
   body("action")
     .isString()
     .isIn(["WARN_USER", "DISABLE_PROFILE", "DELETE_PROFILE"]),
+  body("role").isIn(["", "customer", "seller", "staff"]),
   newMisconduct,
 );
 router.get("/:id", fetchIndividualMisconduct);

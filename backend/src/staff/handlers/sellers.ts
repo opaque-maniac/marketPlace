@@ -115,6 +115,7 @@ export const fetchSellerProducts = async (
     const { id } = req.params;
     const page = req.query.page ? parseInt(req.query.page as string) : 1;
     const limit = req.query.limit ? parseInt(req.query.limit as string) : 10;
+    const query = req.query.query ? (req.query.query as string) : undefined;
 
     const exists = await prisma.seller.findUnique({
       where: {
@@ -127,9 +128,24 @@ export const fetchSellerProducts = async (
     }
 
     const products = await prisma.product.findMany({
-      where: {
-        sellerID: exists.id,
-      },
+      where: query
+        ? {
+            sellerID: exists.id,
+            OR: [
+              {
+                name: {
+                  contains: query,
+                  mode: "insensitive",
+                },
+              },
+              {
+                id: query,
+              },
+            ],
+          }
+        : {
+            sellerID: exists.id,
+          },
       include: {
         images: true,
       },

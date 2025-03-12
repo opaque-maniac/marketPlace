@@ -1,7 +1,7 @@
 import { useQuery } from "@tanstack/react-query";
 import Transition from "../../components/transition";
 import { Link, useNavigate, useParams } from "react-router-dom";
-import { useCallback, useContext, useEffect } from "react";
+import { Suspense, useCallback, useContext, useEffect } from "react";
 import { ErrorContext, ShowErrorContext } from "../../utils/errorContext";
 import { Helmet } from "react-helmet";
 import PageLoader from "../../components/pageloader";
@@ -19,6 +19,22 @@ import CardIcon from "../../components/icons/card";
 import HeartIcon from "../../components/icons/heart";
 import NotAllowedIcon from "../../components/icons/notallowed";
 import PenIcon from "../../components/icons/pen";
+import EnableProfileButton from "../../components/enebleprofilebutton";
+import Loader from "../../components/loader";
+
+const ButtonFallback = () => {
+  return (
+    <button
+      disabled
+      aria-label="loading"
+      className="flex justify-center items-center w-40 h-10 bg-blue-500 text-white rounded"
+    >
+      <div className="w-6 h-6">
+        <Loader color="#fff" />
+      </div>
+    </button>
+  );
+};
 
 const CustomerPage = () => {
   const { id } = useParams();
@@ -35,7 +51,7 @@ const CustomerPage = () => {
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []);
 
-  const { isLoading, isError, isSuccess, data, error } = useQuery({
+  const { isLoading, isError, isSuccess, data, error, refetch } = useQuery({
     queryFn: fetchCustomer,
     queryKey: ["customer", id as string],
   });
@@ -47,6 +63,12 @@ const CustomerPage = () => {
   if (isError && error) {
     errorHandler(error, navigate, setErr, setError);
   }
+
+  const refetchCallback = useCallback(() => {
+    // eslint-disable-next-line @typescript-eslint/no-floating-promises
+    refetch();
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, []);
 
   const customer = data?.customer;
 
@@ -210,12 +232,22 @@ const CustomerPage = () => {
                 >
                   Edit Profile
                 </Link>
-                <Link
-                  to={`/customers/${customer.id}/disable`}
-                  className="flex justify-center items-center w-40 h-10 bg-red-500 text-white rounded"
-                >
-                  Disable
-                </Link>
+                {customer.active ? (
+                  <Link
+                    to={`/customers/${customer.id}/disable`}
+                    className="flex justify-center items-center w-40 h-10 bg-red-500 text-white rounded"
+                  >
+                    Disable
+                  </Link>
+                ) : (
+                  <Suspense fallback={<ButtonFallback />}>
+                    <EnableProfileButton
+                      id={customer.id}
+                      type="customer"
+                      refetch={refetchCallback}
+                    />
+                  </Suspense>
+                )}
               </div>
             </section>
           </div>

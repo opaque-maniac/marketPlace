@@ -1,17 +1,17 @@
 import { WishlistItem } from "../../utils/types";
 import { Link } from "react-router-dom";
-import WishlistDelete from "./wishlistdelete";
 import { apiHost, apiProtocol } from "../../utils/generics";
+import DeleteWishlistItemButton from "./wishlistdelete";
 
 interface Props {
   item: WishlistItem;
   refetch: () => void;
 }
 
-const WishlistItemComponent = ({ item, refetch }: Props) => {
+export default function WishlistItemComponent({ item, refetch }: Props) {
   return (
-    <div className="h-350 relative wishes">
-      <Link to={`/products/${item.product.id}`}>
+    <div className="h-[375px] w-[260px] wishes border-r border-t border-l">
+      <Link to={`/products/${item.product.id}`} target="_blank">
         <div className="h-[250px] w-[270px] flex items-end justify-center pb-4">
           <img
             src={`${apiProtocol}://${apiHost}/${item.product.images[0].url}`}
@@ -20,13 +20,11 @@ const WishlistItemComponent = ({ item, refetch }: Props) => {
             loading="lazy"
           />
         </div>
-        <div className="absolute top-0 left-4 bg-red-600 h-10 w-10 rounded-tl-md rounded-br-md flex justify-center items-center">
-          <span className="text-white font-semibold">{0}%</span>
-        </div>
         <div>
           <p className={`text-black text-xl text-center`}>
             {item.product.name}
           </p>
+          <p className="text-black text-center">{item.product.category}</p>
         </div>
         <div className="flex justify-around items-center py-1">
           <span className="text-red-400">
@@ -45,9 +43,9 @@ const WishlistItemComponent = ({ item, refetch }: Props) => {
           </span>
         </div>
       </Link>
-      <WishlistDelete refetch={refetch} id={item.product.id} />
+      <div className="h-10 w-full bg-black">
+        <DeleteWishlistItemButton id={item.id} refetch={refetch} />
+      </div>
     </div>
   );
-};
-
-export default WishlistItemComponent;
+}

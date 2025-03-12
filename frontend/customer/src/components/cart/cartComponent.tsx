@@ -82,8 +82,12 @@ const CartComponent = () => {
         aria-label="Go to the cart page"
         className="block w-6 h-6 rounded-full relative"
       >
-        <div className="absolute bg-red-400 h-4 w-4 -top-1  rounded-full -right-2 flex justify-center items-center">
-          <span className="text-white">{cart}</span>
+        <div
+          className={`absolute bg-red-400 h-4 min-w-4 px-[2px] -top-1 rounded-full flex justify-center items-center ${
+            cart > 90 ? "-right-4" : "-right-2"
+          }`}
+        >
+          <span className="text-white">{cart > 90 ? "90+" : cart}</span>
         </div>
         <CartIcon />
       </Link>

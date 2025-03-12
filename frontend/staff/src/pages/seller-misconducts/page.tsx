@@ -5,14 +5,13 @@ import { lazy, Suspense, useContext, useEffect } from "react";
 import { ErrorContext, ShowErrorContext } from "../../utils/errorContext";
 import { Helmet } from "react-helmet";
 import { errorHandler } from "../../utils/errorHandler";
-import PageSearchForm from "../../components/customer-cart/searchform";
 import ManageQueryStr from "../../utils/querystr";
 import Loader from "../../components/loader";
 import { fetchCustomerMisconducts } from "../../utils/queries/customers/fetchcustomermisconducts";
 import Pagination from "../../components/pagination";
 import { fetchSellerMisconducts } from "../../utils/queries/sellers/fetchsellermisconducts";
 import MisconductsFilterForm from "../../components/misconducts/filterform";
-import OrdersStatusForm from "../../components/orders/statusform";
+import PageSearchForm from "../../components/pagesearchform";
 
 const MisconductItem = lazy(
   () => import("../../components/misconducts/misconduct"),
@@ -40,7 +39,7 @@ export default function SellerMisconductsPage() {
   const params = new URLSearchParams(window.location.search);
   const _page = params.get("page");
   const _query = params.get("query");
-  const _status = params.get("status");
+  const _action = params.get("action");
 
   useEffect(() => {
     if (!id) {
@@ -48,14 +47,14 @@ export default function SellerMisconductsPage() {
       return;
     }
 
-    ManageQueryStr(navigate, _page, _query, _status, "status");
+    ManageQueryStr(navigate, _page, _query, _action, "action");
 
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []);
 
   const page = Number(_page) || 1;
   const query = _query || "";
-  const status = _status || "";
+  const action = _action || "";
 
   const { isLoading, isError, error, data, isSuccess } = useQuery({
     queryFn: fetchSellerMisconducts,
@@ -86,9 +85,24 @@ export default function SellerMisconductsPage() {
       </Helmet>
       <main role="main" className="relative pt-12">
         <p className="absolute top-4 left-4">
-          Home / <span className="font-bold">Customer's Misconducts</span>
+          <Link
+            to={`/sellers/${id}`}
+            className="xl:no-underline underline xl:hover:underline"
+          >
+            Seller
+          </Link>{" "}
+          / <span className="font-bold">Misconducts</span>
         </p>
-        <div></div>
+        <div className="md:flex justify-between items-start md:px-2 px-0 mb-2">
+          <MisconductsFilterForm initial={action} queryStr={query} />
+          <div className="md:w-64 w-72">
+            <PageSearchForm
+              placeholder="Search misconducts"
+              other="action"
+              otherValue={action}
+            />
+          </div>
+        </div>
         {isLoading ? (
           <section className="page-loader-height flex justify-center items-center">
             <div className="h-10 w-10">

@@ -5,10 +5,12 @@ import { lazy, Suspense, useContext, useEffect } from "react";
 import { ErrorContext, ShowErrorContext } from "../../utils/errorContext";
 import { Helmet } from "react-helmet";
 import { errorHandler } from "../../utils/errorHandler";
-import PageSearchForm from "../../components/customer-cart/searchform";
 import ManageQueryStr from "../../utils/querystr";
 import Loader from "../../components/loader";
 import { fetchCustomerMisconducts } from "../../utils/queries/customers/fetchcustomermisconducts";
+import PageSearchForm from "../../components/pagesearchform";
+import MisconductsFilterForm from "../../components/misconducts/filterform";
+import Pagination from "../../components/pagination";
 
 const MisconductItem = lazy(
   () => import("../../components/misconducts/misconduct"),
@@ -36,6 +38,7 @@ export default function CustomerMisconductsPage() {
   const params = new URLSearchParams(window.location.search);
   const _page = params.get("page");
   const _query = params.get("query");
+  const _action = params.get("action");
 
   useEffect(() => {
     if (!id) {
@@ -43,17 +46,17 @@ export default function CustomerMisconductsPage() {
       return;
     }
 
-    ManageQueryStr(navigate, _page, _query);
-
+    ManageQueryStr(navigate, _page, _query, _action, "action");
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []);
 
   const page = Number(_page) || 1;
   const query = _query || "";
+  const action = _action || "";
 
   const { isLoading, isError, error, data, isSuccess } = useQuery({
     queryFn: fetchCustomerMisconducts,
-    queryKey: ["customer-misconducts", id || "", page, 16, query],
+    queryKey: ["customer-misconducts", id || "", page, 12, query, action],
   });
 
   if (isError) {
@@ -80,13 +83,21 @@ export default function CustomerMisconductsPage() {
       </Helmet>
       <main role="main" className="relative pt-12">
         <p className="absolute top-4 left-4">
-          Home / <span className="font-bold">Customer's Misconducts</span>
+          <Link
+            className="xl:no-underline xl:hover:underline underline"
+            to={`/customers/${id}`}
+          >
+            Customer
+          </Link>{" "}
+          / <span className="font-bold">Misconducts</span>
         </p>
-        <div className="w-52 h-12 absolute top-2 right-4">
-          <PageSearchForm
-            placeholder="Search misconducts"
-            label="Search customer orders"
-          />
+        <div className="flex md:flex-row flex-col md:justify-between md:items-start items-center xl:px-0 md:px-2 px-0 md:gap-0 gap-2 pb-2">
+          <div>
+            <MisconductsFilterForm initial={action} queryStr={query} />
+          </div>
+          <div className="md:w-64 w-72 h-12">
+            <PageSearchForm placeholder="Search misconducts" />
+          </div>
         </div>
         {isLoading ? (
           <section className="page-loader-height flex justify-center items-center">
@@ -99,24 +110,48 @@ export default function CustomerMisconductsPage() {
             {misconducts.length === 0 ? (
               <section className="page-loader-height flex justify-center items-center">
                 <p className="text-xl font-semibold text-center">
-                  No misconducts fouond for this customer
+                  No misconducts found for this customer
                 </p>
               </section>
             ) : (
-              <section className="page-loader-height">
-                <ul className="grid xl:grid-cols-2 grid-cols-1">
-                  {misconducts.map((misconduct) => (
-                    <li key={misconduct.id} className="mx-auto md:mb-8 mb-6">
-                      {/* Here is where it goes */}
-                      <Suspense
-                        fallback={<Fallback misconductID={misconduct.id} />}
-                      >
-                        <MisconductItem misconduct={misconduct} />
-                      </Suspense>
-                    </li>
-                  ))}
-                </ul>
-              </section>
+              <>
+                <section className="page-loader-height">
+                  <ul className="grid xl:grid-cols-2 grid-cols-1">
+                    {misconducts.map((misconduct) => (
+                      <li key={misconduct.id} className="mx-auto md:mb-8 mb-6">
+                        {/* Here is where it goes */}
+                        <Suspense
+                          fallback={<Fallback misconductID={misconduct.id} />}
+                        >
+                          <MisconductItem misconduct={misconduct} />
+                        </Suspense>
+                      </li>
+                    ))}
+                  </ul>
+                </section>
+                <section className="md:pb-0 pb-4">
+                  <div className="md:block hidden">
+                    <Pagination
+                      data={data}
+                      page={page}
+                      setPage={(n) => {
+                        navigate(`?page=${n}&query=${query}&action=${action}`);
+                      }}
+                      to={90}
+                    />
+                  </div>
+                  <div className="md:hidden block">
+                    <Pagination
+                      data={data}
+                      page={page}
+                      setPage={(n) => {
+                        navigate(`?page=${n}&query=${query}&action=${action}`);
+                      }}
+                      to={140}
+                    />
+                  </div>
+                </section>
+              </>
             )}
           </>
         )}

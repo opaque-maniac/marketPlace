@@ -1,6 +1,8 @@
 import { MouseEventHandler } from "react";
 import {
+  SuccessCustomerCartResponse,
   SuccessCustomerOrdersResponse,
+  SuccessCustomerWishlistResponse,
   SuccessMisconductsResponse,
   SuccessOrdersResponse,
   SuccessSellersProductsResponse,
@@ -13,6 +15,8 @@ type Data =
   | SuccessOrdersResponse
   | SuccessCustomerOrdersResponse
   | SuccessMisconductsResponse
+  | SuccessCustomerCartResponse
+  | SuccessCustomerWishlistResponse
   | undefined;
 
 interface Props {

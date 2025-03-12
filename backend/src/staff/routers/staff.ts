@@ -16,10 +16,7 @@ import {
   fetchStaff,
   updateStaff,
 } from "../handlers/staff";
-import {
-  fetchCustomerMisconducts,
-  newMisconduct,
-} from "../handlers/misconducts";
+import { fetchCustomerMisconducts } from "../handlers/misconducts";
 
 const router = Router();
 
@@ -52,16 +49,6 @@ router.put(
 router.post("/:id/enable", isAdmin, enableStaff);
 router.post("/:id/disable", isAdmin, disableStaff);
 router.get("/:id/misconducts", fetchCustomerMisconducts);
-router.post(
-  "/:id/misconducts",
-  body("email").isEmail(),
-  body("misconduct").isString().isLength({ min: 2, max: 225 }),
-  body("description").isString().isLength({ min: 2, max: 500 }),
-  body("action")
-    .isString()
-    .isIn(["WARN_USER", "DISABLE_PROFILE", "DELETE_PROFILE"]),
-  newMisconduct,
-);
 
 // delete staff
 router.delete("/:id", isAdminOrProfileOwner, deleteStaff);

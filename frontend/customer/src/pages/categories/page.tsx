@@ -1,7 +1,7 @@
 import { useQuery } from "@tanstack/react-query";
 import Transition from "../../components/transition";
-import { useNavigate, useParams } from "react-router-dom";
-import { useContext, useEffect } from "react";
+import { Link, useNavigate, useParams } from "react-router-dom";
+import { Suspense, useContext, useEffect } from "react";
 import { ErrorContext, ShowErrorContext } from "../../utils/errorContext";
 import ArrowLeft from "../../components/icons/arrowleft";
 import ArrowRight from "../../components/icons/arrowright";
@@ -10,6 +10,21 @@ import ProductList from "../../components/products/productlist";
 import PageLoader from "../../components/pageloader";
 import { errorHandler } from "../../utils/errorHandler";
 import MetaTags from "../../components/metacomponent";
+import Loader from "../../components/loader";
+import ProductItem from "../../components/products/product";
+
+const Fallback = ({ color, url }: { color: string; url: string }) => {
+  return (
+    <Link
+      to={url}
+      className="w-[270px] h-[350px] flex justify-center items-center border"
+    >
+      <div className="w-10 h-10">
+        <Loader color={color} />
+      </div>
+    </Link>
+  );
+};
 
 const CategoriesPage = () => {
   const { category } = useParams();
@@ -57,7 +72,7 @@ const CategoriesPage = () => {
     }
   };
 
-  const data = query.data?.data;
+  const data = query.data?.data || [];
 
   return (
     <Transition>
@@ -80,19 +95,40 @@ const CategoriesPage = () => {
           style={{ minHeight: "calc(100vh - 1.4rem )" }}
         >
           {query.isLoading ? (
-            <PageLoader />
+            <section className="page-loader-height w-full flex justify-center items-center">
+              <div className="w-10 h-10">
+                <Loader color="#000" />
+              </div>
+            </section>
           ) : (
-            <div
-              style={{ minHeight: "calc(100vh - 1.4rem )" }}
-              className="h-full w-full"
-            >
-              {data && (
-                <ProductList
-                  full={true}
-                  products={data}
-                  color="black"
-                  overflow={false}
-                />
+            <div className="h-full w-full">
+              {data.length === 0 ? (
+                <div className="page-loader-height">
+                  <p className="md:w-6/12">
+                    No {category || ""} products found
+                  </p>
+                </div>
+              ) : (
+                <ul className="grid xl:grid-cols-4 lg:grid-cols-3 md:grid-cols-2 grid-cols-1">
+                  {data.map((product) => (
+                    <li key={product.id} className="mx-auto md:mb-8 mb-6">
+                      <Suspense
+                        fallback={
+                          <Fallback
+                            color="#000"
+                            url={`/products/${product.id}`}
+                          />
+                        }
+                      >
+                        <ProductItem
+                          product={product}
+                          border="black"
+                          color="black"
+                        />
+                      </Suspense>
+                    </li>
+                  ))}
+                </ul>
               )}
             </div>
           )}

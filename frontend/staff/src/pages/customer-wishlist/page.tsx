@@ -1,24 +1,42 @@
 import { useQuery } from "@tanstack/react-query";
 import Transition from "../../components/transition";
-import { useNavigate, useParams } from "react-router-dom";
-import { useContext, useEffect } from "react";
+import { Link, useNavigate, useParams } from "react-router-dom";
+import { lazy, Suspense, useCallback, useContext, useEffect } from "react";
 import { ErrorContext, ShowErrorContext } from "../../utils/errorContext";
 import { Helmet } from "react-helmet";
-import PageLoader from "../../components/pageloader";
 import { errorHandler } from "../../utils/errorHandler";
-import { fetchCustomer } from "../../utils/queries/customers/fetchcustomer";
-import FetchCart from "../../components/customer-cart/fetchcart";
-import PageSearchForm from "../../components/customer-cart/searchform";
-import FetchWishlist from "../../components/customer-wishlist/fetchwishlist";
+import ManageQueryStr from "../../utils/querystr";
+import { fetchCustomerWishlist } from "../../utils/queries/customers/fetchcustomerwishlist";
+import Loader from "../../components/loader";
+import Pagination from "../../components/pagination";
+import PageSearchForm from "../../components/pagesearchform";
 
-const CustomerWishlistPage = () => {
+const WishlistItemComponent = lazy(
+  () => import("../../components/customer-wishlist/wishlistitem"),
+);
+
+const Fallback = ({ url }: { url: string }) => {
+  return (
+    <Link
+      to={url}
+      className="h-[375px] w-[260px] border flex justify-center items-center"
+    >
+      <div className="w-8 h-8">
+        <Loader color="#000" />
+      </div>
+    </Link>
+  );
+};
+
+export default function CustomerWishlistPage() {
   const { id } = useParams();
   const navigate = useNavigate();
   const [, setErr] = useContext(ShowErrorContext);
   const [, setError] = useContext(ErrorContext);
 
-  const _page = new URLSearchParams(window.location.search).get("page");
-  const _query = new URLSearchParams(window.location.search).get("query");
+  const params = new URLSearchParams(window.location.search);
+  const _page = params.get("page");
+  const _query = params.get("query");
 
   useEffect(() => {
     if (!id) {
@@ -26,34 +44,33 @@ const CustomerWishlistPage = () => {
       return;
     }
 
-    if (!_page && !_query) {
-      navigate("?page=1&query=", { replace: true });
-    } else if (!_page) {
-      navigate(`?page=1&query=${_query || ""}`, { replace: true });
-    } else if (!_query) {
-      navigate(`?page=${_page}&query=`, { replace: true });
-    }
-
+    ManageQueryStr(navigate, _page, _query);
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []);
 
   const page = Number(_page) || 1;
-  const query = String(_page) || "";
+  const query = _query || "";
 
-  const { isLoading, isError, isSuccess, data, error } = useQuery({
-    queryFn: fetchCustomer,
-    queryKey: ["customer", id as string],
+  const { isLoading, isError, isSuccess, data, error, refetch } = useQuery({
+    queryFn: fetchCustomerWishlist,
+    queryKey: ["customer-wishlist", id || "", page, 12, query],
   });
+
+  if (isError) {
+    errorHandler(error, navigate, setErr, setError);
+  }
 
   if (isSuccess && !data) {
     navigate("/404", { replace: true });
   }
 
-  if (isError && error) {
-    errorHandler(error, navigate, setErr, setError);
-  }
+  const refetchCallback = useCallback(() => {
+    // eslint-disable-next-line @typescript-eslint/no-floating-promises
+    refetch();
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, []);
 
-  const customer = data?.customer;
+  const items = data?.wishlistItems || [];
 
   return (
     <Transition>
@@ -67,31 +84,76 @@ const CustomerWishlistPage = () => {
         <meta name="googlebot" content="noindex, nofollow" />
         <meta name="google" content="nositelinkssearchbox" />
       </Helmet>
-      <main role="main">
-        {isLoading || !customer ? (
-          <PageLoader />
-        ) : (
-          <div>
-            <div>
-              <h3 className="text-lg">
-                <span className="font-bold">
-                  {customer.firstName} {customer.lastName}{" "}
-                </span>{" "}
-                Cart Page
-              </h3>
-              <div>
-                <PageSearchForm
-                  placeholder="Search Cart"
-                  label="Search cart for a specific product"
-                />
-              </div>
+      <main role="main" className="h-full md:pt-16 pt-12 relative pb-4">
+        <p className="absolute top-4 left-4">
+          <Link
+            to={`/customers/${id}`}
+            className="xl:no-underline xl:hover:underline underline"
+          >
+            Customer
+          </Link>{" "}
+          / <span className="font-extrabold">Wishlist</span>
+        </p>
+        <div className="md:absolute right-4 top-2 md:mx-0 mx-auto md:w-60 w-72 md:mb-0 mb-4">
+          <PageSearchForm placeholder="Search wishist" />
+        </div>
+        {isLoading ? (
+          <section className="page-loader-height flex justify-center items-center">
+            <div className="w-10 h-10">
+              <Loader color="#000" />
             </div>
-            <FetchWishlist id={customer.id} page={page} query={query} />
+          </section>
+        ) : (
+          <div
+            className={`page-loader-height ${
+              items.length === 0 ? "flex justify-center items-center" : ""
+            }`}
+          >
+            {items.length === 0 ? (
+              <p>No wishlist items found</p>
+            ) : (
+              <ul className="grid xl:grid-cols-4 lg:grid-cols-3 md:grid-cols-2 grid-cols-1">
+                {items.map((item) => (
+                  <li key={item.id} className="mx-auto md:mb-8 mb-6">
+                    <Suspense
+                      fallback={
+                        <Fallback url={`/products/${item.productID}`} />
+                      }
+                    >
+                      <WishlistItemComponent
+                        item={item}
+                        refetch={refetchCallback}
+                      />
+                    </Suspense>
+                  </li>
+                ))}
+              </ul>
+            )}
           </div>
         )}
+        <section>
+          <div className="md:block hidden">
+            <Pagination
+              page={page}
+              data={data}
+              setPage={(n) => {
+                navigate(`?page=${n}&query=${query}`);
+              }}
+              to={50}
+            />
+          </div>
+          <div className="md:hidden block">
+            <Pagination
+              page={page}
+              data={data}
+              setPage={(n) => {
+                navigate(`?page=${n}&query=${query}`);
+              }}
+              to={90}
+            />
+          </div>
+        </section>
       </main>
     </Transition>
   );
-};
-
-export default CustomerWishlistPage;
+}

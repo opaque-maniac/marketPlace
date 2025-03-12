@@ -19,7 +19,12 @@ interface InputProps {
   setSelectedType: (type: string) => void;
 }
 
-function RadioInput({ email, type, selectedType, setSelectedType }: InputProps) {
+function RadioInput({
+  email,
+  type,
+  selectedType,
+  setSelectedType,
+}: InputProps) {
   const isSelected = selectedType === type;
 
   const clickHandler = (e: React.MouseEvent<HTMLButtonElement>) => {
@@ -45,7 +50,9 @@ function RadioInput({ email, type, selectedType, setSelectedType }: InputProps) 
         onChange={() => setSelectedType(type)}
         required
       />
-      <label htmlFor={type}>{type.charAt(0).toUpperCase() + type.slice(1)}</label>
+      <label htmlFor={type}>
+        {type.charAt(0).toUpperCase() + type.slice(1)}
+      </label>
       <p className="text-xs">
         Link this misconduct to all {type} profiles with the email address{" "}
         <span className="font-semibold">{email}</span>
@@ -80,7 +87,6 @@ export default function NewMisconductForm({ email, id, type }: Props) {
       misconduct: formData.get("misconduct") as string,
       action: formData.get("action") as string,
       description: formData.get("description") as string,
-      id,
       role: formData.get("profile-type") as "customer" | "seller" | "staff",
     };
 
@@ -90,7 +96,11 @@ export default function NewMisconductForm({ email, id, type }: Props) {
   const types = ["all", "customer", "seller", "staff"];
 
   return (
-    <form onSubmit={submitHandler} className="w-full h-full">
+    <form
+      onSubmit={submitHandler}
+      className="w-full h-full"
+      id="new-misconduct"
+    >
       <div>
         <label htmlFor="email" className="sr-only">
           {"User's Email"}
@@ -133,7 +143,9 @@ export default function NewMisconductForm({ email, id, type }: Props) {
           <option value={"DELETE_PROFILE"}>DELETE PROFILE</option>
         </select>
       </div>
-        <p className="w-72 mx-auto text-sm mt-2 mb-1">Please select profile to attack to this complaint</p>
+      <p className="w-72 mx-auto text-sm mt-4 mb-1">
+        Please select profile to attach to this complaint
+      </p>
       <div className="flex flex-col gap-[10px]">
         {types
           .filter((tp) => tp === "all" || tp === type)
@@ -175,4 +187,3 @@ export default function NewMisconductForm({ email, id, type }: Props) {
     </form>
   );
 }
-

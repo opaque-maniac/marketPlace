@@ -1,4 +1,4 @@
-import { FormEventHandler, MouseEventHandler } from "react";
+import { FormEventHandler, MouseEventHandler, useRef } from "react";
 import SearchIcon from "./icons/searchIcon";
 import { useNavigate } from "react-router-dom";
 import ArrowPath from "./icons/arrowpath";
@@ -15,6 +15,7 @@ export default function PageSearchForm({
   otherValue,
 }: Props) {
   const navigate = useNavigate();
+  const ref = useRef<HTMLFormElement>(null);
 
   const submitHandler: FormEventHandler<HTMLFormElement> = (e) => {
     e.preventDefault();
@@ -34,12 +35,19 @@ export default function PageSearchForm({
 
   const resetHandler: MouseEventHandler<HTMLButtonElement> = (e) => {
     e.preventDefault();
-    navigate(`?page=1&query=&status=${status}`);
+    let url = "?page=1&query=";
+
+    if (other) {
+      url += `&${other}=${otherValue || ""}`;
+    }
+    ref.current?.reset();
+    navigate(url);
   };
 
   return (
     <div>
       <form
+        ref={ref}
         onSubmit={submitHandler}
         className="border border-black/20 flex items-center w-full mx-auto pr-[5px]"
       >

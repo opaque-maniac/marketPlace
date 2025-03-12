@@ -97,7 +97,7 @@ const NinethSection = ({ products, isLoading }: Props) => {
               </div>
             ) : (
               <div className="h-full w-full lg:flex justify-center items-center">
-                <div className="md:block hidden">
+                <div className="lg:hidden xl:block md:block hidden">
                   <ProductList
                     products={products.slice(4, 6)}
                     color="white"
@@ -105,6 +105,16 @@ const NinethSection = ({ products, isLoading }: Props) => {
                     zeroHeight="370px"
                   />
                 </div>
+
+                <div className="lg:block hidden xl:hidden w-[499px]">
+                  <ProductList
+                    products={products.slice(4, 6)}
+                    color="white"
+                    overflow={true}
+                    zeroHeight="370px"
+                  />
+                </div>
+
                 <div className="md:hidden block">
                   <ProductList
                     products={products.slice(4, 6)}
@@ -134,7 +144,7 @@ const NinethSection = ({ products, isLoading }: Props) => {
                   style={{ minHeight: "350px" }}
                   className="lg:flex justify-center items-center"
                 >
-                  <div className="md:block hidden">
+                  <div className="md:block lg:hidden xl:block hidden">
                     <ProductList
                       products={products.slice(6, 8)}
                       color="white"
@@ -142,6 +152,16 @@ const NinethSection = ({ products, isLoading }: Props) => {
                       zeroHeight="370px"
                     />
                   </div>
+
+                  <div className="lg:block hidden xl:hidden w-[499px]">
+                    <ProductList
+                      products={products.slice(6, 8)}
+                      color="white"
+                      overflow={true}
+                      zeroHeight="370px"
+                    />
+                  </div>
+
                   <div className="md:hidden block">
                     <ProductList
                       products={products.slice(6, 8)}

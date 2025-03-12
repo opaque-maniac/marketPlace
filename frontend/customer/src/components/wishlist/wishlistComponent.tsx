@@ -6,7 +6,6 @@ import { ShowErrorContext, ErrorContext } from "../../utils/errorContext";
 import { useContext } from "react";
 import { getAccessToken, getUserID } from "../../utils/cookies";
 import { fetchData } from "../../utils/hooks/fetchfunc";
-import { ErrorResponse } from "../../utils/types";
 import { apiHost, apiProtocol } from "../../utils/generics";
 import { io } from "socket.io-client";
 import { errorHandler } from "../../utils/errorHandler";
@@ -84,8 +83,12 @@ const WishlistComponent = () => {
         aria-label="Go to wishlist page"
         className="block w-6 h-6 rounded-full relative"
       >
-        <div className="absolute bg-red-400 h-4 w-4 -top-1  rounded-full -right-2 flex justify-center items-center">
-          <span className="text-white">{wishlist}</span>
+        <div
+          className={`absolute bg-red-400 h-4 min-w-4 px-[2px] -top-1 rounded-full flex justify-center items-center ${
+            wishlist > 90 ? "-right-4" : "-right-2"
+          }`}
+        >
+          <span className="text-white">{wishlist > 90 ? "90+" : wishlist}</span>
         </div>
         <HeartIcon />
       </Link>

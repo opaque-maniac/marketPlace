@@ -8,8 +8,10 @@ interface Props {
 
 export default function EditMisconductLink({ id, staffID }: Props) {
   const user = useUserStore((state) => state.user);
+  const isAdmin = useUserStore((state) => state.role) === "ADMIN";
+  const disable = user === staffID ? (isAdmin ? false : true) : false;
 
-  return user === staffID ? (
+  return disable ? (
     <button
       disabled
       aria-label="Cannot edit own misconduct"

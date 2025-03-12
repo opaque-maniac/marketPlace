@@ -1,11 +1,26 @@
-import { getAccessToken } from "../../cookies";
-import { responseError, tokenError } from "../../errors";
-import { apiHost, apiProtocol } from "../../generics";
-import { ErrorResponse } from "../../types";
+import { getAccessToken } from "../cookies";
+import { responseError, tokenError } from "./../errors";
+import { apiHost, apiProtocol } from "./../generics";
+import { ErrorResponse } from "./../types";
 
-export const deleteWishlistitem = async (id: string) => {
+export const enableProfile = async ({
+  id,
+  type,
+}: {
+  id: string;
+  type: "customer" | "seller" | "staff";
+}) => {
   try {
-    const url = `${apiProtocol}://${apiHost}/staff/wishlistitems/${id}`;
+    let url = `${apiProtocol}://${apiHost}/staff`;
+
+    if (type === "customer") {
+      url += `/customers/${id}/enable`;
+    } else if (type === "seller") {
+      url += `/sellers/${id}/enable`;
+    } else {
+      url += `/staff/${id}/enable`;
+    }
+
     const token = getAccessToken();
 
     if (!token) {

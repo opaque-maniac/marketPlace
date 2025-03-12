@@ -1,14 +1,28 @@
 import { useQuery } from "@tanstack/react-query";
 import Transition from "../../components/transition";
 import { Link, useNavigate, useParams } from "react-router-dom";
-import { useContext, useEffect } from "react";
+import { lazy, Suspense, useContext, useEffect } from "react";
 import { ErrorContext, ShowErrorContext } from "../../utils/errorContext";
 import { Helmet } from "react-helmet";
 import PageLoader from "../../components/pageloader";
 import { errorHandler } from "../../utils/errorHandler";
 import { fetchCustomer } from "../../utils/queries/customers/fetchcustomer";
-import NewMisconductForm from "../../components/new-misconducts/form";
 import NewMisconductPageWraper from "../../components/misconductwrapper";
+import Loader from "../../components/loader";
+
+const NewMisconductForm = lazy(
+  () => import("../../components/new-misconducts/form"),
+);
+
+const Fallback = () => {
+  return (
+    <div className="border md:w-[420px] w-[350px] h-[694px] mx-auto flex justify-center items-center">
+      <div className="w-8 h-8">
+        <Loader color="#000" />
+      </div>
+    </div>
+  );
+};
 
 function CustomerNewMisconductPage() {
   const { id } = useParams();
@@ -67,14 +81,16 @@ function CustomerNewMisconductPage() {
               </span>
             </h3>
           </div>
-          <section className="border md:w-[420px] w-[350px] py-4 mx-auto">
-            <NewMisconductForm
-              email={customer.email}
-              id={customer.id}
-              type="customer"
-            />
-          </section>
-          <div className="flex justify-center pt-4">
+          <Suspense fallback={<Fallback />}>
+            <section className="border md:w-[420px] w-[350px] py-4 mx-auto">
+              <NewMisconductForm
+                email={customer.email}
+                id={customer.id}
+                type="customer"
+              />
+            </section>
+          </Suspense>
+          <div className="flex justify-center pt-4 mb-6">
             <Link to={`/customers/${customer.id}`} className="underline">
               Go back to profile
             </Link>

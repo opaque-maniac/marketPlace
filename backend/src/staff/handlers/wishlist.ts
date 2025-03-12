@@ -21,6 +21,10 @@ export const fetchUserWishlist = async (
     const limit = req.query.limit ? parseInt(req.query.limit as string) : 10;
     const query = req.query.query ? (req.query.query as string) : undefined;
 
+    console.log(`Page ${page}`);
+    console.log(`Limit ${limit}`);
+    console.log(`Query ${query}`);
+
     const customer = await prisma.customer.findUnique({
       where: {
         id,
@@ -31,13 +35,37 @@ export const fetchUserWishlist = async (
       throw new Error("Customer not found");
     }
 
-    const wishlistItems = await prisma.wishListItem.findMany({
+    const wishlist = await prisma.wishList.findUnique({
       where: {
-        OR: [],
-        wishlist: {
-          customerID: customer.id,
-        },
+        customerID: customer.id,
       },
+    });
+
+    if (!wishlist) {
+      throw new Error("Wishlist not found");
+    }
+
+    const wishlistItems = await prisma.wishListItem.findMany({
+      where: query
+        ? {
+            wishlistID: wishlist.id,
+            OR: [
+              {
+                product: {
+                  name: {
+                    contains: query,
+                    mode: "insensitive",
+                  },
+                },
+              },
+              {
+                id: query,
+              },
+            ],
+          }
+        : {
+            wishlistID: wishlist.id,
+          },
       include: {
         product: {
           include: {

@@ -1,14 +1,29 @@
 import { useQuery } from "@tanstack/react-query";
 import Transition from "../../components/transition";
 import { Link, useNavigate, useParams } from "react-router-dom";
-import { useContext, useEffect } from "react";
+import { lazy, Suspense, useContext, useEffect } from "react";
 import { ErrorContext, ShowErrorContext } from "../../utils/errorContext";
 import { Helmet } from "react-helmet";
 import PageLoader from "../../components/pageloader";
 import { errorHandler } from "../../utils/errorHandler";
-import NewMisconductForm from "../../components/new-misconducts/form";
-import { fetchSeller } from "../../utils/queries/sellers/fetchseller";
+import { fetchCustomer } from "../../utils/queries/customers/fetchcustomer";
 import NewMisconductPageWraper from "../../components/misconductwrapper";
+import Loader from "../../components/loader";
+import { fetchSeller } from "../../utils/queries/sellers/fetchseller";
+
+const NewMisconductForm = lazy(
+  () => import("../../components/new-misconducts/form"),
+);
+
+const Fallback = () => {
+  return (
+    <div className="border md:w-[420px] w-[350px] h-[694px] mx-auto flex justify-center items-center">
+      <div className="w-8 h-8">
+        <Loader color="#000" />
+      </div>
+    </div>
+  );
+};
 
 function SellerNewMisconductPage() {
   const { id } = useParams();
@@ -53,7 +68,11 @@ function SellerNewMisconductPage() {
         <meta name="google" content="nositelinkssearchbox" />
       </Helmet>
       {isLoading || !seller ? (
-        <PageLoader />
+        <div className="page-loader-height flex justify-center items-center">
+          <div className="w-10 h-10">
+            <Loader color="#000" />
+          </div>
+        </div>
       ) : (
         <main role="main" className="relative pt-12">
           <p className="absolute top-4 left-4">
@@ -65,14 +84,16 @@ function SellerNewMisconductPage() {
               <span className="font-bold">{seller.name}</span>
             </h3>
           </div>
-          <section className="border md:w-[420px] w-[350px] py-4 mx-auto">
-            <NewMisconductForm
-              email={seller.email}
-              id={seller.id}
-              type="seller"
-            />
-          </section>
-          <div className="flex justify-center pt-4">
+          <Suspense fallback={<Fallback />}>
+            <section className="border md:w-[420px] w-[350px] py-4 mx-auto">
+              <NewMisconductForm
+                email={seller.email}
+                id={seller.id}
+                type="seller"
+              />
+            </section>
+          </Suspense>
+          <div className="flex justify-center pt-4 mb-6">
             <Link to={`/sellers/${seller.id}`} className="underline">
               Go back to profile
             </Link>
@@ -83,7 +104,7 @@ function SellerNewMisconductPage() {
   );
 }
 
-export default function SellerNewMisconductPageWraper() {
+export default function CustomerNewMisconductPageWrapper() {
   return (
     <NewMisconductPageWraper>
       <SellerNewMisconductPage />

@@ -20,14 +20,18 @@ const ProductItem = ({ product, color, border }: Props) => {
         to={`/products/${product.id}`}
         className={`block min-h-[350px] relative w-[270px] rounded-tr-md ${
           border === "white"
-            ? "border border-white"
+            ? "border border-white rounded-tr-md"
             : border === "black"
-              ? "border border-black"
+              ? "border rounded-tr-md"
               : ""
-        }`}
+        } ${border ? "pb-0" : ""}`}
       >
         <div>
-          <div className="h-[250px] w-[270px] flex items-end justify-center pb-4">
+          <div
+            className={`${
+              border ? "h-[240px]" : "h-[250px]"
+            } w-[270px] flex items-end justify-center pb-4`}
+          >
             <img
               src={`${apiProtocol}://${apiHost}/${product.images[0].url}`}
               alt={product.name}
@@ -35,7 +39,11 @@ const ProductItem = ({ product, color, border }: Props) => {
               loading="lazy"
             />
           </div>
-          <div className="absolute top-0 right-1 bg-red-600 h-10 w-10 rounded-tr-md rounded-bl-md flex justify-center items-center">
+          <div
+            className={`absolute top-0 ${
+              border ? "right-0" : "right-1"
+            } bg-red-600 h-10 w-10 rounded-tr-md rounded-bl-md flex justify-center items-center`}
+          >
             <span
               aria-label={`${discount}% discount`}
               className="font-semibold text-white"

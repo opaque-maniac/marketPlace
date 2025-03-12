@@ -20,7 +20,6 @@ function ProfileButton({ link, label }: { link: string; label: string }) {
 }
 
 export default function MisconductItem({ misconduct }: Props) {
-  console.log(misconduct);
   return (
     <Link
       className="block px-[5px] md:h-[140px] h-[320px] pt-[5px] md:w-[450px] w-[200px] border border-black"

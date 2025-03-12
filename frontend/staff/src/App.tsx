@@ -6,10 +6,10 @@ import Footer from "./components/footer";
 import PageLoader from "./components/pageloader";
 import AuthRoute from "./components/routes/authroutes";
 import ProtectedRoute from "./components/routes/protectedroute";
-import ScrollToTopRoute from "./components/routes/scrolltotop";
 import { BrowserRouter, Route, Routes } from "react-router-dom";
 import AdminOnlyRoutes from "./components/routes/adminonlyroutes";
 import { createRoot } from "react-dom/client";
+import ScrollToTop from "./components/scrolltotop";
 
 const HomePage = lazy(() => import("./pages/home/page"));
 const LoginPage = lazy(() => import("./pages/login/page"));
@@ -28,6 +28,9 @@ const EditProductPage = lazy(() => import("./pages/editproduct/page"));
 const CustomersPage = lazy(() => import("./pages/customers/page"));
 const CustomerPage = lazy(() => import("./pages/customer/page"));
 const CustomerCartPage = lazy(() => import("./pages/customer-cart/page"));
+const CustomerWishlistPage = lazy(
+  () => import("./pages/customer-wishlist/page"),
+);
 const CustomerOrdersPage = lazy(() => import("./pages/customer-orders/page"));
 const CustomerEditPage = lazy(() => import("./pages/customer-edit/page"));
 const CustomerDeletePage = lazy(() => import("./pages/customer-delete/page"));
@@ -111,208 +114,205 @@ const App = () => {
           <ShowErrorContext.Provider value={err}>
             <QueryClientProvider client={queryClient}>
               <Header />
+              <ScrollToTop />
               <div className="pt-14 mx-auto lg:max-w-1300 min-h-screen">
                 <Suspense fallback={<PageLoader />}>
                   <Routes>
-                    <Route element={<ScrollToTopRoute />}>
-                      <Route path="/" element={<HomePage />} />
-                      <Route path="/contact" element={<ContactPage />} />
-                      <Route path="/about" element={<AboutPage />} />
-                      <Route path="/fees" element={<FeePage />} />
-                      <Route path="/privacy" element={<PrivacyPage />} />
-                      <Route path="/faq" element={<FAQPage />} />
-                      <Route path="/terms" element={<TermsPage />} />
-                      <Route element={<ProtectedRoute />}>
-                        <Route path="/products" element={<ProductsPage />} />
+                    <Route path="/" element={<HomePage />} />
+                    <Route path="/contact" element={<ContactPage />} />
+                    <Route path="/about" element={<AboutPage />} />
+                    <Route path="/fees" element={<FeePage />} />
+                    <Route path="/privacy" element={<PrivacyPage />} />
+                    <Route path="/faq" element={<FAQPage />} />
+                    <Route path="/terms" element={<TermsPage />} />
+                    <Route element={<ProtectedRoute />}>
+                      <Route path="/products" element={<ProductsPage />} />
+                      <Route
+                        path="/products/:id"
+                        element={<IndividualProductPage />}
+                      />
+                      <Route
+                        path="/products/:id/edit"
+                        element={<EditProductPage />}
+                      />
+                      <Route path="/customers" element={<CustomersPage />} />
+                      {/* Customers */}
+                      <Route path="/customers/:id" element={<CustomerPage />} />
+                      <Route
+                        path="/customers/:id/cart"
+                        element={<CustomerCartPage />}
+                      />
+                      <Route
+                        path="/customers/:id/wishlist"
+                        element={<CustomerWishlistPage />}
+                      />
+                      <Route
+                        path="/customers/:id/orders"
+                        element={<CustomerOrdersPage />}
+                      />
+                      <Route
+                        path="/customers/:id/edit"
+                        element={<CustomerEditPage />}
+                      />
+                      <Route
+                        path="/customers/:id/disable"
+                        element={<CustomerDisablePage />}
+                      />
+                      <Route
+                        path="/customers/:id/misconducts"
+                        element={<CustomerMisconductsPage />}
+                      />
+                      <Route
+                        path="/customers/:id/misconducts/new"
+                        element={<CustomerNewMisconductPage />}
+                      />
+                      <Route element={<AdminOnlyRoutes />}>
                         <Route
-                          path="/products/:id"
-                          element={<IndividualProductPage />}
-                        />
-                        <Route
-                          path="/products/:id/edit"
-                          element={<EditProductPage />}
-                        />
-                        <Route path="/customers" element={<CustomersPage />} />
-                        {/* Customers */}
-                        <Route
-                          path="/customers/:id"
-                          element={<CustomerPage />}
-                        />
-                        <Route
-                          path="/customers/:id/cart"
-                          element={<CustomerCartPage />}
-                        />
-                        <Route
-                          path="/customers/:id/orders"
-                          element={<CustomerOrdersPage />}
-                        />
-                        <Route
-                          path="/customers/:id/edit"
-                          element={<CustomerEditPage />}
-                        />
-                        <Route
-                          path="/customers/:id/disable"
-                          element={<CustomerDisablePage />}
-                        />
-                        <Route
-                          path="/customers/:id/misconducts"
-                          element={<CustomerMisconductsPage />}
-                        />
-                        <Route
-                          path="/customers/:id/misconducts/new"
-                          element={<CustomerNewMisconductPage />}
-                        />
-                        <Route element={<AdminOnlyRoutes />}>
-                          <Route
-                            path="/customers/:id/delete"
-                            element={<CustomerDeletePage />}
-                          />
-                        </Route>
-
-                        {/* Sellers */}
-                        <Route path="/sellers" element={<SellersPage />} />
-                        <Route path="/sellers/:id" element={<SellerPage />} />
-                        <Route
-                          path="/sellers/:id/orders"
-                          element={<SellerOrdersPage />}
-                        />
-                        <Route
-                          path="/sellers/:id/misconducts"
-                          element={<SellerMisconductsPage />}
-                        />
-                        <Route
-                          path="/sellers/:id/misconducts/new"
-                          element={<SellerNewMisconductPage />}
-                        />
-                        <Route
-                          path="/sellers/:id/edit"
-                          element={<SellerEditPage />}
-                        />
-                        <Route
-                          path="/sellers/:id/disable"
-                          element={<SellerDisablePage />}
-                        />
-
-                        <Route element={<AdminOnlyRoutes />}>
-                          <Route
-                            path="/sellers/:id/delete"
-                            element={<SellerDeletePage />}
-                          />
-                        </Route>
-
-                        {/* Staff */}
-                        <Route path="/staff" element={<StaffPage />} />
-                        <Route
-                          path="/staff/:id/"
-                          element={<StaffProfilePage />}
-                        />
-                        <Route
-                          path="/staff/:id/edit"
-                          element={<StaffEditPage />}
-                        />
-                        <Route
-                          path="/staff/:id/disable"
-                          element={<StaffDisablePage />}
-                        />
-                        <Route element={<AdminOnlyRoutes />}>
-                          <Route
-                            path="/staff/:id/delete"
-                            element={<StaffDeletePage />}
-                          />
-                        </Route>
-
-                        {/* Orders */}
-                        <Route path="/orders" element={<OrdersPage />} />
-
-                        {/* Complaints */}
-                        <Route
-                          path="/complaints"
-                          element={<ComplaintsPage />}
-                        />
-
-                        {/* Misconducts */}
-                        <Route
-                          path="/misconducts"
-                          element={<MisconductsPage />}
-                        />
-                        <Route
-                          path="/misconducts/:id"
-                          element={<MisconductPage />}
-                        />
-
-                        {/* Settings */}
-                        <Route path="/settings" element={<SettingsPage />} />
-
-                        {/* Profile */}
-                        <Route path="/profile" element={<ProfilePage />} />
-                        <Route
-                          path="/profile/update"
-                          element={<ProfileUpdatePage />}
-                        />
-                        <Route
-                          path="/profile/delete"
-                          element={<ProfileDeletePage />}
-                        />
-
-                        {/* Change email */}
-                        <Route
-                          path="/change-email"
-                          element={<ChangeEmailPage />}
-                        />
-                        <Route
-                          path="/change-email/:token"
-                          element={<ChangeEmailTokenPage />}
-                        />
-                        <Route
-                          path="/change-email-confirm"
-                          element={<ChangeEmailConfirmationPage />}
-                        />
-                        <Route
-                          path="/change-password"
-                          element={<ChangePasswordPage />}
-                        />
-                        <Route
-                          path="/change-password/:token"
-                          element={<ChangePasswordTokenPage />}
-                        />
-                        <Route
-                          path="/change-password-confirm"
-                          element={<ChangePasswordConfirmationPage />}
+                          path="/customers/:id/delete"
+                          element={<CustomerDeletePage />}
                         />
                       </Route>
-                      <Route element={<AuthRoute />}>
-                        <Route path="/login" element={<LoginPage />} />
-                        <Route path="/register" element={<RegisterPage />} />
 
-                        {/* Email verification */}
+                      {/* Sellers */}
+                      <Route path="/sellers" element={<SellersPage />} />
+                      <Route path="/sellers/:id" element={<SellerPage />} />
+                      <Route
+                        path="/sellers/:id/orders"
+                        element={<SellerOrdersPage />}
+                      />
+                      <Route
+                        path="/sellers/:id/misconducts"
+                        element={<SellerMisconductsPage />}
+                      />
+                      <Route
+                        path="/sellers/:id/misconducts/new"
+                        element={<SellerNewMisconductPage />}
+                      />
+                      <Route
+                        path="/sellers/:id/edit"
+                        element={<SellerEditPage />}
+                      />
+                      <Route
+                        path="/sellers/:id/disable"
+                        element={<SellerDisablePage />}
+                      />
+
+                      <Route element={<AdminOnlyRoutes />}>
                         <Route
-                          path="/verify-email"
-                          element={<EmailVerificationPage />}
-                        />
-                        <Route
-                          path="/verify-email/:token"
-                          element={<EmailVerificationTokenPage />}
-                        />
-                        <Route
-                          path="/verify-confirm"
-                          element={<EmailVerificationConfirmationPage />}
-                        />
-                        <Route
-                          path="/reset-password"
-                          element={<ResetPasswordPage />}
-                        />
-                        <Route
-                          path="/reset-password/:token"
-                          element={<ResetPasswordTokenPage />}
-                        />
-                        <Route
-                          path="/reset-confirm"
-                          element={<PassswordResetConfirmationPage />}
+                          path="/sellers/:id/delete"
+                          element={<SellerDeletePage />}
                         />
                       </Route>
-                      <Route path="/500" element={<Error500 />} />
-                      <Route path="*" element={<Error404 />} />
+
+                      {/* Staff */}
+                      <Route path="/staff" element={<StaffPage />} />
+                      <Route
+                        path="/staff/:id/"
+                        element={<StaffProfilePage />}
+                      />
+                      <Route
+                        path="/staff/:id/edit"
+                        element={<StaffEditPage />}
+                      />
+                      <Route
+                        path="/staff/:id/disable"
+                        element={<StaffDisablePage />}
+                      />
+                      <Route element={<AdminOnlyRoutes />}>
+                        <Route
+                          path="/staff/:id/delete"
+                          element={<StaffDeletePage />}
+                        />
+                      </Route>
+
+                      {/* Orders */}
+                      <Route path="/orders" element={<OrdersPage />} />
+
+                      {/* Complaints */}
+                      <Route path="/complaints" element={<ComplaintsPage />} />
+
+                      {/* Misconducts */}
+                      <Route
+                        path="/misconducts"
+                        element={<MisconductsPage />}
+                      />
+                      <Route
+                        path="/misconducts/:id"
+                        element={<MisconductPage />}
+                      />
+
+                      {/* Settings */}
+                      <Route path="/settings" element={<SettingsPage />} />
+
+                      {/* Profile */}
+                      <Route path="/profile" element={<ProfilePage />} />
+                      <Route
+                        path="/profile/update"
+                        element={<ProfileUpdatePage />}
+                      />
+                      <Route
+                        path="/profile/delete"
+                        element={<ProfileDeletePage />}
+                      />
+
+                      {/* Change email */}
+                      <Route
+                        path="/change-email"
+                        element={<ChangeEmailPage />}
+                      />
+                      <Route
+                        path="/change-email/:token"
+                        element={<ChangeEmailTokenPage />}
+                      />
+                      <Route
+                        path="/change-email-confirm"
+                        element={<ChangeEmailConfirmationPage />}
+                      />
+                      <Route
+                        path="/change-password"
+                        element={<ChangePasswordPage />}
+                      />
+                      <Route
+                        path="/change-password/:token"
+                        element={<ChangePasswordTokenPage />}
+                      />
+                      <Route
+                        path="/change-password-confirm"
+                        element={<ChangePasswordConfirmationPage />}
+                      />
                     </Route>
+                    <Route element={<AuthRoute />}>
+                      <Route path="/login" element={<LoginPage />} />
+                      <Route path="/register" element={<RegisterPage />} />
+
+                      {/* Email verification */}
+                      <Route
+                        path="/verify-email"
+                        element={<EmailVerificationPage />}
+                      />
+                      <Route
+                        path="/verify-email/:token"
+                        element={<EmailVerificationTokenPage />}
+                      />
+                      <Route
+                        path="/verify-confirm"
+                        element={<EmailVerificationConfirmationPage />}
+                      />
+                      <Route
+                        path="/reset-password"
+                        element={<ResetPasswordPage />}
+                      />
+                      <Route
+                        path="/reset-password/:token"
+                        element={<ResetPasswordTokenPage />}
+                      />
+                      <Route
+                        path="/reset-confirm"
+                        element={<PassswordResetConfirmationPage />}
+                      />
+                    </Route>
+                    <Route path="/500" element={<Error500 />} />
+                    <Route path="*" element={<Error404 />} />
                   </Routes>
                 </Suspense>
               </div>

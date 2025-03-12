@@ -245,5 +245,12 @@ export interface NewMisconductRequest extends AuthenticatedRequest {
     description: string;
     action: RESPONSE;
     email: string;
+    role: "" | "customer" | "staff" | "seller";
+  };
+}
+
+export interface UpdateCartItemRequest extends AuthenticatedRequest {
+  body: {
+    quantity: number;
   };
 }

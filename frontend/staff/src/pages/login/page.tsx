@@ -5,7 +5,12 @@ import { useMutation } from "@tanstack/react-query";
 import { FormEventHandler, useContext, useState } from "react";
 import Loader from "../../components/loader";
 import { ShowErrorContext, ErrorContext } from "../../utils/errorContext";
-import { setAccessToken, setRefreshToken } from "../../utils/cookies";
+import {
+  setAccessToken,
+  setRefreshToken,
+  setStaffRole,
+  setUserID,
+} from "../../utils/cookies";
 import userStore from "../../utils/store";
 import EyeClosed from "../../components/icons/hide";
 import EyeOpen from "../../components/icons/show";
@@ -27,15 +32,18 @@ const LoginPage = () => {
       errorHandler(error, navigate, setErr, setError);
     },
     onSuccess: (data) => {
-      if (data) {
-        setAccessToken(data.token);
-        setRefreshToken(data.refreshToken);
-        setUser(data.staff.id);
-        setRole(data.role);
-        navigate("/", { replace: true });
-      } else {
+      if (!data) {
         setErr("Something unexpected happened");
+        return;
       }
+
+      setAccessToken(data.token);
+      setRefreshToken(data.refreshToken);
+      setUserID(data.staff.id);
+      setUser(data.staff.id);
+      setStaffRole(data.staff.role);
+      setRole(data.staff.role);
+      navigate("/products", { replace: true });
     },
   });
 

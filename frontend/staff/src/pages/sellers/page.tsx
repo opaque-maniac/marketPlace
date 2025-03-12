@@ -52,7 +52,7 @@ export default function SellersPage() {
   });
 
   if (query.isError) {
-    errorHandler(query.error, navigate, setErr, setError);
+    //errorHandler(query.error, navigate, setErr, setError);
   }
 
   const handlePrev = (e: React.MouseEvent) => {

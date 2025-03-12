@@ -7,11 +7,19 @@ import { apiHost, apiProtocol } from "../../generics";
 // Fetch many products
 export const fetchCustomerOrders: QueryFunction<
   SuccessCustomerOrdersResponse,
-  ["customer-orders", string, number, number, string]
+  ["customer-orders", string, number, number, string, string]
 > = async ({ queryKey }) => {
   try {
-    const [, id, page, limit, query] = queryKey;
-    const url = `${apiProtocol}://${apiHost}/staff/customers/${id}/orders?page=${page}&query=${query}&limit=${limit}`;
+    const [, id, page, limit, query, status] = queryKey;
+    let url = `${apiProtocol}://${apiHost}/staff/customers/${id}/orders?page=${page}&limit=${limit}`;
+
+    if (query) {
+      url += `&query=${query}`;
+    }
+
+    if (status) {
+      url += `&status=${status}`;
+    }
 
     const token = getAccessToken();
 

@@ -6,10 +6,11 @@
  */
 
 import { NextFunction, Response } from "express";
-import { AuthenticatedRequest } from "../../types";
+import { AuthenticatedRequest, UpdateCartItemRequest } from "../../types";
 import prisma from "../../utils/db";
 import { serverError } from "../../utils/globals";
 import { newCartItemSocket } from "../../websockets/sockets";
+import { CartItem } from "@prisma/client";
 
 export const fetchUserCart = async (
   req: AuthenticatedRequest,
@@ -20,6 +21,7 @@ export const fetchUserCart = async (
     const { id } = req.params;
     const page = req.query.page ? parseInt(req.query.page as string) : 1;
     const limit = req.query.limit ? parseInt(req.query.limit as string) : 10;
+    const query = req.query.query ? (req.query.query as string) : undefined;
 
     const customer = await prisma.customer.findUnique({
       where: {
@@ -41,20 +43,48 @@ export const fetchUserCart = async (
       throw new Error("Cart not found");
     }
 
-    const cartItems = await prisma.cartItem.findMany({
-      where: {
-        cartID: cart.id,
-      },
-      include: {
-        product: {
-          include: {
-            images: true,
+    let cartItems: CartItem[] = [];
+    if (query) {
+      cartItems = await prisma.cartItem.findMany({
+        where: {
+          OR: [
+            {
+              product: {
+                name: {
+                  contains: query,
+                  mode: "insensitive",
+                },
+              },
+            },
+          ],
+          cartID: cart.id,
+        },
+        include: {
+          product: {
+            include: {
+              images: true,
+            },
           },
         },
-      },
-      take: limit + 1,
-      skip: (page - 1) * limit,
-    });
+        take: limit + 1,
+        skip: (page - 1) * limit,
+      });
+    } else {
+      cartItems = await prisma.cartItem.findMany({
+        where: {
+          cartID: cart.id,
+        },
+        include: {
+          product: {
+            include: {
+              images: true,
+            },
+          },
+        },
+        take: limit + 1,
+        skip: (page - 1) * limit,
+      });
+    }
 
     const hasNext = cartItems.length > limit;
 
@@ -140,6 +170,56 @@ export const fetchCartItem = async (
     res.status(200).json({
       message: "Cart item fetched successfully",
       cartItem,
+    });
+  } catch (e) {
+    if (e instanceof Error) {
+      next(e);
+      return;
+    }
+    next(serverError);
+  }
+};
+
+export const updateCartItem = async (
+  req: UpdateCartItemRequest,
+  res: Response,
+  next: NextFunction,
+): Promise<void> => {
+  try {
+    const { id } = req.params;
+    const { quantity } = req.body;
+
+    const exists = await prisma.cartItem.findUnique({
+      where: { id },
+      include: {
+        product: true,
+      },
+    });
+
+    if (!exists) {
+      throw new Error("Cart item not found");
+    }
+
+    if (exists.product.inventory > quantity) {
+      if (quantity >= 1) {
+        const newItem = await prisma.cartItem.update({
+          where: { id },
+          data: {
+            quantity,
+          },
+        });
+
+        res.status(200).json({
+          message: "Updated quantity",
+          quantity: newItem.quantity,
+        });
+        return;
+      }
+    }
+
+    res.status(200).json({
+      message: "Updated quantity",
+      quantity: exists.quantity,
     });
   } catch (e) {
     if (e instanceof Error) {

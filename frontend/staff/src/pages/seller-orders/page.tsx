@@ -1,30 +1,29 @@
 import { useQuery } from "@tanstack/react-query";
-import { useNavigate, useParams } from "react-router-dom";
+import { Link, useNavigate, useParams } from "react-router-dom";
 import { lazy, Suspense, useContext, useEffect, useState } from "react";
 import { ErrorContext, ShowErrorContext } from "../../utils/errorContext";
-import ArrowLeft from "../../components/icons/arrowleft";
-import ArrowRight from "../../components/icons/arrowright";
 import { Helmet } from "react-helmet";
-import PageLoader from "../../components/pageloader";
 import { errorHandler } from "../../utils/errorHandler";
 import Loader from "../../components/loader";
 import ManageQueryStr from "../../utils/querystr";
 import OrdersStatusForm from "../../components/orders/statusform";
 import { fetchSellerOrders } from "../../utils/queries/sellers/fetchorders";
 import Transition from "../../components/transition";
-import SellerOrdersSearchForm from "../../components/seller-orders/searchform";
 import Pagination from "../../components/pagination";
 import PageSearchForm from "../../components/pagesearchform";
 
 const OrderItem = lazy(() => import("../../components/orders/orderitem"));
 
-const Fallback = () => {
+const Fallback = ({ url }: { url: string }) => {
   return (
-    <div className="md:h-[200px] w-350 flex justify-center items-center">
+    <Link
+      to={url}
+      className="md:h-[200px] w-350 flex justify-center items-center"
+    >
       <div className="h-8 w-8">
         <Loader color="#000" />
       </div>
-    </div>
+    </Link>
   );
 };
 
@@ -62,24 +61,6 @@ export default function SellerOrdersPage() {
     errorHandler(query.error, navigate, setErr, setError);
   }
 
-  const handlePrev = (e: React.MouseEvent) => {
-    e.preventDefault();
-    if (page > 1) {
-      const newPage = page - 1;
-      navigate(`?page=${newPage}`);
-      window.scrollTo(0, 0);
-    }
-  };
-
-  const handleNext = (e: React.MouseEvent) => {
-    e.preventDefault();
-    if (query.data?.hasNext) {
-      const newPage = page + 1;
-      navigate(`?page=${newPage}`);
-      window.scrollTo(0, 0);
-    }
-  };
-
   const data = query.data;
   const orders = data?.orders || [];
 
@@ -98,7 +79,13 @@ export default function SellerOrdersPage() {
       <main role="main" className="pt-12 relative">
         <p className="absolute top-4 left-4">
           {" "}
-          Home / <span className="font-extrabold">Orders</span>
+          <Link
+            to={`/sellers/${id}`}
+            className="xl:no-underline xl:hover:underline underline"
+          >
+            Seller{" "}
+          </Link>{" "}
+          / <span className="font-extrabold">Orders</span>
         </p>
         <div className="flex md:justify-between justify-start items-center md:flex-row flex-col md:gap-0 gap-6 mb-2 xl:px-0 md:px-4 px-0">
           <OrdersStatusForm initial={status} queryStr={queryStr} />
@@ -139,7 +126,9 @@ export default function SellerOrdersPage() {
                   <ul className="grid xl:grid-cols-2 grid-cols-1">
                     {orders.map((order) => (
                       <li key={order.id} className="mx-auto md:mb-8 mb-6">
-                        <Suspense fallback={<Fallback />}>
+                        <Suspense
+                          fallback={<Fallback url={`/orders/${order.id}`} />}
+                        >
                           <OrderItem order={order} />
                         </Suspense>
                       </li>

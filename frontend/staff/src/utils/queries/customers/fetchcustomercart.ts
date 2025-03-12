@@ -7,11 +7,15 @@ import { apiHost, apiProtocol } from "../../generics";
 // Fetch many products
 export const fetchCustomerCart: QueryFunction<
   SuccessCustomerCartResponse,
-  ["customer-cart", string, number, number]
+  ["customer-cart", string, number, number, string]
 > = async ({ queryKey }) => {
   try {
-    const [, id, page, limit] = queryKey;
-    const url = `${apiProtocol}://${apiHost}/staff/customers/${id}/cart?page=${page}&limit=${limit}`;
+    const [, id, page, limit, query] = queryKey;
+    let url = `${apiProtocol}://${apiHost}/staff/customers/${id}/cart?page=${page}&limit=${limit}`;
+
+    if (query) {
+      url += `&query=${query}`;
+    }
 
     const token = getAccessToken();
 

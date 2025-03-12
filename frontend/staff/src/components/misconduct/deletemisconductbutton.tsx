@@ -1,5 +1,5 @@
 import { useMutation } from "@tanstack/react-query";
-import { MouseEventHandler, useContext, useState } from "react";
+import { MouseEventHandler, useContext, useEffect, useState } from "react";
 import { useNavigate } from "react-router-dom";
 import { ErrorContext, ShowErrorContext } from "../../utils/errorContext";
 import { errorHandler } from "../../utils/errorHandler";
@@ -15,6 +15,7 @@ interface Props {
 
 export default function DeleteMisconductButton({ id, staffID }: Props) {
   const user = useUserStore((state) => state.user);
+  const isAdmin = useUserStore((state) => state.role) === "ADMIN";
 
   const navigate = useNavigate();
   const [, setErr] = useContext(ShowErrorContext);
@@ -45,12 +46,14 @@ export default function DeleteMisconductButton({ id, staffID }: Props) {
     mutate(id);
   };
 
+  const disable = user === staffID ? (isAdmin ? false : true) : false;
+
   return (
     <>
       <button
         onClick={onclick}
-        disabled={user === staffID}
         aria-label="Delete misconduct"
+        disabled={disable}
         className="flex justify-center items-center bg-red-500 text-white h-10 w-36 rounded-md"
       >
         <span>Delete Misconduct</span>
@@ -65,6 +68,7 @@ export default function DeleteMisconductButton({ id, staffID }: Props) {
               <div className="mt-10 flex md:flex-row flex-col md:justify-around justify-start items-center md:gap-0 gap-4">
                 <button
                   aria-label="Confirm"
+                  disabled={isPending || disable}
                   className="w-36 h-10 bg-red-500 text-white rounded-md flex justify-center items-center"
                   onClick={onConfirm}
                 >

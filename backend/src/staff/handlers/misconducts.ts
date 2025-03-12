@@ -251,6 +251,9 @@ export const fetchCustomerMisconducts = async (
     const page = req.query.page ? parseInt(req.query.page as string) : 1;
     const limit = req.query.limit ? parseInt(req.query.limit as string) : 10;
     const query = req.query.query ? (req.query.query as string) : undefined;
+    const response = req.query.action
+      ? (req.query.action as RESPONSE)
+      : undefined;
 
     const customer = await prisma.customer.findUnique({
       where: {
@@ -262,54 +265,44 @@ export const fetchCustomerMisconducts = async (
       throw new Error("Customer not found");
     }
 
-    let misconducts: Misconduct[] = [];
-
-    if (!query) {
-      misconducts = await prisma.misconduct.findMany({
-        where: {
-          customerID: customer.id,
-        },
-        include: {
-          personel: {
-            include: {
-              image: true,
-            },
-          },
-        },
-        take: limit + 1,
-        skip: (page - 1) * limit,
-      });
-    } else {
-      misconducts = await prisma.misconduct.findMany({
-        where: {
-          customerID: customer.id,
-          OR: [
-            {
-              personel: {
-                firstName: {
-                  contains: query,
-                  mode: "insensitive",
+    const misconducts = await prisma.misconduct.findMany({
+      where: query
+        ? {
+            customerID: customer.id,
+            response,
+            OR: [
+              {
+                personel: {
+                  firstName: {
+                    contains: query,
+                    mode: "insensitive",
+                  },
                 },
               },
-            },
-            {
-              personel: {
-                lastName: query,
+              {
+                personel: {
+                  lastName: {
+                    contains: query,
+                    mode: "insensitive",
+                  },
+                },
               },
-            },
-          ],
-        },
-        include: {
-          personel: {
-            include: {
-              image: true,
-            },
+            ],
+          }
+        : {
+            customerID: customer.id,
+            response,
+          },
+      include: {
+        personel: {
+          include: {
+            image: true,
           },
         },
-        take: limit + 1,
-        skip: (page - 1) * limit,
-      });
-    }
+      },
+      take: limit + 1,
+      skip: (page - 1) * limit,
+    });
 
     const hasNext = misconducts.length > limit;
 
@@ -516,25 +509,18 @@ export const newMisconduct = async (
   next: NextFunction,
 ): Promise<void> => {
   try {
-    const { email, misconduct, description, action } = req.body;
+    const { email, misconduct, description, action, role } = req.body;
     const { user } = req;
-    const profileType = req.query.profile
-      ? (req.query.profile as string)
-      : undefined;
 
     if (!user) {
       throw new Error("User not found");
     }
 
-      const sellers = await prisma.seller.findMany({
-          where: {}
-      })
-
     let seller: Seller | null = null;
     let customer: Customer | null = null;
     let staff: Staff | null = null;
 
-    if (profileType === "seller" || typeof profileType === undefined) {
+    if (role === "seller" || !role) {
       seller = await prisma.seller.findUnique({
         where: {
           email,
@@ -542,7 +528,7 @@ export const newMisconduct = async (
       });
     }
 
-    if (profileType === "customer" || typeof profileType === "undefined") {
+    if (role === "customer" || !role) {
       customer = await prisma.customer.findUnique({
         where: {
           email,
@@ -550,7 +536,7 @@ export const newMisconduct = async (
       });
     }
 
-    if (profileType === "staff" || typeof profileType === "undefined") {
+    if (role === "staff" || !role) {
       staff = await prisma.staff.findUnique({
         where: {
           email,

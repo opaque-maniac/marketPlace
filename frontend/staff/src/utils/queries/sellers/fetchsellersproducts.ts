@@ -11,7 +11,11 @@ export const fetchSellersProducts: QueryFunction<
 > = async ({ queryKey }) => {
   try {
     const [, id, page, limit, query] = queryKey;
-    let url = `${apiProtocol}://${apiHost}/staff/sellers/${id}/products?page=${page}&limit=${limit}&query=${query}`;
+    let url = `${apiProtocol}://${apiHost}/staff/sellers/${id}/products?page=${page}&limit=${limit}`;
+
+    if (query) {
+      url += `&query=${query}`;
+    }
 
     const token = getAccessToken();
 

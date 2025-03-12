@@ -5,11 +5,12 @@ import { apiHost, apiProtocol } from "../../generics";
 
 export const fetchProductComments: QueryFunction<
   SuccessCommentsResponse,
-  ["comments", string, number]
+  ["comments", string, number, number]
 > = async ({ queryKey }) => {
   try {
-    const [, id, page] = queryKey;
-    const url = `${apiProtocol}://${apiHost}/customers/products/${id}/comments?page=${page}`;
+    const [, id, page, limit] = queryKey;
+    const url = `${apiProtocol}://${apiHost}/customers/products/${id}/comments?page=${page}&limit=${limit}`;
+
     const options = {
       method: "GET",
       headers: {

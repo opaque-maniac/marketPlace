@@ -1,7 +1,7 @@
 import { useQuery } from "@tanstack/react-query";
 import Transition from "../../components/transition";
 import { useNavigate } from "react-router-dom";
-import { lazy, Suspense, useContext, useEffect, useState } from "react";
+import { lazy, Suspense, useContext, useEffect } from "react";
 import { ErrorContext, ShowErrorContext } from "../../utils/errorContext";
 import ArrowLeft from "../../components/icons/arrowleft";
 import ArrowRight from "../../components/icons/arrowright";
