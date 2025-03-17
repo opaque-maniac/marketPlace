@@ -14,6 +14,7 @@ import { errorHandler } from "../../utils/errorHandler";
 import Loader from "../../components/loader";
 import { calculateDiscount } from "../../utils/price";
 import MetaTags from "../../components/metacomponent";
+import ProductRatings from "../../components/product/ratings";
 
 const ProductImageButton = lazy(
   () => import("../../components/product/productimagebutton"),
@@ -94,6 +95,7 @@ const IndividualProductPage = () => {
     queryFn: fetchProduct,
     queryKey: ["product", id as string],
   });
+  console.log(query.data);
 
   if (query.isError) {
     errorHandler(query.error, navigate, setErr, setError);
@@ -135,9 +137,9 @@ const IndividualProductPage = () => {
         ) : (
           <>
             <div className="flex pb-8 xl:flex-row flex-col xl:items-start items-center pt-8 lg:justify-evenly">
-              <section className="flex justify-start items-center gap-4 md:flex-row flex-col xl:border-none lg:border lg:border-red-500">
+              <section className="flex justify-start xl:items-start items-center gap-4 md:flex-row flex-col ">
                 {product && product.images.length > 1 && (
-                  <div className="flex md:flex-col flex-row flex-wrap gap-4 justify-center items-center md:order-1 order-2 md:h-600">
+                  <div className="flex md:flex-col flex-row flex-wrap gap-4 justify-center items-center md:order-1 order-2">
                     {product &&
                       product.images.map((img, index) => {
                         if (index === 0) {
@@ -273,31 +275,12 @@ const IndividualProductPage = () => {
                   </>
                 )}
 
-                <div className="h-180 md:w-399 w-80 mx-auto border border-black rounded-lg">
-                  <div
-                    style={{ height: "90px" }}
-                    className="md:w-399 w-80 border-b border-black flex justify-start items-center gap-4 px-2"
-                  >
-                    <div className="h-14 w-14">
-                      <TruckIcon />
-                    </div>
-                    <div>
-                      <h3>Free Delivery</h3>
-                      <p className="underline">
-                        Enter your postal code for Delivery Availability
-                      </p>
-                    </div>
-                  </div>
-                  <div className="md:w-399 w-80 flex justify-start items-center gap-4 px-2">
-                    <div className="h-14 w-14">
-                      <ArrowPath />
-                    </div>
-                    <div>
-                      <h3>Return Delivery</h3>
-                      <p className="underline">Free 30 Days Delivery Return</p>
-                    </div>
-                  </div>
-                </div>
+                {query.data && (
+                  <ProductRatings
+                    count={query.data.count}
+                    value={query.data.value}
+                  />
+                )}
               </section>
             </div>
             <section>
@@ -307,6 +290,33 @@ const IndividualProductPage = () => {
                 </Suspense>
               )}
             </section>
+
+            <div className="h-180 md:w-399 w-80 mx-auto border border-black rounded-lg md:mt-6 mt-4">
+              <div
+                style={{ height: "90px" }}
+                className="md:w-399 w-80 border-b border-black flex justify-start items-center gap-4 px-2"
+              >
+                <div className="h-14 w-14">
+                  <TruckIcon />
+                </div>
+                <div>
+                  <h3>Free Delivery</h3>
+                  <p className="underline">
+                    Enter your postal code for Delivery Availability
+                  </p>
+                </div>
+              </div>
+              <div className="md:w-399 w-80 flex justify-start items-center gap-4 px-2">
+                <div className="h-14 w-14">
+                  <ArrowPath />
+                </div>
+                <div>
+                  <h3>Return Delivery</h3>
+                  <p className="underline">Free 30 Days Delivery Return</p>
+                </div>
+              </div>
+            </div>
+
             <section className="min-h-400 w-full xl:px-0 md:px-4">
               <div className="py-4">
                 <h3 className="text-xl font-semibold md:text-start text-center">

@@ -1,56 +1,47 @@
-import { useMutation } from "@tanstack/react-query";
-import TrashIcon from "../../components/icons/trash";
-import Transition from "../../components/transition";
-import { deleteComment } from "../../utils/mutations/comments/deletecomment";
 import { MouseEventHandler, useContext } from "react";
-import Loader from "../../components/loader";
+import BinIcon from "../icons/bin";
+import { useMutation } from "@tanstack/react-query";
 import { useNavigate } from "react-router-dom";
 import { ErrorContext, ShowErrorContext } from "../../utils/errorContext";
 import { errorHandler } from "../../utils/errorHandler";
+import Loader from "../loader";
+import { deleteComment } from "../../utils/mutations/comments/deletecomment";
 
 interface Props {
-  id: string;
-  productId: string;
+  commentID: string;
   refetch: () => void;
 }
 
-const DeleteComment = ({ id, productId, refetch }: Props) => {
+export default function DeleteCommentButton({ commentID, refetch }: Props) {
   const navigate = useNavigate();
-  const [, setErr] = useContext(ShowErrorContext);
   const [, setError] = useContext(ErrorContext);
+  const [, setErr] = useContext(ShowErrorContext);
 
-  const mutation = useMutation({
+  const { isPending, mutate } = useMutation({
     mutationFn: deleteComment,
-    onError: (error: Error) => {
-      errorHandler(error, navigate, setErr, setError);
-    },
     onSuccess: () => {
       refetch();
     },
+    onError: (error) => {
+      errorHandler(error, navigate, setErr, setError);
+    },
   });
 
-  const clickHandler: MouseEventHandler<HTMLButtonElement> = (e) => {
+  const onclick: MouseEventHandler<HTMLButtonElement> = (e) => {
     e.preventDefault();
-    mutation.mutate({ productId, commentId: id });
+    mutate(commentID);
   };
 
-  const disable = mutation.isPending ? true : false;
   return (
-    <Transition>
-      <button
-        disabled={disable}
-        onClick={clickHandler}
-        className={`flex justify-start items-center gap-2 border border-black h-8 p-2 rounded-sm bg-white ${
-          disable ? "cursor-not-allowed" : "cursor-pointer"
-        }`}
-      >
-        <div className="h-6 w-6">
-          {mutation.isPending ? <Loader color="#000" /> : <TrashIcon />}
-        </div>
-        <span className="text-sm">Delete</span>
-      </button>
-    </Transition>
+    <button
+      onClick={onclick}
+      aria-label="Delete comment"
+      className="flex justify-center items-center md:w-[104px] w-[40px] h-[34px] bg-red-400 rounded-lg gap-[5px] text-white"
+    >
+      <div className="w-[20px] h-[30px] gap-1">
+        {isPending ? <Loader color="#fff" /> : <BinIcon />}
+      </div>
+      <span className="font-semibold text-lg md:inline hidden">Delete</span>
+    </button>
   );
-};
-
-export default DeleteComment;
+}

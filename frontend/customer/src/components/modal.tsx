@@ -4,9 +4,10 @@ import { createPortal } from "react-dom";
 interface Props {
   children: ReactElement;
   callback: () => void;
+  color?: string;
 }
 
-const Modal = ({ children, callback }: Props) => {
+const Modal = ({ children, callback, color = "black" }: Props) => {
   const elRef: MutableRefObject<HTMLDivElement | null> = useRef(null);
   const previousActiveElement: MutableRefObject<HTMLElement | null> =
     useRef(null);
@@ -92,7 +93,7 @@ const Modal = ({ children, callback }: Props) => {
       role="dialog"
       aria-modal="true"
       aria-labelledby="Navigation Modal"
-      className="fixed top-0 left-0 right-0 bottom-0 z-30 bg-black bg-opacity-80"
+      className={`fixed top-0 left-0 right-0 bottom-0 z-30 bg-${color} bg-opacity-80`}
     >
       <div className="relative">{children}</div>
     </div>,

@@ -3,8 +3,6 @@ import { body } from "express-validator";
 import { fetchIndividualProduct, fetchProducts } from "../handlers/products";
 import {
   createProductComment,
-  deleteProductComment,
-  fetchIndividualComment,
   fetchProductComments,
 } from "../handlers/comments";
 import {
@@ -31,17 +29,6 @@ router.post(
   isCustomer,
   body("message").isString().isLength(stringConfig),
   createProductComment,
-);
-
-// fetch individual comment
-router.get("/:id/comments/:commentId", fetchIndividualComment);
-
-// delete comment
-router.delete(
-  "/:id/comments/:commentId",
-  allowIfAuthenticated,
-  isCustomer,
-  deleteProductComment,
 );
 
 export default router;

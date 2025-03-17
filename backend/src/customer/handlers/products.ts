@@ -88,9 +88,27 @@ export const fetchIndividualProduct = async (
       throw new Error("Product not found");
     }
 
+    const raitngs = await prisma.ratings.findMany({
+      where: {
+        productID: product.id,
+      },
+    });
+
+    console.log(`Value: ${raitngs}`);
+
+    const value =
+      raitngs.length > 0
+        ? raitngs.reduce(
+            (accumulator, current) => accumulator + current.value,
+            0,
+          ) / raitngs.length
+        : 0;
+
     res.status(200).json({
       message: "Product fetched successfully",
       data: product,
+      value,
+      count: raitngs.length,
     });
   } catch (e) {
     if (e instanceof Error) {

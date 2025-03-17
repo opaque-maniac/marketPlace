@@ -216,8 +216,6 @@ export const disableCustomer = async (
       where: {
         id: misconductID,
         customerID: exists.id,
-        personelID: user.id,
-        response: "DELETE_PROFILE",
       },
     });
 

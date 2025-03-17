@@ -1,17 +1,11 @@
 import { getAccessToken } from "../../cookies";
 import { responseError, tokenError } from "../../errors";
 import { apiHost, apiProtocol } from "../../generics";
-import { ErrorResponse, SuccessSellerResponse } from "../../types";
+import { ErrorResponse, SuccessProfileUpdate } from "../../types";
 
-export const sendUpdateProfile = async ({
-  data,
-  id,
-}: {
-  data: FormData;
-  id: string;
-}) => {
+export const sendUpdateProfile = async (data: FormData) => {
   try {
-    const url = `${apiProtocol}://${apiHost}/seller/profile/${id}`;
+    const url = `${apiProtocol}://${apiHost}/customers/profile`;
 
     const token = getAccessToken();
 
@@ -40,7 +34,7 @@ export const sendUpdateProfile = async ({
       }
     }
 
-    const json = (await response.json()) as SuccessSellerResponse;
+    const json = (await response.json()) as SuccessProfileUpdate;
     return json;
   } catch (e) {
     if (e instanceof Error) {

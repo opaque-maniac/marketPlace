@@ -71,15 +71,7 @@ export const updateProfile = async (
       throw new Error("User profile not found");
     }
 
-    let filename: string | undefined;
-
-    if (Array.isArray(req.files)) {
-      filename = req.files ? req.files[0].filename : undefined;
-    } else if (req.files && typeof req.files === "object") {
-      filename = req.files["image"][0].filename || undefined;
-    } else {
-      filename = undefined;
-    }
+    const filename = req.file?.filename;
 
     const customer = await prisma.$transaction(
       async (txl) => {
@@ -118,9 +110,15 @@ export const updateProfile = async (
       },
     );
 
+    const image = await prisma.customerImage.findUnique({
+      where: {
+        customerID: customer.id,
+      },
+    });
+
     res.status(200).json({
       message: "Customer updated successfully",
-      customer,
+      image,
     });
   } catch (e) {
     if (e instanceof Error) {

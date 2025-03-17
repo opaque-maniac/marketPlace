@@ -5,10 +5,10 @@ import CommentItem from "../../components/comments/comment";
 import { fetchProductComments } from "../../utils/queries/products/fetchproductcomments";
 import { ErrorContext, ShowErrorContext } from "../../utils/errorContext";
 import { useNavigate } from "react-router-dom";
-import CommentForm from "../../components/comments/commentform";
 import useUserStore from "../../utils/store";
 import { errorHandler } from "../../utils/errorHandler";
 import NewComment from "../../components/comments/commentform";
+import MoreCommentsButton from "./morecomments";
 
 interface Props {
   id: string;
@@ -48,20 +48,25 @@ const CommentList = ({ id }: Props) => {
           <>
             {query.data ? (
               <div>
+                <div className="xl:w-746 md:w-[500px] w-[350px] h-[30px] mx-auto flex justify-between items-start">
+                  <h3>Comments</h3>
+                  {query.data.data.length > 0 && (
+                    <MoreCommentsButton productID={id} />
+                  )}
+                </div>
                 {query.data.data.length > 0 ? (
-                  <ul className="flex flex-col items-center gap-2 border border-red-500">
+                  <ul className="flex flex-col items-center gap-2 md:min-h-[316px] min-h-[382px]">
                     {query.data.data.map((comment) => (
                       <li key={comment.id}>
                         <CommentItem
                           refetch={refetchComments}
                           comment={comment}
-                          productId={id}
                         />
                       </li>
                     ))}
                   </ul>
                 ) : (
-                  <div className="flex justify-center items-center h-60">
+                  <div className="flex justify-center items-center md:h-[316px] h-[382px]">
                     <h3>No Comments For This Product</h3>
                   </div>
                 )}
@@ -69,9 +74,18 @@ const CommentList = ({ id }: Props) => {
             ) : null}
           </>
         ) : null}
-        <div>
-          <NewComment buttonText="Send comment" />
-        </div>
+        {user && (
+          <>
+            <h3 className="text-center">New Comment</h3>
+            <div className="md:w-auto w-full">
+              <NewComment
+                buttonText="Send"
+                productID={id}
+                refetch={refetchComments}
+              />
+            </div>
+          </>
+        )}
       </div>
       {user && null}
     </div>

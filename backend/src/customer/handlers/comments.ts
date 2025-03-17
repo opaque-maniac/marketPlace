@@ -9,6 +9,7 @@ import { Response, NextFunction, Request } from "express";
 import prisma from "../../utils/db";
 import { AuthenticatedRequest, CommentCreateRequest } from "../../types";
 import { serverError } from "../../utils/globals";
+import { addToWishlist } from "./wishlist";
 
 // Function to fetch comments for products
 export const fetchProductComments = async (
@@ -37,8 +38,21 @@ export const fetchProductComments = async (
       },
       include: {
         customer: {
-          include: {
+          select: {
             image: true,
+            firstName: true,
+            lastName: true,
+            id: true,
+          },
+        },
+        product: {
+          select: {
+            id: true,
+          },
+        },
+        _count: {
+          select: {
+            replies: true,
           },
         },
       },
@@ -52,10 +66,15 @@ export const fetchProductComments = async (
       comments.pop();
     }
 
+    const formattedComments = comments.map((comment) => ({
+      ...comment,
+      hasReplies: comment._count.replies > 0,
+    }));
+
     res.status(200).json({
       message: "Comments fetched successfully",
       hasNext,
-      data: comments,
+      data: formattedComments,
     });
   } catch (e) {
     if (e instanceof Error) {
@@ -112,24 +131,30 @@ export const createProductComment = async (
   }
 };
 
-// Function to fetchIndividualComment
+// Function to fetch individual comment replies
 export const fetchIndividualComment = async (
   req: Request,
   res: Response,
   next: NextFunction,
 ): Promise<void> => {
   try {
-    const { id, commentId } = req.params;
+    const { id } = req.params;
 
     const comment = await prisma.comment.findUnique({
       where: {
-        id: commentId,
-        productID: id,
+        id,
       },
       include: {
         customer: {
-          include: {
-            image: true,
+          select: {
+            firstName: true,
+            lastName: true,
+            id: true,
+            image: {
+              select: {
+                url: true,
+              },
+            },
           },
         },
       },
@@ -140,7 +165,7 @@ export const fetchIndividualComment = async (
     }
 
     res.status(200).json({
-      message: "Comment found",
+      message: "Retrieved comment",
       comment,
     });
   } catch (e) {
@@ -152,41 +177,193 @@ export const fetchIndividualComment = async (
   }
 };
 
+// Function to fetch individual comment replies
+export const fetchCommentReplies = async (
+  req: Request,
+  res: Response,
+  next: NextFunction,
+): Promise<void> => {
+  try {
+    const { id } = req.params;
+    const page = req.query.page ? parseInt(req.query.page as string) : 1;
+    const limit = req.query.limit ? parseInt(req.query.limit as string) : 10;
+
+    const comment = await prisma.comment.findUnique({
+      where: {
+        id,
+      },
+    });
+
+    if (!comment) {
+      throw new Error("Comment not found");
+    }
+
+    const replies = await prisma.comment.findMany({
+      where: {
+        parentID: comment.id,
+      },
+      include: {
+        customer: {
+          select: {
+            firstName: true,
+            lastName: true,
+            id: true,
+            image: {
+              select: {
+                url: true,
+              },
+            },
+          },
+        },
+      },
+      take: limit + 1,
+      skip: (page - 1) * limit,
+    });
+
+    const hasNext = replies.length > limit;
+
+    if (hasNext) {
+      replies.pop();
+    }
+
+    res.status(200).json({
+      message: "Comment found",
+      replies,
+      hasNext,
+    });
+  } catch (e) {
+    if (e instanceof Error) {
+      next(e);
+      return;
+    }
+    next(serverError);
+  }
+};
+
 // Function to delete product comment
-export const deleteProductComment = async (
+export const deleteComment = async (
   req: AuthenticatedRequest,
   res: Response,
   next: NextFunction,
 ): Promise<void> => {
   try {
-    const { id, commentId } = req.params;
+    const { id } = req.params;
     const { user } = req;
 
     if (!user) {
       throw new Error("User not found");
     }
 
-    const product = await prisma.product.findUnique({
+    const exists = await prisma.comment.findUnique({
       where: {
         id,
+        customerID: user.id,
       },
     });
 
-    if (!product) {
-      throw new Error("Product not found");
+    if (!exists) {
+      throw new Error("Comment not found");
     }
 
     const comment = await prisma.comment.delete({
       where: {
-        id: commentId,
-        productID: product.id,
-        customerID: user.id,
+        id: exists.id,
       },
     });
 
     res.status(203).json({
       message: "Comment deleted successfully",
       comment,
+    });
+  } catch (e) {
+    if (e instanceof Error) {
+      next(e);
+      return;
+    }
+    next(serverError);
+  }
+};
+
+export const updateComment = async (
+  req: CommentCreateRequest,
+  res: Response,
+  next: NextFunction,
+): Promise<void> => {
+  try {
+    const { message } = req.body;
+    const { user } = req;
+    const { id } = req.params;
+
+    if (!user) {
+      throw new Error("User not found");
+    }
+
+    const comment = await prisma.comment.findUnique({
+      where: {
+        id,
+        customerID: user.id,
+      },
+    });
+
+    if (!comment) {
+      throw new Error("Comment not found");
+    }
+
+    await prisma.comment.update({
+      where: {
+        id: comment.id,
+      },
+      data: {
+        message,
+      },
+    });
+
+    res.status(200).json({
+      message: "Updated comment",
+    });
+  } catch (e) {
+    if (e instanceof Error) {
+      next(e);
+      return;
+    }
+    next(serverError);
+  }
+};
+
+export const replyToComment = async (
+  req: CommentCreateRequest,
+  res: Response,
+  next: NextFunction,
+): Promise<void> => {
+  try {
+    const { message } = req.body;
+    const { user } = req;
+    const { id } = req.params;
+
+    if (!user) {
+      throw new Error("User not found");
+    }
+
+    const comment = await prisma.comment.findUnique({
+      where: {
+        id,
+      },
+    });
+
+    if (!comment) {
+      throw new Error("Comment not found");
+    }
+
+    await prisma.comment.create({
+      data: {
+        customerID: user.id,
+        parentID: comment.id,
+        message,
+      },
+    });
+
+    res.status(200).json({
+      message: "Updated comment",
     });
   } catch (e) {
     if (e instanceof Error) {

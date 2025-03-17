@@ -32,6 +32,7 @@ model Customer {
   misconducts Misconduct[]
   createdAt   DateTime       @default(now())
   updatedAt   DateTime       @updatedAt
+  ratings Ratings[]
 }
 
 model CustomerImage {
@@ -132,6 +133,17 @@ model Product {
   createdAt     DateTime       @default(now())
   updatedAt     DateTime       @updatedAt
   inventory     Int
+  ratings       Ratings[]
+}
+
+model Ratings {
+    id String @id @default(uuid())
+    productID String
+    product Product @relation(fields: [productID], references: [id], onDelete: Cascade)
+    customerID String
+    customer Customer @relation(fields: [customerID], references: [id], onDelete: Cascade)
+    value Int
+    createdAt DateTime @default(now())
 }
 
 model ProductImage {
@@ -143,13 +155,16 @@ model ProductImage {
 }
 
 model Comment {
-  id         String   @id @default(uuid())
-  productID  String
+  id         String  @id @default(uuid())
+  productID  String? // Optional, only for top-level comments
   customerID String
-  product    Product  @relation(fields: [productID], references: [id], onDelete: Cascade)
-  customer   Customer @relation(fields: [customerID], references: [id], onDelete: Cascade)
-  message    String
-  createdAt  DateTime @default(now())
+  parentID   String? // References another comment if it's a reply
+  product   Product?  @relation(fields: [productID], references: [id], onDelete: Cascade)
+  customer  Customer  @relation(fields: [customerID], references: [id], onDelete: Cascade)
+  parent    Comment?  @relation("CommentReplies", fields: [parentID], references: [id], onDelete: Cascade)
+  replies   Comment[] @relation("CommentReplies")
+  message   String
+  createdAt DateTime  @default(now())
 }
 
 model Cart {

@@ -11,7 +11,7 @@ export const fetchIndividualStaff: QueryFunction<
 > = async ({ queryKey }) => {
   try {
     const [, id] = queryKey;
-    const url = `${apiProtocol}://${apiHost}/staff/sellers/${id}`;
+    const url = `${apiProtocol}://${apiHost}/staff/staff/${id}`;
 
     const token = getAccessToken();
 

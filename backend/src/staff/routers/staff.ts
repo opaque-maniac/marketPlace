@@ -16,7 +16,7 @@ import {
   fetchStaff,
   updateStaff,
 } from "../handlers/staff";
-import { fetchCustomerMisconducts } from "../handlers/misconducts";
+import { fetchStaffMisconducts } from "../handlers/misconducts";
 
 const router = Router();
 
@@ -26,9 +26,7 @@ router.use(isStaff);
 
 // File upload
 const staffStorage = createStorage("uploads/staff");
-const staffUpload = multer({ storage: staffStorage });
-
-// fetch staff
+const staffUpload = multer({ storage: staffStorage }); // fetch staff
 router.get("/", fetchStaff);
 
 // fetch individual staff
@@ -48,7 +46,7 @@ router.put(
 // delete staff
 router.post("/:id/enable", isAdmin, enableStaff);
 router.post("/:id/disable", isAdmin, disableStaff);
-router.get("/:id/misconducts", fetchCustomerMisconducts);
+router.get("/:id/misconducts", fetchStaffMisconducts);
 
 // delete staff
 router.delete("/:id", isAdminOrProfileOwner, deleteStaff);

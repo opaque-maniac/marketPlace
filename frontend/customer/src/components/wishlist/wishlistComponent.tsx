@@ -65,8 +65,11 @@ const WishlistComponent = () => {
           token as string,
         );
         setWishlist(count.count);
-      } catch (error) {
-        errorHandler(error, navigate, setErr, setError);
+      } catch (_) {
+        setTimeout(() => {
+          // eslint-disable-next-line @typescript-eslint/no-floating-promises
+          fetchCart();
+        }, 1500);
       }
     }
 

@@ -25,7 +25,7 @@ const Related = ({ product }: Props) => {
   if (query.isLoading) {
     return (
       <div className="h-full w-full flex justify-center items-center">
-        <div className="h-20 w-20">
+        <div className="h-10 w-10">
           <Loader color="#000000" />
         </div>
       </div>

@@ -8,6 +8,7 @@ const cookies = new Cookies();
 
 const accessLabel: string = "hazina-customer-access-token";
 const refreshLabel: string = "hazina-customer-refresh-token";
+const profileImageLabel: string = "hazina-customer-profile-image";
 const userIDLabel: string = "hazina-customer-user-id";
 
 export const setAccessToken = (token: string) => {
@@ -31,6 +32,12 @@ export const setUserID = (id: string) => {
   });
 };
 
+export const setProfileImage = (url: string | null) => {
+  cookies.set(profileImageLabel, url, {
+    expires: new Date(new Date().getTime() + 60 * 60 * 1000 * 24 * 30),
+  });
+};
+
 export const getAccessToken = () => {
   return cookies.get(accessLabel) as string | undefined;
 };
@@ -43,6 +50,10 @@ export const getUserID = () => {
   return cookies.get(userIDLabel) as string | undefined;
 };
 
+export const getProfileImage = () => {
+  return cookies.get(profileImageLabel) as string | null;
+};
+
 export const removeAccessToken = () => {
   cookies.remove(accessLabel);
 };
@@ -53,4 +64,8 @@ export const removeRefreshToken = () => {
 
 export const removeUserID = () => {
   cookies.remove(userIDLabel);
+};
+
+export const removeProfileImage = () => {
+  cookies.remove(profileImageLabel);
 };

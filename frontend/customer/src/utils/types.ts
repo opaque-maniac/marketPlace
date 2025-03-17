@@ -88,6 +88,8 @@ export interface SuccessProductsResponse {
 export interface SuccessProductResponse {
   message: string;
   data: Product;
+  value: number;
+  count: number;
 }
 
 export interface Comment {
@@ -95,6 +97,7 @@ export interface Comment {
   productID: string;
   customerID: string;
   customer: Customer;
+  hasReplies: boolean;
   message: string;
   createdAt: string;
 }
@@ -283,4 +286,26 @@ export interface SuccessEmailResponse {
 
 export interface SuccessTokenResponse {
   message: string;
+}
+
+export interface SuccessRepliesResponse {
+  message: string;
+  replies: Comment[];
+  hasNext: boolean;
+}
+
+export interface SuccessIndividualCommentResponse {
+  message: string;
+  comment: Comment;
+}
+
+export interface SuccessProfileUpdate {
+  message: string;
+  image: CustomerImage | null;
+}
+
+export interface SuccessProductRatings {
+  message: string;
+  value: number;
+  count: number;
 }

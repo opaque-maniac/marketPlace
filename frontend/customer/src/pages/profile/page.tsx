@@ -14,6 +14,7 @@ import LocationPinIcon from "../../components/icons/pin";
 import GearIcon from "../../components/icons/gear";
 import MetaTags from "../../components/metacomponent";
 import ProfileImageButton from "../../components/profile/profileimagebutton";
+import NoStaleQueryClientWrapper from "../../components/nostalewrapper";
 
 const Fallback = () => {
   return (
@@ -25,7 +26,7 @@ const Fallback = () => {
   );
 };
 
-const ProfilePage = () => {
+function ProfilePage() {
   const user = useUserStore((state) => state.user);
   const navigate = useNavigate();
   const [, setError] = useContext(ErrorContext);
@@ -49,6 +50,7 @@ const ProfilePage = () => {
   }
 
   const customer = query.data?.data;
+  console.log(customer);
 
   return (
     <Transition>
@@ -142,6 +144,12 @@ const ProfilePage = () => {
       </main>
     </Transition>
   );
-};
+}
 
-export default ProfilePage;
+export default function ProfilePageWrapper() {
+  return (
+    <NoStaleQueryClientWrapper>
+      <ProfilePage />
+    </NoStaleQueryClientWrapper>
+  );
+}

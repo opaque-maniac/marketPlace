@@ -1,31 +1,59 @@
-import { useState } from "react";
+import { lazy, Suspense, useContext, useState } from "react";
 import { Comment } from "../../utils/types";
 import useUserStore from "../../utils/store";
-import { formatDate, timeAgo } from "../../utils/date";
+import { timeAgo } from "../../utils/date";
 import NewComment from "./commentform";
-import BinIcon from "../icons/bin";
 import PencilIcon from "../icons/pencil";
+import { apiHost, apiProtocol } from "../../utils/generics";
+import ReplyIcon from "../icons/reply";
+import DeleteCommentButton from "./deletecomment";
+import Loader from "../loader";
+import { useNavigate } from "react-router-dom";
+
+const FetchCommentReplies = lazy(() => import("./replies"));
 
 interface Props {
   comment: Comment;
-  productId: string;
+  isReply?: boolean;
+  isModal?: boolean;
   refetch: () => void;
 }
 
-const CommentItem = ({ comment, productId, refetch }: Props) => {
+const Fallback = () => {
+  return (
+    <div className="xl:w-746 md:w-[500px] w-[350px] min-h-[100px] flex justify-center items-center">
+      <div className="w-6 h-6">
+        <Loader color="#000" />
+      </div>
+    </div>
+  );
+};
+
+const CommentItem = ({
+  comment,
+  refetch,
+  isReply = false,
+  isModal = false,
+}: Props) => {
   const [isEditing, setIsEditing] = useState<boolean>(false);
   const [isReplying, setIsReplying] = useState<boolean>(false);
+  const [isRepliesOpen, setIsRepliesOpen] = useState<boolean>(false);
   const user = useUserStore((state) => state.user);
+  const navigate = useNavigate();
 
   return (
     <div
       style={{ backgroundColor: "#e6f7ff" }}
-      className="xl:w-746 min-h-[100px] rounded-md p-2 relative"
+      className={`${isReply ? "xl:w-[700px]" : "xl:w-746"} md:w-[500px] w-[350px] min-h-[100px] rounded-md p-2 relative`}
     >
       <div>
         <div className="flex justify-start items-center gap-[14px] mb-[16px]">
           <img
-            src={comment.customer.image ? `` : "/images/profile.svg"}
+            src={
+              comment.customer.image
+                ? `${apiProtocol}://${apiHost}/${comment.customer.image.url}`
+                : "/images/profile.svg"
+            }
             alt="user avatar"
             className="w-[32px] h-[32px] rounded-full overflow-hidden"
           />
@@ -47,43 +75,73 @@ const CommentItem = ({ comment, productId, refetch }: Props) => {
         <div className="editing">
           {!isEditing && <p className="comment-content">{comment.message}</p>}
           {isEditing && (
-            <NewComment
-              initialText={comment.message}
-              isEdit
-              buttonText="update"
-            />
+            <div className="md:pb-0 pb-2">
+              <NewComment
+                initialText={comment.message}
+                initialID={comment.id}
+                isEdit={true}
+                buttonText="Update"
+                refetch={() => {
+                  refetch();
+                  setIsEditing(false);
+                }}
+              />
+            </div>
           )}
         </div>
         <div className="md:block flex justify-between items-center">
-          <div className="w-[120px] border border-green-500 h-[34px]"></div>
-          <div className="md:absolute md:top-2 top-[38px] right-0">
+          <div className="md:absolute md:top-2 top-[38px] right-2 md:pt-0 pt-[5px]">
             {user === comment.customerID ? (
-              <div className="flex">
+              <div className="flex gap-2">
+                <DeleteCommentButton commentID={comment.id} refetch={refetch} />
                 <button
-                  className="flex justify-center items-center w-[104px] h-[34px] bg-white rounded-lg gap-[5px]"
-                  onClick={() => {}}
-                >
-                  <div className="w-[20px] h-[30px] text-red-500 gap-1">
-                    <BinIcon />
-                  </div>
-                  <span className="text-red-500 font-semibold text-lg">
-                    Delete
-                  </span>
-                </button>
-                <button
-                  className="flex justify-center items-center w-[104px] h-[34px]"
-                  onClick={() => {}}
+                  className="flex justify-center items-center md:w-[104px] w-[40px] h-[34px] bg-white rounded-lg gap-[5px]"
+                  onClick={(e) => {
+                    e.preventDefault();
+                    setIsEditing((prev) => !prev);
+                  }}
                 >
                   <div className="w-[12px] h-[18px]">
                     <PencilIcon />
                   </div>
-                  Edit
+                  <span className="md:inline hidden">Edit</span>
                 </button>
               </div>
             ) : (
-              <button className="reply-btn" onClick={() => {}}>
-                <img className="reply-icon" src={""} alt="reply icon" />
-                Reply
+              <>
+                {user && (
+                  <button
+                    className="flex justify-center items-center w-[104px] h-[34px] bg-white rounded-lg gap-[5px]"
+                    onClick={(e) => {
+                      e.preventDefault();
+                      setIsReplying((prev) => !prev);
+                    }}
+                  >
+                    <div className="w-[12px] h-[18px]">
+                      <ReplyIcon />
+                    </div>
+                    Reply
+                  </button>
+                )}
+              </>
+            )}
+          </div>
+
+          <div>
+            {comment.hasReplies && (
+              <button
+                aria-label={isRepliesOpen ? "Hide replies" : "Show replies"}
+                className="text-xs xl:no-underline underline xl:hover:underline"
+                onClick={(e) => {
+                  e.preventDefault();
+                  if (isModal) {
+                    navigate(`?open=true&commentID=${comment.id}`);
+                  } else {
+                    setIsRepliesOpen((prev) => !prev);
+                  }
+                }}
+              >
+                {isRepliesOpen ? "Close" : "Replies"}
               </button>
             )}
           </div>
@@ -91,63 +149,25 @@ const CommentItem = ({ comment, productId, refetch }: Props) => {
       </div>
       <div>
         {isReplying && (
-          <div>
+          <div className="md:py-0 py-2">
             <NewComment
-              placeholder={`Replying to @${props.user.username}`}
-              buttonText="reply"
+              placeholder={`Replying to @${comment.customer.firstName}`}
+              isReplying={true}
+              initialID={comment.id}
+              buttonText="Reply"
+              refetch={() => {
+                refetch();
+                setIsReplying(false);
+              }}
             />
           </div>
         )}
-        {/*
-      //{props.replies && (
-        //<div className="replies-container">
-          //{backendReplies.map((reply) => (
-            //<div className="reply">
-              //<Reply
-                //key={reply.id}
-                //currentUser={props.currentUser}
-                //activeComment={props.activeComment}
-                //setActiveComment={props.setActiveComment}
-                //addReply={addReply}
-                //deleteReply={deleteReply}
-                //updateReply={updateReply}
-                //{...reply}
-              ///>
-            //</div>
-          //))}
-                //*/}
+        {isRepliesOpen && (
+          <Suspense fallback={<Fallback />}>
+            <FetchCommentReplies commentID={comment.id} />{" "}
+          </Suspense>
+        )}
       </div>
-      {/*
-      {showDeleteModal && (
-        <div className="delete-modal-container">
-          <div className="delete-modal">
-            <h2 className="delete-modal_title">Delete comment</h2>
-            <p className="delete-modal_content">
-              Are you sure you want to delete this comment? This will remove the
-              comment and can't be undone.
-            </p>
-            <div className="delete-modal_btns">
-              <button
-                className="delete-modal_btn no"
-                onClick={() => {
-                  setShowDeleteModal(false);
-                }}
-              >
-                No, cancel
-              </button>
-              <button
-                className="delete-modal_btn yes"
-                onClick={() => {
-                  props.deleteComment(props.id);
-                }}
-              >
-                Yes, delete
-              </button>
-            </div>
-          </div>
-        </div>
-      )}
-  */}
     </div>
   );
 };

@@ -8,7 +8,7 @@ import { sendUpdateProfile } from "../../utils/mutations/profile/updateprofile";
 import { ErrorContext, ShowErrorContext } from "../../utils/errorContext";
 import { useNavigate } from "react-router-dom";
 import { errorHandler } from "../../utils/errorHandler";
-import useUserStore from "../../utils/store";
+import { setProfileImage } from "../../utils/cookies";
 
 interface Props {
   profile: Customer;
@@ -18,13 +18,15 @@ const ProfileForm = ({ profile }: Props) => {
   const [, setErr] = useContext(ShowErrorContext);
   const [, setError] = useContext(ErrorContext);
   const navigate = useNavigate();
-  const user = useUserStore((state) => state.user);
   const { state, dispatch, ActionType } = useProfileForm(profile);
 
   const { isPending, mutate } = useMutation({
     mutationFn: sendUpdateProfile,
     onSuccess: (data) => {
       if (data) {
+        if (data.image) {
+          setProfileImage(data.image.url);
+        }
         navigate("/profile", { replace: true });
       } else {
         setError(true);
@@ -39,7 +41,7 @@ const ProfileForm = ({ profile }: Props) => {
   const submitHandler: FormEventHandler<HTMLFormElement> = (e) => {
     e.preventDefault();
     const formData = new FormData(e.currentTarget);
-    mutate({ data: formData, id: user as string });
+    mutate(formData);
   };
 
   return (

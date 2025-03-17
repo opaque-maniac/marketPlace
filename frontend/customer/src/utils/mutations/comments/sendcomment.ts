@@ -5,13 +5,27 @@ import { ErrorResponse, SuccessCommentCreateResponse } from "../../types";
 
 export const sendComment = async ({
   message,
+  productID,
+  edit = false,
+  reply = false,
   id,
 }: {
   message: string;
-  id: string;
+  productID?: string;
+  edit?: boolean;
+  reply?: boolean;
+  id?: string;
 }) => {
   try {
-    const url = `${apiProtocol}://${apiHost}/customers/products/${id}/comments`;
+    let url = `${apiProtocol}://${apiHost}/customers`;
+    if (edit || reply) {
+      url += `/comments/${id}`;
+    } else if (productID) {
+      url += `/products/${productID}/comments`;
+    } else {
+      throw responseError();
+    }
+
     const token = getAccessToken();
 
     if (!token) {
@@ -19,7 +33,7 @@ export const sendComment = async ({
     }
 
     const options = {
-      method: "POST",
+      method: edit ? "PUT" : "POST",
       headers: {
         "Content-Type": "application/json",
         Authorization: `Bearer ${token}`,

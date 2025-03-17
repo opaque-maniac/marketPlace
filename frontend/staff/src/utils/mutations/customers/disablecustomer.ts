@@ -11,15 +11,16 @@ export const disableCustomer = async ({
   misconductId: string;
 }) => {
   try {
-    const url = `${apiProtocol}://${apiHost}/staff/comments/${id}/disable?misconduct=${misconductId}`;
+    const url = `${apiProtocol}://${apiHost}/staff/customers/${id}/disable?misconduct=${misconductId}`;
     const token = getAccessToken();
+    console.log(url);
 
     if (!token) {
       throw tokenError();
     }
 
     const options = {
-      method: "DELETE",
+      method: "POST",
       headers: {
         Authorization: `Bearer ${token}`,
       },

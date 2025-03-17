@@ -1,4 +1,4 @@
-import { FormEventHandler, useRef } from "react";
+import { FormEventHandler, MouseEventHandler, useRef } from "react";
 import { useNavigate } from "react-router-dom";
 import SearchIcon from "../icons/searchIcon";
 import ArrowPath from "../icons/arrowpath";
@@ -13,7 +13,12 @@ export default function MobileSearchForm() {
     const query = formDate.get("query") as string;
     const encoded = encodeURIComponent(query);
     navigate(`/explore?page=1&query=${encoded}`);
+  };
+
+  const onclick: MouseEventHandler<HTMLButtonElement> = (e) => {
+    e.preventDefault();
     form.current?.reset();
+    navigate("?page=1&query=");
   };
 
   return (
@@ -46,7 +51,7 @@ export default function MobileSearchForm() {
         </div>
       </form>
       <div>
-        <button aria-label="Reset" className="block w-6 h-6">
+        <button onClick={onclick} aria-label="Reset" className="block w-6 h-6">
           <ArrowPath />
         </button>
       </div>

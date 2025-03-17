@@ -3,15 +3,9 @@ import { responseError, tokenError } from "../../errors";
 import { apiHost, apiProtocol } from "../../generics";
 import { ErrorResponse } from "../../types";
 
-export const deleteComment = async ({
-  productId,
-  commentId,
-}: {
-  productId: string;
-  commentId: string;
-}) => {
+export const deleteComment = async (commentId: string) => {
   try {
-    const url = `${apiProtocol}://${apiHost}/customers/products/${productId}/comments/${commentId}`;
+    const url = `${apiProtocol}://${apiHost}/customers/comments/${commentId}`;
     const token = getAccessToken();
 
     if (!token) {

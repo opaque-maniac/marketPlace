@@ -41,11 +41,11 @@ const ExplorePage = () => {
     const q = urlParams.get("query");
 
     if (!p && !q) {
-      navigate("/explore?page=1&query=", { replace: true });
+      navigate("?page=1&query=", { replace: true });
     } else if (!p) {
-      navigate(`/explore?page=1&query=${q}`, { replace: true });
+      navigate(`?page=1&query=${q}`, { replace: true });
     } else if (!q) {
-      navigate(`/explore?page=${p}&query=`, { replace: true });
+      navigate(`?page=${p}&query=`, { replace: true });
     }
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []);
@@ -108,7 +108,16 @@ const ExplorePage = () => {
             <PageLoader />
           ) : (
             <div className="h-full w-full">
-              {products.length === 0 ? null : (
+              {products.length === 0 ? (
+                <section
+                  style={{ height: "calc(100vh - 9.5rem)" }}
+                  className="flex justify-center items-center"
+                >
+                  <p>
+                    No products found{queryStr ? ` for search ${queryStr}` : ""}
+                  </p>
+                </section>
+              ) : (
                 <ul className="h-full grid xl:grid-cols-4 lg:grid-cols-3 md:grid-cols-2 grid-cols-1">
                   {products.map((product) => (
                     <li key={product.id} className="mx-auto md:mb-8 mb-6">

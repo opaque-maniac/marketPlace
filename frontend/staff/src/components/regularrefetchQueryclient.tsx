@@ -11,6 +11,8 @@ export default function RegularrefetchQueryclient({ children }: Props) {
       queries: {
         staleTime: 0,
         refetchOnMount: true,
+        retry: true,
+        retryDelay: 2000,
       },
     },
   });

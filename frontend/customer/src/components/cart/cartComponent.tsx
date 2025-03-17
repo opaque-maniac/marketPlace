@@ -64,7 +64,11 @@ const CartComponent = () => {
         );
         setCart(count.count);
       } catch (error) {
-        errorHandler(error, navigate, setErr, setError);
+        console.log(error);
+        setTimeout(() => {
+          // eslint-disable-next-line @typescript-eslint/no-floating-promises
+          fetchCart();
+        }, 1500);
       }
     }
 

@@ -96,9 +96,14 @@ export const login = async (
   try {
     const { email, password } = req.body;
 
+    console.log(email, password);
+
     const customer = await prisma.customer.findUnique({
       where: {
         email,
+      },
+      include: {
+        image: true,
       },
     });
 

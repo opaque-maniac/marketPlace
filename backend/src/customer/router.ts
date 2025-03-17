@@ -8,6 +8,7 @@ import profileRouter from "./routers/profile";
 import sellersRouter from "./routers/sellers";
 import wishlistRouter from "./routers/wishlist";
 import wishlistitemsRouter from "./routers/wishlistitems";
+import commentsRouter from "./routers/comments";
 
 const router = Router();
 
@@ -20,5 +21,6 @@ router.use("/profile", profileRouter);
 router.use("/sellers", sellersRouter);
 router.use("/wishlist", wishlistRouter);
 router.use("/wishlistitems", wishlistitemsRouter);
+router.use("/comments", commentsRouter);
 
 export default router;

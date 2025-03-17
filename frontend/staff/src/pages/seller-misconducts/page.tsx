@@ -7,7 +7,6 @@ import { Helmet } from "react-helmet";
 import { errorHandler } from "../../utils/errorHandler";
 import ManageQueryStr from "../../utils/querystr";
 import Loader from "../../components/loader";
-import { fetchCustomerMisconducts } from "../../utils/queries/customers/fetchcustomermisconducts";
 import Pagination from "../../components/pagination";
 import { fetchSellerMisconducts } from "../../utils/queries/sellers/fetchsellermisconducts";
 import MisconductsFilterForm from "../../components/misconducts/filterform";
@@ -58,7 +57,7 @@ export default function SellerMisconductsPage() {
 
   const { isLoading, isError, error, data, isSuccess } = useQuery({
     queryFn: fetchSellerMisconducts,
-    queryKey: ["customer-misconducts", id || "", page, 16, query],
+    queryKey: ["seller-misconducts", id || "", page, 16, query],
   });
 
   if (isError) {
@@ -93,7 +92,7 @@ export default function SellerMisconductsPage() {
           </Link>{" "}
           / <span className="font-bold">Misconducts</span>
         </p>
-        <div className="md:flex justify-between items-start md:px-2 px-0 mb-2">
+        <div className="flex md:flex-row flex-col justify-between md:items-start items-center md:px-2 px-0 md:mb-2 mb-4 md:gap-0 gap-4">
           <MisconductsFilterForm initial={action} queryStr={query} />
           <div className="md:w-64 w-72">
             <PageSearchForm
@@ -133,12 +132,24 @@ export default function SellerMisconductsPage() {
                 </ul>
               </section>
             )}
-            <Pagination
-              page={page}
-              data={data}
-              setPage={(n) => navigate(`?page=${n}&query=${query}`)}
-              to={0}
-            />
+            <div>
+              <div className="md:block hidden">
+                <Pagination
+                  page={page}
+                  data={data}
+                  setPage={(n) => navigate(`?page=${n}&query=${query}`)}
+                  to={90}
+                />
+              </div>
+              <div className="md:hidden block">
+                <Pagination
+                  page={page}
+                  data={data}
+                  setPage={(n) => navigate(`?page=${n}&query=${query}`)}
+                  to={150}
+                />
+              </div>
+            </div>
           </>
         )}
       </main>

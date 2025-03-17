@@ -13,13 +13,19 @@ export const enableProfile = async ({
   try {
     let url = `${apiProtocol}://${apiHost}/staff`;
 
-    if (type === "customer") {
-      url += `/customers/${id}/enable`;
-    } else if (type === "seller") {
-      url += `/sellers/${id}/enable`;
-    } else {
-      url += `/staff/${id}/enable`;
+    switch (type) {
+      case "customer":
+        url += `/customers`;
+        break;
+      case "seller":
+        url += `/sellers`;
+        break;
+      default:
+        url += `/staff`;
+        break;
     }
+
+    url += `/${id}/enable`;
 
     const token = getAccessToken();
 
@@ -28,7 +34,7 @@ export const enableProfile = async ({
     }
 
     const options = {
-      method: "DELETE",
+      method: "POST",
       headers: {
         Authorization: `Bearer ${token}`,
       },

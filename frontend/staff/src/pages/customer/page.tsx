@@ -21,6 +21,7 @@ import NotAllowedIcon from "../../components/icons/notallowed";
 import PenIcon from "../../components/icons/pen";
 import EnableProfileButton from "../../components/enebleprofilebutton";
 import Loader from "../../components/loader";
+import RegularrefetchQueryclient from "../../components/regularrefetchQueryclient";
 
 const ButtonFallback = () => {
   return (
@@ -36,7 +37,7 @@ const ButtonFallback = () => {
   );
 };
 
-const CustomerPage = () => {
+function CustomerPage() {
   const { id } = useParams();
   const navigate = useNavigate();
   const [, setErr] = useContext(ShowErrorContext);
@@ -91,8 +92,8 @@ const CustomerPage = () => {
           <p className="absolute top-4 left-4">
             Home / <span className="font-bold">Customer Profile</span>
           </p>
-          <div className="h-full w-full flex justify-start xl:justify-center items-center xl:items-start xl:flex-row flex-col gap-4 pt-4">
-            <section className="w-[300px] h-[300px] md:w-6/12">
+          <div className="h-full w-full flex justify-start xl:justify-center items-center xl:items-start xl:flex-row flex-col xl:gap-8 gap-4 pt-4">
+            <section className="w-[300px] xl:h-[400px] h-[300px] xl:w-[420px] md:w-6/12">
               <img
                 src={
                   customer.image
@@ -103,7 +104,7 @@ const CustomerPage = () => {
                 className="h-full w-full"
               />
             </section>
-            <section className="md:w-5/12">
+            <section className="md:w-5/12 xl:w-[500px]">
               <div className="mb-2">
                 <h3 className="text-lg font-semibold">
                   {customer.firstName} {customer.lastName}
@@ -165,13 +166,13 @@ const CustomerPage = () => {
                           <PhoneIcon />
                         </div>
                       )}
-                      <p>{customer.phone ?? "Not provided"}</p>{" "}
+                      <p>{customer.phone || "Not provided"}</p>{" "}
                     </li>
                     <li className="flex justify-start items-center gap-2">
                       <div className="block w-7 h-7 bg-black text-white rounded p-[2px]">
                         <LocationPinIcon />
                       </div>
-                      <p>{customer.phone ?? "Not provided"}</p>{" "}
+                      <p>{customer.phone || "Not provided"}</p>{" "}
                     </li>
                     <li className="flex justify-start items-center gap-2">
                       <Link
@@ -255,6 +256,12 @@ const CustomerPage = () => {
       )}
     </Transition>
   );
-};
+}
 
-export default CustomerPage;
+export default function CustomerPageWrapper() {
+  return (
+    <RegularrefetchQueryclient>
+      <CustomerPage />
+    </RegularrefetchQueryclient>
+  );
+}

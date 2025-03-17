@@ -21,9 +21,6 @@ const AddToCart = ({ id, color, text }: Props) => {
 
   const mutation = useMutation({
     mutationFn: addToCart,
-    onSuccess: () => {
-      navigate("/cart");
-    },
     onError: (error: Error) => {
       errorHandler(error, navigate, setErr, setError);
     },

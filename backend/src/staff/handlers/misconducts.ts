@@ -254,6 +254,12 @@ export const fetchCustomerMisconducts = async (
     const response = req.query.action
       ? (req.query.action as RESPONSE)
       : undefined;
+    const mine = req.query.mine ? true : false;
+    const { user } = req;
+
+    if (!user) {
+      throw new Error("User not found");
+    }
 
     const customer = await prisma.customer.findUnique({
       where: {
@@ -268,6 +274,7 @@ export const fetchCustomerMisconducts = async (
     const misconducts = await prisma.misconduct.findMany({
       where: query
         ? {
+            personelID: mine ? user.id : undefined,
             customerID: customer.id,
             response,
             OR: [
@@ -290,6 +297,7 @@ export const fetchCustomerMisconducts = async (
             ],
           }
         : {
+            personelID: mine ? user.id : undefined,
             customerID: customer.id,
             response,
           },
@@ -426,8 +434,8 @@ export const fetchStaffMisconducts = async (
     const page = req.query.page ? parseInt(req.query.page as string) : 1;
     const limit = req.query.limit ? parseInt(req.query.limit as string) : 10;
     const query = req.query.query ? (req.query.query as string) : "";
-    const response = req.query.response
-      ? parseResponse(req.query.status as string)
+    const response = req.query.action
+      ? parseResponse(req.query.action as string)
       : undefined;
 
     const staff = await prisma.staff.findUnique({
@@ -474,8 +482,33 @@ export const fetchStaffMisconducts = async (
       },
       include: {
         customer: {
-          include: {
-            image: true,
+          select: {
+            firstName: true,
+            lastName: true,
+          },
+        },
+        seller: {
+          select: {
+            name: true,
+          },
+        },
+        staff: {
+          select: {
+            firstName: true,
+            lastName: true,
+          },
+        },
+        personel: {
+          select: {
+            firstName: true,
+            lastName: true,
+            id: true,
+            role: true,
+            image: {
+              select: {
+                url: true,
+              },
+            },
           },
         },
       },

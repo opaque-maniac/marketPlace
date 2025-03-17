@@ -18,7 +18,7 @@ const ProductItem = ({ product, blank = false }: Props) => {
     <>
       <Link
         className="block h-[350px] w-[270px] border p-2 relative rounded-tr-md"
-        target={blank ? "_blank" : "_parent"}
+        target={blank ? "_blank" : ""}
         to={`/products/${product.id}`}
       >
         <div className="h-250 w-270 pt-1">

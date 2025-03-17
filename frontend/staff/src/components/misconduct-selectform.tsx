@@ -1,10 +1,24 @@
 import { Link, useNavigate } from "react-router-dom";
-import { errorHandler } from "../../utils/errorHandler";
-import { FormEventHandler, useContext } from "react";
+import { errorHandler } from "../utils/errorHandler";
+import { FormEventHandler, lazy, Suspense, useContext } from "react";
 import { useMutation } from "@tanstack/react-query";
-import { ErrorContext, ShowErrorContext } from "../../utils/errorContext";
-import Loader from "../loader";
-import { DeleteDisableMutationFN } from "../../utils/types";
+import { ErrorContext, ShowErrorContext } from "../utils/errorContext";
+import Loader from "./loader";
+import { DeleteDisableMutationFN } from "../utils/types";
+
+const FetchMisconductsInputValues = lazy(
+  () => import("./profile-misconducts-input"),
+);
+
+const Fallback = () => {
+  return (
+    <div className="h-[300px] md:w-[400px] w-[340px] mx-auto flex justify-center items-center">
+      <div className="w-6 h-6">
+        <Loader color="#000" />
+      </div>
+    </div>
+  );
+};
 
 interface Props {
   callback: string;
@@ -12,6 +26,7 @@ interface Props {
   id: string;
   disable: boolean;
   refetch: () => void;
+  userType: "seller" | "staff" | "customer";
   mutationFn: DeleteDisableMutationFN;
 }
 
@@ -20,6 +35,7 @@ export default function MisconductsInputForm({
   success,
   id,
   disable,
+  userType,
   mutationFn,
 }: Props) {
   const navigate = useNavigate();
@@ -40,13 +56,21 @@ export default function MisconductsInputForm({
   const submitHandler: FormEventHandler<HTMLFormElement> = (e) => {
     e.preventDefault();
     const formData = new FormData(e.currentTarget);
-    const misconductId = formData.get("misconduct") as string;
+    const misconductId = formData.get("misconduct-id") as string;
     mutate({ id, misconductId });
   };
 
   return (
     <form onSubmit={submitHandler}>
-      <div className="h-[300px] md:w-[400px] w-[340px] mx-auto border border-black/20"></div>
+      <div className="h-[300px] xl:w-[350px] md:w-[400px] w-[340px] mx-auto border border-black/20">
+        <Suspense fallback={<Fallback />}>
+          <FetchMisconductsInputValues
+            disable={disable}
+            id={id}
+            role={userType}
+          />
+        </Suspense>
+      </div>
       <div className="flex md:flex-row flex-col justify-center items-center md:gap-10 gap-6 pt-4">
         <button
           aria-label={`Confirm ${disable ? "disable" : "deletion"}`}

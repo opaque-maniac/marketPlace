@@ -13,6 +13,7 @@ import StaffItem from "../../components/staff/staff";
 import Loader from "../../components/loader";
 import ManageQueryStr from "../../utils/querystr";
 import ProfileActiveSelectForm from "../../components/activequeryform";
+import RegularrefetchQueryclient from "../../components/regularrefetchQueryclient";
 
 const Fallback = () => {
   return (
@@ -27,7 +28,7 @@ const Fallback = () => {
   );
 };
 
-export default function StaffPage() {
+function StaffPage() {
   const navigate = useNavigate();
   const [, setError] = useContext(ErrorContext);
   const [, setErr] = useContext(ShowErrorContext);
@@ -162,5 +163,13 @@ export default function StaffPage() {
         </section>
       </main>
     </Transition>
+  );
+}
+
+export default function StaffPageWrapp() {
+  return (
+    <RegularrefetchQueryclient>
+      <StaffPage />
+    </RegularrefetchQueryclient>
   );
 }

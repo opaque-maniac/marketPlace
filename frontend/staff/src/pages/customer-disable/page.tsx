@@ -9,13 +9,15 @@ import { errorHandler } from "../../utils/errorHandler";
 import { fetchCustomer } from "../../utils/queries/customers/fetchcustomer";
 import { apiHost, apiProtocol } from "../../utils/generics";
 import { disableCustomer } from "../../utils/mutations/customers/disablecustomer";
-import MisconductsInputForm from "../../components/profile-delete/form";
+import MisconductsInputForm from "../../components/misconduct-selectform";
+import useUserStore from "../../utils/store";
 
 export default function CustomerDeletePage() {
   const { id } = useParams();
   const navigate = useNavigate();
   const [, setErr] = useContext(ShowErrorContext);
   const [, setError] = useContext(ErrorContext);
+  const isAdmin = useUserStore((state) => state.role) === "ADMIN";
 
   useEffect(() => {
     if (!id) {
@@ -63,8 +65,8 @@ export default function CustomerDeletePage() {
         {isLoading || !customer ? (
           <PageLoader />
         ) : (
-          <div className="h-full w-full flex justify-start xl:justify-center items-center md:items-start xl:flex-row flex-col gap-4 pt-4">
-            <section className="w-[300px] h-[300px] md:w-6/12">
+          <div className="h-full w-full flex justify-start xl:justify-center items-center xl:items-center md:items-start xl:flex-row flex-col gap-4 pt-4">
+            <section className="w-[300px] h-[300px] md:w-6/12 xl:w-[450px]">
               <img
                 src={
                   customer.image
@@ -92,16 +94,28 @@ export default function CustomerDeletePage() {
                   misconduct log for the user. If none exists then you will not
                   be able to proceed. Click{" "}
                   <Link
-                    to={`customers/${id}/misconducts/new`}
+                    to={`/customers/${id}/misconducts/new`}
                     className="font-semibold underline text-lg"
+                    target="_blank"
                   >
                     here
                   </Link>{" "}
-                  below to file a misconduct.
+                  to file a misconduct.
                 </p>
+                {isAdmin && (
+                  <div className="pt-2">
+                    <Link
+                      className="xl:no-underline underline xl:hover:underline"
+                      to={`/customers/${id}/delete`}
+                    >
+                      Delete customer profile instead?
+                    </Link>
+                  </div>
+                )}
               </div>
               <div className="mt-6 mb-10">
                 <MisconductsInputForm
+                  userType="customer"
                   success={() => {
                     navigate(`/customers/${id}`);
                   }}

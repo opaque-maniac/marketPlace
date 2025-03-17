@@ -7,7 +7,7 @@ import { apiHost, apiProtocol } from "../../generics";
 // Fetch many products
 export const fetchSellerMisconducts: QueryFunction<
   SuccessMisconductsResponse,
-  ["customer-misconducts", string, number, number, string]
+  ["seller-misconducts", string, number, number, string]
 > = async ({ queryKey }) => {
   try {
     const [, id, page, limit, query] = queryKey;

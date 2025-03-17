@@ -55,6 +55,12 @@ const SellerDeletePage = lazy(() => import("./pages/seller-delete/page"));
 const SellerDisablePage = lazy(() => import("./pages/seller-disable/page"));
 const StaffPage = lazy(() => import("./pages/staff/page"));
 const StaffProfilePage = lazy(() => import("./pages/staff-profile/page"));
+const StaffMisconductsPage = lazy(
+  () => import("./pages/staff-misconducts/page"),
+);
+const StaffNewMisconductPage = lazy(
+  () => import("./pages/staff-new-misconduct/page"),
+);
 const StaffEditPage = lazy(() => import("./pages/staff-edit/page"));
 const StaffDisablePage = lazy(() => import("./pages/staff-disable/page"));
 const StaffDeletePage = lazy(() => import("./pages/staff-delete/page"));
@@ -214,6 +220,15 @@ const App = () => {
                         path="/staff/:id/edit"
                         element={<StaffEditPage />}
                       />
+                      <Route
+                        path="/staff/:id/misconducts"
+                        element={<StaffMisconductsPage />}
+                      />
+                      <Route
+                        path="/staff/:id/misconducts/new"
+                        element={<StaffNewMisconductPage />}
+                      />
+
                       <Route
                         path="/staff/:id/disable"
                         element={<StaffDisablePage />}

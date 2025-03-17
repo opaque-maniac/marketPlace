@@ -9,7 +9,7 @@ import { errorHandler } from "../../utils/errorHandler";
 import { fetchCustomer } from "../../utils/queries/customers/fetchcustomer";
 import { apiHost, apiProtocol } from "../../utils/generics";
 import { deleteCustomer } from "../../utils/mutations/customers/deletecustomer";
-import MisconductsInputForm from "../../components/profile-delete/form";
+import MisconductsInputForm from "../../components/misconduct-selectform";
 
 export default function CustomerDeletePage() {
   const { id } = useParams();
@@ -64,7 +64,7 @@ export default function CustomerDeletePage() {
           <PageLoader />
         ) : (
           <div className="h-full w-full flex justify-start xl:justify-center items-center md:items-start xl:flex-row flex-col gap-4 pt-4">
-            <section className="w-[300px] h-[300px] md:w-6/12">
+            <section className="w-[300px] h-[300px] md:w-6/12 xl:w-[450px]">
               <img
                 src={
                   customer.image
@@ -76,19 +76,20 @@ export default function CustomerDeletePage() {
               />
             </section>
             <section className="md:w-5/12">
-              <div className="mb-2">
+              <div className="md:w-[400px] w-[340px] mx-auto mb-2">
                 <h3 className="text-lg font-semibold">
                   {customer.firstName} {customer.lastName}
                 </h3>
               </div>
-              <div>
+              <div className="md:w-[400px] w-[340px] mx-auto">
                 <p>
                   Are your sure you want to delete the profile of this customer,
                   if you are, you need to make sure you file a misconduct log
                   for the user. If none exists then you will not be able to
                   proceed. Click{" "}
                   <Link
-                    to={"/new-misconduct"}
+                    to={`/customers/${id}/misconducts/new`}
+                    target="_blank"
                     className="font-semibold underline text-lg"
                   >
                     here
@@ -96,20 +97,18 @@ export default function CustomerDeletePage() {
                   below to file a misconduct.
                 </p>
               </div>
-              <div>
-                <h4>Select misconduct</h4>
-                <div>
-                  <MisconductsInputForm
-                    success={() => {
-                      navigate("/customers?page=1&query=");
-                    }}
-                    callback={`/customers/${id}`}
-                    id={id || ""}
-                    disable={false}
-                    refetch={refetchCallback}
-                    mutationFn={deleteCustomer}
-                  />
-                </div>
+              <div className="mt-6 mb-10">
+                <MisconductsInputForm
+                  userType="customer"
+                  success={() => {
+                    navigate("/customers?page=1&query=");
+                  }}
+                  callback={`/customers/${id}`}
+                  id={id || ""}
+                  disable={false}
+                  refetch={refetchCallback}
+                  mutationFn={deleteCustomer}
+                />
               </div>
             </section>
           </div>

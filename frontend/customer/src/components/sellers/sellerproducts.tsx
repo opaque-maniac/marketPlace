@@ -22,7 +22,7 @@ export default function SellerProducts({ seller }: Props) {
 
   const { isLoading, isError, error, data } = useQuery({
     queryFn: fetchSellerProducts,
-    queryKey: ["products", seller.id, page, 10],
+    queryKey: ["products", seller.id, page, 12],
   });
 
   if (isError && error) {
