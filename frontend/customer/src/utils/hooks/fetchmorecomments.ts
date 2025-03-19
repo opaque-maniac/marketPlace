@@ -44,16 +44,28 @@ export default function useMoreProductComments(id: string) {
       setError(null);
 
       try {
+        const limit = 5;
         const currentPage = reset ? 1 : page;
         const data = await fetchCommentData<SuccessCommentsResponse>(
           id,
           currentPage,
-          10,
+          limit,
         );
 
-        setComments((prevComments) =>
-          reset ? data.data : [...prevComments, ...data.data],
-        );
+        const prev = (page - 1) * limit;
+
+        if (comments.length === prev) {
+          setComments((prevComments) =>
+            reset ? data.data : [...prevComments, ...data.data],
+          );
+        } else if (comments.length !== prev + limit) {
+          const copy = [
+            ...comments.slice(0, prev),
+            ...data.data,
+            ...comments.slice(prev + 1, comments.length),
+          ];
+          setComments(copy);
+        }
         setHasMore(data.hasNext);
         if (reset) setPage(1); // Reset to first page on refetch
       } catch (e) {

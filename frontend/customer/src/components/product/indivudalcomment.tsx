@@ -1,57 +1,84 @@
-import { useQuery } from "@tanstack/react-query";
-import { useEffect } from "react";
+import { lazy, Suspense, useEffect, useState } from "react";
 import { useNavigate } from "react-router-dom";
-import { fetchIndividualComment } from "../../utils/queries/comments/fetchindivudalcomment";
 import Loader from "../loader";
+import useFetchIndividualComment from "../../utils/hooks/fetchindividualcomment";
+import CommentItem from "../comments/comment";
 
-const Fallback = () => {
+const FetchCommentReplies = lazy(() => import("../comments/replies"));
+
+function Fallback() {
   return (
-    <div className="min-h-100 w-full flex justify-center items-center">
+    <div className="h-100 w-full flex justify-center items-center">
       <div className="w-6 h-6">
         <Loader color="#000" />
       </div>
     </div>
   );
-};
+}
 
 export default function IndividualComment() {
   const navigate = useNavigate();
-  const params = new URLSearchParams(window.location.pathname);
-  const open = params.get("open") === "true" ? true : false;
-  const id = params.get("commentID");
+  const params = new URLSearchParams(window.location.search);
+  const [id] = useState<string>(params.get("id") || "");
+
+  const { comment, loading, error, refetch } = useFetchIndividualComment(
+    id || "",
+  );
 
   useEffect(() => {
+    if (!id) {
+      navigate("?open=true", { replace: true });
+    }
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []);
 
-  const { isLoading, isError, data, isSuccess } = useQuery({
-    queryFn: fetchIndividualComment,
-    queryKey: ["comment", id || ""],
-  });
+  if (error) {
+    return (
+      <div className="min-h-40 flex justify-center items-center w-full">
+        <p>Oops! Something went wrong</p>
+        <button
+          aria-label="refetch"
+          onClick={(e) => {
+            e.preventDefault();
+            refetch();
+          }}
+          className="flex justify-center items-center bg-black text-white"
+        >
+          <span>Refetch</span>
+        </button>
+      </div>
+    );
+  }
+
+  if (loading) {
+    return (
+      <div className="min-h-40 flex justify-center items-center">
+        <div className="w-6 h-6">
+          <Loader color="#000" />
+        </div>
+      </div>
+    );
+  }
 
   return (
     <div>
-      <div>
-        {isSuccess && <>{data && <div></div>}</>}
-        {isError && (
-          <div className="min-h-40 flex justify-center items-center">
-            <p>Oops! Something went wrong</p>
-          </div>
-        )}
-        {isLoading && (
-          <div className="min-h-40 flex justify-center items-center">
-            <div className="w-6 h-6">
-              <Loader color="#000" />
+      {comment && (
+        <>
+          <CommentItem comment={comment} refetch={refetch} />
+          {/* replies */}
+          <div>
+            {/* buttons */}
+            <div className="py-[10px]">
+              <h3>Replies:</h3>
+            </div>
+            <div>
+              <Suspense fallback={<Fallback />}>
+                <FetchCommentReplies commentID={comment.id} />
+              </Suspense>
             </div>
           </div>
-        )}
-      </div>
-
-      {/* replies */}
-      <div>
-        {/* buttons */}
-        <div></div>
-      </div>
+        </>
+      )}
     </div>
   );
 }

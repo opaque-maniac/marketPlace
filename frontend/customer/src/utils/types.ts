@@ -53,7 +53,7 @@ export interface ProductImages {
   createdAt: string;
 }
 
-type Categories =
+export type Categories =
   | "ELECTRONICS"
   | "FASHION"
   | "HOME"
@@ -82,6 +82,7 @@ export interface Product {
 export interface SuccessProductsResponse {
   message: string;
   data: Product[];
+  sellers: Seller[];
   hasNext: boolean;
 }
 
@@ -306,6 +307,7 @@ export interface SuccessProfileUpdate {
 
 export interface SuccessProductRatings {
   message: string;
-  value: number;
-  count: number;
+  rating: {
+    value: number;
+  } | null;
 }

@@ -9,7 +9,6 @@ import { Response, NextFunction, Request } from "express";
 import prisma from "../../utils/db";
 import { AuthenticatedRequest, CommentCreateRequest } from "../../types";
 import { serverError } from "../../utils/globals";
-import { addToWishlist } from "./wishlist";
 
 // Function to fetch comments for products
 export const fetchProductComments = async (
@@ -205,20 +204,31 @@ export const fetchCommentReplies = async (
       include: {
         customer: {
           select: {
+            image: true,
             firstName: true,
             lastName: true,
             id: true,
-            image: {
-              select: {
-                url: true,
-              },
-            },
+          },
+        },
+        product: {
+          select: {
+            id: true,
+          },
+        },
+        _count: {
+          select: {
+            replies: true,
           },
         },
       },
-      take: limit + 1,
       skip: (page - 1) * limit,
+      take: limit + 1,
     });
+
+    const formattedReplies = replies.map((comment) => ({
+      ...comment,
+      hasReplies: comment._count.replies > 0,
+    }));
 
     const hasNext = replies.length > limit;
 
@@ -228,7 +238,7 @@ export const fetchCommentReplies = async (
 
     res.status(200).json({
       message: "Comment found",
-      replies,
+      replies: formattedReplies,
       hasNext,
     });
   } catch (e) {

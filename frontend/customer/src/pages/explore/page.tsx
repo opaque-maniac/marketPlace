@@ -1,20 +1,25 @@
 import { useQuery } from "@tanstack/react-query";
 import Transition from "../../components/transition";
 import { Link, useNavigate } from "react-router-dom";
-import { lazy, Suspense, useContext, useEffect } from "react";
+import { lazy, Suspense, useContext, useEffect, useState } from "react";
 import { ErrorContext, ShowErrorContext } from "../../utils/errorContext";
 import ArrowLeft from "../../components/icons/arrowleft";
 import ArrowRight from "../../components/icons/arrowright";
-import { fetchProducts } from "../../utils/queries/products/fetchproducts";
 import PageLoader from "../../components/pageloader";
 import { errorHandler } from "../../utils/errorHandler";
 import MetaTags from "../../components/metacomponent";
-import MobileSearchForm from "../../components/products/exploremobilesearch";
 import Loader from "../../components/loader";
+import FilterComponent from "../../components/products/filtercomponent";
+import {
+  FilterState,
+  initialFilters,
+  ProductFilterContext,
+} from "../../utils/productContext";
+import { fetchExploreProducts } from "../../utils/queries/products/fetchexploreproducts";
 
 const ProductItem = lazy(() => import("../../components/products/product"));
 
-const Fallback = ({ color, url }: { color: string; url: string }) => {
+function Fallback({ color, url }: { color: string; url: string }) {
   return (
     <Link
       to={url}
@@ -25,11 +30,12 @@ const Fallback = ({ color, url }: { color: string; url: string }) => {
       </div>
     </Link>
   );
-};
+}
 
-const ExplorePage = () => {
+function ExplorePage() {
   const [, setError] = useContext(ErrorContext);
   const [, setErr] = useContext(ShowErrorContext);
+  const [filters] = useContext(ProductFilterContext);
 
   const navigate = useNavigate();
 
@@ -54,8 +60,17 @@ const ExplorePage = () => {
   const queryStr = urlParams.get("query") || "";
 
   const query = useQuery({
-    queryKey: ["products", page, 20, queryStr],
-    queryFn: fetchProducts,
+    queryKey: [
+      "products",
+      page,
+      20,
+      queryStr,
+      filters.minprice.toString(),
+      filters.maxprice.toString(),
+      true,
+      filters.category,
+    ],
+    queryFn: fetchExploreProducts,
   });
 
   if (query.isError) {
@@ -97,8 +112,8 @@ const ExplorePage = () => {
         allowBots={true}
       />
       <main role="main">
-        <section className="md:hidden block px-4 pt-2">
-          <MobileSearchForm />
+        <section>
+          <FilterComponent />
         </section>
         <section
           className="px-2 py-2"
@@ -118,26 +133,42 @@ const ExplorePage = () => {
                   </p>
                 </section>
               ) : (
-                <ul className="h-full grid xl:grid-cols-4 lg:grid-cols-3 md:grid-cols-2 grid-cols-1">
-                  {products.map((product) => (
-                    <li key={product.id} className="mx-auto md:mb-8 mb-6">
-                      <Suspense
-                        fallback={
-                          <Fallback
-                            url={`/products/${product.id}`}
-                            color="#000"
+                <div>
+                  {query.data?.sellers && (
+                    <>
+                      {query.data.sellers.length > 0 && (
+                        <div>
+                          <h3 className="text-lg font-semibold md:pl-6">
+                            Sellers:
+                          </h3>
+                          <h3 className="text-lg font-semibold md:pl-6">
+                            Products:
+                          </h3>
+                        </div>
+                      )}
+                    </>
+                  )}
+                  <ul className="h-full grid xl:grid-cols-4 lg:grid-cols-3 md:grid-cols-2 grid-cols-1">
+                    {products.map((product) => (
+                      <li key={product.id} className="mx-auto md:mb-8 mb-6">
+                        <Suspense
+                          fallback={
+                            <Fallback
+                              url={`/products/${product.id}`}
+                              color="#000"
+                            />
+                          }
+                        >
+                          <ProductItem
+                            border="black"
+                            product={product}
+                            color="black"
                           />
-                        }
-                      >
-                        <ProductItem
-                          border="black"
-                          product={product}
-                          color="black"
-                        />
-                      </Suspense>
-                    </li>
-                  ))}
-                </ul>
+                        </Suspense>
+                      </li>
+                    ))}
+                  </ul>
+                </div>
               )}
             </div>
           )}
@@ -166,6 +197,14 @@ const ExplorePage = () => {
       </main>
     </Transition>
   );
-};
+}
 
-export default ExplorePage;
+export default function ExplorePageWrapper() {
+  const state = useState<FilterState>(initialFilters);
+
+  return (
+    <ProductFilterContext.Provider value={state}>
+      <ExplorePage />
+    </ProductFilterContext.Provider>
+  );
+}

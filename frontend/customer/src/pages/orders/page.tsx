@@ -104,7 +104,7 @@ const OrdersPage = () => {
             Orders
           </h2>
         </div>
-        <div className="py-2 flex md:flex-row flex-col md:justify-between justify-center items-center md:gap-0 gap-4">
+        <div className="py-2 flex md:flex-row flex-col md:justify-between justify-center items-center md:gap-0 gap-4 md:px-20">
           <div>
             <select
               aria-label="Filter orders by status"
@@ -136,9 +136,9 @@ const OrdersPage = () => {
             <div>
               {data && data.orders && data.orders.length > 0 ? (
                 <div style={{ minHeight: "calc(100vh - 1.4rem )" }}>
-                  <ul className="flex h-full flex-wrap md:flex-row flex-col gap-10 md:pl-10 lg:p-0 justify-evenly items-center">
+                  <ul className="grid xl:grid-cols-2 grid-cols-1">
                     {data.orders.map((order) => (
-                      <li key={order.id}>
+                      <li key={order.id} className="mx-auto mb-6">
                         <Suspense fallback={<Fallback />}>
                           <OrderItem order={order} />
                         </Suspense>

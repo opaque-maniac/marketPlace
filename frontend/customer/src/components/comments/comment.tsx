@@ -1,4 +1,4 @@
-import { lazy, Suspense, useContext, useState } from "react";
+import { lazy, Suspense, useState } from "react";
 import { Comment } from "../../utils/types";
 import useUserStore from "../../utils/store";
 import { timeAgo } from "../../utils/date";
@@ -134,8 +134,8 @@ const CommentItem = ({
                 className="text-xs xl:no-underline underline xl:hover:underline"
                 onClick={(e) => {
                   e.preventDefault();
-                  if (isModal) {
-                    navigate(`?open=true&commentID=${comment.id}`);
+                  if (isModal || isReply) {
+                    navigate(`?open=true&id=${comment.id}`);
                   } else {
                     setIsRepliesOpen((prev) => !prev);
                   }

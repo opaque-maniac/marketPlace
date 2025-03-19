@@ -1,53 +1,47 @@
-import { QueryFunction } from "@tanstack/react-query";
-import { ErrorResponse, SuccessCustomerResponse } from "../types";
-import { getAccessToken, getUserID } from "../cookies";
+import { ErrorResponse } from "react-router-dom";
+import { getAccessToken } from "../cookies";
 import { responseError, tokenError } from "../errors";
-import { apiHost, apiProtocol } from "../generics";
 
-export const fetchProfile<T>: QueryFunction<
-  SuccessCustomerResponse,
-  ["profile"]
-> = async ({ queryKey }) => {
-  try {
-    const id = getUserID();
+interface Props {
+  url: string;
+  authenticate?: boolean;
+}
 
-    if (!id) {
-      throw tokenError;
-    }
+export async function baseQueryFunction<T>({
+  url,
+  authenticate = false,
+}: Props) {
+  let token: string | undefined = undefined;
 
-    const url = `${apiProtocol}://${apiHost}/customers/profile`;
-
-    const token = getAccessToken();
+  if (authenticate) {
+    token = getAccessToken();
 
     if (!token) {
-      throw tokenError();
+      throw tokenError;
     }
-    const options = {
-      method: "GET",
-      headers: {
-        Authorization: `Bearer ${token}`,
-        "Content-Type": "application/json",
-      },
-    };
-
-    const response = await fetch(url, options);
-
-    if (!response.ok) {
-      try {
-        const error = (await response.json()) as ErrorResponse;
-        throw new Error(JSON.stringify(error));
-      } catch (e) {
-        if (e instanceof Error) {
-          throw responseError();
-        }
-      }
-    }
-
-    return response.json() as Promise<SuccessCustomerResponse>;
-  } catch (e) {
-    if (e instanceof Error) {
-      throw new Error(e.message);
-    }
-    throw e;
   }
-};
+
+  const options = {
+    method: "GET",
+    headers: {
+      "Content-Type": "application/json",
+      Authorization: authenticate ? `Bearer ${token}` : "",
+    },
+  };
+
+  const response = await fetch(url, options);
+
+  if (!response.ok) {
+    let error: ErrorResponse;
+
+    try {
+      error = (await response.json()) as ErrorResponse;
+    } catch (e) {
+      throw responseError;
+    }
+
+    throw new Error(JSON.stringify(error));
+  }
+
+  return response.json() as Promise<T>;
+}

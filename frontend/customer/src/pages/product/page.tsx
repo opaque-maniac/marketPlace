@@ -2,7 +2,14 @@ import { useQuery } from "@tanstack/react-query";
 import Transition from "../../components/transition";
 import { fetchProduct } from "../../utils/queries/products/fetchindividualproduct";
 import { Link, useNavigate, useParams } from "react-router-dom";
-import { lazy, Suspense, useContext, useEffect, useState } from "react";
+import {
+  lazy,
+  Suspense,
+  useCallback,
+  useContext,
+  useEffect,
+  useState,
+} from "react";
 import { ErrorContext, ShowErrorContext } from "../../utils/errorContext";
 import TickIcon from "../../components/icons/tick";
 import CloseIcon from "../../components/icons/closeIcon";
@@ -93,17 +100,19 @@ const IndividualProductPage = () => {
 
   const query = useQuery({
     queryFn: fetchProduct,
-    queryKey: ["product", id as string],
+    queryKey: ["product", id || ""],
   });
-  console.log(query.data);
 
-  if (query.isError) {
-    errorHandler(query.error, navigate, setErr, setError);
-  }
+  useEffect(() => {
+    if (query.isError) {
+      errorHandler(query.error, navigate, setErr, setError);
+    }
 
-  if (query.isSuccess && !query.data?.data) {
-    navigate("/404", { replace: true });
-  }
+    if (query.isSuccess && !query.data) {
+      navigate("/404", { replace: true });
+    }
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [query.isError, query.isSuccess, query.data?.data]);
 
   let discount = `0`;
   const product = query.data?.data;
@@ -111,6 +120,11 @@ const IndividualProductPage = () => {
   if (product) {
     discount = calculateDiscount(product.buyingPrice, product.sellingPrice);
   }
+
+  const refetchCallback = useCallback(() => {
+    // eslint-disable-next-line @typescript-eslint/no-floating-promises
+    query.refetch();
+  }, [query]);
 
   return (
     <Transition>
@@ -275,8 +289,11 @@ const IndividualProductPage = () => {
                   </>
                 )}
 
-                {query.data && (
+                {query.data?.data && (
                   <ProductRatings
+                    productID={query.data.data.id}
+                    productName={query.data.data.name}
+                    refetch={refetchCallback}
                     count={query.data.count}
                     value={query.data.value}
                   />

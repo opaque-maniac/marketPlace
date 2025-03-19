@@ -53,22 +53,19 @@ export default function useCommentReplies(id: string) {
         const currentPage = reset ? 1 : page;
         const data = await fetchReplies<SuccessReplies>(id, currentPage, limit);
 
-        const difference = (page - 1) * limit;
-
-        if (comments.length > difference) {
-          if (reset) {
-            setComments(data.replies);
-          } else {
-            setComments((prevComments) => [
-              ...prevComments.slice(0, difference),
-              ...data.replies,
-            ]);
-          }
+        const prev = page - 1 - limit;
+        if (comments.length === prev) {
+          setComments((prevComments) =>
+            reset ? data.replies : [...prevComments, ...data.replies],
+          );
+        } else {
+          const copy = [
+            ...comments.slice(0, prev),
+            ...data.replies,
+            ...comments.slice(prev + 1, comments.length),
+          ];
+          setComments(copy);
         }
-
-        setComments((prevComments) =>
-          reset ? data.replies : [...prevComments, ...data.replies],
-        );
         setHasMore(data.hasNext);
         if (reset) setPage(1); // Reset to first page on refetch
       } catch (e) {

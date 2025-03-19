@@ -254,3 +254,9 @@ export interface UpdateCartItemRequest extends AuthenticatedRequest {
     quantity: number;
   };
 }
+
+export interface NewOrUpdateRatingRequest extends AuthenticatedRequest {
+  body: {
+    value: number;
+  };
+}

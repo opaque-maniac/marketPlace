@@ -1,6 +1,11 @@
 import { Router } from "express";
 import { body } from "express-validator";
-import { fetchIndividualProduct, fetchProducts } from "../handlers/products";
+import {
+  fetchCustomerProductRatings,
+  fetchIndividualProduct,
+  fetchProducts,
+  newOrUpdateRating,
+} from "../handlers/products";
 import {
   createProductComment,
   fetchProductComments,
@@ -16,9 +21,6 @@ const router = Router();
 // fetch products
 router.get("/", fetchProducts);
 
-// fetch individual product
-router.get("/:id", fetchIndividualProduct);
-
 // fetch comments
 router.get("/:id/comments", fetchProductComments);
 
@@ -30,5 +32,25 @@ router.post(
   body("message").isString().isLength(stringConfig),
   createProductComment,
 );
+
+// current user ratings
+router.get(
+  "/:id/ratings",
+  allowIfAuthenticated,
+  isCustomer,
+  fetchCustomerProductRatings,
+);
+
+// new or update ratings
+router.post(
+  "/:id/ratings",
+  allowIfAuthenticated,
+  isCustomer,
+  body("value").isNumeric(),
+  newOrUpdateRating,
+);
+
+// fetch individual product
+router.get("/:id", fetchIndividualProduct);
 
 export default router;
