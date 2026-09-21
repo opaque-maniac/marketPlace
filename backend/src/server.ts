@@ -54,6 +54,6 @@ app.use(slowDowner);
 app.use("/api/v1", appRouter);
 
 // Error Handling
-app.use(errorHandler)
+app.use(errorHandler);
 
 export default server;

@@ -4,5 +4,6 @@ import authRouter from "./auth";
 const appRouter = Router();
 
 appRouter.use("/auth", authRouter);
+appRouter.use("/security", authRouter);
 
 export default appRouter;
