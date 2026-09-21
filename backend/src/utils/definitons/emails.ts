@@ -8,11 +8,10 @@ export type EmailType =
   | "change-password"
   | "welcome";
 
-
 export interface EmailResponse {
-  sucess: boolean
-  id: string | undefined
-  error: ErrorResponse | null
+  sucess: boolean;
+  id: string | undefined;
+  error: ErrorResponse | null;
 }
 
 export type EmailTemplateData = {

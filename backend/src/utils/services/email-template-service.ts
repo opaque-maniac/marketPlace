@@ -30,8 +30,7 @@ export default class EmailTemplateService {
     return fileData;
   }
 
-  // TODO: convert emails to templates
-  // TODO: Look into whether this being async would be faster
+  // TODO: see if there is a better way to do this
   private parse(templateContent: string, data: EmailTemplateData): string {
     for (let key of Object.keys(data)) {
       templateContent.replace(`{{${key}}}`, data[key]);

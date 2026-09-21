@@ -1,14 +1,18 @@
 import { Resend } from "resend";
 import EmailTemplateService from "./email-template-service";
-import type { EmailResponse, EmailTemplateData, EmailType } from "../definitons/emails";
+import type {
+  EmailResponse,
+  EmailTemplateData,
+  EmailType,
+} from "../definitons/emails";
 import type { UserType } from "../definitons/users";
 
 const apiKey = process.env.RESEND_API_KEY;
 const isDev = process.env.ENVIRONMENT == "development";
 const productionEmail = process.env.RESEND_EMAIL;
-const customDomain = process.env.CUSTOMER_CLIENT_HOST
-const sellerDomain = process.env.SELLER_CLIENT_HOST
-const staffDomain = process.env.STAFF_CLIENT_HOST
+const customDomain = process.env.CUSTOMER_CLIENT_HOST;
+const sellerDomain = process.env.SELLER_CLIENT_HOST;
+const staffDomain = process.env.STAFF_CLIENT_HOST;
 
 export default class EmailService {
   resend: Resend;
@@ -17,7 +21,7 @@ export default class EmailService {
 
   constructor() {
     if (!customDomain || !sellerDomain || !staffDomain) {
-      throw new Error("Client domain env variables not set")
+      throw new Error("Client domain env variables not set");
     }
 
     if (!apiKey) {
@@ -42,13 +46,7 @@ export default class EmailService {
   ): Promise<EmailResponse> {
     const renderedTemp = await this.templates.render(
       emailType,
-      this.generatePayload(
-        userType,
-        emailType,
-        firstName,
-        lastName,
-        token,
-      )
+      this.generatePayload(userType, emailType, firstName, lastName, token),
     );
     return await this.sendEmail(
       email,
@@ -100,43 +98,43 @@ export default class EmailService {
     lastName: string,
     token: string,
   ): EmailTemplateData {
-    var base_url: string
+    var base_url: string;
 
     switch (userType) {
       case "customer":
-        base_url = customDomain!
+        base_url = customDomain!;
         break;
       case "staff":
-        base_url = staffDomain!
+        base_url = staffDomain!;
         break;
       case "seller":
-        base_url = sellerDomain!
+        base_url = sellerDomain!;
         break;
     }
 
-    var pathname: string
+    var pathname: string;
 
     switch (emailType) {
       case "verify-email":
       case "verify-device":
       case "reset-password":
-        pathname = emailType
-        break
+        pathname = emailType;
+        break;
       case "change-email":
       case "change-password":
-        pathname = `security/${emailType}`
+        pathname = `security/${emailType}`;
       default:
-        pathname = ""
+        pathname = "";
     }
 
-    const service_url = `${base_url}/${pathname}`
+    const service_url = `${base_url}/${pathname}`;
 
     return {
       first_name: firstName,
       last_name: lastName,
       token_url: `${service_url}?token=${token}`,
       try_again_url: service_url,
-      support_url: `${base_url}/contact`
-    }
+      support_url: `${base_url}/contact`,
+    };
   }
 }
