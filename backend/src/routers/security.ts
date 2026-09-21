@@ -13,19 +13,24 @@ import {
   RequestResetPassword,
   VerifyResetPasswordURL,
 } from "../controllers/security/reset-password";
-import { ConfirmVerifyEmailURL, RequestVerifyEmail } from "../controllers/security/verify-email";
-import { ConfirmVerifyDeviceURL, RequestVerifyDevice } from "../controllers/security/verify-device";
+import {
+  ConfirmVerifyEmailURL,
+  RequestVerifyEmail,
+} from "../controllers/security/verify-email";
+import {
+  ConfirmVerifyDeviceURL,
+  RequestVerifyDevice,
+} from "../controllers/security/verify-device";
 
 const securityRouter = Router();
 
 // Verify email
-securityRouter.post("/verify-email", RequestVerifyEmail)
-securityRouter.put("/verify-email", ConfirmVerifyEmailURL)
-
+securityRouter.post("/verify-email", RequestVerifyEmail);
+securityRouter.put("/verify-email", ConfirmVerifyEmailURL);
 
 // Verify device
-securityRouter.post("/verify-device", RequestVerifyDevice)
-securityRouter.put("/verify-device", ConfirmVerifyDeviceURL)
+securityRouter.post("/verify-device", RequestVerifyDevice);
+securityRouter.put("/verify-device", ConfirmVerifyDeviceURL);
 
 // Reset password routes
 securityRouter.post("/reset-password", RequestResetPassword);

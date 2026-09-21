@@ -4,10 +4,10 @@ export async function RequestVerifyEmail(
   req: Request,
   res: Response,
   next: NextFunction,
-): Promise<void> { }
+): Promise<void> {}
 
 export async function ConfirmVerifyEmailURL(
   req: Request,
   res: Response,
   next: NextFunction,
-): Promise<void> { }
+): Promise<void> {}
