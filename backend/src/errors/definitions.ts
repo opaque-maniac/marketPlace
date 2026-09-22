@@ -1,66 +1,32 @@
-import { stat } from "fs";
 import APIErrorCodes from "./error-codes";
 
-export class APIError extends Error {
-  statusCode: number = 404;
-  errorCode: string;
-
-  constructor(message: string, status: number = 400) {
-    super(message);
-    this.statusCode = status;
-    this.errorCode = APIErrorCodes.generic.api_error;
-  }
-}
-
-export class InvalidCredentialsErorr extends APIError {
-  constructor(message: string, status: number = 401) {
-    super(message, status);
-    this.errorCode = APIErrorCodes.authentication.invalid_credentials;
-  }
-}
-
-export class NotFoundError extends APIError {
+export class AppError extends Error {
+  public statusCode: number;
+  public errorCode: string;
   constructor(
     message: string,
-    errType: "Customer" | "Product" | "Seller" | "Staff",
-    status: number = 404,
+    statusCode: number = 400,
+    errorCode: string = APIErrorCodes.generic.bad_request
   ) {
-    super(message, status);
-    this.errorCode = APIErrorCodes.not_found[errType];
+    super(message);
+    this.statusCode = statusCode;
+    this.errorCode = errorCode;
+
+    // Maintains proper stack trace for where our error was thrown (only available on V8)
+    Error.captureStackTrace(this, this.constructor);
   }
 }
 
-export class BadRequestError extends APIError {
-  constructor(message: string, status: number = 400) {
-    super(message, status);
-    this.errorCode = APIErrorCodes.generic.bad_request;
-  }
-}
+export const Errors = {
+  BadRequest: (msg: string) =>
+    new AppError(msg, 400, APIErrorCodes.generic.bad_request),
 
-export class UnauthorizedError extends APIError {
-  constructor(message: string, status: number = 401) {
-    super(message, status);
-    this.errorCode = APIErrorCodes.authentication.unauthorized_access;
-  }
-}
+  NotFound: (msg: string, entity: "Customer" | "Product" | "Seller" | "Staff") =>
+    new AppError(msg, 404, APIErrorCodes.not_found[entity]),
 
-export class DatabaseError extends APIError {
-  constructor(message: string, status: number = 500) {
-    super(message, status);
-    this.errorCode = APIErrorCodes.server_error.database_error;
-  }
-}
+  Unauthorized: (msg: string = "Unauthorized") =>
+    new AppError(msg, 401, APIErrorCodes.authentication.unauthorized_access),
 
-export class PrismaError extends APIError {
-  constructor(message: string, status: number = 500) {
-    super(message, status)
-    this.errorCode = APIErrorCodes.server_error.prisma_error
-  }
-}
-
-export class InternalServerError extends APIError {
-  constructor(message: string, status: number = 500) {
-    super(message, status);
-    this.errorCode = APIErrorCodes.server_error.internal_server_error;
-  }
+  Internal: (msg: string = "Internal Server Error", code = APIErrorCodes.server_error.internal_server_error) =>
+    new AppError(msg, 500, code)
 }
