@@ -44,28 +44,29 @@ model CustomerImage {
 }
 
 // Seller works like an organization
-model Seller {
-  id          String       @id @default(uuid())
-  name        String       @unique
+model SellerOrganization {
+  id          String          @id @default(uuid())
+  name        String          @unique
   bio         String?
   address     String?
   phone       String?
-  verified    Boolean      @default(false)
-  active      Boolean      @default(true)
+  verified    Boolean         @default(false)
+  active      Boolean         @default(true)
   image       SellerImage?
   products    Product[]
   orders      Order[]
   misconducts Misconduct[]
-  createdAt   DateTime     @default(now())
-  updatedAt   DateTime     @updatedAt
+  profiles    SellerProfile[]
+  createdAt   DateTime        @default(now())
+  updatedAt   DateTime        @updatedAt
 }
 
 model SellerImage {
-  id             String          @id @default(uuid())
-  sellerID       String          @unique
+  id             String             @id @default(uuid())
+  sellerID       String             @unique
   url            String
-  seller         Seller          @relation(fields: [sellerID], references: [id], onDelete: Cascade)
-  createdAt      DateTime        @default(now())
+  seller         SellerOrganization @relation(fields: [sellerID], references: [id], onDelete: Cascade)
+  createdAt      DateTime           @default(now())
   sellerProfiles SellerProfile[]
 }
 
@@ -84,6 +85,8 @@ model SellerProfile {
   verified           Boolean             @default(false)
   active             Boolean             @default(true)
   role               STAFF_ROLE
+  organizationID     String
+  organization       SellerOrganization  @relation(fields: [organizationID], references: [id])
   image              SellerImage?        @relation(fields: [sellerImageId], references: [id])
   sellerImageId      String?
   sellerProfileImage SellerProfileImage?
@@ -144,21 +147,21 @@ enum CATEGORIES {
 }
 
 model Product {
-  id            String         @id @default(uuid())
+  id            String             @id @default(uuid())
   name          String
   description   String
-  sellingPrice  Float          @default(0)
-  buyingPrice   Float          @default(0)
+  sellingPrice  Float              @default(0)
+  buyingPrice   Float              @default(0)
   category      CATEGORIES
   sellerID      String
-  seller        Seller         @relation(fields: [sellerID], references: [id], onDelete: Cascade)
+  seller        SellerOrganization @relation(fields: [sellerID], references: [id], onDelete: Cascade)
   images        ProductImage[]
   cartItems     CartItem[]
   wishlistItems WishListItem[]
   comments      Comment[]
   orders        Order[]
-  createdAt     DateTime       @default(now())
-  updatedAt     DateTime       @updatedAt
+  createdAt     DateTime           @default(now())
+  updatedAt     DateTime           @updatedAt
   inventory     Int
   ratings       Ratings[]
 }
@@ -240,19 +243,19 @@ enum ORDER_STATUS {
 }
 
 model Order {
-  id          String       @id @default(uuid())
+  id          String             @id @default(uuid())
   totalAmount Float
-  status      ORDER_STATUS @default(PENDING)
+  status      ORDER_STATUS       @default(PENDING)
   quantity    Int
   productID   String
-  product     Product      @relation(fields: [productID], references: [id], onDelete: Cascade)
+  product     Product            @relation(fields: [productID], references: [id], onDelete: Cascade)
   customerID  String
-  customer    Customer     @relation(fields: [customerID], references: [id], onDelete: Cascade)
+  customer    Customer           @relation(fields: [customerID], references: [id], onDelete: Cascade)
   sellerID    String
-  seller      Seller       @relation(fields: [sellerID], references: [id], onDelete: Cascade)
+  seller      SellerOrganization @relation(fields: [sellerID], references: [id], onDelete: Cascade)
   payment     Payment?
-  createdAt   DateTime     @default(now())
-  updatedAt   DateTime     @updatedAt
+  createdAt   DateTime           @default(now())
+  updatedAt   DateTime           @updatedAt
 }
 
 model Payment {
@@ -283,19 +286,19 @@ enum RESPONSE {
 }
 
 model Misconduct {
-  id          String    @id @default(uuid())
+  id          String              @id @default(uuid())
   personelID  String
   userEmail   String
-  personel    Staff     @relation("Personel", fields: [personelID], references: [id])
-  response    RESPONSE  @default(WARN_USER)
+  personel    Staff               @relation("Personel", fields: [personelID], references: [id])
+  response    RESPONSE            @default(WARN_USER)
   customerID  String?
-  customer    Customer? @relation(fields: [customerID], references: [id])
+  customer    Customer?           @relation(fields: [customerID], references: [id])
   sellerID    String?
-  seller      Seller?   @relation(fields: [sellerID], references: [id])
+  seller      SellerOrganization? @relation(fields: [sellerID], references: [id])
   staffID     String?
-  staff       Staff?    @relation(fields: [staffID], references: [id])
+  staff       Staff?              @relation(fields: [staffID], references: [id])
   misconduct  String
   description String
-  createdAt   DateTime  @default(now())
-  updatedAt   DateTime  @default(now())
+  createdAt   DateTime            @default(now())
+  updatedAt   DateTime            @default(now())
 }
