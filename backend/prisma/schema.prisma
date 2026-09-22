@@ -32,7 +32,7 @@ model Customer {
   misconducts Misconduct[]
   createdAt   DateTime       @default(now())
   updatedAt   DateTime       @updatedAt
-  ratings Ratings[]
+  ratings     Ratings[]
 }
 
 model CustomerImage {
@@ -43,12 +43,10 @@ model CustomerImage {
   createdAt  DateTime @default(now())
 }
 
+// Seller works like an organization
 model Seller {
   id          String       @id @default(uuid())
-  email       String       @unique
-  tempEmail   String?
-  name        String
-  password    String
+  name        String       @unique
   bio         String?
   address     String?
   phone       String?
@@ -63,11 +61,40 @@ model Seller {
 }
 
 model SellerImage {
-  id        String   @id @default(uuid())
-  sellerID  String   @unique
+  id             String          @id @default(uuid())
+  sellerID       String          @unique
+  url            String
+  seller         Seller          @relation(fields: [sellerID], references: [id], onDelete: Cascade)
+  createdAt      DateTime        @default(now())
+  sellerProfiles SellerProfile[]
+}
+
+enum SELLER_ROLE {
+  OWNER
+  STAFF
+}
+
+model SellerProfile {
+  id                 String              @id @default(uuid())
+  email              String              @unique
+  tempEmail          String?
+  firstName          String
+  lastName           String
+  password           String
+  verified           Boolean             @default(false)
+  active             Boolean             @default(true)
+  role               STAFF_ROLE
+  image              SellerImage?        @relation(fields: [sellerImageId], references: [id])
+  sellerImageId      String?
+  sellerProfileImage SellerProfileImage?
+}
+
+model SellerProfileImage {
+  id        String        @id @default(uuid())
+  profileID String        @unique
   url       String
-  seller    Seller   @relation(fields: [sellerID], references: [id], onDelete: Cascade)
-  createdAt DateTime @default(now())
+  profile   SellerProfile @relation(fields: [profileID], references: [id], onDelete: Cascade)
+  createdAt DateTime      @default(now())
 }
 
 enum STAFF_ROLE {
@@ -137,13 +164,13 @@ model Product {
 }
 
 model Ratings {
-    id String @id @default(uuid())
-    productID String
-    product Product @relation(fields: [productID], references: [id], onDelete: Cascade)
-    customerID String
-    customer Customer @relation(fields: [customerID], references: [id], onDelete: Cascade)
-    value Int
-    createdAt DateTime @default(now())
+  id         String   @id @default(uuid())
+  productID  String
+  product    Product  @relation(fields: [productID], references: [id], onDelete: Cascade)
+  customerID String
+  customer   Customer @relation(fields: [customerID], references: [id], onDelete: Cascade)
+  value      Int
+  createdAt  DateTime @default(now())
 }
 
 model ProductImage {
@@ -155,16 +182,16 @@ model ProductImage {
 }
 
 model Comment {
-  id         String  @id @default(uuid())
+  id         String    @id @default(uuid())
   productID  String? // Optional, only for top-level comments
   customerID String
   parentID   String? // References another comment if it's a reply
-  product   Product?  @relation(fields: [productID], references: [id], onDelete: Cascade)
-  customer  Customer  @relation(fields: [customerID], references: [id], onDelete: Cascade)
-  parent    Comment?  @relation("CommentReplies", fields: [parentID], references: [id], onDelete: Cascade)
-  replies   Comment[] @relation("CommentReplies")
-  message   String
-  createdAt DateTime  @default(now())
+  product    Product?  @relation(fields: [productID], references: [id], onDelete: Cascade)
+  customer   Customer  @relation(fields: [customerID], references: [id], onDelete: Cascade)
+  parent     Comment?  @relation("CommentReplies", fields: [parentID], references: [id], onDelete: Cascade)
+  replies    Comment[] @relation("CommentReplies")
+  message    String
+  createdAt  DateTime  @default(now())
 }
 
 model Cart {
