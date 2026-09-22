@@ -17,6 +17,7 @@ const APIErrorCodes = {
   server_error: {
     internal_server_error: "401",
     database_error: "402",
+    prisma_error: "403",
   },
 };
 

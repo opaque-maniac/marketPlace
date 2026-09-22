@@ -51,6 +51,13 @@ export class DatabaseError extends APIError {
   }
 }
 
+export class PrismaError extends APIError {
+  constructor(message: string, status: number = 500) {
+    super(message, status)
+    this.errorCode = APIErrorCodes.server_error.prisma_error
+  }
+}
+
 export class InternalServerError extends APIError {
   constructor(message: string, status: number = 500) {
     super(message, status);

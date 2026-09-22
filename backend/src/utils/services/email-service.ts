@@ -132,7 +132,7 @@ export default class EmailService {
     return {
       first_name: firstName,
       last_name: lastName,
-      token_url: `${service_url}?token=${token}`,
+      token_url: `${service_url}?role=${userType}&token=${token}`,
       try_again_url: service_url,
       support_url: `${base_url}/contact`,
     };

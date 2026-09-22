@@ -84,7 +84,7 @@ model SellerProfile {
   password           String
   verified           Boolean             @default(false)
   active             Boolean             @default(true)
-  role               STAFF_ROLE
+  role               SELLER_ROLE
   organizationID     String
   organization       SellerOrganization  @relation(fields: [organizationID], references: [id])
   image              SellerImage?        @relation(fields: [sellerImageId], references: [id])
