@@ -37,3 +37,7 @@ export interface ResetPasswordBody {
 export interface ConfirmResetPasswordBody {
   password: string;
 }
+
+export interface ChangeEmailBody {
+  email: string;
+}

@@ -40,7 +40,7 @@ securityRouter.patch("/reset-password", ConfirmResetPassword);
 
 // Change email routes
 securityRouter.post("/change-email", allowIfAuthenticated, RequestChangeEmail);
-securityRouter.put("/change-email", allowIfAuthenticated, VerifyChangeEmailURL);
+securityRouter.put("/change-email", VerifyChangeEmailURL);
 
 // Change password routes
 securityRouter.post(
@@ -48,15 +48,7 @@ securityRouter.post(
   allowIfAuthenticated,
   RequestChangePassword,
 );
-securityRouter.put(
-  "/change-password",
-  allowIfAuthenticated,
-  VerifyChangePasswordURL,
-);
-securityRouter.patch(
-  "/change-password",
-  allowIfAuthenticated,
-  ConfirmChangePassword,
-);
+securityRouter.put("/change-password", VerifyChangePasswordURL);
+securityRouter.patch("/change-password", ConfirmChangePassword);
 
 export default securityRouter;
