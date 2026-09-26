@@ -1,4 +1,4 @@
-import type { Request, Response, NextFunction } from "express";
+import type { Request, Response } from "express";
 import { Errors } from "../../errors/definitions";
 import { Customer, SellerProfile, Staff } from "@prisma/client";
 import { LoginBody } from "../../definitons/payloads";

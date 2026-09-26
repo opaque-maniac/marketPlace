@@ -1,5 +1,5 @@
+import type { Request, Response } from "express";
 import db from "../../db/db";
-import type { Request, Response, NextFunction } from "express";
 import { OnboardingSellerBody } from "../../definitons/payloads";
 import { Errors } from "../../errors/definitions";
 import { hashPassword } from "../../utils/bcrypt";

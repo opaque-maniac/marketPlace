@@ -1,4 +1,4 @@
-import type { Request, Response, NextFunction } from "express";
+import type { Request, Response } from "express";
 import { Errors } from "../../errors/definitions";
 import { Customer, SellerProfile, Staff } from "@prisma/client";
 import db from "../../db/db";
@@ -129,7 +129,7 @@ export async function ConfirmVerifyEmailURL(
   const tokenService = new JWTService();
 
   const tokenPayload = tokenService.parseToken(token);
-  if (!tokenPayload) {
+  if (!tokenPayload || tokenPayload.purpose != "EMAIL") {
     throw Errors.BadRequest(
       "Token has expired or is invalid",
       APIErrorCodes.token.invalid_security_token,

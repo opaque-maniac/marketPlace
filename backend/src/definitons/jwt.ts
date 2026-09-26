@@ -8,11 +8,8 @@ export interface JWTInput {
   role: UserType;
 }
 
-export interface JWTPayload {
-  id: string;
-  email: string;
+export interface JWTPayload extends JWTInput {
   purpose: JWTPurpose;
-  role: UserType;
 }
 
 export type TokenExpiresIn = "1h" | "30d" | "10m";
