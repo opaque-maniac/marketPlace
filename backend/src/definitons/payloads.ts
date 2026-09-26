@@ -30,14 +30,12 @@ export interface VerifyEmailBody {
   email: string;
 }
 
-export interface ResetPasswordBody {
-  email: string;
-}
+export interface ResetPasswordBody extends VerifyEmailBody {}
 
 export interface ConfirmResetPasswordBody {
   password: string;
 }
 
-export interface ChangeEmailBody {
-  email: string;
-}
+export interface ChangeEmailBody extends VerifyEmailBody {}
+
+export interface ConfirmChangePasswordBody extends ConfirmResetPasswordBody {}
