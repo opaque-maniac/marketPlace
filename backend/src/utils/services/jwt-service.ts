@@ -69,4 +69,12 @@ export default class JWTService {
     });
     return token;
   }
+
+  // TODO: find out how to implement this
+  // Also find out if it is logical to have an endpoint
+  // that checks if an access token is valid in a nextjs
+  // middleware function call
+  shouldRegerateRefresh(token: string): boolean {
+    return false;
+  }
 }

@@ -22,6 +22,7 @@ import {
   RequestVerifyDevice,
 } from "../controllers/security/verify-device";
 import { allowIfAuthenticated } from "../middleware/auth-middleware";
+import { RefreshAccessToken } from "../controllers/security/refresh-token";
 
 const securityRouter = Router();
 
@@ -50,5 +51,8 @@ securityRouter.post(
 );
 securityRouter.put("/change-password", VerifyChangePasswordURL);
 securityRouter.patch("/change-password", ConfirmChangePassword);
+
+// Access and refresh token management
+securityRouter.post("/refresh-token", RefreshAccessToken);
 
 export default securityRouter;
