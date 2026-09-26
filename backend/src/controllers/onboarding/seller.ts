@@ -11,7 +11,6 @@ import { generateSellerReferenceNumber } from "../../utils/generate-ref";
 export async function OnboardSeller(
   req: Request,
   res: Response,
-  next: NextFunction,
 ): Promise<void> {
   const { name, phone, bio, address, ownerData } =
     req.body as OnboardingSellerBody;

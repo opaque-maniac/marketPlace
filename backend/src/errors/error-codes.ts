@@ -14,11 +14,17 @@ const APIErrorCodes = {
     invalid_credentials: "301",
     unauthorized_access: "302",
     unverified_profile: "303",
+    unverified_seller_org: "304",
+  },
+  token: {
+    invalid_security_token: "401",
+    invalid_access_token: "402",
+    invalid_refresh_token: "403",
   },
   server_error: {
-    internal_server_error: "401",
-    database_error: "402",
-    resend_error: "403",
+    internal_server_error: "501",
+    database_error: "502",
+    resend_error: "503",
   },
 };
 

@@ -27,3 +27,7 @@ export interface LoginBody {
 export interface SellerLoginBody extends LoginBody {
   referenceNumber: string;
 }
+
+export interface VerifyEmailBody {
+  email: string;
+}

@@ -17,11 +17,7 @@ import APIErrorCodes from "../../errors/error-codes";
 // ENV variables
 const ADMIN_EMAIL = process.env.ADMIN_EMAIL;
 
-export async function LoginUser(
-  req: Request,
-  res: Response,
-  next: NextFunction,
-): Promise<void> {
+export async function LoginUser(req: Request, res: Response): Promise<void> {
   const role = req.query.role ? (req.query.role as string).toLowerCase() : "";
 
   if (!role) {
@@ -60,6 +56,26 @@ export async function LoginUser(
     throw Errors.BadRequest("Invalid credentials provided");
   }
 
+  if (role == "seller") {
+    const org = await db.sellerOrganization.findFirst({
+      where: {
+        id: (profile as SellerProfile).organizationID,
+      },
+    });
+
+    // Not possible since profile exists
+    if (!org) {
+      throw Errors.Internal("Internal Server Error");
+    }
+
+    if (!org.verified) {
+      throw Errors.BadRequest(
+        "Organization is not verified",
+        APIErrorCodes.authentication.unverified_seller_org,
+      );
+    }
+  }
+
   if (!profile.verified) {
     const { success, error } = await sendVerificationEmail(profile, userType);
     if (!success) {
@@ -89,24 +105,24 @@ export async function LoginUser(
     role: userType,
   };
 
-  switch(userType) {
+  switch (userType) {
     case "customer":
       await db.customer.update({
-        where: {id: profile.id},
-        data: { lastLogin: new Date() }
-      })
+        where: { id: profile.id },
+        data: { lastLogin: new Date() },
+      });
       break;
     case "seller":
       await db.sellerProfile.update({
-        where: {id: profile.id},
-        data: { lastLogin: new Date() }
-      })
+        where: { id: profile.id },
+        data: { lastLogin: new Date() },
+      });
       break;
     case "staff":
       await db.staff.update({
-        where: {id: profile.id},
-        data: { lastLogin: new Date() }
-      })
+        where: { id: profile.id },
+        data: { lastLogin: new Date() },
+      });
       break;
   }
 
@@ -118,7 +134,7 @@ export async function LoginUser(
     message: "Logged in succesfully",
     accessToken,
     refreshToken,
-  })
+  });
 }
 
 async function sendVerificationEmail(

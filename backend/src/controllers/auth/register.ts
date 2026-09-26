@@ -13,11 +13,7 @@ import { EmailTemplateData, EmailType } from "../../definitons/emails";
 // ENV variables
 const ADMIN_EMAIL = process.env.ADMIN_EMAIL;
 
-export async function RegisterUser(
-  req: Request,
-  res: Response,
-  next: NextFunction,
-): Promise<void> {
+export async function RegisterUser(req: Request, res: Response): Promise<void> {
   const role = req.query.role ? (req.query.role as string).toLowerCase() : "";
   const orgRef = req.query.orgRef ? (req.query.orgRef as string) : "";
 

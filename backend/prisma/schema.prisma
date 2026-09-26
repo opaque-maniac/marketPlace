@@ -170,6 +170,7 @@ model Product {
   buyingPrice    Float              @default(0)
   inventory      Int
   categoryID     String
+  verified       Boolean            @default(false)
   category       Category           @relation(fields: [categoryID], references: [id])
   images         ProductImage[]
   cartItems      CartItem[]
