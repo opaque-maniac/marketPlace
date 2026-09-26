@@ -26,8 +26,10 @@ export const Errors = {
     entity: "Customer" | "Product" | "Seller" | "Staff",
   ) => new AppError(msg, 404, APIErrorCodes.not_found[entity]),
 
-  Unauthorized: (msg: string = "Unauthorized") =>
-    new AppError(msg, 401, APIErrorCodes.authentication.unauthorized_access),
+  Unauthorized: (
+    msg: string = "Unauthorized",
+    code: string = APIErrorCodes.authentication.unauthorized_access,
+  ) => new AppError(msg, 401, code),
 
   Internal: (
     msg: string = "Internal Server Error",

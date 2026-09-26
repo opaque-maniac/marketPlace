@@ -21,6 +21,7 @@ import {
   ConfirmVerifyDeviceURL,
   RequestVerifyDevice,
 } from "../controllers/security/verify-device";
+import { allowIfAuthenticated } from "../middleware/auth-middleware";
 
 const securityRouter = Router();
 
@@ -38,12 +39,24 @@ securityRouter.put("/reset-password", VerifyResetPasswordURL);
 securityRouter.patch("/reset-password", ConfirmResetPassword);
 
 // Change email routes
-securityRouter.post("/change-email", RequestChangeEmail);
-securityRouter.put("/change-email", VerifyChangeEmailURL);
+securityRouter.post("/change-email", allowIfAuthenticated, RequestChangeEmail);
+securityRouter.put("/change-email", allowIfAuthenticated, VerifyChangeEmailURL);
 
 // Change password routes
-securityRouter.post("/change-password", RequestChangePassword);
-securityRouter.put("/change-password", VerifyChangePasswordURL);
-securityRouter.patch("/change-password", ConfirmChangePassword);
+securityRouter.post(
+  "/change-password",
+  allowIfAuthenticated,
+  RequestChangePassword,
+);
+securityRouter.put(
+  "/change-password",
+  allowIfAuthenticated,
+  VerifyChangePasswordURL,
+);
+securityRouter.patch(
+  "/change-password",
+  allowIfAuthenticated,
+  ConfirmChangePassword,
+);
 
 export default securityRouter;
