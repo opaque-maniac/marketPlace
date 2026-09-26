@@ -1,5 +1,5 @@
 import * as jwt from "jsonwebtoken";
-import type { JWTPayload, TokenExpiresIn } from "../definitons/jwt";
+import type { JWTPayload, TokenExpiresIn } from "../../definitons/jwt";
 
 const secret = process.env.JWT_SECRET;
 

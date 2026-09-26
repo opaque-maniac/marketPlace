@@ -45,20 +45,21 @@ model CustomerImage {
 
 // Seller works like an organization
 model SellerOrganization {
-  id          String          @id @default(uuid())
-  name        String          @unique
-  bio         String?
-  address     String?
-  phone       String?
-  verified    Boolean         @default(false)
-  active      Boolean         @default(true)
-  image       SellerImage?
-  products    Product[]
-  orders      Order[]
-  misconducts Misconduct[]
-  profiles    SellerProfile[]
-  createdAt   DateTime        @default(now())
-  updatedAt   DateTime        @updatedAt
+  id              String          @id @default(uuid())
+  name            String          @unique
+  bio             String?
+  address         String?
+  phone           String?
+  referenceNumber String          @unique
+  verified        Boolean         @default(false)
+  active          Boolean         @default(true)
+  image           SellerImage?
+  products        Product[]
+  orders          Order[]
+  misconducts     Misconduct[]
+  profiles        SellerProfile[]
+  createdAt       DateTime        @default(now())
+  updatedAt       DateTime        @updatedAt
 }
 
 model SellerImage {

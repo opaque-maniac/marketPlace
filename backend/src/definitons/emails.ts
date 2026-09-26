@@ -2,6 +2,8 @@ import { ErrorResponse } from "resend";
 
 export type EmailType =
   | "verify-email"
+  | "verify-email-staff"
+  | "onboarding-verification"
   | "verify-device"
   | "reset-password"
   | "change-email"
@@ -9,7 +11,7 @@ export type EmailType =
   | "welcome";
 
 export interface EmailResponse {
-  sucess: boolean;
+  success: boolean;
   id: string | undefined;
   error: ErrorResponse | null;
 }

@@ -42,18 +42,19 @@ CREATE TABLE "CustomerImage" (
 );
 
 -- CreateTable
-CREATE TABLE "Seller" (
+CREATE TABLE "SellerOrganization" (
     "id" TEXT NOT NULL,
     "name" TEXT NOT NULL,
     "bio" TEXT,
     "address" TEXT,
     "phone" TEXT,
+    "referenceNumber" TEXT NOT NULL,
     "verified" BOOLEAN NOT NULL DEFAULT false,
     "active" BOOLEAN NOT NULL DEFAULT true,
     "createdAt" TIMESTAMP(3) NOT NULL DEFAULT CURRENT_TIMESTAMP,
     "updatedAt" TIMESTAMP(3) NOT NULL,
 
-    CONSTRAINT "Seller_pkey" PRIMARY KEY ("id")
+    CONSTRAINT "SellerOrganization_pkey" PRIMARY KEY ("id")
 );
 
 -- CreateTable
@@ -76,7 +77,8 @@ CREATE TABLE "SellerProfile" (
     "password" TEXT NOT NULL,
     "verified" BOOLEAN NOT NULL DEFAULT false,
     "active" BOOLEAN NOT NULL DEFAULT true,
-    "role" "STAFF_ROLE" NOT NULL,
+    "role" "SELLER_ROLE" NOT NULL,
+    "organizationID" TEXT NOT NULL,
     "sellerImageId" TEXT,
 
     CONSTRAINT "SellerProfile_pkey" PRIMARY KEY ("id")
@@ -274,7 +276,10 @@ CREATE UNIQUE INDEX "Customer_email_key" ON "Customer"("email");
 CREATE UNIQUE INDEX "CustomerImage_customerID_key" ON "CustomerImage"("customerID");
 
 -- CreateIndex
-CREATE UNIQUE INDEX "Seller_name_key" ON "Seller"("name");
+CREATE UNIQUE INDEX "SellerOrganization_name_key" ON "SellerOrganization"("name");
+
+-- CreateIndex
+CREATE UNIQUE INDEX "SellerOrganization_referenceNumber_key" ON "SellerOrganization"("referenceNumber");
 
 -- CreateIndex
 CREATE UNIQUE INDEX "SellerImage_sellerID_key" ON "SellerImage"("sellerID");
@@ -304,7 +309,10 @@ CREATE UNIQUE INDEX "Payment_orderID_key" ON "Payment"("orderID");
 ALTER TABLE "CustomerImage" ADD CONSTRAINT "CustomerImage_customerID_fkey" FOREIGN KEY ("customerID") REFERENCES "Customer"("id") ON DELETE CASCADE ON UPDATE CASCADE;
 
 -- AddForeignKey
-ALTER TABLE "SellerImage" ADD CONSTRAINT "SellerImage_sellerID_fkey" FOREIGN KEY ("sellerID") REFERENCES "Seller"("id") ON DELETE CASCADE ON UPDATE CASCADE;
+ALTER TABLE "SellerImage" ADD CONSTRAINT "SellerImage_sellerID_fkey" FOREIGN KEY ("sellerID") REFERENCES "SellerOrganization"("id") ON DELETE CASCADE ON UPDATE CASCADE;
+
+-- AddForeignKey
+ALTER TABLE "SellerProfile" ADD CONSTRAINT "SellerProfile_organizationID_fkey" FOREIGN KEY ("organizationID") REFERENCES "SellerOrganization"("id") ON DELETE RESTRICT ON UPDATE CASCADE;
 
 -- AddForeignKey
 ALTER TABLE "SellerProfile" ADD CONSTRAINT "SellerProfile_sellerImageId_fkey" FOREIGN KEY ("sellerImageId") REFERENCES "SellerImage"("id") ON DELETE SET NULL ON UPDATE CASCADE;
@@ -316,7 +324,7 @@ ALTER TABLE "SellerProfileImage" ADD CONSTRAINT "SellerProfileImage_profileID_fk
 ALTER TABLE "StaffImage" ADD CONSTRAINT "StaffImage_staffID_fkey" FOREIGN KEY ("staffID") REFERENCES "Staff"("id") ON DELETE CASCADE ON UPDATE CASCADE;
 
 -- AddForeignKey
-ALTER TABLE "Product" ADD CONSTRAINT "Product_sellerID_fkey" FOREIGN KEY ("sellerID") REFERENCES "Seller"("id") ON DELETE CASCADE ON UPDATE CASCADE;
+ALTER TABLE "Product" ADD CONSTRAINT "Product_sellerID_fkey" FOREIGN KEY ("sellerID") REFERENCES "SellerOrganization"("id") ON DELETE CASCADE ON UPDATE CASCADE;
 
 -- AddForeignKey
 ALTER TABLE "Ratings" ADD CONSTRAINT "Ratings_productID_fkey" FOREIGN KEY ("productID") REFERENCES "Product"("id") ON DELETE CASCADE ON UPDATE CASCADE;
@@ -361,7 +369,7 @@ ALTER TABLE "Order" ADD CONSTRAINT "Order_productID_fkey" FOREIGN KEY ("productI
 ALTER TABLE "Order" ADD CONSTRAINT "Order_customerID_fkey" FOREIGN KEY ("customerID") REFERENCES "Customer"("id") ON DELETE CASCADE ON UPDATE CASCADE;
 
 -- AddForeignKey
-ALTER TABLE "Order" ADD CONSTRAINT "Order_sellerID_fkey" FOREIGN KEY ("sellerID") REFERENCES "Seller"("id") ON DELETE CASCADE ON UPDATE CASCADE;
+ALTER TABLE "Order" ADD CONSTRAINT "Order_sellerID_fkey" FOREIGN KEY ("sellerID") REFERENCES "SellerOrganization"("id") ON DELETE CASCADE ON UPDATE CASCADE;
 
 -- AddForeignKey
 ALTER TABLE "Payment" ADD CONSTRAINT "Payment_orderID_fkey" FOREIGN KEY ("orderID") REFERENCES "Order"("id") ON DELETE CASCADE ON UPDATE CASCADE;
@@ -376,7 +384,7 @@ ALTER TABLE "Misconduct" ADD CONSTRAINT "Misconduct_personelID_fkey" FOREIGN KEY
 ALTER TABLE "Misconduct" ADD CONSTRAINT "Misconduct_customerID_fkey" FOREIGN KEY ("customerID") REFERENCES "Customer"("id") ON DELETE SET NULL ON UPDATE CASCADE;
 
 -- AddForeignKey
-ALTER TABLE "Misconduct" ADD CONSTRAINT "Misconduct_sellerID_fkey" FOREIGN KEY ("sellerID") REFERENCES "Seller"("id") ON DELETE SET NULL ON UPDATE CASCADE;
+ALTER TABLE "Misconduct" ADD CONSTRAINT "Misconduct_sellerID_fkey" FOREIGN KEY ("sellerID") REFERENCES "SellerOrganization"("id") ON DELETE SET NULL ON UPDATE CASCADE;
 
 -- AddForeignKey
 ALTER TABLE "Misconduct" ADD CONSTRAINT "Misconduct_staffID_fkey" FOREIGN KEY ("staffID") REFERENCES "Staff"("id") ON DELETE SET NULL ON UPDATE CASCADE;

@@ -6,7 +6,7 @@ export class AppError extends Error {
   constructor(
     message: string,
     statusCode: number = 400,
-    errorCode: string = APIErrorCodes.generic.bad_request
+    errorCode: string = APIErrorCodes.generic.bad_request,
   ) {
     super(message);
     this.statusCode = statusCode;
@@ -21,12 +21,16 @@ export const Errors = {
   BadRequest: (msg: string) =>
     new AppError(msg, 400, APIErrorCodes.generic.bad_request),
 
-  NotFound: (msg: string, entity: "Customer" | "Product" | "Seller" | "Staff") =>
-    new AppError(msg, 404, APIErrorCodes.not_found[entity]),
+  NotFound: (
+    msg: string,
+    entity: "Customer" | "Product" | "Seller" | "Staff",
+  ) => new AppError(msg, 404, APIErrorCodes.not_found[entity]),
 
   Unauthorized: (msg: string = "Unauthorized") =>
     new AppError(msg, 401, APIErrorCodes.authentication.unauthorized_access),
 
-  Internal: (msg: string = "Internal Server Error", code = APIErrorCodes.server_error.internal_server_error) =>
-    new AppError(msg, 500, code)
-}
+  Internal: (
+    msg: string = "Internal Server Error",
+    code = APIErrorCodes.server_error.internal_server_error,
+  ) => new AppError(msg, 500, code),
+};

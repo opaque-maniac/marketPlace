@@ -1,5 +1,5 @@
 import path from "path";
-import type { EmailTemplateData, EmailType } from "../definitons/emails";
+import type { EmailTemplateData, EmailType } from "../../definitons/emails";
 import { readFile } from "fs/promises";
 
 const cache: Map<EmailType, string> = new Map();
