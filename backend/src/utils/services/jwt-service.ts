@@ -1,5 +1,9 @@
 import * as jwt from "jsonwebtoken";
-import type { JWTPayload, TokenExpiresIn } from "../../definitons/jwt";
+import type {
+  JWTInput,
+  JWTPayload,
+  TokenExpiresIn,
+} from "../../definitons/jwt";
 
 const secret = process.env.JWT_SECRET;
 
@@ -14,20 +18,38 @@ export default class JWTService {
     this.secret = secret;
   }
 
-  generateAccessToken(payload: JWTPayload) {
-    return this.generateToken(payload, "1h");
+  generateAccessToken(payload: JWTInput) {
+    return this.generateToken(
+      {
+        ...payload,
+        purpose: "ACCESS",
+      },
+      "1h",
+    );
   }
 
-  generateRefreshToken(payload: JWTPayload) {
-    return this.generateToken(payload, "30d");
+  generateRefreshToken(payload: JWTInput) {
+    return this.generateToken(
+      {
+        ...payload,
+        purpose: "REFRESH",
+      },
+      "30d",
+    );
   }
 
-  generateEmailToken(payload: JWTPayload) {
-    return this.generateToken(payload, "10m");
+  generateEmailToken(payload: JWTInput) {
+    return this.generateToken(
+      {
+        ...payload,
+        purpose: "EMAIL",
+      },
+      "10m",
+    );
   }
 
-  generateSecurityToken(payload: JWTPayload) {
-    return this.generateToken(payload, "10m");
+  generateSecurityToken(payload: JWTInput) {
+    return this.generateToken({ ...payload, purpose: "SECURITY" }, "10m");
   }
 
   parseToken(token: string): JWTPayload | null {

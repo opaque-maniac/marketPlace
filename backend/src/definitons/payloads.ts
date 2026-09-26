@@ -9,7 +9,9 @@ export interface RegisterStaffBody extends RegisterUserBody {
   role: "ADMIN" | "MANAGER" | "STAFF";
 }
 
-export interface RegisterSellerBody extends RegisterUserBody {}
+export interface RegisterSellerBody extends RegisterUserBody {
+  referenceNumber: string;
+}
 
 export interface OnboardingSellerBody {
   name: string;
@@ -24,10 +26,14 @@ export interface LoginBody {
   password: string;
 }
 
-export interface SellerLoginBody extends LoginBody {
-  referenceNumber: string;
-}
-
 export interface VerifyEmailBody {
   email: string;
+}
+
+export interface ResetPasswordBody {
+  email: string;
+}
+
+export interface ConfirmResetPasswordBody {
+  password: string;
 }

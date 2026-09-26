@@ -1,5 +1,9 @@
 import type { Request, Response, NextFunction } from "express";
-import { RegisterUserBody, RegisterStaffBody } from "../../definitons/payloads";
+import {
+  RegisterUserBody,
+  RegisterStaffBody,
+  RegisterSellerBody,
+} from "../../definitons/payloads";
 import { Errors } from "../../errors/definitions";
 import { Customer, SellerProfile, Staff } from "@prisma/client";
 import db from "../../db/db";
@@ -15,7 +19,6 @@ const ADMIN_EMAIL = process.env.ADMIN_EMAIL;
 
 export async function RegisterUser(req: Request, res: Response): Promise<void> {
   const role = req.query.role ? (req.query.role as string).toLowerCase() : "";
-  const orgRef = req.query.orgRef ? (req.query.orgRef as string) : "";
 
   if (!role) {
     throw Errors.BadRequest("Invalid role query param provided");
@@ -64,7 +67,7 @@ export async function RegisterUser(req: Request, res: Response): Promise<void> {
       emailRole = "customer";
       break;
     case "seller":
-      profile = await registerSeller(req, orgRef, passwordHash);
+      profile = await registerSeller(req, passwordHash);
       recipient = profile.email;
       emailType = "verify-email";
       emailRole = "seller";
@@ -145,22 +148,25 @@ async function registerCustomer(
 
 async function registerSeller(
   req: Request,
-  orgRef: string,
   password: string,
 ): Promise<SellerProfile> {
-  if (!orgRef) {
-    throw Errors.BadRequest("Invalid orgRef query param provided");
-  }
-
-  const { email, firstName, lastName } = req.body as RegisterUserBody;
+  const { email, firstName, lastName, referenceNumber } =
+    req.body as RegisterSellerBody;
 
   const org = await db.sellerOrganization.findFirst({
     where: {
-      referenceNumber: orgRef,
+      referenceNumber,
     },
   });
   if (!org) {
     throw Errors.BadRequest("Invalid orgRef query param provided");
+  }
+
+  if (!org.verified) {
+    throw Errors.BadRequest(
+      "Organization is not verified, wait for owner to verify",
+      APIErrorCodes.authentication.unverified_seller_org,
+    );
   }
 
   // return await db.sellerProfile.create({})

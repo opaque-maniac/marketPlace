@@ -1,8 +1,17 @@
 import { UserType } from "./users";
 
+type JWTPurpose = "ACCESS" | "REFRESH" | "EMAIL" | "SECURITY";
+
+export interface JWTInput {
+  id: string;
+  email: string;
+  role: UserType;
+}
+
 export interface JWTPayload {
   id: string;
   email: string;
+  purpose: JWTPurpose;
   role: UserType;
 }
 

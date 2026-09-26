@@ -1,7 +1,7 @@
 import type { Request, Response, NextFunction } from "express";
 import { Errors } from "../../errors/definitions";
 import { Customer, SellerProfile, Staff } from "@prisma/client";
-import { LoginBody, SellerLoginBody } from "../../definitons/payloads";
+import { LoginBody } from "../../definitons/payloads";
 import db from "../../db/db";
 import { comparePassword } from "../../utils/bcrypt";
 import { UserType } from "../../definitons/users";
@@ -36,9 +36,8 @@ export async function LoginUser(req: Request, res: Response): Promise<void> {
       userType = "customer";
       break;
     case "seller":
-      const { referenceNumber } = req.body as SellerLoginBody;
       profile = await db.sellerProfile.findFirst({
-        where: { email, organization: { referenceNumber } },
+        where: { email },
       });
       userType = "seller";
       break;
