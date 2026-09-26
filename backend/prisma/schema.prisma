@@ -30,6 +30,7 @@ model Customer {
   orders      Order[]
   comments    Comment[]
   misconducts Misconduct[]
+  lastLogin   DateTime?
   createdAt   DateTime       @default(now())
   updatedAt   DateTime       @updatedAt
   ratings     Ratings[]
@@ -91,6 +92,9 @@ model SellerProfile {
   image              SellerImage?        @relation(fields: [sellerImageId], references: [id])
   sellerImageId      String?
   sellerProfileImage SellerProfileImage?
+  lastLogin          DateTime?
+  createdAt          DateTime            @default(now())
+  updatedAt          DateTime            @updatedAt
 }
 
 model SellerProfileImage {
@@ -123,6 +127,7 @@ model Staff {
   complaints       Complaint[]
   misconducts      Misconduct[]
   filedmisconducts Misconduct[] @relation("Personel")
+  lastLogin        DateTime?
   createdAt        DateTime     @default(now())
   updatedAt        DateTime     @updatedAt
 }
@@ -135,36 +140,48 @@ model StaffImage {
   createdAt DateTime @default(now())
 }
 
-enum CATEGORIES {
-  ELECTRONICS
-  FASHION
-  HOME
-  BEAUTY
-  SPORTS
-  FOOD
-  BOOKS
-  TOYS
-  OTHER
+/**
+ * enum CATEGORIES {
+ * ELECTRONICS
+ * FASHION
+ * HOME
+ * BEAUTY
+ * SPORTS
+ * FOOD
+ * BOOKS
+ * TOYS
+ * OTHER
+ * }
+ */
+
+model Category {
+  id        String    @id @default(uuid())
+  name      String
+  products  Product[]
+  createdAt DateTime  @default(now())
+  updatedAt DateTime  @updatedAt
 }
 
 model Product {
-  id            String             @id @default(uuid())
-  name          String
-  description   String
-  sellingPrice  Float              @default(0)
-  buyingPrice   Float              @default(0)
-  category      CATEGORIES
-  sellerID      String
-  seller        SellerOrganization @relation(fields: [sellerID], references: [id], onDelete: Cascade)
-  images        ProductImage[]
-  cartItems     CartItem[]
-  wishlistItems WishListItem[]
-  comments      Comment[]
-  orders        Order[]
-  createdAt     DateTime           @default(now())
-  updatedAt     DateTime           @updatedAt
-  inventory     Int
-  ratings       Ratings[]
+  id             String             @id @default(uuid())
+  name           String
+  description    String
+  sellingPrice   Float              @default(0)
+  buyingPrice    Float              @default(0)
+  inventory      Int
+  categoryID     String
+  category       Category           @relation(fields: [categoryID], references: [id])
+  images         ProductImage[]
+  cartItems      CartItem[]
+  wishlistItems  WishListItem[]
+  comments       Comment[]
+  orders         Order[]
+  ratings        Ratings[]
+  sellerID       String
+  seller         SellerOrganization @relation(fields: [sellerID], references: [id], onDelete: Cascade)
+  createdAt      DateTime           @default(now())
+  updatedAt      DateTime           @updatedAt
+  userActivities UserActivity[]
 }
 
 model Ratings {
@@ -302,4 +319,22 @@ model Misconduct {
   description String
   createdAt   DateTime            @default(now())
   updatedAt   DateTime            @default(now())
+}
+
+enum ActivityType {
+  VIEW_PRODUCT
+  COMMENT
+  RATE_PRODUCT
+  ADD_TO_WISHLIST
+  ADD_TO_CART
+}
+
+model UserActivity {
+  id         String       @id @default(uuid())
+  activity   ActivityType @default(VIEW_PRODUCT)
+  productID  String
+  product    Product      @relation(fields: [productID], references: [id])
+  guestID    String?
+  customerID String?
+  createdAt  DateTime     @default(now())
 }

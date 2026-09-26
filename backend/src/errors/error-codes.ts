@@ -13,6 +13,7 @@ const APIErrorCodes = {
   authentication: {
     invalid_credentials: "301",
     unauthorized_access: "302",
+    unverified_profile: "303",
   },
   server_error: {
     internal_server_error: "401",

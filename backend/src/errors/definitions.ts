@@ -18,8 +18,8 @@ export class AppError extends Error {
 }
 
 export const Errors = {
-  BadRequest: (msg: string) =>
-    new AppError(msg, 400, APIErrorCodes.generic.bad_request),
+  BadRequest: (msg: string, code: string = APIErrorCodes.generic.bad_request) =>
+    new AppError(msg, 400, code),
 
   NotFound: (
     msg: string,
