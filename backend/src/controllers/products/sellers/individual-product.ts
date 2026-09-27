@@ -67,6 +67,46 @@ export async function UpdateSellerIndividualProduct(
   res: Response,
 ): Promise<void> {}
 
+export async function UpdateSellerProductVerifiedStatus(
+  req: Request,
+  res: Response,
+): Promise<void> {
+  const { id } = req.params;
+  const user = (req as any).user as JWTPayload;
+
+  const profile = await db.sellerProfile.findFirst({
+    where: { id: user.id },
+  });
+  if (!profile || profile.role != "OWNER") {
+    throw Errors.Unauthorized("Unauthorized");
+  }
+
+  const product = await db.product.findFirst({
+    where: {
+      id,
+      sellerID: profile.organizationID,
+    },
+  });
+  if (!product) {
+    throw Errors.NotFound("Product not found", "Product");
+  }
+
+  const newStatus = !product.verified;
+  await db.product.update({
+    where: {
+      id,
+    },
+    data: {
+      verified: newStatus,
+    },
+  });
+
+  res.status(200).json({
+    success: true,
+    message: "Updated product verified status",
+  });
+}
+
 export async function DeleteSellerIndividualProduct(
   req: Request,
   res: Response,
@@ -87,7 +127,6 @@ export async function DeleteSellerIndividualProduct(
       sellerID: profile.organizationID,
     },
   });
-
   if (!product) {
     throw Errors.NotFound("Product not found", "Product");
   }
