@@ -10,6 +10,7 @@ import {
 import {
   DeleteSellerIndividualProduct,
   FetchSellerIndividualProduct,
+  UpdateSellerIndividualProduct,
   UpdateSellerProductVerifiedStatus,
 } from "../../controllers/products/sellers/individual-product";
 
@@ -23,6 +24,7 @@ sellerRouter.post("", CreateNewProduct);
 
 // Invidiual product
 sellerRouter.get("/:id", FetchSellerIndividualProduct);
+sellerRouter.put("/:id", UpdateSellerIndividualProduct);
 sellerRouter.patch("/:id", UpdateSellerProductVerifiedStatus);
 sellerRouter.delete("/:id", DeleteSellerIndividualProduct);
 
