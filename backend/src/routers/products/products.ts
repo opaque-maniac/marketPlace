@@ -1,12 +1,15 @@
 import { Router } from "express";
 import customerRouter from "./customer";
-import { allowIfAuthenticated, allowIfIsCustomer } from "../../middleware/auth-middleware";
+import {
+  allowIfAuthenticated,
+  allowIfIsCustomer,
+} from "../../middleware/auth-middleware";
 import staffRouter from "./staff";
 import sellerRouter from "./seller";
 import {
   CreateProductComment,
   FetchProductComments,
-} from "../../controllers/products/customers/comments";
+} from "../../controllers/products/comments";
 
 const productsRouter = Router();
 

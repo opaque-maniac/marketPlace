@@ -1,8 +1,8 @@
 import type { Request, Response } from "express";
-import { Errors } from "../../../errors/definitions";
-import db from "../../../db/db";
-import { JWTPayload } from "../../../definitons/jwt";
-import { CreateCommentBody } from "../../../definitons/payloads";
+import { Errors } from "../../errors/definitions";
+import db from "../../db/db";
+import { JWTPayload } from "../../definitons/jwt";
+import { CreateCommentBody } from "../../definitons/payloads";
 
 export async function FetchProductComments(
   req: Request,

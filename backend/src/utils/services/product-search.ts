@@ -11,6 +11,7 @@ import { Product } from "@prisma/client";
 // Selecting different fields so we do not just take all of them
 // TODO: add a method for finding one product too
 // Adapt this so that we can fetch as well as using prisma .findMany or findFirst
+// Include seller ID too
 export class ProductSearchService {
   async search(param: ProductSearchParams): Promise<ProductSearchResult> {
     const page = param.page || 1;

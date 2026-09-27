@@ -31,20 +31,36 @@ export async function allowIfAuthenticated(
   next();
 }
 
-
 export async function allowIfIsCustomer(
   req: Request,
   res: Response,
   next: NextFunction,
 ): Promise<void> {
-  const user = (req as any).user as JWTPayload | undefined
+  const user = (req as any).user as JWTPayload | undefined;
   if (!user) {
-    throw Errors.Unauthorized("Unauthorized")
+    throw Errors.Unauthorized("Unauthorized");
   }
 
   if (user.role != "customer") {
-    throw Errors.Unauthorized("Unauthorized")
+    throw Errors.Unauthorized("Unauthorized");
   }
 
-  next()
+  next();
+}
+
+export async function allowIfIsSeller(
+  req: Request,
+  res: Response,
+  next: NextFunction,
+): Promise<void> {
+  const user = (req as any).user as JWTPayload | undefined;
+  if (!user) {
+    throw Errors.Unauthorized("Unauthorized");
+  }
+
+  if (user.role != "seller") {
+    throw Errors.Unauthorized("Unauthorized");
+  }
+
+  next();
 }

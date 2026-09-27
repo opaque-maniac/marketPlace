@@ -8,6 +8,7 @@ export interface ProductSearchParams {
   maxPrice?: number;
   page?: number;
   limit?: number;
+  sellerID?: string;
 }
 
 /*
