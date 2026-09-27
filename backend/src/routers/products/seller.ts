@@ -3,7 +3,14 @@ import {
   allowIfAuthenticated,
   allowIfIsSeller,
 } from "../../middleware/auth-middleware";
-import { CreateNewProduct, FetchSellerProducts } from "../../controllers/products/sellers/products";
+import {
+  CreateNewProduct,
+  FetchSellerProducts,
+} from "../../controllers/products/sellers/products";
+import {
+  DeleteSellerIndividualProduct,
+  FetchSellerIndividualProduct,
+} from "../../controllers/products/sellers/individual-product";
 
 const sellerRouter = Router();
 
@@ -12,5 +19,9 @@ sellerRouter.use(allowIfIsSeller);
 
 sellerRouter.get("", FetchSellerProducts);
 sellerRouter.post("", CreateNewProduct);
+
+// Invidiual product
+sellerRouter.get("/:id", FetchSellerIndividualProduct);
+sellerRouter.delete("/:id", DeleteSellerIndividualProduct);
 
 export default sellerRouter;

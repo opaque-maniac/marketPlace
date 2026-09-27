@@ -9,6 +9,7 @@ export interface ProductSearchParams {
   page?: number;
   limit?: number;
   sellerID?: string;
+  sellerVerified?: boolean;
 }
 
 /*

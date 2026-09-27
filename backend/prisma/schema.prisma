@@ -88,8 +88,8 @@ model SellerProfile {
   active             Boolean             @default(true)
   role               SELLER_ROLE
   organizationID     String
-  organization       SellerOrganization  @relation(fields: [organizationID], references: [id])
-  image              SellerImage?        @relation(fields: [sellerImageId], references: [id])
+  organization       SellerOrganization  @relation(fields: [organizationID], references: [id], onDelete: Cascade)
+  image              SellerImage?        @relation(fields: [sellerImageId], references: [id], onDelete: Cascade)
   sellerImageId      String?
   sellerProfileImage SellerProfileImage?
   lastLogin          DateTime?
@@ -171,7 +171,7 @@ model Product {
   inventory      Int
   categoryID     String
   verified       Boolean            @default(false)
-  category       Category           @relation(fields: [categoryID], references: [id])
+  category       Category           @relation(fields: [categoryID], references: [id], onDelete: Cascade)
   images         ProductImage[]
   cartItems      CartItem[]
   wishlistItems  WishListItem[]

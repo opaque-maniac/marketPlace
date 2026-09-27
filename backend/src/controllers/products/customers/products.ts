@@ -35,11 +35,12 @@ export async function FetchCustomerProducts(
   const searchParams: ProductSearchParams = {
     query,
     page,
-    verified: true,
     limit,
     maxPrice,
     minPrice,
     categoryId,
+    verified: true,
+    sellerVerified: true,
   };
 
   const productSearchService = new ProductSearchService();
