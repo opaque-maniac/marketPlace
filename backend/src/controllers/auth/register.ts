@@ -142,6 +142,12 @@ async function registerCustomer(
       },
     });
 
+    await tx.wishList.create({
+      data: {
+        customerID: profile.id,
+      },
+    });
+
     return profile;
   });
 }

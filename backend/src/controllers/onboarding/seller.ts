@@ -34,7 +34,7 @@ export async function OnboardSeller(
    * to delete profiles that have been inactive for a month to give leeway
    * And disable deletion if there are still orders on their ways
    * */
-  const referenceNumber = await generateSellerReferenceNumber(db);
+  const referenceNumber = await generateSellerReferenceNumber();
   const sellerProfile = await db.$transaction(async (tx) => {
     const sellerOrg = await tx.sellerOrganization.create({
       data: {

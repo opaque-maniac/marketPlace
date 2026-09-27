@@ -2,6 +2,7 @@ import type { Request, Response, NextFunction } from "express";
 import JWTService from "../utils/services/jwt-service";
 import { Errors } from "../errors/definitions";
 import APIErrorCodes from "../errors/error-codes";
+import { JWTPayload } from "../definitons/jwt";
 
 const tokenService = new JWTService();
 
@@ -28,4 +29,22 @@ export async function allowIfAuthenticated(
 
   (req as any).user = payload;
   next();
+}
+
+
+export async function allowIfIsCustomer(
+  req: Request,
+  res: Response,
+  next: NextFunction,
+): Promise<void> {
+  const user = (req as any).user as JWTPayload | undefined
+  if (!user) {
+    throw Errors.Unauthorized("Unauthorized")
+  }
+
+  if (user.role != "customer") {
+    throw Errors.Unauthorized("Unauthorized")
+  }
+
+  next()
 }

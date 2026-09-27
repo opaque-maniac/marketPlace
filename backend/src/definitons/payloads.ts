@@ -39,3 +39,11 @@ export interface ConfirmResetPasswordBody {
 export interface ChangeEmailBody extends VerifyEmailBody {}
 
 export interface ConfirmChangePasswordBody extends ConfirmResetPasswordBody {}
+
+export interface OrderProductBody {
+  quantity: number;
+}
+
+export interface CreateCommentBody {
+  comment: string;
+}
