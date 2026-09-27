@@ -15,6 +15,7 @@ const APIErrorCodes = {
     unauthorized_access: "302",
     unverified_profile: "303",
     unverified_seller_org: "304",
+    disabled_profie: "305",
   },
   token: {
     invalid_security_token: "401",

@@ -165,7 +165,7 @@ async function registerSeller(
     },
   });
   if (!org) {
-    throw Errors.BadRequest("Invalid orgRef query param provided");
+    throw Errors.BadRequest("Invalid reference number provided in request");
   }
 
   if (!org.verified) {

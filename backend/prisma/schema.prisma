@@ -13,6 +13,11 @@ datasource db {
   url      = env("DATABASE_URL")
 }
 
+enum PROFILE_STATUS {
+  ACTIVE
+  DISABLED
+}
+
 model Customer {
   id          String         @id @default(uuid())
   email       String         @unique
@@ -22,6 +27,7 @@ model Customer {
   password    String
   address     String?
   phone       String?
+  status      PROFILE_STATUS @default(ACTIVE)
   verified    Boolean        @default(false)
   active      Boolean        @default(true)
   image       CustomerImage?
@@ -39,7 +45,7 @@ model Customer {
 model CustomerImage {
   id         String   @id @default(uuid())
   customerID String   @unique
-  filename        String
+  filename   String
   customer   Customer @relation(fields: [customerID], references: [id], onDelete: Cascade)
   createdAt  DateTime @default(now())
 }
@@ -66,7 +72,7 @@ model SellerOrganization {
 model SellerImage {
   id             String             @id @default(uuid())
   sellerID       String             @unique
-  filename            String
+  filename       String
   seller         SellerOrganization @relation(fields: [sellerID], references: [id], onDelete: Cascade)
   createdAt      DateTime           @default(now())
   sellerProfiles SellerProfile[]
@@ -87,6 +93,7 @@ model SellerProfile {
   verified           Boolean             @default(false)
   active             Boolean             @default(true)
   role               SELLER_ROLE
+  status             PROFILE_STATUS      @default(ACTIVE)
   organizationID     String
   organization       SellerOrganization  @relation(fields: [organizationID], references: [id], onDelete: Cascade)
   image              SellerImage?        @relation(fields: [sellerImageId], references: [id], onDelete: Cascade)
@@ -100,7 +107,7 @@ model SellerProfile {
 model SellerProfileImage {
   id        String        @id @default(uuid())
   profileID String        @unique
-  filename       String
+  filename  String
   profile   SellerProfile @relation(fields: [profileID], references: [id], onDelete: Cascade)
   createdAt DateTime      @default(now())
 }
@@ -112,30 +119,31 @@ enum STAFF_ROLE {
 }
 
 model Staff {
-  id               String       @id @default(uuid())
-  email            String       @unique
+  id               String         @id @default(uuid())
+  email            String         @unique
   tempEmail        String?
   firstName        String
   lastName         String
   password         String
-  verified         Boolean      @default(false)
-  active           Boolean      @default(true)
+  verified         Boolean        @default(false)
+  active           Boolean        @default(true)
   role             STAFF_ROLE
+  status           PROFILE_STATUS @default(ACTIVE)
   phone            String?
   address          String?
   image            StaffImage?
   complaints       Complaint[]
   misconducts      Misconduct[]
-  filedmisconducts Misconduct[] @relation("Personel")
+  filedmisconducts Misconduct[]   @relation("Personel")
   lastLogin        DateTime?
-  createdAt        DateTime     @default(now())
-  updatedAt        DateTime     @updatedAt
+  createdAt        DateTime       @default(now())
+  updatedAt        DateTime       @updatedAt
 }
 
 model StaffImage {
   id        String   @id @default(uuid())
   staffID   String   @unique
-  filename       String
+  filename  String
   staff     Staff    @relation(fields: [staffID], references: [id], onDelete: Cascade)
   createdAt DateTime @default(now())
 }
@@ -198,7 +206,7 @@ model Ratings {
 model ProductImage {
   id        String   @id @default(uuid())
   productID String
-  filename       String
+  filename  String
   product   Product  @relation(fields: [productID], references: [id], onDelete: Cascade)
   createdAt DateTime @default(now())
 }

@@ -55,6 +55,13 @@ export async function LoginUser(req: Request, res: Response): Promise<void> {
     throw Errors.BadRequest("Invalid credentials provided");
   }
 
+  if (profile.status == "DISABLED") {
+    throw Errors.Unauthorized(
+      "Unauthorized",
+      APIErrorCodes.authentication.disabled_profie,
+    );
+  }
+
   if (role == "seller") {
     const org = await db.sellerOrganization.findFirst({
       where: {

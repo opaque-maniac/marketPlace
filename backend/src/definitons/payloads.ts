@@ -15,9 +15,9 @@ export interface RegisterSellerBody extends RegisterUserBody {
 
 export interface OnboardingSellerBody {
   name: string;
-  phone: string | undefined;
-  bio: string | undefined;
-  address: string | undefined;
+  phone?: string;
+  bio?: string;
+  address?: string;
   ownerData: RegisterUserBody;
 }
 

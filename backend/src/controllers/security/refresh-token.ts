@@ -50,6 +50,13 @@ export async function RefreshAccessToken(
     );
   }
 
+  if (profile.status == "DISABLED") {
+    throw Errors.Unauthorized(
+      "Unauthorized",
+      APIErrorCodes.authentication.disabled_profie,
+    );
+  }
+
   const tokenPayload = {
     id: profile.id,
     email: profile.email,
