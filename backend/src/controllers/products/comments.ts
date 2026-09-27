@@ -37,7 +37,7 @@ export async function FetchProductComments(
           lastName: true,
           image: {
             select: {
-              url: true,
+              filename: true,
             },
           },
         },

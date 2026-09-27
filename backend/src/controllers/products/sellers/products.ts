@@ -4,6 +4,7 @@ import { ProductSearchParams } from "../../../definitons/products";
 import { JWTPayload } from "../../../definitons/jwt";
 import db from "../../../db/db";
 import { ProductSearchService } from "../../../utils/services/product-search";
+import { ProductCreateUpdateBody } from "../../../definitons/payloads";
 
 export async function FetchSellerProducts(req: Request, res: Response) {
   const limit = req.query.limit ? Number(req.query.limit) : 10;
@@ -65,5 +66,79 @@ export async function FetchSellerProducts(req: Request, res: Response) {
     message: "Fetched products",
     products,
     hasNext,
+  });
+}
+
+export async function CreateNewProduct(
+  req: Request,
+  res: Response,
+): Promise<void> {
+  const { id } = (req as any).user as JWTPayload;
+
+  const profile = await db.sellerProfile.findFirst({
+    where: { id },
+  });
+  if (!profile) {
+    throw Errors.Unauthorized("Unauthorized");
+  }
+
+  const {
+    name,
+    description,
+    buyingPrice,
+    sellingPrice,
+    categoryId,
+    inventory,
+  } = req.body as ProductCreateUpdateBody;
+  let filenames: string[] | undefined;
+
+  if (req.files && Array.isArray(req.files)) {
+    filenames = req.files.map((file) => file.filename);
+  }
+
+  if (!filenames || filenames.length == 0) {
+    throw Errors.BadRequest("New products require at least one image");
+  }
+
+  const category = await db.category.findFirst({
+    where: { id: categoryId },
+  });
+  if (!category) {
+    throw Errors.BadRequest("Invalid category id in request body");
+  }
+
+  const parsedBP = parseFloat(buyingPrice);
+  const parsedSP = parseFloat(sellingPrice);
+  const parsedInventory = parseInt(inventory);
+
+  const product = await db.$transaction(async (tx) => {
+    const newProduct = await tx.product.create({
+      data: {
+        name,
+        description,
+        buyingPrice: parsedBP,
+        sellingPrice: parsedSP,
+        categoryID: category.id,
+        inventory: parsedInventory,
+        sellerID: profile.organizationID,
+      },
+    });
+
+    for (const file in filenames) {
+      await tx.productImage.create({
+        data: {
+          productID: newProduct.id,
+          filename: file,
+        },
+      });
+    }
+
+    return newProduct;
+  });
+
+  res.status(200).json({
+    success: true,
+    message: "Created new product",
+    productId: product.id,
   });
 }

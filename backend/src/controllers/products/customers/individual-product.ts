@@ -21,7 +21,7 @@ export async function FetchCustomerIndividualProduct(
     include: {
       images: {
         select: {
-          url: true,
+          filename: true,
         },
       },
       seller: {
@@ -29,7 +29,7 @@ export async function FetchCustomerIndividualProduct(
           name: true,
           image: {
             select: {
-              url: true,
+              filename: true,
             },
           },
         },

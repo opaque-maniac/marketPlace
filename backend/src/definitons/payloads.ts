@@ -47,3 +47,12 @@ export interface OrderProductBody {
 export interface CreateCommentBody {
   comment: string;
 }
+
+export interface ProductCreateUpdateBody {
+  name: string;
+  description: string;
+  buyingPrice: string;
+  sellingPrice: string;
+  categoryId: string;
+  inventory: string;
+}
