@@ -29,7 +29,7 @@ export async function FetchProductComments(
   }
 
   const comments = await db.comment.findMany({
-    where: { productID: product.id },
+    where: { productID: product.id, disabled: false },
     include: {
       customer: {
         select: {

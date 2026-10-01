@@ -221,6 +221,7 @@ model Comment {
   parent     Comment?  @relation("CommentReplies", fields: [parentID], references: [id], onDelete: Cascade)
   replies    Comment[] @relation("CommentReplies")
   message    String
+  disabled   Boolean   @default(false)
   createdAt  DateTime  @default(now())
 }
 
