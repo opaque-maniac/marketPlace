@@ -120,6 +120,8 @@ export interface CartSearchParams extends Pagination {
   sort?: SortDirection;
 }
 
+// TODO: add a query option here and do the same for the
+// Search function
 export interface CartItemSearchParams extends Pagination {
   cartId?: string;
   customerId?: string;
@@ -140,6 +142,8 @@ export interface WishlistSearchParams extends Pagination {
   sort?: SortDirection;
 }
 
+// TODO: add a query option here and do the same for the
+// Search function
 export interface WishlistItemSearchParams extends Pagination {
   wishlistId?: string;
   customerId?: string;

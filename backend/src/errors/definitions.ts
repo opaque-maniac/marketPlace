@@ -23,7 +23,8 @@ export const Errors = {
 
   NotFound: (
     msg: string,
-    entity: "Customer" | "Product" | "Seller" | "Staff",
+    entity:
+      "Customer" | "Product" | "Seller" | "Staff" | "CartItem" | "WishlistItem",
   ) => new AppError(msg, 404, APIErrorCodes.not_found[entity]),
 
   Unauthorized: (

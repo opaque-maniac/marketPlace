@@ -9,6 +9,8 @@ const APIErrorCodes = {
     Staff: "203",
     Product: "204",
     Comment: "205",
+    CartItem: "206,",
+    WishlistItem: "207",
   },
   authentication: {
     invalid_credentials: "301",

@@ -164,14 +164,28 @@ export async function OrderProduct(req: Request, res: Response): Promise<void> {
   const user = (req as any).user as JWTPayload;
   const { quantity } = req.body as OrderProductBody;
 
-  const order = await db.order.create({
-    data: {
-      productID: product.id,
-      customerID: user.id,
-      quantity,
-      sellerID: product.sellerID,
-      totalAmount: product.sellingPrice * quantity,
-    },
+  // TODO: look into race conditions
+  const order = await db.$transaction(async (tx) => {
+    const newOrder = await tx.order.create({
+      data: {
+        productID: product.id,
+        customerID: user.id,
+        quantity,
+        sellerID: product.sellerID,
+        totalAmount: product.sellingPrice * quantity,
+      },
+    });
+
+    await tx.product.update({
+      where: { id: product.id },
+      data: {
+        inventory: {
+          decrement: newOrder.quantity,
+        },
+      },
+    });
+
+    return newOrder;
   });
 
   res.status(200).json({

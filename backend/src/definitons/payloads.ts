@@ -60,3 +60,7 @@ export interface ProductCreateUpdateBody {
 export interface ProductStatusUpdateBody {
   verified: boolean;
 }
+
+export interface UpdateCartItemBody {
+  increment: boolean;
+}
