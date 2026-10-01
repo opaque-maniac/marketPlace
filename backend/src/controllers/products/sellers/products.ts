@@ -1,12 +1,12 @@
 import type { Request, Response } from "express";
 import { Errors } from "../../../errors/definitions";
-import { ProductSearchParams } from "../../../definitons/products";
 import { JWTPayload } from "../../../definitons/jwt";
 import db from "../../../db/db";
-import { ProductSearchService } from "../../../utils/services/product-search";
 import { ProductCreateUpdateBody } from "../../../definitons/payloads";
+import { ProductSearchParams } from "../../../definitons/search";
+import searchService from "../../../utils/services/search-service";
 
-export async function FetchSellerProducts(req: Request, res: Response) {
+export async function SellerFetchProducts(req: Request, res: Response) {
   const limit = req.query.limit ? Number(req.query.limit) : 10;
   const page = req.query.page ? Number(req.query.page) : 1;
   const query = req.query.query ? (req.query.query as string) : "";
@@ -21,6 +21,12 @@ export async function FetchSellerProducts(req: Request, res: Response) {
       : req.query.verified == "false"
         ? false
         : undefined;
+  const minInventory = req.query.minInventory
+    ? Number(req.query.minInventory)
+    : undefined;
+  const maxInventory = req.query.minInventory
+    ? Number(req.query.maxInventory)
+    : undefined;
 
   if (isNaN(page)) {
     throw Errors.BadRequest("Invalid page query param");
@@ -36,6 +42,14 @@ export async function FetchSellerProducts(req: Request, res: Response) {
 
   if (maxPrice != undefined && isNaN(maxPrice)) {
     throw Errors.BadRequest("Invalid maxPrice query param");
+  }
+
+  if (minInventory != undefined && isNaN(minInventory)) {
+    throw Errors.BadRequest("Invalid minInventory query param");
+  }
+
+  if (maxInventory != undefined && isNaN(maxInventory)) {
+    throw Errors.BadRequest("Invalid maxInventory query param");
   }
 
   const { id } = (req as any).user as JWTPayload;
@@ -55,21 +69,22 @@ export async function FetchSellerProducts(req: Request, res: Response) {
     maxPrice,
     page,
     limit,
-    sellerID: profile.organizationID,
+    minInventory,
+    maxInventory,
+    sellerId: profile.organizationID,
   };
 
-  const productSearch = new ProductSearchService();
-  const { products, hasNext } = await productSearch.search(searchParams);
+  const { items, hasNext } = await searchService.products(searchParams);
 
   res.status(200).json({
     success: true,
     message: "Fetched products",
-    products,
+    products: items,
     hasNext,
   });
 }
 
-export async function CreateNewProduct(
+export async function SellerCreateNewProduct(
   req: Request,
   res: Response,
 ): Promise<void> {

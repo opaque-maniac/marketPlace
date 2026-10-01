@@ -1,7 +1,7 @@
 import { Router } from "express";
 import { OnboardSeller } from "../controllers/onboarding/seller";
 import { body } from "express-validator";
-import { stringConfig } from "../utils/input-validation";
+import { passwordConfig, stringConfig } from "../utils/input-validation";
 
 const onboardingRouter = Router();
 
@@ -14,7 +14,10 @@ onboardingRouter.post(
     .matches(/^[0-9]{10}$/),
   body("address").isString().isLength(stringConfig).optional(),
   body("bio").optional().isString().isLength({ min: 10, max: 500 }),
-  // TODO: find out how to validate owner data
+  body("ownerData.email").isEmail(),
+  body("ownerData.firstName").isString().isLength(stringConfig),
+  body("ownerData.lastName").isString().isLength(stringConfig),
+  body("ownerData.password").isStrongPassword(passwordConfig),
   OnboardSeller,
 );
 

@@ -4,7 +4,7 @@ import db from "../../../db/db";
 import { JWTPayload } from "../../../definitons/jwt";
 import { OrderProductBody } from "../../../definitons/payloads";
 
-export async function FetchCustomerIndividualProduct(
+export async function CustomerFetchIndividualProduct(
   req: Request,
   res: Response,
 ): Promise<void> {
@@ -81,13 +81,22 @@ export async function AddToCart(req: Request, res: Response): Promise<void> {
     throw Errors.Unauthorized("Unauthorized");
   }
 
-  await db.cartItem.create({
-    data: {
+  const itemExists = await db.cartItem.findFirst({
+    where: {
       cartID: cart.id,
       productID: product.id,
-      quantity: 0,
     },
   });
+
+  if (!itemExists) {
+    await db.cartItem.create({
+      data: {
+        cartID: cart.id,
+        productID: product.id,
+        quantity: 0,
+      },
+    });
+  }
 
   res.status(200).json({
     success: true,
@@ -119,12 +128,21 @@ export async function AddToWishlist(
     throw Errors.Unauthorized("Unauthorized");
   }
 
-  await db.wishListItem.create({
-    data: {
+  const itemExists = await db.wishListItem.findFirst({
+    where: {
       wishlistID: wishlist.id,
       productID: product.id,
     },
   });
+
+  if (!itemExists) {
+    await db.wishListItem.create({
+      data: {
+        wishlistID: wishlist.id,
+        productID: product.id,
+      },
+    });
+  }
 
   res.status(200).json({
     success: true,

@@ -4,14 +4,14 @@ import {
   allowIfIsSeller,
 } from "../../middleware/auth-middleware";
 import {
-  CreateNewProduct,
-  FetchSellerProducts,
+  SellerCreateNewProduct,
+  SellerFetchProducts,
 } from "../../controllers/products/sellers/products";
 import {
-  DeleteSellerIndividualProduct,
-  FetchSellerIndividualProduct,
-  UpdateSellerIndividualProduct,
-  UpdateSellerProductVerifiedStatus,
+  SellerDeleteIndividualProduct,
+  SellerFetchIndividualProduct,
+  SellerUpdateIndividualProduct,
+  SellerUpdateProductVerifiedStatus,
 } from "../../controllers/products/sellers/individual-product";
 import { createStorage } from "../../utils/storage";
 import multer from "multer";
@@ -27,7 +27,7 @@ const productUpload = multer({ storage: productStorage });
 sellerRouter.use(allowIfAuthenticated);
 sellerRouter.use(allowIfIsSeller);
 
-sellerRouter.get("", FetchSellerProducts);
+sellerRouter.get("", SellerFetchProducts);
 sellerRouter.post(
   "",
   body("name").isString().isLength(stringConfig),
@@ -37,11 +37,11 @@ sellerRouter.post(
   body("inventory").isNumeric(),
   body("categoryId").isString(),
   productUpload.array("images", 5),
-  CreateNewProduct,
+  SellerCreateNewProduct,
 );
 
 // Invidiual product
-sellerRouter.get("/:id", FetchSellerIndividualProduct);
+sellerRouter.get("/:id", SellerFetchIndividualProduct);
 sellerRouter.put(
   "/:id",
   body("name").isString().isLength(stringConfig),
@@ -51,9 +51,13 @@ sellerRouter.put(
   body("inventory").isNumeric(),
   body("categoryId").isString(),
   productUpload.array("images", 5),
-  UpdateSellerIndividualProduct,
+  SellerUpdateIndividualProduct,
 );
-sellerRouter.patch("/:id", UpdateSellerProductVerifiedStatus);
-sellerRouter.delete("/:id", DeleteSellerIndividualProduct);
+sellerRouter.patch(
+  "/:id",
+  body("verified").isBoolean(),
+  SellerUpdateProductVerifiedStatus,
+);
+sellerRouter.delete("/:id", SellerDeleteIndividualProduct);
 
 export default sellerRouter;

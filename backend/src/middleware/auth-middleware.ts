@@ -27,6 +27,13 @@ export async function allowIfAuthenticated(
     );
   }
 
+  if (payload.purpose != "ACCESS") {
+    throw Errors.Unauthorized(
+      "Unauthorized",
+      APIErrorCodes.authentication.invalid_credentials,
+    );
+  }
+
   (req as any).user = payload;
   next();
 }
@@ -59,6 +66,23 @@ export async function allowIfIsSeller(
   }
 
   if (user.role != "seller") {
+    throw Errors.Unauthorized("Unauthorized");
+  }
+
+  next();
+}
+
+export async function allowIfIsStaff(
+  req: Request,
+  res: Response,
+  next: NextFunction,
+): Promise<void> {
+  const user = (req as any).user as JWTPayload | undefined;
+  if (!user) {
+    throw Errors.Unauthorized("Unauthorized");
+  }
+
+  if (user.role != "staff") {
     throw Errors.Unauthorized("Unauthorized");
   }
 

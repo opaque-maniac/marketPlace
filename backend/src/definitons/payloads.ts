@@ -56,3 +56,7 @@ export interface ProductCreateUpdateBody {
   categoryId: string;
   inventory: string;
 }
+
+export interface ProductStatusUpdateBody {
+  verified: boolean;
+}

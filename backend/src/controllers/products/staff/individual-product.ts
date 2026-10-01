@@ -1,31 +1,19 @@
 import type { Request, Response } from "express";
-import { Errors } from "../../../errors/definitions";
-import { JWTPayload } from "../../../definitons/jwt";
 import db from "../../../db/db";
+import { Errors } from "../../../errors/definitions";
 import {
   ProductCreateUpdateBody,
   ProductStatusUpdateBody,
 } from "../../../definitons/payloads";
 
-export async function SellerFetchIndividualProduct(
+export async function StaffFetchIndividualProduct(
   req: Request,
   res: Response,
 ): Promise<void> {
   const { id } = req.params;
-  const user = (req as any).user as JWTPayload;
-
-  const profile = await db.sellerProfile.findFirst({
-    where: { id: user.id },
-  });
-  if (!profile) {
-    throw Errors.Unauthorized("Unauthorized");
-  }
 
   const product = await db.product.findFirst({
-    where: {
-      id,
-      sellerID: profile.organizationID,
-    },
+    where: { id },
     include: {
       images: {
         select: {
@@ -33,8 +21,7 @@ export async function SellerFetchIndividualProduct(
         },
       },
       seller: {
-        select: {
-          name: true,
+        include: {
           image: {
             select: {
               filename: true,
@@ -49,42 +36,21 @@ export async function SellerFetchIndividualProduct(
     throw Errors.NotFound("Product not found", "Product");
   }
 
-  const ratings = await db.ratings.findMany({
-    where: { productID: product.id },
-  });
-
-  const ratingValue =
-    ratings.length > 0
-      ? ratings.reduce((acc, val) => acc + val.value, 0) / ratings.length
-      : 0;
-
   res.status(200).json({
     success: true,
     message: "Fetched product",
     product,
-    rating: ratingValue,
   });
 }
 
-export async function SellerUpdateIndividualProduct(
+export async function StaffUpdateProduct(
   req: Request,
   res: Response,
 ): Promise<void> {
   const { id } = req.params;
-  const user = (req as any).user as JWTPayload;
-
-  const profile = await db.sellerProfile.findFirst({
-    where: { id: user.id },
-  });
-  if (!profile) {
-    throw Errors.Unauthorized("Unauthorized");
-  }
 
   const product = await db.product.findFirst({
-    where: {
-      id,
-      sellerID: profile.organizationID,
-    },
+    where: { id },
   });
   if (!product) {
     throw Errors.NotFound("Product not found", "Product");
@@ -155,27 +121,16 @@ export async function SellerUpdateIndividualProduct(
   });
 }
 
-export async function SellerUpdateProductVerifiedStatus(
+export async function StaffUpdateProductVerifiedStatus(
   req: Request,
   res: Response,
 ): Promise<void> {
   const { id } = req.params;
-  const user = (req as any).user as JWTPayload;
 
-  const profile = await db.sellerProfile.findFirst({
-    where: { id: user.id },
+  const exists = await db.product.findFirst({
+    where: { id },
   });
-  if (!profile || profile.role != "OWNER") {
-    throw Errors.Unauthorized("Unauthorized");
-  }
-
-  const product = await db.product.findFirst({
-    where: {
-      id,
-      sellerID: profile.organizationID,
-    },
-  });
-  if (!product) {
+  if (!exists) {
     throw Errors.NotFound("Product not found", "Product");
   }
 
@@ -191,36 +146,25 @@ export async function SellerUpdateProductVerifiedStatus(
   });
 }
 
-export async function SellerDeleteIndividualProduct(
+export async function StaffDeleteProduct(
   req: Request,
   res: Response,
 ): Promise<void> {
   const { id } = req.params;
-  const user = (req as any).user as JWTPayload;
 
-  const profile = await db.sellerProfile.findFirst({
-    where: { id: user.id },
+  const exists = await db.product.findFirst({
+    where: { id },
   });
-  if (!profile) {
-    throw Errors.Unauthorized("Unauthorized");
-  }
-
-  const product = await db.product.findFirst({
-    where: {
-      id,
-      sellerID: profile.organizationID,
-    },
-  });
-  if (!product) {
+  if (!exists) {
     throw Errors.NotFound("Product not found", "Product");
   }
 
   await db.product.delete({
-    where: { id: product.id },
+    where: { id },
   });
 
   res.status(203).json({
     success: true,
-    message: "Deleted product",
+    message: "Deleted product in database",
   });
 }
