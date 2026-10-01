@@ -3,7 +3,10 @@ import {
   allowIfAuthenticated,
   allowIfIsCustomer,
 } from "../middleware/auth-middleware";
-import { CustomerEmptyWishlist, CustomerFetchWishlist } from "../controllers/wishlist/wishlist";
+import {
+  CustomerEmptyWishlist,
+  CustomerFetchWishlist,
+} from "../controllers/wishlist/wishlist";
 import { CustomerDeleteWishlistItem } from "../controllers/wishlist/wishlist-item";
 
 const wishlistRouter = Router();

@@ -3,13 +3,16 @@ import { Errors } from "../../errors/definitions";
 import db from "../../db/db";
 import { JWTPayload } from "../../definitons/jwt";
 import { CreateCommentBody } from "../../definitons/payloads";
+import searchService from "../../utils/services/search-service";
+import { CommentSearchParams } from "../../definitons/search";
 
 export async function FetchProductComments(
   req: Request,
   res: Response,
 ): Promise<void> {
-  const limit = req.query.limit ? Number(req.query.limit) : 10;
   const page = req.query.page ? Number(req.query.page) : 1;
+  const limit = req.query.limit ? Number(req.query.limit) : 10;
+  const query = req.query.query ? (req.query.query as string) : "";
 
   if (isNaN(page)) {
     throw Errors.BadRequest("Invalid page query param");
@@ -28,34 +31,22 @@ export async function FetchProductComments(
     throw Errors.NotFound("Product not found", "Product");
   }
 
-  const comments = await db.comment.findMany({
-    where: { productID: product.id, disabled: false },
-    include: {
-      customer: {
-        select: {
-          firstName: true,
-          lastName: true,
-          image: {
-            select: {
-              filename: true,
-            },
-          },
-        },
-      },
-    },
-    take: limit + 1,
-    skip: (page - 1) * limit,
-  });
+  // TODO: disabled: false
+  const params: CommentSearchParams = {
+    query,
+    page,
+    limit,
+    productId: product.id,
+    topLevelOnly: true,
+    sortBy: "relevance",
+  };
 
-  const hasNext = comments.length > limit;
-  if (hasNext) {
-    comments.pop();
-  }
+  const { items, hasNext } = await searchService.comments(params);
 
   res.status(200).json({
     success: true,
     message: "Retrieved product comments",
-    comments,
+    comments: items,
     hasNext,
   });
 }

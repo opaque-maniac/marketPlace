@@ -154,6 +154,7 @@ export interface WishlistItemSearchParams extends Pagination {
   sort?: SortDirection;
 }
 
+// TODO: add the disabled flag and change search function too
 export interface CommentSearchParams extends Pagination {
   query?: string;
   customerId?: string;
